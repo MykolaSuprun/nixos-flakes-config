@@ -120,7 +120,11 @@
     };
   };
 
-
+  #Enable flatpak
+  services.flatpak.enable = true;
+  # xdg.portal.extraPortals = [pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal-kde];
+  xdg.portal.enable = true;
+  
   # Configure keymap in X11
   services.xserver = {
     layout = "us";
