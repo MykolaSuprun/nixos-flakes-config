@@ -40,7 +40,6 @@
     neovim.enable = true;
     neovim.viAlias = true;
     neovim.vimAlias = true;
-    thefuck.enable = true;
     git = {
       enable = true;
       userName = "Mykola Suprun";
@@ -49,7 +48,7 @@
 
 
     zsh = {
-      enable = true; 
+      enable = true;
       oh-my-zsh = {
         enable = true;
         extraConfig = ''
@@ -68,7 +67,6 @@
         plugins = [
           "git"
           "cp"
-          "thefuck"
           "aliases"
           "branch"
           "cabal"
@@ -85,13 +83,41 @@
           "archlinux"
         ];
       };
-      # sessionVariables = {
-      #   GTK_IM_MDOULE = "fcitx5";
-      #   QT_IM_MODULE = "fcitx5";
-      #   XMODIFIERS = "@im=fcitx5";
-      #   GLFW_IM_MODULE = "ibus"; # IME support in kitty
-      # };
+
       shellAliases = {
+        editconf = "code ~/.dotfiles";
+        sysbuild = "~/.dotfiles/apply-system.sh";
+        hmbuild = "~/.dotfiles/apply-users.sh";
+        sysupdate = "~/.dotfiles/update.sh";
+        confdir = "~/.dotfiles";
+        nsgc = "nix-collect-garbage";
+        arch = "distrobox-enter arch";
+      };
+    };
+    
+    bash = {
+      enable = true;
+      enableCompletion = true;
+      bashrcExtra = ''
+        if [[ $(uname -a | grep arch) ]]
+        then 
+          distrobox-host-exec xhost +local:
+          xhost +SI:localuser:$USER
+          alias vi='nvim'
+          alias vim='nvim'
+          alias nano='nvim'
+          # echo "in Arch" 
+          # zsh
+          clear
+        else 
+          # echo "in NixOS"
+          clear
+        fi
+      '';
+      shellAliases = {
+        vi = "nvim";
+        vim = "nvim";
+        nano = "nvim";
         editconf = "code ~/.dotfiles";
         sysbuild = "~/.dotfiles/apply-system.sh";
         hmbuild = "~/.dotfiles/apply-users.sh";
