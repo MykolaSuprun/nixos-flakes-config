@@ -1,19 +1,10 @@
 { config, pkgs, ... }:
 
 {
-  # Home Manager needs a bit of information about you and the
-  # paths it should manage.
+
   home.username = "mykolas";
   home.homeDirectory = "/home/mykolas";
 
-  # This value determines the Home Manager release that your
-  # configuration is compatible with. This helps avoid breakage
-  # when a new Home Manager release introduces backwards
-  # incompatible changes.
-  #
-  # You can update Home Manager without changing this value. See
-  # the Home Manager release notes for a list of state version
-  # changes in each release.
   home.stateVersion = "22.11";
 
   # Let Home Manager install and manage itself.
@@ -26,6 +17,93 @@
     pinentryFlavor = "qt";
   };
 
+
+  i18n.inputMethod = {
+    enabled = "fcitx5";
+    fcitx.engines = with pkgs.fcitx-engines; [ mozc hangul m17n unikey table-other rime ];
+    fcitx5.addons = with pkgs; [ 
+      fcitx5-rime 
+      fcitx5-gtk 
+      libsForQt5.fcitx5-qt 
+      fcitx5-with-addons
+      fcitx5-chinese-addons
+      fcitx5-table-other
+      fcitx5-configtool
+      fcitx5-hangul
+      fcitx5-unikey
+      fcitx5-m17n
+      fcitx5-mozc
+    ];
+  };
+
+  programs = {
+    neovim.enable = true;
+    neovim.viAlias = true;
+    neovim.vimAlias = true;
+    thefuck.enable = true;
+    git = {
+      enable = true;
+      userName = "Mykola Suprun";
+      userEmail = "mykola.suprun@protonmail.com";
+    };
+
+
+    zsh = {
+      enable = true; 
+      oh-my-zsh = {
+        enable = true;
+        extraConfig = ''
+          if [[ $(uname -a | grep arch) ]]
+          then 
+            distrobox-host-exec xhost +local:
+            xhost +SI:localuser:$USER
+            PROMPT="%B%F{47}%n%f%b%B:%b%B%F{39}%m%f%b%B>%b "
+            alias vi="nvim"
+            alias vim="nvim"
+            alias nano="nvim"
+          fi
+          clear
+        '';
+        theme = "agnoster";
+        plugins = [
+          "git"
+          "cp"
+          "thefuck"
+          "aliases"
+          "branch"
+          "cabal"
+          "docker"
+          "python"
+          "scala"
+          "sbt"
+          "stack"
+          "sublime"
+          "sudo"
+          "systemd"
+          "zsh-interactive-cd"
+          "vi-mode"
+          "archlinux"
+        ];
+      };
+      # sessionVariables = {
+      #   GTK_IM_MDOULE = "fcitx5";
+      #   QT_IM_MODULE = "fcitx5";
+      #   XMODIFIERS = "@im=fcitx5";
+      #   GLFW_IM_MODULE = "ibus"; # IME support in kitty
+      # };
+      shellAliases = {
+        editconf = "code ~/.dotfiles";
+        sysbuild = "~/.dotfiles/apply-system.sh";
+        hmbuild = "~/.dotfiles/apply-users.sh";
+        sysupdate = "~/.dotfiles/update.sh";
+        confdir = "~/.dotfiles";
+        nsgc = "nix-collect-garbage";
+        arch = "distrobox-enter arch";
+      };
+    };
+  };
+
+
   home.packages = with pkgs; [
     firefox
     brave
@@ -37,5 +115,31 @@
     pinentry_qt
     github-desktop
     tdesktop
+    megasync
+    thefuck
+    fzf
+    fzf-zsh
+    discord
+    rnix-lsp
+    vlc
+
+    #fcitx
+    libsForQt5.fcitx-qt5
+    fcitx-configtool
+    librime
+    libhangul
+    rime-data
+    vimPlugins.fcitx-vim
+    fcitx5-gtk
+
+    # plasma packages
+    libsForQt5.sddm-kcm
+    libsForQt5.ark
+    libsForQt5.yakuake
+    libsForQt5.qmltermwidget
+    libsForQt5.qt5.qtwebsockets
+    qbittorrent
   ];
+
+
 }
