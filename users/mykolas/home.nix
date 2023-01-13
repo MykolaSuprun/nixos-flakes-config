@@ -106,8 +106,8 @@
           alias vi='nvim'
           alias vim='nvim'
           alias nano='nvim'
+          zsh
           # echo "in Arch" 
-          # zsh
           clear
         else 
           # echo "in NixOS"
