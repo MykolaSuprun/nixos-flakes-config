@@ -11,7 +11,7 @@
     ];
 
   # backup system configuration
-  system.copySystemConfiguration = true;
+  # system.copySystemConfiguration = true;
 
   # Bootloader.
   boot.loader.grub.enable = true;
@@ -27,7 +27,10 @@
   nix = {
     settings.experimental-features = [ "nix-command" "flakes" ];
     settings.auto-optimise-store = true;
+    package = pkgs.nixFlakes;
   };
+
+
 
 
   # security

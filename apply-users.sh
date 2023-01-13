@@ -1,4 +1,5 @@
 #!/bin/sh
 pushd ~/.dotfiles
-home-manager switch -f ./users/mykolas/home.nix
+nix build .#homeConfigurations.mykolas.activationPackage
+./result/activate
 popd

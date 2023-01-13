@@ -37,6 +37,5 @@
     pinentry_qt
     github-desktop
     tdesktop
-    sl
   ];
 }
