@@ -122,9 +122,9 @@
 
   #Enable flatpak
   services.flatpak.enable = true;
-  # xdg.portal.extraPortals = [pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal-kde];
+  # D
   xdg.portal.enable = true;
-  
+
   # Configure keymap in X11
   services.xserver = {
     layout = "us";
@@ -146,6 +146,25 @@
     # If you want to use JACK applications, uncomment this
     #jack.enable = true;
  
+  };
+
+  i18n.inputMethod = {
+    enabled = "fcitx5";
+    fcitx.engines = with pkgs.fcitx-engines; [ mozc hangul m17n unikey table-other rime ];
+    fcitx5.addons = with pkgs; [ 
+      fcitx5-rime 
+      fcitx5-gtk 
+      libsForQt5.fcitx5-qt 
+      fcitx5-with-addons
+      fcitx5-chinese-addons
+      fcitx5-table-other
+      fcitx5-configtool
+      fcitx5-hangul
+      fcitx5-unikey
+      fcitx5-m17n
+      fcitx5-mozc
+      fcitx5-lua
+    ];
   };
 
   environment.shells = with pkgs; [zsh];
@@ -178,6 +197,15 @@
     kvmtool
     spice
     spice-gtk
+
+    #fcitx
+    # libsForQt5.fcitx-qt5
+    # fcitx-configtool
+    # librime
+    # libhangul
+    # rime-data
+    # vimPlugins.fcitx-vim
+    # fcitx5-gtk
   ];
 
 

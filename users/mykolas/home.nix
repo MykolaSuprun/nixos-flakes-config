@@ -17,25 +17,6 @@
     pinentryFlavor = "qt";
   };
 
-
-  i18n.inputMethod = {
-    enabled = "fcitx5";
-    fcitx.engines = with pkgs.fcitx-engines; [ mozc hangul m17n unikey table-other rime ];
-    fcitx5.addons = with pkgs; [ 
-      fcitx5-rime 
-      fcitx5-gtk 
-      libsForQt5.fcitx5-qt 
-      fcitx5-with-addons
-      fcitx5-chinese-addons
-      fcitx5-table-other
-      fcitx5-configtool
-      fcitx5-hangul
-      fcitx5-unikey
-      fcitx5-m17n
-      fcitx5-mozc
-    ];
-  };
-
   programs = {
     neovim.enable = true;
     neovim.viAlias = true;
@@ -129,7 +110,6 @@
     };
   };
 
-
   home.packages = with pkgs; [
     firefox
     brave
@@ -148,15 +128,6 @@
     discord
     rnix-lsp
     vlc
-
-    #fcitx
-    libsForQt5.fcitx-qt5
-    fcitx-configtool
-    librime
-    libhangul
-    rime-data
-    vimPlugins.fcitx-vim
-    fcitx5-gtk
 
     # plasma packages
     libsForQt5.sddm-kcm
