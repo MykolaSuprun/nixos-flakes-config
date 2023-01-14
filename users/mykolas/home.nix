@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, pkgs-unstable, ... }:
 
 {
 
@@ -110,32 +110,49 @@
     };
   };
 
-  home.packages = with pkgs; [
-    firefox
-    brave
-    vscode-with-extensions
-    distrobox
-    git
-    git-crypt
-    gnupg
-    pinentry_qt
-    github-desktop
-    tdesktop
-    megasync
-    thefuck
-    fzf
-    fzf-zsh
-    discord
-    rnix-lsp
-    vlc
+  home.packages = [
+    pkgs.firefox
+    pkgs.brave
+    pkgs.vscode-with-extensions
+    pkgs.git
+    pkgs.git-crypt
+    pkgs.gnupg
+    pkgs.pinentry_qt
+    pkgs.github-desktop
+    pkgs.tdesktop
+    pkgs.megasync
+    pkgs.thefuck
+    pkgs.fzf
+    pkgs.fzf-zsh
+    pkgs.rnix-lsp
+    pkgs.vlc
 
     # plasma packages
-    libsForQt5.sddm-kcm
-    libsForQt5.ark
-    libsForQt5.yakuake
-    libsForQt5.qmltermwidget
-    libsForQt5.qt5.qtwebsockets
-    qbittorrent
+    pkgs.libsForQt5.sddm-kcm
+    pkgs.libsForQt5.ark
+    pkgs.libsForQt5.yakuake
+    pkgs.libsForQt5.qmltermwidget
+    pkgs.libsForQt5.qt5.qtwebsockets
+    pkgs.qbittorrent
+
+    #graphic, steam, wine libraries
+    pkgs-unstable.mesa
+    pkgs-unstable.libdrm
+    pkgs-unstable.wine-staging
+    pkgs-unstable.winetricks
+    pkgs-unstable.vulkan-tools
+    pkgs-unstable.vulkan-loader
+    pkgs-unstable.vulkan-extension-layer
+    pkgs-unstable.vkBasalt
+    pkgs-unstable.dxvk
+    pkgs-unstable.vulkan-headers
+    pkgs-unstable.vulkan-validation-layers
+    pkgs-unstable.wine64Packages.fonts
+    pkgs-unstable.winePackages.fonts
+    pkgs-unstable.lutris
+    pkgs-unstable.steam
+    pkgs-unstable.discord
+    pkgs-unstable.distrobox
   ];
 
 
