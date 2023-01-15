@@ -168,10 +168,12 @@
   };
 
   environment.shells = with pkgs; [zsh];
+  users.defaultUserShell = pkgs.zsh;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.mykolas = {
     isNormalUser = true;
+    shell = pkgs.zsh;
     description = "Mykola Suprun";
     extraGroups = [ "networkmanager" "wheel" "docker" "libvirtd" "kvm" ];
   };
@@ -197,6 +199,7 @@
     kvmtool
     spice
     spice-gtk
+    appimage-run
 
     #fcitx
     # libsForQt5.fcitx-qt5
