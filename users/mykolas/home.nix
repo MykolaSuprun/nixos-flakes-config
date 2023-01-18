@@ -126,6 +126,7 @@
     pkgs.fzf-zsh
     pkgs.rnix-lsp
     pkgs.vlc
+    pkgs.cider
 
     # plasma packages
     pkgs.libsForQt5.sddm-kcm
