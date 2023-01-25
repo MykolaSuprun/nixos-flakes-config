@@ -113,7 +113,7 @@
   home.packages = [
     pkgs.firefox
     pkgs.brave
-    pkgs-unstable.vscode-with-extensions
+    pkgs.vscode-with-extensions
     pkgs.git
     pkgs.git-crypt
     pkgs.gnupg

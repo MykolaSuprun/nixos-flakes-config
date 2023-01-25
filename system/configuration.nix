@@ -22,7 +22,13 @@
   boot.loader.systemd-boot.enable = false;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot/efi";
-
+  boot.kernelPackages = pkgs.linuxPackages_zen;
+  boot.kernelModules = [ "wl" ];
+  boot.initrd.kernelModules = [ "wl" ];
+  boot.extraModulePackages = [ 
+    config.boot.kernelPackages.broadcom_sta
+    ];
+  # boot.extraModulePackages = with config.boot.kernelPackages; [ broadcom_sta ];
 
   nix = {
     settings.experimental-features = [ "nix-command" "flakes" ];
@@ -34,6 +40,7 @@
   # security
   security.tpm2.enable = true;
   security.tpm2.pkcs11.enable = true;
+  networking.enableB43Firmware = true;
 
   networking.hostName = "Geks-Nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
