@@ -113,7 +113,7 @@
   home.packages = [
     pkgs.firefox
     pkgs.brave
-    pkgs.vscode-with-extensions
+    pkgs-unstable.vscode-with-extensions
     pkgs.git
     pkgs.git-crypt
     pkgs.gnupg
@@ -127,6 +127,7 @@
     pkgs.rnix-lsp
     pkgs.vlc
     pkgs.cider
+    pkgs.spotify
 
     # plasma packages
     pkgs.libsForQt5.sddm-kcm
@@ -134,6 +135,7 @@
     pkgs.libsForQt5.yakuake
     pkgs.libsForQt5.qmltermwidget
     pkgs.libsForQt5.qt5.qtwebsockets
+    pkgs.libsForQt5.kdeconnect-kde
     pkgs.qbittorrent
 
     #graphic, steam, wine libraries
@@ -154,6 +156,7 @@
     pkgs-unstable.steam
     pkgs-unstable.discord
     pkgs-unstable.distrobox
+    pkgs-unstable.bottles
   ];
 
 
