@@ -191,6 +191,9 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  # Additional program options
+  programs.kdeconnect.enable = true;
+
   # List packages installed in system profile.
   environment.systemPackages = with pkgs; [
     # basic packages

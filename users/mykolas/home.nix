@@ -135,7 +135,6 @@
     pkgs.libsForQt5.yakuake
     pkgs.libsForQt5.qmltermwidget
     pkgs.libsForQt5.qt5.qtwebsockets
-    pkgs.libsForQt5.kdeconnect-kde
     pkgs.qbittorrent
 
     #graphic, steam, wine libraries
