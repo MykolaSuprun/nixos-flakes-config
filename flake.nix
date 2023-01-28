@@ -18,17 +18,21 @@
       pkgs = import nixpkgs {
         inherit system;
         config = { allowUnfree = true; };
-        overlays = [
-        ];
+        overlays = [ ];
       };
       pkgs-unstable = import nixpkgs-unstable {
         inherit system;
         config = { allowUnfree = true; };
-        overlays = [ 
-          discord-overlay.overlays.default 
+        overlays = [
+          discord-overlay.overlays.default
           (self: super: {
             steam = (super.steam.override {
-              extraPkgs = pkgs-unstable: with pkgs-unstable; [ pango harfbuzz libthai ];
+              extraPkgs = pkgs-unstable:
+                with pkgs-unstable; [
+                  pango
+                  harfbuzz
+                  libthai
+                ];
             });
           })
         ];

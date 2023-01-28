@@ -1,14 +1,13 @@
- # Edit this configuration file to define what should be installed on
+# Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [ # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # backup system configuration
   # system.copySystemConfiguration = true;
@@ -25,9 +24,7 @@
   boot.kernelPackages = pkgs.linuxPackages_zen;
   boot.kernelModules = [ "wl" ];
   boot.initrd.kernelModules = [ "wl" ];
-  boot.extraModulePackages = [ 
-    config.boot.kernelPackages.broadcom_sta
-    ];
+  boot.extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
   # boot.extraModulePackages = with config.boot.kernelPackages; [ broadcom_sta ];
 
   nix = {
@@ -35,7 +32,6 @@
     settings.auto-optimise-store = true;
     package = pkgs.nixFlakes;
   };
-
 
   # security
   security.tpm2.enable = true;
@@ -81,10 +77,11 @@
   services.xserver.desktopManager.plasma5.enable = true;
   services.xserver.desktopManager.plasma5.phononBackend = "vlc";
   services.xserver.desktopManager.plasma5.useQtScaling = true;
-  services.xserver.desktopManager.plasma5.excludePackages = with pkgs.libsForQt5; [
-    elisa
-    khelpcenter
-  ];
+  services.xserver.desktopManager.plasma5.excludePackages =
+    with pkgs.libsForQt5; [
+      elisa
+      khelpcenter
+    ];
 
   # Enable proprietary nvidia drivers.
   services.xserver.videoDrivers = [ "nvidia" ];
@@ -94,24 +91,20 @@
     enableAllFirmware = true;
 
     nvidia.nvidiaSettings = true;
-    cpu.amd.updateMicrocode = true; #needs unfree
+    cpu.amd.updateMicrocode = true; # needs unfree
 
     opengl = {
       enable = true;
       #Enable other graphical drivers
       driSupport = true;
       driSupport32Bit = true;
-      extraPackages32 = with pkgs.pkgsi686Linux; [libva];
+      extraPackages32 = with pkgs.pkgsi686Linux; [ libva ];
       setLdLibraryPath = true;
     };
 
     bluetooth = {
       enable = true;
-      settings = {
-        General = {
-          Enable = "Source,Sink,Media,Socket";
-        };
-      };
+      settings = { General = { Enable = "Source,Sink,Media,Socket"; }; };
     };
   };
 
@@ -155,16 +148,23 @@
     pulse.enable = true;
     # If you want to use JACK applications, uncomment this
     #jack.enable = true;
- 
+
   };
 
   i18n.inputMethod = {
     enabled = "fcitx5";
-    fcitx.engines = with pkgs.fcitx-engines; [ mozc hangul m17n unikey table-other rime ];
-    fcitx5.addons = with pkgs; [ 
-      fcitx5-rime 
-      fcitx5-gtk 
-      libsForQt5.fcitx5-qt 
+    fcitx.engines = with pkgs.fcitx-engines; [
+      mozc
+      hangul
+      m17n
+      unikey
+      table-other
+      rime
+    ];
+    fcitx5.addons = with pkgs; [
+      fcitx5-rime
+      fcitx5-gtk
+      libsForQt5.fcitx5-qt
       fcitx5-with-addons
       fcitx5-chinese-addons
       fcitx5-table-other
@@ -177,7 +177,7 @@
     ];
   };
 
-  environment.shells = with pkgs; [zsh];
+  environment.shells = with pkgs; [ zsh ];
   users.defaultUserShell = pkgs.zsh;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -224,7 +224,6 @@
     # fcitx5-gtk
   ];
 
-
   fonts.fonts = with pkgs; [
     noto-fonts
     noto-fonts-cjk
@@ -238,7 +237,6 @@
     inconsolata
   ];
   fonts.fontDir.enable = true;
-
 
   system.stateVersion = "22.11";
 

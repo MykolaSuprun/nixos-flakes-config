@@ -27,7 +27,6 @@
       userEmail = "mykola.suprun@protonmail.com";
     };
 
-
     zsh = {
       enable = true;
       oh-my-zsh = {
@@ -75,7 +74,7 @@
         arch = "distrobox-enter arch";
       };
     };
-    
+
     bash = {
       enable = true;
       enableCompletion = true;
@@ -162,6 +161,5 @@
     pkgs.nix-tree
     pkgs.nix-diff
   ];
-
 
 }
