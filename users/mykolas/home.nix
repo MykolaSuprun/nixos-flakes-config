@@ -113,12 +113,6 @@
   home.packages = [
     pkgs.firefox
     pkgs.brave
-    pkgs.vscode-with-extensions
-    pkgs.git
-    pkgs.git-crypt
-    pkgs.gnupg
-    pkgs.pinentry_qt
-    pkgs.github-desktop
     pkgs.tdesktop
     pkgs.megasync
     pkgs.thefuck
@@ -156,6 +150,17 @@
     pkgs-unstable.discord
     pkgs-unstable.distrobox
     pkgs-unstable.bottles
+
+    #dev related packages
+    pkgs.github-desktop
+    pkgs.vscode-with-extensions
+    pkgs.git
+    pkgs.git-crypt
+    pkgs.gnupg
+    pkgs.pinentry_qt
+    pkgs.nixfmt
+    pkgs.nix-tree
+    pkgs.nix-diff
   ];
 
 
