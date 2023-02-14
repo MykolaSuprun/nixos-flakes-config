@@ -110,7 +110,7 @@
   };
 
   home.packages = [
-    pkgs.firefox
+    pkgs.firefox-bin
     pkgs.brave
     pkgs.tdesktop
     pkgs.megasync
@@ -121,6 +121,8 @@
     pkgs.vlc
     pkgs.cider
     pkgs.spotify
+    pkgs.zoom-us
+    pkgs-unstable.ledger-live-desktop
 
     # plasma packages
     pkgs.libsForQt5.sddm-kcm
@@ -149,6 +151,7 @@
     pkgs-unstable.discord
     pkgs-unstable.distrobox
     pkgs-unstable.bottles
+    pkgs-unstable.gamescope
 
     #dev related packages
     pkgs.github-desktop
@@ -160,6 +163,7 @@
     pkgs.nixfmt
     pkgs.nix-tree
     pkgs.nix-diff
+    pkgs-unstable.ghc
   ];
 
 }

@@ -106,6 +106,7 @@
       enable = true;
       settings = { General = { Enable = "Source,Sink,Media,Socket"; }; };
     };
+    ledger.enable = true; # udev rules for ledger
   };
 
   # virtualization and containers
@@ -178,6 +179,7 @@
   };
 
   environment.shells = with pkgs; [ zsh ];
+  users.groups.plugdev = {};
   users.defaultUserShell = pkgs.zsh;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -185,7 +187,7 @@
     isNormalUser = true;
     shell = pkgs.zsh;
     description = "Mykola Suprun";
-    extraGroups = [ "networkmanager" "wheel" "docker" "libvirtd" "kvm" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" "libvirtd" "kvm" "plugdev" ];
   };
 
   # Allow unfree packages
