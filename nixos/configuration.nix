@@ -137,19 +137,6 @@
     };
   };
 
-  #Enable flatpak
-  services.flatpak.enable = true;
-  # XDG portal
-  xdg.portal = {
-    enable = true;
-    extraPortals = [
-      pkgs.xdg-desktop-portal-gtk
-      pkgs.xdg-desktop-portal
-      pkgs.libsForQt5.xdg-desktop-portal-kde
-      pkgs.xdg-utils
-    ];
-  };
-
   # Configure keymap in X11
   services.xserver = {
     layout = "us";
@@ -223,8 +210,54 @@
       libwacom
       xf86_input_wacom
       xsettingsd
+
+      # QT and GTK themes
+      plasma-overdose-kde-theme
+      materia-kde-theme
+      graphite-kde-theme
+      arc-kde-theme
+      adapta-kde-theme
+      fluent-gtk-theme
+      adapta-gtk-theme
+      mojave-gtk-theme
+      numix-gtk-theme
     ];
 };
+
+
+
+
+# Enable flatpak
+services.flatpak.enable = true;
+# XDG portal
+xdg.portal = {
+  enable = true;
+  extraPortals = [
+    pkgs.xdg-desktop-portal-gtk
+    pkgs.xdg-desktop-portal
+    pkgs.libsForQt5.xdg-desktop-portal-kde
+    pkgs.xdg-utils
+  ];
+};
+
+#Flatpak fix for themes and fonts
+system.fsPackages = [ pkgs.bindfs ];
+  fileSystems = let
+    mkRoSymBind = path: {
+      device = path;
+      fsType = "fuse.bindfs";
+      options = [ "ro" "resolve-symlinks" "x-gvfs-hide" ];
+    };
+    aggregatedFonts = pkgs.buildEnv {
+      name = "system-fonts";
+      paths = config.fonts.fonts;
+      pathsToLink = [ "/share/fonts" ];
+    };
+  in {
+    # Create an FHS mount to support flatpak host icons/fonts
+    "/usr/share/icons" = mkRoSymBind (config.system.path + "/share/icons");
+    "/usr/share/fonts" = mkRoSymBind (aggregatedFonts + "/share/fonts");
+  };
 
   system.stateVersion = "22.11";
 

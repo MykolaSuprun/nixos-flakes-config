@@ -50,6 +50,7 @@
       homeManagerModules = map import [
         ./modules/home-manager/default-shell.nix
         ./modules/home-manager/chromium.nix
+        ./modules/home-manager/flatpak-overrides.nix 
       ];
 
       nixosConfigurations = {

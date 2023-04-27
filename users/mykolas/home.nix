@@ -42,7 +42,6 @@
     enable = true;
     pinentryFlavor = "qt";
   };
-  
 
   programs = {
     neovim.enable = true;
@@ -51,7 +50,7 @@
   };
 
   home.packages = [
-    pkgs.tdesktop
+    pkgs.stable.tdesktop
     pkgs.megasync
     pkgs.thefuck
     pkgs.fzf

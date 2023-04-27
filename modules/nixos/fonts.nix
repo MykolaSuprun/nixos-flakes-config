@@ -14,7 +14,7 @@
     fira-code-symbols
     mplus-outline-fonts.githubRelease
     dina-font
-    proggyfonts
+    # proggyfonts
     inconsolata
   ];
 }
