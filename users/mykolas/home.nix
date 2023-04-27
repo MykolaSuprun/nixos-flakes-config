@@ -41,17 +41,12 @@
     enable = true;
     pinentryFlavor = "qt";
   };
+  
 
   programs = {
     neovim.enable = true;
     neovim.viAlias = true;
     neovim.vimAlias = true;
-    git = {
-      enable = true;
-      userName = "Mykola Suprun";
-      userEmail = "mykola.suprun@protonmail.com";
-
-    };
   };
 
   home.packages = [
