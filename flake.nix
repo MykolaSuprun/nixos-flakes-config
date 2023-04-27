@@ -2,10 +2,10 @@
   description = "System configuration";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-22.11";
-    nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "nixpkgs/nixos-22.11";
+    nixpkgs.url = "nixpkgs/nixos-unstable";
     home-manager.url =
-      "https://github.com/nix-community/home-manager/archive/release-22.11.tar.gz";
+      "https://github.com/nix-community/home-manager/archive/master.tar.gz";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
@@ -19,7 +19,7 @@
         config = { allowUnfree = true; };
       };
 
-      pkgs-unstable = import inputs.nixpkgs-unstable {
+      pkgs-stable = import inputs.nixpkgs-stable {
         inherit system;
         config = { allowUnfree = true; };
       };
@@ -32,12 +32,12 @@
 
       # Packages and modifications, exported as overlays
       overlays = { 
-        unstable = (import ./overlays/unstable.nix { inherit inputs; }).unstable-packages;
-        home_modifications = (import ./overlays/modifications.nix { inherit inputs outputs pkgs pkgs-unstable; }).home_modifications;
-        additions = (import ./overlays/modifications.nix { inherit inputs outputs pkgs pkgs-unstable; }).additions;
+        stable = (import ./overlays/stable.nix { inherit inputs; }).stable-packages;
+        home_modifications = (import ./overlays/modifications.nix { inherit inputs outputs pkgs pkgs-stable; }).home_modifications;
+        additions = (import ./overlays/modifications.nix { inherit inputs outputs pkgs pkgs-stable; }).additions;
       };
       # overlays = [
-      #  import ./overlays/unstable.nix { inherit inputs; }
+      #  import ./overlays/stable.nix { inherit inputs; }
       #  import ./overlays/modifications.nix { inherit inputs; }
       # ];
       # Nixos modules you might want to export

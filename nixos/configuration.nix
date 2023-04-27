@@ -13,7 +13,7 @@
     # Add overlays here
     overlays = [
       # Add overlays your own flake exports (from overlays and pkgs dir):
-      outputs.overlays.unstable
+      outputs.overlays.stable
       outputs.overlays.additions
     ];
     config = { allowUnfree = true; };
@@ -87,11 +87,6 @@
   services.xserver.desktopManager.plasma5.enable = true;
   services.xserver.desktopManager.plasma5.phononBackend = "vlc";
   services.xserver.desktopManager.plasma5.useQtScaling = true;
-  services.xserver.desktopManager.plasma5.excludePackages =
-    with pkgs.libsForQt5; [
-      elisa
-      khelpcenter
-    ];
 
   # Enable proprietary nvidia drivers.
   services.xserver.videoDrivers = [ "nvidia" ];
@@ -194,32 +189,42 @@
     ports = [ "127.0.0.1:80:8080" ];
   };
 
+  programs.zsh.enable = true;
+
   # List packages installed in system profile.
-  environment.systemPackages = with pkgs; [
-    # basic packages
-    neovim
-    sublime4
-    wget
-    p7zip
-    rar
-    xorg.xhost
-    ntfs3g
-    tpm2-tools
-    libtpms
-    swtpm
-    virt-manager
-    qemu
-    kvmtool
-    spice
-    spice-gtk
-    appimage-run
-    x264
-    x265
-    wacomtablet
-    libwacom
-    xf86_input_wacom
-    xsettingsd
-  ];
+  environment = {
+    plasma5 = {
+      excludePackages = with pkgs.libsForQt5; [
+        elisa
+        khelpcenter
+      ];
+    };
+    systemPackages = with pkgs; [
+      # basic packages
+      neovim
+      sublime4
+      wget
+      p7zip
+      rar
+      xorg.xhost
+      ntfs3g
+      tpm2-tools
+      libtpms
+      swtpm
+      virt-manager
+      qemu
+      kvmtool
+      spice
+      spice-gtk
+      appimage-run
+      x264
+      x265
+      wacomtablet
+      libwacom
+      xf86_input_wacom
+      xsettingsd
+    ];
+};
 
   system.stateVersion = "22.11";
 

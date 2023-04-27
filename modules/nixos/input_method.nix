@@ -2,14 +2,14 @@
 
   i18n.inputMethod = {
     enabled = "fcitx5";
-    fcitx.engines = with pkgs.fcitx-engines; [
-      mozc
-      hangul
-      m17n
-      unikey
-      table-other
-      rime
-    ];
+    # fcitx.engines = with pkgs.fcitx-engines; [
+    #   mozc
+    #   hangul
+    #   m17n
+    #   unikey
+    #   table-other
+    #   rime
+    # ];
     fcitx5.addons = with pkgs; [
       fcitx5-rime
       fcitx5-gtk

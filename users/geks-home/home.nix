@@ -15,7 +15,7 @@
   nixpkgs = {
     # You can add overlays here
     overlays = [
-      outputs.overlays.unstable
+      outputs.overlays.stable
       outputs.overlays.home_modifications
       outputs.overlays.additions
     ];
@@ -40,6 +40,7 @@
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+  programs.zsh.enable = true;
 
   programs.gpg.enable = true;
   services.gpg-agent = {
@@ -76,7 +77,7 @@
 
     #dev related packages
     pkgs.github-desktop
-    pkgs.unstable.vscode
+    pkgs.vscode
     pkgs.git
     pkgs.git-crypt
     pkgs.gnupg
@@ -84,7 +85,7 @@
     pkgs.nixfmt
     pkgs.nix-tree
     pkgs.nix-diff
-    pkgs.unstable.ghc
+    pkgs.ghc
   ];
 
 }

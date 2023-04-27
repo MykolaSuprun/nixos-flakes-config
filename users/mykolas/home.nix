@@ -15,7 +15,7 @@
   nixpkgs = {
     # You can add overlays here
     overlays = [
-      outputs.overlays.unstable
+      outputs.overlays.stable
       outputs.overlays.home_modifications
       outputs.overlays.additions
     ];
@@ -35,6 +35,7 @@
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+  programs.zsh.enable = true;
 
   programs.gpg.enable = true;
   services.gpg-agent = {
@@ -62,7 +63,7 @@
     pkgs.qbittorrent
     pkgs.zoom-us
     pkgs.onlyoffice-bin
-    pkgs.unstable.ledger-live-desktop
+    pkgs.ledger-live-desktop
     pkgs.discord
 
     # plasma packages
@@ -75,29 +76,29 @@
 
     #graphic, steam, wine libraries
     pkgs.steam
-    pkgs.unstable.mesa
-    pkgs.unstable.libdrm
-    pkgs.unstable.wine-staging
-    pkgs.unstable.winetricks
-    pkgs.unstable.vulkan-tools
-    pkgs.unstable.vulkan-loader
-    pkgs.unstable.vulkan-extension-layer
-    pkgs.unstable.vkBasalt
-    pkgs.unstable.dxvk
-    pkgs.unstable.vulkan-headers
-    pkgs.unstable.vulkan-validation-layers
-    pkgs.unstable.wine64Packages.fonts
-    pkgs.unstable.winePackages.fonts
-    pkgs.unstable.lutris
+    pkgs.mesa
+    pkgs.libdrm
+    pkgs.wine-staging
+    pkgs.winetricks
+    pkgs.vulkan-tools
+    pkgs.vulkan-loader
+    pkgs.vulkan-extension-layer
+    pkgs.vkBasalt
+    pkgs.dxvk
+    pkgs.vulkan-headers
+    pkgs.vulkan-validation-layers
+    pkgs.wine64Packages.fonts
+    pkgs.winePackages.fonts
+    pkgs.lutris
 
-    # pkgs.unstable.discord
-    pkgs.unstable.distrobox
-    pkgs.unstable.gamescope
-    # pkgs.unstable.bottles
+    # pkgs.discord
+    pkgs.distrobox
+    pkgs.gamescope
+    # pkgs.bottles
 
     #dev related packages
     pkgs.github-desktop
-    pkgs.unstable.vscode
+    pkgs.vscode
     pkgs.git
     pkgs.git-crypt
     pkgs.gnupg
@@ -105,7 +106,7 @@
     pkgs.nixfmt
     pkgs.nix-tree
     pkgs.nix-diff
-    pkgs.unstable.ghc
+    pkgs.ghc
   ];
 
 }

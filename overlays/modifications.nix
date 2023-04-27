@@ -1,5 +1,5 @@
 # This file defines overlays
-{ inputs, pkgs-unstable, ... }: {
+{ inputs, pkgs-stable, ... }: {
 
   # This one brings our custom packages from the 'pkgs' directory
   additions = final: _prev: import ../pkgs { pkgs = final; };
@@ -9,9 +9,9 @@
   # https://nixos.wiki/wiki/Overlays
 
   home_modifications = final: prev: {
-    steam = (pkgs-unstable.pkgs.steam.override {
-      extraPkgs = pkgs-unstable: with pkgs-unstable; [ pango harfbuzz libthai ];
+    steam = (prev.steam.override {
+      extraPkgs = pkgs: with pkgs; [ pango harfbuzz libthai ];
     });
-    discord = pkgs-unstable.discord.override { withOpenASAR = true; };
+    discord = prev.discord.override { withOpenASAR = true; };
   };
 }
