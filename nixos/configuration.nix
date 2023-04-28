@@ -221,6 +221,8 @@
       adapta-gtk-theme
       mojave-gtk-theme
       numix-gtk-theme
+      whitesur-gtk-theme
+      whitesur-icon-theme
     ];
 };
 
