@@ -210,6 +210,10 @@
       libwacom
       xf86_input_wacom
       xsettingsd
+      # fcitx5-gtk
+      # libsForQt5.fcitx5-qt
+      ibus-with-plugins
+      ibus-theme-tools
 
       # QT and GTK themes
       plasma-overdose-kde-theme
@@ -225,8 +229,6 @@
       whitesur-icon-theme
     ];
 };
-
-
 
 
 # Enable flatpak

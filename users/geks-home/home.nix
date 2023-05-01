@@ -87,5 +87,4 @@
     pkgs.nix-diff
     pkgs.ghc
   ];
-
 }
