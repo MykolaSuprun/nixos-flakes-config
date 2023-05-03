@@ -89,7 +89,6 @@
     pkgs.wine64Packages.fonts
     pkgs.winePackages.fonts
     pkgs.lutris
-
     # pkgs.discord
     pkgs.distrobox
     pkgs.gamescope

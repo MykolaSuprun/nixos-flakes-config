@@ -128,6 +128,7 @@
     libvirtd.qemu.swtpm.enable = true;
     libvirtd.qemu.ovmf.enable = true;
     spiceUSBRedirection.enable = true;
+    vmware.host.enable = true;
 
     # Enable Docker 
     docker = {
@@ -210,6 +211,7 @@
       libwacom
       xf86_input_wacom
       xsettingsd
+      file
       # fcitx5-gtk
       # libsForQt5.fcitx5-qt
       ibus-with-plugins
