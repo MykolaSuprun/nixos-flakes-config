@@ -6,15 +6,17 @@
     noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
-    jetbrains-mono
+    # jetbrains-mono
     fira-code
     fira-code-symbols
     liberation_ttf
     fira-code
     fira-code-symbols
     mplus-outline-fonts.githubRelease
-    dina-font
-    # proggyfonts
+    proggyfonts
     inconsolata
+    dejavu_fonts
+    corefonts
+    google-fonts
   ];
 }

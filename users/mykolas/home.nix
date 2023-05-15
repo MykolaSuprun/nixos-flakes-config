@@ -61,9 +61,10 @@
     pkgs.spotify
     pkgs.qbittorrent
     pkgs.zoom-us
-    pkgs.onlyoffice-bin
+    pkgs.libreoffice-qt
     pkgs.ledger-live-desktop
     pkgs.discord
+    pkgs.mullvad-browser
 
     # plasma packages
     pkgs.libsForQt5.sddm-kcm
@@ -89,10 +90,8 @@
     pkgs.wine64Packages.fonts
     pkgs.winePackages.fonts
     pkgs.lutris
-    # pkgs.discord
     pkgs.distrobox
     pkgs.gamescope
-    # pkgs.bottles
 
     #dev related packages
     pkgs.github-desktop
