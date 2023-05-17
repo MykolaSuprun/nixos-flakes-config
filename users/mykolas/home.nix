@@ -25,6 +25,9 @@
       allowUnfree = true;
       # Workaround for https://github.com/nix-community/home-manager/issues/2942
       allowUnfreePredicate = (_: true);
+      # permittedInsecurePackages = [
+      #     "openssl-1.1.1t"
+      #   ];
     };
   };
 
@@ -44,10 +47,24 @@
   };
 
   programs = {
-    neovim.enable = true;
-    neovim.viAlias = true;
-    neovim.vimAlias = true;
+    neovim = {
+      enable = true;
+      viAlias = true;
+      vimAlias = true;
+      plugins = [
+        pkgs.vimPlugins.nvim-treesitter.withAllGrammars
+        pkgs.tree-sitter-grammars.tree-sitter-regex
+      ];
+    };
   };
+
+  home.file."./.config/nvim/" = {
+     source = ./nvim;
+     recursive = true;
+     enable = true;
+   };
+
+
 
   home.packages = [
     pkgs.stable.tdesktop
@@ -65,6 +82,8 @@
     pkgs.ledger-live-desktop
     pkgs.discord
     pkgs.mullvad-browser
+    pkgs.kitty
+    pkgs.wezterm
 
     # plasma packages
     pkgs.libsForQt5.sddm-kcm

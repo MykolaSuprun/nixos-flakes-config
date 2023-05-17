@@ -13,5 +13,20 @@
       extraPkgs = pkgs: with pkgs; [ pango harfbuzz libthai ];
     });
     discord = prev.discord.override { withOpenASAR = true; };
+
+    # neovim = (prev.neovim.override {
+    #   configure = {
+    #     packages.myPlugins = with prev.vimPlugins; {
+    #       start = [
+    #         (nvim-treesitter.withPlugins (
+    #           plugins: with plugins; [
+    #             nix
+    #             python
+    #           ]
+    #         ))
+    #       ];
+    #     };
+    #   };
+    # });
   };
 }

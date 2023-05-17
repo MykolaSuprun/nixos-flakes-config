@@ -18,5 +18,6 @@
     dejavu_fonts
     corefonts
     google-fonts
+    nerdfonts
   ];
 }

@@ -16,7 +16,12 @@
       outputs.overlays.stable
       outputs.overlays.additions
     ];
-    config = { allowUnfree = true; };
+    config = { 
+      allowUnfree = true;
+      # permittedInsecurePackages = [
+      #           "openssl-1.1.1t"
+      #         ];
+    };
   };
 
   # backup system configuration
@@ -24,7 +29,6 @@
 
   # Bootloader.
   boot.loader.grub.enable = true;
-  boot.loader.grub.version = 2;
   boot.loader.grub.device = "nodev";
   boot.loader.grub.useOSProber = true;
   boot.loader.grub.efiSupport = true;
@@ -78,6 +82,8 @@
     LC_TELEPHONE = "en_IE.UTF-8";
     LC_TIME = "en_IE.UTF-8";
   };
+  
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
@@ -95,7 +101,10 @@
   hardware = {
     enableAllFirmware = true;
 
+    nvidia.open = true;
     nvidia.nvidiaSettings = true;
+    nvidia.modesetting.enable = true;
+    nvidia.forceFullCompositionPipeline = true;
     cpu.amd.updateMicrocode = true; # needs unfree
 
     opengl = {
@@ -187,49 +196,61 @@
         khelpcenter
       ];
     };
-    systemPackages = with pkgs; [
-      # basic packages
-      neovim
-      sublime4
-      wget
-      p7zip
-      rar
-      xorg.xhost
-      ntfs3g
-      tpm2-tools
-      libtpms
-      swtpm
-      virt-manager
-      qemu
-      kvmtool
-      spice
-      spice-gtk
-      appimage-run
-      x264
-      x265
-      wacomtablet
-      libwacom
-      xf86_input_wacom
-      xsettingsd
-      file
-      # fcitx5-gtk
-      # libsForQt5.fcitx5-qt
-      ibus-with-plugins
-      ibus-theme-tools
+    
+  systemPackages = with pkgs; [
+    # basic packages
+    sublime4
+    wget
+    p7zip
+    rar
+    xorg.xhost
+    ntfs3g
+    tpm2-tools
+    libtpms
+    swtpm
+    virt-manager
+    qemu
+    kvmtool
+    spice
+    spice-gtk
+    appimage-run
+    x264
+    x265
+    wacomtablet
+    libwacom
+    xf86_input_wacom
+    xsettingsd
+    file
+    # fcitx5-gtk
+    # libsForQt5.fcitx5-qt
+    ibus-with-plugins
+    ibus-theme-tools
+    gnumake
+    cmake
+    libgccjit
+    vim
+    tree-sitter
+    lazygit
+    ripgrep
+    fd
+    nodejs
+    wl-clipboard
+    # wl-clipboard-x11
+    xclip
 
-      # QT and GTK themes
-      plasma-overdose-kde-theme
-      materia-kde-theme
-      graphite-kde-theme
-      arc-kde-theme
-      adapta-kde-theme
-      fluent-gtk-theme
-      adapta-gtk-theme
-      mojave-gtk-theme
-      numix-gtk-theme
-      whitesur-gtk-theme
-      whitesur-icon-theme
-    ];
+    # QT and GTK themes
+    plasma-overdose-kde-theme
+    materia-kde-theme
+    graphite-kde-theme
+    arc-kde-theme
+    adapta-kde-theme
+    fluent-gtk-theme
+    adapta-gtk-theme
+    mojave-gtk-theme
+    numix-gtk-theme
+    whitesur-gtk-theme
+    whitesur-icon-theme
+  ];
 };
 
 

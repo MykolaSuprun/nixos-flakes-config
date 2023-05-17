@@ -4,20 +4,20 @@
   programs = {
     zsh = {
       enable = true;
+      initExtra = ''
+        if [[ $(uname -a | grep arch) ]]
+        then 
+          distrobox-host-exec xhost +local:
+          xhost +SI:localuser:$USER
+          PROMPT="%B%F{47}%n%f%b%B:%b%B%F{39}%m%f%b%B>%b "
+          alias vi="nvim"
+          alias vim="nvim"
+          alias nano="nvim"
+        fi
+        clear
+      '';
       oh-my-zsh = {
         enable = true;
-        extraConfig = ''
-          if [[ $(uname -a | grep arch) ]]
-          then 
-            distrobox-host-exec xhost +local:
-            xhost +SI:localuser:$USER
-            PROMPT="%B%F{47}%n%f%b%B:%b%B%F{39}%m%f%b%B>%b "
-            alias vi="nvim"
-            alias vim="nvim"
-            alias nano="nvim"
-          fi
-          clear
-        '';
         theme = "agnoster";
         plugins = [
           "git"
@@ -38,7 +38,6 @@
           "archlinux"
         ];
       };
-
       shellAliases = {
         editconf = "code ~/.dotfiles";
         nixos-build = "~/.dotfiles/apply-system.sh";
@@ -47,6 +46,7 @@
         confdir = "~/.dotfiles";
         nixgc = "nix-collect-garbage";
         arch = "distrobox-enter arch";
+        vim = "nvim";
       };
     };
 
