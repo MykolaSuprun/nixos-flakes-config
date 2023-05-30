@@ -25,9 +25,8 @@
       allowUnfree = true;
       # Workaround for https://github.com/nix-community/home-manager/issues/2942
       allowUnfreePredicate = (_: true);
-      # permittedInsecurePackages = [
-      #     "openssl-1.1.1t"
-      #   ];
+      permittedInsecurePackages =
+        [ "openssl-1.1.1t" "qtwebkit-5.212.0-alpha4" ];
     };
   };
 
@@ -58,16 +57,25 @@
     };
   };
 
-  home.file."./.config/nvim/" = {
-     source = ./nvim;
-     recursive = true;
-     enable = true;
-   };
-
-
+  home.file = {
+    "./.config/nvim/" = {
+      source = ./nvim;
+      recursive = true;
+      enable = true;
+    };
+    "./.config/helix" = {
+      source = ./helix;
+      recursive = true;
+      enable = true;
+    };
+    "./.wezterm.lua" = {
+      source = ./wezterm/wezterm.lua;
+      enable = true;
+    };
+  };
 
   home.packages = [
-    pkgs.stable.tdesktop
+    # pkgs.stable.tdesktop
     pkgs.megasync
     pkgs.thefuck
     pkgs.fzf
@@ -84,6 +92,8 @@
     pkgs.mullvad-browser
     pkgs.kitty
     pkgs.wezterm
+    pkgs.tusk
+    pkgs.helix
 
     # plasma packages
     pkgs.libsForQt5.sddm-kcm
@@ -92,6 +102,7 @@
     pkgs.libsForQt5.qmltermwidget
     pkgs.libsForQt5.qt5.qtwebsockets
     pkgs.libsForQt5.qtstyleplugin-kvantum # flatpak plasma theming compatibility tool
+    pkgs.kphotoalbum
 
     #graphic, steam, wine libraries
     pkgs.steam
@@ -124,5 +135,12 @@
     pkgs.nix-diff
     pkgs.ghc
   ];
+
+  home.sessionVariables = {
+    NIXOS_OZONE_WL = "1";
+    GTK_IM_MODULE = "fcitx";
+    QT_IM_MODULE = "fcitx";
+    XMODIFIERS = "@im=fcitx";
+  };
 
 }

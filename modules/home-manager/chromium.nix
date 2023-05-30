@@ -20,6 +20,7 @@
       { id = "cimiefiiaegbelhefglklhhakcgmhkai"; } # Plasma integration
       { id = "ailoabdmgclmfmhdagmlohpjlbpffblp"; } # Surfshark vpn
       { id = "dphilobhebphkdjbpfohgikllaljmgbn"; } # SimpleLogin anonymous mail
+      { id = "pioclpoplcdbaefihamjohnefbikjilc"; } # Evernote web clipper
     ];
   };
 }

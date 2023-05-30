@@ -39,7 +39,7 @@
         ];
       };
       shellAliases = {
-        editconf = "code ~/.dotfiles";
+        editconf = "hx ~/.dotfiles";
         nixos-build = "~/.dotfiles/apply-system.sh";
         home-build = "~/.dotfiles/apply-users.sh";
         nix-update = "~/.dotfiles/update.sh";
@@ -73,7 +73,7 @@
         vi = "nvim";
         vim = "nvim";
         nano = "nvim";
-        editconf = "code ~/.dotfiles";
+        editconf = "hx ~/.dotfiles";
         nixos-build = "~/.dotfiles/apply-system.sh";
         home-build = "~/.dotfiles/apply-users.sh";
         nix-update = "~/.dotfiles/update.sh";

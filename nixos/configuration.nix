@@ -16,11 +16,9 @@
       outputs.overlays.stable
       outputs.overlays.additions
     ];
-    config = { 
+    config = {
       allowUnfree = true;
-      # permittedInsecurePackages = [
-      #           "openssl-1.1.1t"
-      #         ];
+      permittedInsecurePackages = [ "openssl-1.1.1t" ];
     };
   };
 
@@ -82,9 +80,14 @@
     LC_TELEPHONE = "en_IE.UTF-8";
     LC_TIME = "en_IE.UTF-8";
   };
-  
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
+  environment.sessionVariables = {
+    NIXOS_OZONE_WL = "1";
+    GTK_IM_MODULE = "fcitx";
+    QT_IM_MODULE = "fcitx";
+    XMODIFIERS = "@im=fcitx";
+  };
+  
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
@@ -191,84 +194,80 @@
   # List packages installed in system profile.
   environment = {
     plasma5 = {
-      excludePackages = with pkgs.libsForQt5; [
-        elisa
-        khelpcenter
-      ];
+      excludePackages = with pkgs.libsForQt5; [ elisa khelpcenter ];
     };
-    
-  systemPackages = with pkgs; [
-    # basic packages
-    sublime4
-    wget
-    p7zip
-    rar
-    xorg.xhost
-    ntfs3g
-    tpm2-tools
-    libtpms
-    swtpm
-    virt-manager
-    qemu
-    kvmtool
-    spice
-    spice-gtk
-    appimage-run
-    x264
-    x265
-    wacomtablet
-    libwacom
-    xf86_input_wacom
-    xsettingsd
-    file
-    # fcitx5-gtk
-    # libsForQt5.fcitx5-qt
-    ibus-with-plugins
-    ibus-theme-tools
-    gnumake
-    cmake
-    libgccjit
-    vim
-    tree-sitter
-    lazygit
-    ripgrep
-    fd
-    nodejs
-    wl-clipboard
-    # wl-clipboard-x11
-    xclip
 
-    # QT and GTK themes
-    plasma-overdose-kde-theme
-    materia-kde-theme
-    graphite-kde-theme
-    arc-kde-theme
-    adapta-kde-theme
-    fluent-gtk-theme
-    adapta-gtk-theme
-    mojave-gtk-theme
-    numix-gtk-theme
-    whitesur-gtk-theme
-    whitesur-icon-theme
-  ];
-};
+    systemPackages = with pkgs; [
+      # basic packages
+      sublime4
+      wget
+      p7zip
+      rar
+      xorg.xhost
+      ntfs3g
+      tpm2-tools
+      libtpms
+      swtpm
+      virt-manager
+      qemu
+      kvmtool
+      spice
+      spice-gtk
+      appimage-run
+      x264
+      x265
+      wacomtablet
+      libwacom
+      xf86_input_wacom
+      xsettingsd
+      file
+      # fcitx5-gtk
+      # libsForQt5.fcitx5-qt
+      ibus-with-plugins
+      ibus-theme-tools
+      gnumake
+      cmake
+      libgccjit
+      vim
+      tree-sitter
+      lazygit
+      ripgrep
+      fd
+      nodejs
+      wl-clipboard
+      # wl-clipboard-x11
+      xclip
 
+      # QT and GTK themes
+      plasma-overdose-kde-theme
+      materia-kde-theme
+      graphite-kde-theme
+      arc-kde-theme
+      adapta-kde-theme
+      fluent-gtk-theme
+      adapta-gtk-theme
+      mojave-gtk-theme
+      numix-gtk-theme
+      whitesur-gtk-theme
+      whitesur-icon-theme
+    ];
+  };
 
-# Enable flatpak
-services.flatpak.enable = true;
-# XDG portal
-xdg.portal = {
-  enable = true;
-  extraPortals = [
-    pkgs.xdg-desktop-portal-gtk
-    pkgs.xdg-desktop-portal
-    pkgs.libsForQt5.xdg-desktop-portal-kde
-    pkgs.xdg-utils
-  ];
-};
+  # Enable flatpak
+  services.flatpak.enable = true;
+  # XDG portal
+  xdg.portal = {
+    enable = true;
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gtk
+      pkgs.xdg-desktop-portal
+      pkgs.libsForQt5.xdg-desktop-portal-kde
+      pkgs.xdg-utils
+    ];
+  };
 
-#Flatpak fix for themes and fonts
-system.fsPackages = [ pkgs.bindfs ];
+  #Flatpak fix for themes and fonts
+  system.fsPackages = [ pkgs.bindfs ];
   fileSystems = let
     mkRoSymBind = path: {
       device = path;

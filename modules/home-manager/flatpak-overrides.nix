@@ -7,6 +7,7 @@
 
     [Environment]
     QT_STYLE_OVERRIDE=kvantum
+    QT_QPA_PLATFORMTHEME=WhiteSur-Light-solid
     GTK_THEME=WhiteSur-Light-solid
     ICON_THEME=WhiteSur
     '';
