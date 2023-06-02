@@ -18,7 +18,7 @@
     ];
     config = {
       allowUnfree = true;
-      permittedInsecurePackages = [ "openssl-1.1.1t" ];
+      permittedInsecurePackages = [ "openssl-1.1.1u" ];
     };
   };
 
@@ -237,6 +237,7 @@
       wl-clipboard
       # wl-clipboard-x11
       xclip
+      tmux
 
       # QT and GTK themes
       plasma-overdose-kde-theme

@@ -26,7 +26,7 @@
       # Workaround for https://github.com/nix-community/home-manager/issues/2942
       allowUnfreePredicate = (_: true);
       permittedInsecurePackages =
-        [ "openssl-1.1.1t" "qtwebkit-5.212.0-alpha4" ];
+        [ "openssl-1.1.1u" "qtwebkit-5.212.0-alpha4" ];
     };
   };
 
