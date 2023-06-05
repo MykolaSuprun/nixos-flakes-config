@@ -26,16 +26,33 @@
   # system.copySystemConfiguration = true;
 
   # Bootloader.
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "nodev";
-  boot.loader.grub.useOSProber = true;
-  boot.loader.grub.efiSupport = true;
-  boot.loader.systemd-boot.enable = false;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.efi.efiSysMountPoint = "/boot/efi";
-  boot.kernelPackages = pkgs.linuxPackages_zen;
-  boot.kernelModules = [ "wl" ];
-  boot.initrd.kernelModules = [ "wl" ];
+
+  boot.loader = {
+    timeout = 5;
+
+    efi = {
+      efiSysMountPoint = "/boot";
+    };
+
+    grub = {
+      enable = true;
+
+      efiSupport = true;
+      efiInstallAsRemovable = true;
+      devices = [ "nodev" ];
+    };
+    
+  };
+
+  # boot.loader.grub.enable = true;
+  # boot.loader.grub.device = "nodev";
+  # boot.loader.grub.useOSProber = true;
+  # boot.loader.grub.efiSupport = true;
+  # boot.loader.systemd-boot.enable = false;
+  # boot.loader.efi.canTouchEfiVariables = true;
+  # boot.loader.efi.efiSysMountPoint = "/boot/efi";
+
+  boot.kernelPackages = pkgs.linuxPackages_zen; boot.kernelModules = [ "wl" ]; boot.initrd.kernelModules = [ "wl" ];
   boot.extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
   # boot.extraModulePackages = with config.boot.kernelPackages; [ broadcom_sta ];
 
@@ -294,6 +311,6 @@
     "/usr/share/fonts" = mkRoSymBind (aggregatedFonts + "/share/fonts");
   };
 
-  system.stateVersion = "22.11";
+  system.stateVersion = "23.05";
 
 }
