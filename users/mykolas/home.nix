@@ -72,6 +72,10 @@
       source = ./wezterm/wezterm.lua;
       enable = true;
     };
+    "./.tmux.conf" = {
+      source = ./tmux/tmux.conf;
+      enable = true;
+    };
   };
 
   home.packages = [

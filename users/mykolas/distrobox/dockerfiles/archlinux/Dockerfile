@@ -48,7 +48,7 @@ USER root
 
 
 # #install other apps
-RUN yes | pacman -S neovim python xorg-xhost 
+RUN yes | pacman -S neovim python xorg-xhost helix telegram-desktop
 
 # #install plasma
 RUN yes | pacman -S plasma-desktop pipewire-jack wireplumber ttf-dejavu ttf-liberation phonon-qt5-vlc
@@ -60,15 +60,15 @@ RUN yes | paru -S ttf-inconsolata-g
 USER root
 
 # #flatpak 
-RUN yes | pacman -S flatpak xdg-desktop-portal-kde xdg-desktop-portal
+#RUN yes | pacman -S flatpak xdg-desktop-portal-kde xdg-desktop-portal
 
 #bottles and lutris
-RUN pacman -S --noconfirm gamemode gvfs lib32-vkd3d lib32-vulkan-icd-loader vkd3d vulkan-icd-loader
-RUN pacman -S --noconfirm lutris
-USER build
-RUN paru -S --noconfirm bottles
+#RUN pacman -S --noconfirm gamemode gvfs lib32-vkd3d lib32-vulkan-icd-loader vkd3d vulkan-icd-loader
+#RUN pacman -S --noconfirm lutris
+#USER build
+#RUN paru -S --noconfirm bottles
 # RUN paru -S --noconfirm latencyflex-git
-USER root
+#USER root
 
 # install zsh
 RUN yes | pacman -S zsh zsh-completions fzf

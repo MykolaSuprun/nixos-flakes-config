@@ -13,6 +13,7 @@
           alias vi="nvim"
           alias vim="nvim"
           alias nano="nvim"
+          alias tmux='tmux -2'
         fi
         clear
       '';
@@ -43,10 +44,12 @@
         nixos-build = "~/.dotfiles/apply-system.sh";
         home-build = "~/.dotfiles/apply-users.sh";
         nix-update = "~/.dotfiles/update.sh";
+        distrobox-build-arch = "~/.dotfiles/users/mykolas/distrobox/build-arch.sh";
         confdir = "~/.dotfiles";
         nixgc = "nix-collect-garbage";
         arch = "distrobox-enter arch";
         vim = "nvim";
+        tmux = "tmux -2";
       };
     };
 
@@ -61,6 +64,7 @@
           alias vi='nvim'
           alias vim='nvim'
           alias nano='nvim'
+          alias tmux='tmux -2'
           zsh
           # echo "in Arch" 
           clear
@@ -77,9 +81,11 @@
         nixos-build = "~/.dotfiles/apply-system.sh";
         home-build = "~/.dotfiles/apply-users.sh";
         nix-update = "~/.dotfiles/update.sh";
+        distrobox-build-arch = "~/.dotfiles/users/mykolas/distrobox/build-arch.sh";
         confdir = "~/.dotfiles";
         nixgc = "nix-collect-garbage";
         arch = "distrobox-enter arch";
+        tmux = "tmux -2";
       };
     };
   };

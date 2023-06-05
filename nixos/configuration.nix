@@ -143,10 +143,17 @@
     vmware.host.enable = true;
 
     # Enable Docker 
-    docker = {
+    # docker = {
+    #   enable = true;
+    #   enableOnBoot = true;
+    #   enableNvidia = true;
+    # };
+
+    # Enable Podman
+    podman = {
       enable = true;
-      enableOnBoot = true;
       enableNvidia = true;
+      dockerCompat = true;
     };
   };
 
@@ -237,6 +244,7 @@
       wl-clipboard
       # wl-clipboard-x11
       xclip
+      ncurses
       tmux
 
       # QT and GTK themes
