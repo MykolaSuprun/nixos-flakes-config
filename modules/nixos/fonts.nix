@@ -6,7 +6,11 @@
     noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
-    # jetbrains-mono
+    # jetbrains-mono # seems to be included with google-fonts package
+    victor-mono
+    roboto-mono
+    ibm-plex
+    hack-font
     fira-code
     fira-code-symbols
     liberation_ttf

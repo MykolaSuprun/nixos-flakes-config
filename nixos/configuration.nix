@@ -213,7 +213,28 @@
     ports = [ "127.0.0.1:80:8080" ];
   };
 
-  programs.zsh.enable = true;
+  programs = {
+    zsh.enable = true;
+    kdeconnect.enable = true;
+    tmux = {
+      enable = true;
+      terminal = "xterm-256color";
+      escapeTime = 10;
+      keyMode = "vi";
+      plugins = with pkgs.tmuxPlugins; [
+        yank
+        resurrect
+        continuum
+        vim-tmux-navigator
+        tmux-fzf
+        better-mouse-mode
+        fzf-tmux-url
+        sidebar
+        sysstat 
+      ];
+      
+    };
+  };
 
   # List packages installed in system profile.
   environment = {
@@ -245,8 +266,6 @@
       xf86_input_wacom
       xsettingsd
       file
-      # fcitx5-gtk
-      # libsForQt5.fcitx5-qt
       ibus-with-plugins
       ibus-theme-tools
       gnumake
@@ -263,7 +282,13 @@
       xclip
       ncurses
       tmux
+      tree
+      nil
 
+      # Haskell
+      haskell-language-server
+
+      
       # QT and GTK themes
       plasma-overdose-kde-theme
       materia-kde-theme

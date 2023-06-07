@@ -33,36 +33,44 @@
   home.username = "mykolas";
   home.homeDirectory = "/home/mykolas";
 
-  home.stateVersion = "22.11";
+  home.stateVersion = "23.05";
 
   # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
-  programs.zsh.enable = true;
 
-  programs.gpg.enable = true;
   services.gpg-agent = {
     enable = true;
     pinentryFlavor = "qt";
   };
 
   programs = {
-    neovim = {
+    home-manager.enable = true;
+
+    helix = {
       enable = true;
-      viAlias = true;
-      vimAlias = true;
-      plugins = [
-        pkgs.vimPlugins.nvim-treesitter.withAllGrammars
-        pkgs.tree-sitter-grammars.tree-sitter-regex
-      ];
+      package = pkgs.helix;
     };
+
+    zsh.enable = true;
+    gpg.enable = true;
+
+  #   neovim = {
+  #     enable = true;
+  #     viAlias = true;
+  #     vimAlias = true;
+  #     plugins = with pkgs; [
+  #       vimPlugins.nvim-treesitter.withAllGrammars
+  #       tree-sitter-grammars.tree-sitter-regex
+  #       vimPlugins.LazyVim
+  #     ];
+  #   };
   };
 
   home.file = {
-    "./.config/nvim/" = {
-      source = ./nvim;
-      recursive = true;
-      enable = true;
-    };
+    # "./.config/nvim/" = {
+    #   source = ./nvim;
+    #   recursive = true;
+    #   enable = true;
+    # };
     "./.config/helix" = {
       source = ./helix;
       recursive = true;
@@ -97,7 +105,8 @@
     pkgs.kitty
     pkgs.wezterm
     pkgs.tusk
-    pkgs.helix
+    pkgs.telegram-desktop
+    pkgs.signal-desktop
 
     # plasma packages
     pkgs.libsForQt5.sddm-kcm

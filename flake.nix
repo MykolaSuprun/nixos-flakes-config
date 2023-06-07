@@ -28,8 +28,6 @@
 
 
     in {
-
-
       # Packages and modifications, exported as overlays
       overlays = { 
         stable = (import ./overlays/stable.nix { inherit inputs; }).stable-packages;
