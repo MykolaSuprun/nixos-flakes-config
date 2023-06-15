@@ -107,6 +107,8 @@
     pkgs.tusk
     pkgs.telegram-desktop
     pkgs.signal-desktop
+    pkgs.steam-run
+    pkgs.spotify
 
     # plasma packages
     pkgs.libsForQt5.sddm-kcm
@@ -118,7 +120,7 @@
     pkgs.kphotoalbum
 
     #graphic, steam, wine libraries
-    pkgs.steam
+    pkgs.stable.steam
     pkgs.mesa
     pkgs.libdrm
     pkgs.wine-staging
@@ -132,7 +134,7 @@
     pkgs.vulkan-validation-layers
     pkgs.wine64Packages.fonts
     pkgs.winePackages.fonts
-    pkgs.lutris
+    # pkgs.lutris
     pkgs.distrobox
     pkgs.gamescope
 

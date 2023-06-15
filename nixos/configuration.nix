@@ -111,8 +111,9 @@
   # Enable the KDE Plasma Desktop Environment.
   services.xserver.displayManager.sddm.enable = true;
   services.xserver.desktopManager.plasma5.enable = true;
-  services.xserver.desktopManager.plasma5.phononBackend = "vlc";
+  services.xserver.desktopManager.plasma5.phononBackend = "gstreamer";
   services.xserver.desktopManager.plasma5.useQtScaling = true;
+
 
   # Enable proprietary nvidia drivers.
   services.xserver.videoDrivers = [ "nvidia" ];
@@ -232,8 +233,8 @@
         sidebar
         sysstat 
       ];
-      
     };
+    gnupg.agent.pinentryFlavor = "qt";
   };
 
   # List packages installed in system profile.

@@ -21,6 +21,7 @@
       { id = "ailoabdmgclmfmhdagmlohpjlbpffblp"; } # Surfshark vpn
       { id = "dphilobhebphkdjbpfohgikllaljmgbn"; } # SimpleLogin anonymous mail
       { id = "pioclpoplcdbaefihamjohnefbikjilc"; } # Evernote web clipper
+      { id = "dbepggeogbaibhgnhhndojpepiihcmeb"; } # Vimium
     ];
   };
 }

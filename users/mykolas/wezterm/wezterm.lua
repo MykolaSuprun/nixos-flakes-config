@@ -13,7 +13,7 @@ end
 -- This is where you actually apply your config choices
 
 -- For example, changing the color scheme:
-config.color_scheme = 'Breeze (Gogh)'
+config.color_scheme = 'rose-pine'
 config.font_size = 10
 config.font = wezterm.font_with_fallback {
   {
@@ -24,7 +24,7 @@ config.font = wezterm.font_with_fallback {
   { family = 'Terminus', weight = 'Bold' },
   'Noto Color Emoji',
 }
-config.initial_rows = 75
-config.initial_cols = 288
+config.initial_rows = 70
+config.initial_cols = 260
 -- and finally, return the configuration to wezterm
 return config

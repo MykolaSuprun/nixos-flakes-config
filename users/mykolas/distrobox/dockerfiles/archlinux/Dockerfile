@@ -48,7 +48,7 @@ USER root
 
 
 # #install other apps
-RUN yes | pacman -S neovim python xorg-xhost helix telegram-desktop
+RUN yes | pacman -S neovim python xorg-xhost helix 
 
 # #install plasma
 RUN yes | pacman -S plasma-desktop pipewire-jack wireplumber ttf-dejavu ttf-liberation phonon-qt5-vlc

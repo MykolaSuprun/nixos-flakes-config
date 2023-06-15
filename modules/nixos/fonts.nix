@@ -6,6 +6,7 @@
     noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
+    emojione
     # jetbrains-mono # seems to be included with google-fonts package
     victor-mono
     roboto-mono
@@ -23,5 +24,10 @@
     corefonts
     google-fonts
     nerdfonts
+    paratype-pt-sans
+    paratype-pt-mono
+    paratype-pt-serif
+    caladea
+    carlito
   ];
 }
