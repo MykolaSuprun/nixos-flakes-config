@@ -1,4 +1,9 @@
-{ inputs, outputs, lib, config, pkgs, overlays, ... }: {
+{ inputs, outputs, lib, config, pkgs, overlays, ... }: 
+
+let
+  customNeovim = import ./../../modules/home-manager/neovim.nix;
+in
+{
   # imports = [./default-shell.nix];
   imports = [
 
@@ -49,6 +54,8 @@
       enable = true;
       package = pkgs.helix;
     };
+    
+    neovim = customNeovim { inputs=inputs; config=config; pkgs=pkgs; };
 
     zsh.enable = true;
     gpg.enable = true;
@@ -66,11 +73,11 @@
   };
 
   home.file = {
-    # "./.config/nvim/" = {
-    #   source = ./nvim;
-    #   recursive = true;
-    #   enable = true;
-    # };
+    "./.config/nvim/" = {
+      source = ./nvim;
+      recursive = true;
+      enable = true;
+    };
     "./.config/helix" = {
       source = ./helix;
       recursive = true;
@@ -87,7 +94,6 @@
   };
 
   home.packages = [
-    # pkgs.stable.tdesktop
     pkgs.megasync
     pkgs.thefuck
     pkgs.fzf
@@ -110,6 +116,18 @@
     pkgs.steam-run
     pkgs.spotify
 
+    # neovim related packages
+    pkgs.luajit
+    pkgs.luajitPackages.jsregexp
+    pkgs.lazygit
+    pkgs.ripgrep
+    pkgs.fd
+
+    # base devel
+    pkgs.binutils
+    pkgs.go
+    pkgs.gcc
+    
     # plasma packages
     pkgs.libsForQt5.sddm-kcm
     pkgs.libsForQt5.ark
@@ -117,7 +135,8 @@
     pkgs.libsForQt5.qmltermwidget
     pkgs.libsForQt5.qt5.qtwebsockets
     pkgs.libsForQt5.qtstyleplugin-kvantum # flatpak plasma theming compatibility tool
-    pkgs.kphotoalbum
+    pkgs.partition-manager
+    pkgs.libsForQt5.kpmcore
 
     #graphic, steam, wine libraries
     pkgs.stable.steam
