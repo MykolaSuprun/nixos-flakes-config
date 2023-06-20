@@ -96,12 +96,6 @@ in
   home.packages = [
     pkgs.megasync
     pkgs.thefuck
-    pkgs.fzf
-    pkgs.fzf-zsh
-    pkgs.rnix-lsp
-    pkgs.vlc
-    pkgs.cider
-    pkgs.spotify
     pkgs.qbittorrent
     pkgs.zoom-us
     pkgs.libreoffice-qt
@@ -114,7 +108,12 @@ in
     pkgs.telegram-desktop
     pkgs.signal-desktop
     pkgs.steam-run
+
+    # media
     pkgs.spotify
+    pkgs.cider
+    pkgs.vlc
+    pkgs.calibre 
 
     # neovim related packages
     pkgs.luajit
@@ -127,7 +126,10 @@ in
     pkgs.binutils
     pkgs.go
     pkgs.gcc
-    
+    pkgs.fzf
+    pkgs.fzf-zsh
+    pkgs.rnix-lsp
+
     # plasma packages
     pkgs.libsForQt5.sddm-kcm
     pkgs.libsForQt5.ark

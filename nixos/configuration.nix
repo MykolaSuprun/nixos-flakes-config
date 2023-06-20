@@ -271,14 +271,18 @@
       ibus-theme-tools
       gnumake
       cmake
-      libgccjit
       vim
+      wl-clipboard
+    
+      # dev tools 
+      libgccjit
       tree-sitter
       lazygit
       ripgrep
       fd
       nodejs
-      wl-clipboard
+      gh                          # Github CLI
+      
       # wl-clipboard-x11
       xclip
       ncurses
