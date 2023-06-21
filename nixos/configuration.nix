@@ -282,6 +282,13 @@
       fd
       nodejs
       gh                          # Github CLI
+      cargo
+      binutils
+      go
+      gcc
+      fzf
+      fzf-zsh
+      rnix-lsp
       
       # wl-clipboard-x11
       xclip

@@ -123,12 +123,6 @@ in
     pkgs.fd
 
     # base devel
-    pkgs.binutils
-    pkgs.go
-    pkgs.gcc
-    pkgs.fzf
-    pkgs.fzf-zsh
-    pkgs.rnix-lsp
 
     # plasma packages
     pkgs.libsForQt5.sddm-kcm
