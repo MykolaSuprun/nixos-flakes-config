@@ -1,84 +1,92 @@
 {
-  description = "System configuration";
+  description = "NixOS flake";
 
-  inputs = {
-    nixpkgs-stable.url = "nixpkgs/nixos-22.11";
-    nixpkgs.url = "nixpkgs/nixos-unstable";
-    home-manager.url =
-      "https://github.com/nix-community/home-manager/archive/master.tar.gz";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+   nixConfig = {
+    experimental-features = [ "nix-command" "flakes" ];
+    allowUnfree = true;
+    substituters = [
+      "https://cache.nixos.org/"
+    ];
+    extra-substituters = [
+      "https://nix-community.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    ];
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs:
-    let
-      inherit (self) outputs;
-      system = "x86_64-linux";
+  inputs = {
+    nixpkgs = {
+      type = "github";
+      owner = "NixOS";
+      repo = "nixpkgs";
+      ref = "nixos-unstable";
+    };
+    nixpkgs-stable = {
+      type = "github";
+      owner = "NixOS";
+      repo = "nixpkgs";
+      ref = "nixos-23.05";
+    };
+    home-manager = {
+      type = "github";
+      owner = "nix-community";
+      repo = "home-manager";
+      ref = "master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+  
+  outputs = inputs@{self, nixpkgs, nixpkgs-stable, home-manager, ...}:
+  let
+    inherit (self) outputs;
+    system = "x86_64-linux";
 
-      pkgs = import nixpkgs {
+    pkgs = import nixpkgs {
+      inherit system;
+      config = { allowUnfree = true; };
+    };
+
+    pkgs-stable = import nixpkgs-stable {
+      inherit system;
+      config = { allowUnfree = true; };
+    };
+
+    lib = nixpkgs.lib;
+
+  in
+  rec {
+    nixosModules = [
+      ./modules/nixos/pipewire.nix 
+      ./modules/nixos/input_method.nix
+      ./modules/nixos/fonts.nix
+    ];
+
+    homeManagerModules = [
+      ./modules/home-manager/default-shell.nix
+      ./modules/home-manager/chromium.nix
+      ./modules/home-manager/flatpak-overrides.nix
+      ./modules/home-manager/neovim.nix
+    ];
+
+    nixosConfigurations = {
+      Geks-Nixos = lib.nixosSystem {
         inherit system;
-        config = { allowUnfree = true; };
-      };
-
-      pkgs-stable = import inputs.nixpkgs-stable {
-        inherit system;
-        config = { allowUnfree = true; };
-      };
-
-      lib = nixpkgs.lib;
-
-
-    in {
-      # Packages and modifications, exported as overlays
-      overlays = { 
-        stable = (import ./overlays/stable.nix { inherit inputs; }).stable-packages;
-        home_modifications = (import ./overlays/modifications.nix { inherit inputs outputs pkgs pkgs-stable; }).home_modifications;
-        additions = (import ./overlays/modifications.nix { inherit inputs outputs pkgs pkgs-stable; }).additions;
-      };
-      # overlays = [
-      #  import ./overlays/stable.nix { inherit inputs; }
-      #  import ./overlays/modifications.nix { inherit inputs; }
-      # ];
-      # Nixos modules you might want to export
-      nixosModules = map import [
-        ./modules/nixos/pipewire.nix 
-        ./modules/nixos/input_method.nix
-        ./modules/nixos/fonts.nix
-      ];
-      # Home-manager modules you might want to export
-      homeManagerModules = map import [
-        ./modules/home-manager/default-shell.nix
-        ./modules/home-manager/chromium.nix
-        ./modules/home-manager/flatpak-overrides.nix 
-      ];
-
-      nixosConfigurations = {
-        Geks-Nixos = lib.nixosSystem {
-          inherit system;
-          specialArgs = {inherit inputs outputs; };
-          modules = [ ./nixos/configuration.nix ];
-        };
-      };
-
-      homeConfigurations = {
-        mykolas = home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          # Specify your home configuration modules here, for example,
-          # the path to your home.nix.
-          modules = [ ./users/mykolas/home.nix ];
-          # Optionally use extraSpecialArgs
-          # to pass through arguments to home.nix
-          extraSpecialArgs = { inherit inputs outputs; };
-        };
-
-        geks-home = home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          # Specify your home configuration modules here, for example,
-          # the path to your home.nix.
-          modules = [ ./users/geks-home/home.nix ];
-          # Optionally use extraSpecialArgs
-          # to pass through arguments to home.nix
-          extraSpecialArgs = { inherit inputs outputs; };
-        };
+        modules = [
+          ./nixos/configuration.nix
+       ];
+        specialArgs = { inherit inputs outputs; };
       };
     };
+
+    homeConfigurations = {
+      mykolas = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [ 
+          ./home/mykolas/home.nix
+        ];
+        extraSpecialArgs = { inherit inputs outputs; };
+      };
+    };
+  };
 }

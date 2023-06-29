@@ -1,9 +1,7 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ inputs, outputs, lib, config, pkgs, ... }:
-
+{ inputs, outputs, lib, config, pkgs, pkgs-stable, ... }:
 {
   imports = [ # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -13,12 +11,9 @@
     # Add overlays here
     overlays = [
       # Add overlays your own flake exports (from overlays and pkgs dir):
-      outputs.overlays.stable
-      outputs.overlays.additions
     ];
     config = {
-      allowUnfree = true;
-      permittedInsecurePackages = [ "openssl-1.1.1u" ];
+    allowUnfree = true;
     };
   };
 
@@ -26,35 +21,24 @@
   # system.copySystemConfiguration = true;
 
   # Bootloader.
-
-  boot.loader = {
-    timeout = 5;
-
-    efi = {
-      efiSysMountPoint = "/boot";
+  boot = { 
+    loader = {
+      timeout = 5;
+      efi = {
+        efiSysMountPoint = "/boot";
+      };
+      grub = {
+        enable = true;
+        efiSupport = true;
+        efiInstallAsRemovable = true;
+        devices = [ "nodev" ];
+      };
     };
-
-    grub = {
-      enable = true;
-
-      efiSupport = true;
-      efiInstallAsRemovable = true;
-      devices = [ "nodev" ];
-    };
-    
+    kernelPackages = pkgs.linuxPackages_zen; 
+    kernelModules = [ "wl" ]; 
+    initrd.kernelModules = [ "wl" ];
+    extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
   };
-
-  # boot.loader.grub.enable = true;
-  # boot.loader.grub.device = "nodev";
-  # boot.loader.grub.useOSProber = true;
-  # boot.loader.grub.efiSupport = true;
-  # boot.loader.systemd-boot.enable = false;
-  # boot.loader.efi.canTouchEfiVariables = true;
-  # boot.loader.efi.efiSysMountPoint = "/boot/efi";
-
-  boot.kernelPackages = pkgs.linuxPackages_zen; boot.kernelModules = [ "wl" ]; boot.initrd.kernelModules = [ "wl" ];
-  boot.extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
-  # boot.extraModulePackages = with config.boot.kernelPackages; [ broadcom_sta ];
 
   nix = {
     settings.experimental-features = [ "nix-command" "flakes" ];
@@ -65,20 +49,15 @@
   # security
   security.tpm2.enable = true;
   security.tpm2.pkcs11.enable = true;
-  networking.enableB43Firmware = true;
 
-  networking.hostName = "Geks-Nixos"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Enable networking
-  networking.wireless.iwd.enable = true;
-  networking.networkmanager.enable = true;
-  networking.networkmanager.wifi.backend = "iwd";
-  # networking.networkmanager.wifi.backend = "wpa_supplicant";
+  # networking
+  networking = {
+    hostName = "Geks-Nixos"; # Define your hostname.
+    wireless.iwd.enable = true;
+    enableB43Firmware = true;
+    networkmanager.enable = true;
+    networkmanager.wifi.backend = "iwd";
+  };
 
   # Set your time zone.
   time.timeZone = "Europe/Warsaw";
@@ -114,9 +93,9 @@
   services.xserver.desktopManager.plasma5.phononBackend = "gstreamer";
   services.xserver.desktopManager.plasma5.useQtScaling = true;
 
-
   # Enable proprietary nvidia drivers.
   services.xserver.videoDrivers = [ "nvidia" ];
+
 
   # hardware settings
   hardware = {
@@ -143,8 +122,6 @@
       setLdLibraryPath = true;
     };
 
-    # pulseaudio.extraConfig = "unload-module module-role-cork"; # prevent audiostreams from stopping when another stream is started
-
     bluetooth = {
       enable = true;
       settings = { General = { Enable = "Source,Sink,Media,Socket"; }; };
@@ -159,13 +136,6 @@
     libvirtd.qemu.ovmf.enable = true;
     spiceUSBRedirection.enable = true;
     vmware.host.enable = true;
-
-    # Enable Docker 
-    # docker = {
-    #   enable = true;
-    #   enableOnBoot = true;
-    #   enableNvidia = true;
-    # };
 
     # Enable Podman
     podman = {
@@ -245,7 +215,10 @@
 
     systemPackages = with pkgs; [
       # basic packages
-      sublime4
+      git
+      gh
+      helix
+      wezterm
       wget
       p7zip
       rar
@@ -267,39 +240,10 @@
       xf86_input_wacom
       xsettingsd
       file
-      ibus-with-plugins
-      ibus-theme-tools
-      gnumake
-      cmake
-      vim
       wl-clipboard
-    
-      # dev tools 
-      libgccjit
-      tree-sitter
-      lazygit
-      ripgrep
-      fd
-      nodejs
-      gh                          # Github CLI
-      cargo
-      binutils
-      go
-      gcc
-      fzf
-      fzf-zsh
-      rnix-lsp
-      
       # wl-clipboard-x11
       xclip
       ncurses
-      tmux
-      tree
-      nil
-
-      # Haskell
-      haskell-language-server
-
       
       # QT and GTK themes
       plasma-overdose-kde-theme
@@ -348,6 +292,6 @@
     "/usr/share/fonts" = mkRoSymBind (aggregatedFonts + "/share/fonts");
   };
 
-  system.stateVersion = "23.05";
+  system.stateVersion = "23.11";
 
 }
