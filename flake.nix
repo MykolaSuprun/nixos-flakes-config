@@ -16,28 +16,19 @@
   };
 
   inputs = {
-    nixpkgs = {
-      type = "github";
-      owner = "NixOS";
-      repo = "nixpkgs";
-      ref = "nixos-unstable";
-    };
-    nixpkgs-stable = {
-      type = "github";
-      owner = "NixOS";
-      repo = "nixpkgs";
-      ref = "nixos-23.05";
-    };
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.05";
     home-manager = {
-      type = "github";
-      owner = "nix-community";
-      repo = "home-manager";
-      ref = "master";
+      url = "github:nix-community/home-manager/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nur = {
+      url = "github:nix-community/NUR/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
   
-  outputs = inputs@{self, nixpkgs, nixpkgs-stable, home-manager, ...}:
+  outputs = inputs@{self, nixpkgs, nixpkgs-stable, home-manager, nur, ...}:
   let
     inherit (self) outputs;
     system = "x86_64-linux";
@@ -67,6 +58,7 @@
       ./modules/home-manager/chromium.nix
       ./modules/home-manager/flatpak-overrides.nix
       ./modules/home-manager/neovim.nix
+      ./modules/home-manager/firefox.nix
     ];
 
     homeManagerOverlays = (args: { nixpkgs.overlays = import ./overlays/home-manager args; });
