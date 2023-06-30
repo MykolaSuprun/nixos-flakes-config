@@ -69,6 +69,8 @@
       ./modules/home-manager/neovim.nix
     ];
 
+    homeManagerOverlays = (args: { nixpkgs.overlays = import ./overlays/home-manager args; });
+
     nixosConfigurations = {
       Geks-Nixos = lib.nixosSystem {
         inherit system;
@@ -84,6 +86,7 @@
         inherit pkgs;
         modules = [ 
           ./home/mykolas/home.nix
+          homeManagerOverlays
         ];
         extraSpecialArgs = { inherit inputs outputs; };
       };
