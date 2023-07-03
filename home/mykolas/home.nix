@@ -129,6 +129,7 @@
     tusk
     libreoffice-qt
     ledger-live-desktop
+    partition-manager
 
    # plasma packages
     libsForQt5.sddm-kcm
@@ -137,8 +138,8 @@
     libsForQt5.qmltermwidget
     libsForQt5.qt5.qtwebsockets
     libsForQt5.qtstyleplugin-kvantum # flatpak plasma theming compatibility tool
-    partition-manager
     libsForQt5.kpmcore
+    libsForQt5.plasma-browser-integration
 
     #graphic, steam, wine libraries
     steam
