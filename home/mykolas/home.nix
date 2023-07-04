@@ -112,6 +112,7 @@
 
     # internet
     mullvad-browser
+    mullvad-vpn
 
     # media
     spotify
