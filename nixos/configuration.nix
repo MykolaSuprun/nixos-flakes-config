@@ -156,6 +156,12 @@
   # wacom tablet server
   services.xserver.wacom.enable = true;
 
+  services.mullvad-vpn = {
+    enable = true;
+    package = pkgs.mullvad-vpn;
+    enableExcludeWrapper = false;
+  };
+
   environment.shells = with pkgs; [ zsh ];
   users.groups.plugdev = { };
   users.defaultUserShell = pkgs.zsh;
@@ -263,15 +269,22 @@
   # Enable flatpak
   services.flatpak.enable = true;
   # XDG portal
-  xdg.portal = {
-    enable = true;
-    extraPortals = with pkgs; [
-      xdg-desktop-portal
-      xdg-desktop-portal-wlr
-      xdg-desktop-portal-gtk
-      libsForQt5.xdg-desktop-portal-kde
-      xdg-utils
-    ];
+  xdg = { 
+    portal = {
+      enable = true;
+      extraPortals = with pkgs; [
+        xdg-desktop-portal
+        xdg-desktop-portal-wlr
+        xdg-desktop-portal-gtk
+        libsForQt5.xdg-desktop-portal-kde
+        xdg-utils
+      ];
+      xdgOpenUsePortal = true;
+    };
+    mime.enable = true;
+    menus.enable = true;
+    sounds.enable = true;
+    icons.enable = true;
   };
 
   #Flatpak fix for themes and fonts

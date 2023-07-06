@@ -112,7 +112,6 @@
 
     # internet
     mullvad-browser
-    mullvad-vpn
 
     # media
     spotify
@@ -141,6 +140,7 @@
     libsForQt5.qtstyleplugin-kvantum # flatpak plasma theming compatibility tool
     libsForQt5.kpmcore
     libsForQt5.plasma-browser-integration
+    libsForQt5.dolphin-plugins
 
     #graphic, steam, wine libraries
     steam

@@ -58,7 +58,7 @@
       ./modules/home-manager/chromium.nix
       ./modules/home-manager/flatpak-overrides.nix
       ./modules/home-manager/neovim.nix
-      ./modules/home-manager/firefox.nix
+      #./modules/home-manager/firefox.nix
     ];
 
     homeManagerOverlays = (args: { nixpkgs.overlays = import ./overlays/home-manager args; });
