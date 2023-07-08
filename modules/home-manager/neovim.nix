@@ -19,6 +19,8 @@
   home.packages = with pkgs; [
     luajit
     luajitPackages.jsregexp
+    luajitPackages.lua-lsp
+    stylua
     lazygit
     ripgrep
     fd
