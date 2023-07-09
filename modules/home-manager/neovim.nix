@@ -15,33 +15,40 @@
     ];
   };
 
-  # packages required for neovim
+  # packages required for development with neovim and it's plugins
   home.packages = with pkgs; [
+    # nix
+    nil                         # Nix lsp
+    nixfmt
+    rnix-lsp
+    # haskell
+    haskell-language-server
+    ghc
+    # lua
     luajit
+    stylua
     luajitPackages.jsregexp
     luajitPackages.lua-lsp
-    stylua
-    lazygit
-    ripgrep
-    fd
-    gh
-    git
-    libgccjit
-    tree-sitter
-    lazygit
-    ripgrep
-    fd
+    luajitPackages.luarocks
+    # other languages
     nodejs
-    gh                          # Github CLI
-    cargo
-    binutils
     go
     gcc
-    fzf
-    fzf-zsh
-    rnix-lsp
-    nil
+    libgccjit
+    cargo
+    # other dev
+    gh                          # Github CLI
+    unzip
+    fd
+    lazygit
+    ripgrep
     gnumake
     cmake
+    binutils
+    tree-sitter
+    fzf
+    fzf-zsh
+    # other
+    xclip
   ];
 }
