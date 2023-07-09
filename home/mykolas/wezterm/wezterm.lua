@@ -13,15 +13,16 @@ end
 -- This is where you actually apply your config choices
 
 config.window_decorations = 'RESIZE'
-config.display_pixel_geometry = "RGB"
-config.freetype_load_target = "Light"
+config.display_pixel_geometry = 'RGB'
+config.freetype_load_target = 'Light'
 
 -- For example, changing the color scheme:
 config.color_scheme = 'Catppuccin Mocha'
 config.font_size = 10
-config.font = wezterm.font(
-  'JetBrainsMono Nerd Font'
-)
+config.font = wezterm.font({
+  family = 'JetBrainsMono Nerd Font',
+  weight = 'Medium'
+})
 -- config.font = wezterm.font_with_fallback ({
 --   "JetBrainsMono Nerd Font",
 --   {
