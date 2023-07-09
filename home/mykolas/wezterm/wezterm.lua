@@ -15,7 +15,6 @@ end
 config.window_decorations = 'RESIZE'
 config.display_pixel_geometry = "RGB"
 config.freetype_load_target = "Light"
-config.freetype_render_target = 'VerticalLcd'
 
 -- For example, changing the color scheme:
 config.color_scheme = 'Catppuccin Mocha'
