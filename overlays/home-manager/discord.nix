@@ -1,5 +1,3 @@
-{ inputs, ... }: 
-(self: super: {
-  discord = super.discord.override { withOpenASAR = true; };
-})
+{ inputs, ... }:
+(self: super: { discord = super.discord.override { withOpenASAR = true; }; })
 

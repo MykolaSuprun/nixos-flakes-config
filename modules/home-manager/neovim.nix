@@ -1,9 +1,8 @@
-{ inputs, config, pkgs, ... }:
-{
-  programs.neovim =  {
+{ inputs, config, pkgs, ... }: {
+  programs.neovim = {
     enable = true;
     vimAlias = true;
-  
+
     # extraConfig = ''
     #   luafile $HOME/.config/nvim/settings.lua
     # '';
@@ -18,7 +17,7 @@
   # packages required for development with neovim and it's plugins
   home.packages = with pkgs; [
     # nix
-    nil                         # Nix lsp
+    nil # Nix lsp
     nixfmt
     rnix-lsp
     # haskell
@@ -37,7 +36,7 @@
     libgccjit
     cargo
     # other dev
-    gh                          # Github CLI
+    gh # Github CLI
     unzip
     fd
     lazygit

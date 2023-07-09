@@ -1,8 +1,7 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-{ inputs, outputs, lib, config, pkgs, pkgs-stable, ... }:
-{
+{ inputs, outputs, lib, config, pkgs, pkgs-stable, ... }: {
   imports = [ # Include the results of the hardware scan.
     ./hardware-configuration.nix
   ] ++ outputs.nixosModules;
@@ -12,21 +11,17 @@
     overlays = [
       # Add overlays your own flake exports (from overlays and pkgs dir):
     ];
-    config = {
-    allowUnfree = true;
-    };
+    config = { allowUnfree = true; };
   };
 
   # backup system configuration
   # system.copySystemConfiguration = true;
 
   # Bootloader.
-  boot = { 
+  boot = {
     loader = {
       timeout = 5;
-      efi = {
-        efiSysMountPoint = "/boot";
-      };
+      efi = { efiSysMountPoint = "/boot"; };
       grub = {
         enable = true;
         efiSupport = true;
@@ -34,8 +29,8 @@
         devices = [ "nodev" ];
       };
     };
-    kernelPackages = pkgs.linuxPackages_zen; 
-    kernelModules = [ "wl" ]; 
+    kernelPackages = pkgs.linuxPackages_zen;
+    kernelModules = [ "wl" ];
     initrd.kernelModules = [ "wl" ];
     extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
   };
@@ -83,7 +78,7 @@
     QT_IM_MODULE = "fcitx";
     XMODIFIERS = "@im=fcitx";
   };
-  
+
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
@@ -95,7 +90,6 @@
 
   # Enable proprietary nvidia drivers.
   services.xserver.videoDrivers = [ "nvidia" ];
-
 
   # hardware settings
   hardware = {
@@ -207,7 +201,7 @@
         better-mouse-mode
         fzf-tmux-url
         sidebar
-        sysstat 
+        sysstat
       ];
     };
     gnupg.agent.pinentryFlavor = "qt";
@@ -250,7 +244,7 @@
       # wl-clipboard-x11
       xclip
       ncurses
-      
+
       # QT and GTK themes
       plasma-overdose-kde-theme
       materia-kde-theme
@@ -269,7 +263,7 @@
   # Enable flatpak
   services.flatpak.enable = true;
   # XDG portal
-  xdg = { 
+  xdg = {
     portal = {
       enable = true;
       extraPortals = with pkgs; [

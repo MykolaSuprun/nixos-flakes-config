@@ -44,7 +44,8 @@
         nixos-build = "~/.dotfiles/nixos-build.sh";
         home-build = "~/.dotfiles/home-build.sh";
         nix-update = "~/.dotfiles/nix-update.sh";
-        distrobox-build-arch = "~/.dotfiles/home/mykolas/distrobox/build-arch.sh";
+        distrobox-build-arch =
+          "~/.dotfiles/home/mykolas/distrobox/build-arch.sh";
         confdir = "~/.dotfiles";
         nixgc = "nix-collect-garbage";
         arch = "distrobox-enter arch";
@@ -81,7 +82,8 @@
         nixos-build = "~/.dotfiles/nixos-build.sh";
         home-build = "~/.dotfiles/home-build.sh";
         nix-update = "~/.dotfiles/nix-update.sh";
-        distrobox-build-arch = "~/.dotfiles/home/mykolas/distrobox/build-arch.sh";
+        distrobox-build-arch =
+          "~/.dotfiles/home/mykolas/distrobox/build-arch.sh";
         confdir = "~/.dotfiles";
         nixgc = "nix-collect-garbage";
         arch = "distrobox-enter arch";

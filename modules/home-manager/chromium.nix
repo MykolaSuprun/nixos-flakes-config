@@ -15,7 +15,9 @@
       { id = "kbfnbcaeplbcioakkpcpgfkobkghlhen"; } # Grammarly
       { id = "ponfpcnoihfmfllpaingbgckeeldkhle"; } # Enhancer for YouTube
       { id = "mnjggcdmjocbbbhaepdhchncahnbgone"; } # SponsorBlock for YouTube
-      { id = "oepjogknopbbibcjcojmedaepolkghpb"; } # Editor for Docs, Sheets & Slides
+      {
+        id = "oepjogknopbbibcjcojmedaepolkghpb";
+      } # Editor for Docs, Sheets & Slides
       { id = "ecabifbgmdmgdllomnfinbmaellmclnh"; } # Reader view
       { id = "cimiefiiaegbelhefglklhhakcgmhkai"; } # Plasma integration
       { id = "ailoabdmgclmfmhdagmlohpjlbpffblp"; } # Surfshark vpn

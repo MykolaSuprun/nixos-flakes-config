@@ -1,5 +1,4 @@
-{ inputs, outputs, lib, config, pkgs, overlays, ... }: 
-{
+{ inputs, outputs, lib, config, pkgs, overlays, ... }: {
   # imports = [./default-shell.nix];
   imports = [
 
@@ -13,7 +12,6 @@
     # ./nvim.nix
   ] ++ outputs.homeManagerModules;
 
-
   nixpkgs = {
     # You can add overlays here
     # Configure your nixpkgs instance
@@ -23,9 +21,7 @@
       # Workaround for https://github.com/nix-community/home-manager/issues/2942
       allowUnfreePredicate = (_: true);
 
-      permittedInsecurePackages = [
-        "openssl-1.1.1u"
-      ];
+      permittedInsecurePackages = [ "openssl-1.1.1u" ];
     };
   };
 
@@ -53,8 +49,8 @@
     gpg.enable = true;
   };
 
-    # create home configuration files
-    home.file = {
+  # create home configuration files
+  home.file = {
     "./.config/nvim/" = {
       source = ./nvim;
       recursive = true;
@@ -83,7 +79,7 @@
     ripgrep
     fd
     nodejs
-    gh                          # Github CLI
+    gh # Github CLI
     cargo
     binutils
     go
@@ -109,6 +105,7 @@
     nil
     nix-tree
     nix-diff
+    nixfmt
 
     # internet
     mullvad-browser
@@ -131,7 +128,7 @@
     ledger-live-desktop
     partition-manager
 
-   # plasma packages
+    # plasma packages
     libsForQt5.sddm-kcm
     libsForQt5.ark
     libsForQt5.yakuake
