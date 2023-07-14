@@ -9,6 +9,7 @@ return {
       { "gb", mode = { "n", "o" }, desc = "Comment toggle blockwise" },
       { "gb", mode = "x", desc = "Comment toggle blockwise (visual)" },
     },
+
     init = function()
       -- require("core.utils").load_mappings "comment"
     end,

@@ -5,7 +5,7 @@ return {
     keys = {
       {
         "<leader>td",
-        "<cmd>ToggleTerm size=25 dir=. direction=horizontal<cr>",
+        "<cmd>ToggleTerm size=16 dir=. direction=horizontal<cr>",
         desc = "Open a horizontal terminal at the Desktop directory",
       },
     },

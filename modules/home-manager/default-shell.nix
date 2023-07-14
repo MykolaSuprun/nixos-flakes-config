@@ -9,7 +9,7 @@
         then 
           distrobox-host-exec xhost +local:
           xhost +SI:localuser:$USER
-          PROMPT="%B%F{47}%n%f%b%B:%b%B%F{39}%m%f%b%B>%b "
+          #PROMPT="%B%F{47}%n%f%b%B:%b%B%F{39}%m%f%b%B>%b "
           alias vi="nvim"
           alias vim="nvim"
           alias nano="nvim"
@@ -48,6 +48,7 @@
           "~/.dotfiles/home/mykolas/distrobox/build-arch.sh";
         confdir = "~/.dotfiles";
         nixgc = "nix-collect-garbage";
+        arch-build = "~/.dotfiles/home/mykolas/distrobox/build-arch.sh";
         arch = "distrobox-enter arch";
         vim = "nvim";
         tmux = "tmux -2";

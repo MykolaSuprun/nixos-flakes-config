@@ -75,11 +75,6 @@
           modules = [ ./home/mykolas/home.nix homeManagerOverlays ];
           extraSpecialArgs = { inherit inputs outputs; };
         };
-        mykolas_env = home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          modules = [ ./home/mykolas_env/home.nix homeManagerOverlays ];
-          extraSpecialArgs = { inherit inputs outputs; };
-        };
       };
     };
 }

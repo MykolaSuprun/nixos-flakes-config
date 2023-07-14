@@ -11,6 +11,9 @@
       nvim-treesitter
       lazygit-nvim
       telescope-nvim
+      vim-lsp
+      nvim-treesitter-parsers.lua
+      vim-lua
     ];
   };
 
