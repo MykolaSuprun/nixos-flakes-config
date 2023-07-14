@@ -1,0 +1,36 @@
+[user]
+  name = MykolaSuprun 
+  email = mykola.surpun@protonmail.com
+  signingkey = 652530FFDAF1E42B
+[color]
+  ui = auto
+[core]
+  editor = nvim
+[web]
+  browser = firefox
+[merge]
+  conflictstyle = diff3
+  # Setup your merge tool here. This will allow you to see visual diffs with `git mergetool` or `git difftool`
+  tool = meld
+[gpg]
+  program = gpg
+[commit]
+  gpgSign = true
+[tag]
+  gpgSign = true
+[pull]
+  rebase = false 
+[github]
+  user = MykolaSuprun
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+[credential "https://github.com"]
+  helper = 
+  helper = !/run/current-system/sw/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+  helper = 
+  helper = !/run/current-system/sw/bin/gh auth git-credential
+

@@ -204,7 +204,7 @@
         sysstat
       ];
     };
-    gnupg.agent.pinentryFlavor = "qt";
+    gnupg.agent.pinentryFlavor = "tty";
   };
 
   # List packages installed in system profile.

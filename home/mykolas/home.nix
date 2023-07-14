@@ -34,7 +34,7 @@
 
   services.gpg-agent = {
     enable = true;
-    pinentryFlavor = "qt";
+    pinentryFlavor = "tty";
   };
 
   programs = {
@@ -69,6 +69,15 @@
       source = ./tmux/tmux.conf;
       enable = true;
     };
+    "./.gnupg/" = {
+      source = ./gnupg;
+      recursive = true;
+      enable = true;
+    };
+    "./.gitconfig" = {
+      source = ./gitconfig/gitconfig;
+      enable = true;
+    };
   };
 
   home.packages = with pkgs; [
@@ -80,6 +89,7 @@
     fd
     nodejs
     gh # Github CLI
+    meld
     cargo
     binutils
     go
@@ -96,7 +106,6 @@
     git
     git-crypt
     gnupg
-    pinentry_qt
     github-desktop
     # haskell
     haskell-language-server
