@@ -1,5 +1,4 @@
 { inputs, ... }:
-
 {
   programs = {
     zsh = {
@@ -15,6 +14,9 @@
           alias nano="nvim"
           alias tmux='tmux -2'
         fi
+        export GPG_TTY=$(tty)
+        gpgconf --launch gpg-agent
+        export VI_MODE_SET_CURSOR=true
         clear
       '';
       oh-my-zsh = {
@@ -74,6 +76,8 @@
           # echo "in NixOS"
           clear
         fi
+        export GPG_TTY=$(tty)
+        gpgconf --launch gpg-agent
       '';
       shellAliases = {
         vi = "nvim";
