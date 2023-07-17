@@ -80,6 +80,12 @@ RUN pacman -S --noconfirm gamemode gvfs lib32-vkd3d lib32-vulkan-icd-loader vkd3
 # install zsh
 RUN yes | pacman -S zsh zsh-completions fzf
 
+
+USER build
+RUN paru -S --noconfirm evernote-beta-bin
+
+
+USER root
 #update system
 RUN pacman -Syu --noconfirm
 

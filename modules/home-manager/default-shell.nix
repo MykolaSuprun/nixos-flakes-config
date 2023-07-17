@@ -17,6 +17,7 @@
         export GPG_TTY=$(tty)
         gpgconf --launch gpg-agent
         export VI_MODE_SET_CURSOR=true
+        export NIXPKGS_ALLOW_UNFREE=1
         clear
       '';
       oh-my-zsh = {
@@ -46,8 +47,6 @@
         nixos-build = "~/.dotfiles/nixos-build.sh";
         home-build = "~/.dotfiles/home-build.sh";
         nix-update = "~/.dotfiles/nix-update.sh";
-        distrobox-build-arch =
-          "~/.dotfiles/home/mykolas/distrobox/build-arch.sh";
         confdir = "~/.dotfiles";
         nixgc = "nix-collect-garbage";
         arch-build = "~/.dotfiles/home/mykolas/distrobox/build-arch.sh";
@@ -87,10 +86,9 @@
         nixos-build = "~/.dotfiles/nixos-build.sh";
         home-build = "~/.dotfiles/home-build.sh";
         nix-update = "~/.dotfiles/nix-update.sh";
-        distrobox-build-arch =
-          "~/.dotfiles/home/mykolas/distrobox/build-arch.sh";
         confdir = "~/.dotfiles";
         nixgc = "nix-collect-garbage";
+        arch-build = "~/.dotfiles/home/mykolas/distrobox/build-arch.sh";
         arch = "distrobox-enter arch";
         tmux = "tmux -2";
       };
