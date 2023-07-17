@@ -1,7 +1,6 @@
 [user]
   name = MykolaSuprun 
   email = mykola.surpun@protonmail.com
-  signingkey = 652530FFDAF1E42B
 [color]
   ui = auto
 [core]
@@ -15,9 +14,7 @@
 [gpg]
   program = gpg
 [commit]
-  gpgSign = true
 [tag]
-  gpgSign = true
 [pull]
   rebase = false 
 [github]
