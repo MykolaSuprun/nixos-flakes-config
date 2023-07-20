@@ -81,7 +81,7 @@
   };
 
   home.packages = with pkgs; [
-    # dev tools 
+    # dev tools
     libgccjit
     tree-sitter
     lazygit
@@ -132,6 +132,7 @@
     # other
     megasync
     qbittorrent
+    morgen
     tusk
     libreoffice-qt
     ledger-live-desktop
