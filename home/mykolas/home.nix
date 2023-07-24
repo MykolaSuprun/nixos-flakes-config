@@ -137,6 +137,7 @@
     libreoffice-qt
     ledger-live-desktop
     partition-manager
+    obsidian
 
     # plasma packages
     libsForQt5.sddm-kcm

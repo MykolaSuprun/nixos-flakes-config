@@ -90,6 +90,9 @@
   services.xserver.desktopManager.plasma5.enable = true;
   services.xserver.desktopManager.plasma5.phononBackend = "gstreamer";
   services.xserver.desktopManager.plasma5.useQtScaling = true;
+  # Remap caps-lock to esc
+  services.xserver.xkbOptions = "caps:escape_shifted_capslock";
+
 
   # Enable proprietary nvidia drivers.
   services.xserver.videoDrivers = [ "nvidia" ];
