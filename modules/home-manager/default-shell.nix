@@ -52,7 +52,7 @@
         arch-build = "~/.dotfiles/home/mykolas/distrobox/build-arch.sh";
         arch = "distrobox-enter arch";
         vim = "nvim";
-        nv = "nix run ~/src/neovim-flake -- .";
+        nv = "nix run ~/src/neovim-flake -- ";
         tmux = "tmux -2";
       };
     };
@@ -84,7 +84,7 @@
         vim = "nvim";
         nano = "nvim";
         nv = "nix run ~/src/neovim-flake -- .";
-        editconf = "cd ~/.dotfiles/; nvim .";
+        editconf = "cd ~/.dotfiles/; nvim ";
         nixos-build = "~/.dotfiles/nixos-build.sh";
         home-build = "~/.dotfiles/home-build.sh";
         nix-update = "~/.dotfiles/nix-update.sh";
