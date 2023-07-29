@@ -1,17 +1,28 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-{ inputs, outputs, lib, config, pkgs, pkgs-stable, ... }: {
-  imports = [ # Include the results of the hardware scan.
-    ./hardware-configuration.nix
-  ] ++ outputs.nixosModules;
+{
+  inputs,
+  outputs,
+  lib,
+  config,
+  pkgs,
+  pkgs-stable,
+  ...
+}: {
+  imports =
+    [
+      # Include the results of the hardware scan.
+      ./hardware-configuration.nix
+    ]
+    ++ outputs.nixosModules;
 
   nixpkgs = {
     # Add overlays here
     overlays = [
       # Add overlays your own flake exports (from overlays and pkgs dir):
     ];
-    config = { allowUnfree = true; };
+    config = {allowUnfree = true;};
   };
 
   # backup system configuration
@@ -21,22 +32,22 @@
   boot = {
     loader = {
       timeout = 5;
-      efi = { efiSysMountPoint = "/boot"; };
+      efi = {efiSysMountPoint = "/boot";};
       grub = {
         enable = true;
         efiSupport = true;
         efiInstallAsRemovable = true;
-        devices = [ "nodev" ];
+        devices = ["nodev"];
       };
     };
     kernelPackages = pkgs.linuxPackages_zen;
-    kernelModules = [ "wl" ];
-    initrd.kernelModules = [ "wl" ];
-    extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
+    kernelModules = ["wl"];
+    initrd.kernelModules = ["wl"];
+    extraModulePackages = [config.boot.kernelPackages.broadcom_sta];
   };
 
   nix = {
-    settings.experimental-features = [ "nix-command" "flakes" ];
+    settings.experimental-features = ["nix-command" "flakes"];
     settings.auto-optimise-store = true;
     package = pkgs.nixFlakes;
   };
@@ -93,9 +104,8 @@
   # Remap caps-lock to esc
   services.xserver.xkbOptions = "caps:escape_shifted_capslock";
 
-
   # Enable proprietary nvidia drivers.
-  services.xserver.videoDrivers = [ "nvidia" ];
+  services.xserver.videoDrivers = ["nvidia"];
 
   # hardware settings
   hardware = {
@@ -124,7 +134,7 @@
 
     bluetooth = {
       enable = true;
-      settings = { General = { Enable = "Source,Sink,Media,Socket"; }; };
+      settings = {General = {Enable = "Source,Sink,Media,Socket";};};
     };
     ledger.enable = true; # udev rules for ledger
   };
@@ -162,8 +172,8 @@
     enableExcludeWrapper = false;
   };
 
-  environment.shells = with pkgs; [ zsh ];
-  users.groups.plugdev = { };
+  environment.shells = with pkgs; [zsh];
+  users.groups.plugdev = {};
   users.defaultUserShell = pkgs.zsh;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -172,22 +182,20 @@
       isNormalUser = true;
       shell = pkgs.zsh;
       description = "Mykola Suprun";
-      extraGroups =
-        [ "networkmanager" "wheel" "docker" "libvirtd" "kvm" "plugdev" ];
+      extraGroups = ["networkmanager" "wheel" "docker" "libvirtd" "kvm" "plugdev"];
     };
     geks-home = {
       isNormalUser = true;
       shell = pkgs.zsh;
       description = "Geks Home";
-      extraGroups =
-        [ "networkmanager" "wheel" "docker" "libvirtd" "kvm" "plugdev" ];
+      extraGroups = ["networkmanager" "wheel" "docker" "libvirtd" "kvm" "plugdev"];
     };
   };
 
   # Docker SearXNG instance
   virtualisation.oci-containers.containers.searxng = {
     image = "searxng/searxng:latest";
-    ports = [ "127.0.0.1:80:8080" ];
+    ports = ["127.0.0.1:80:8080"];
   };
 
   programs = {
@@ -216,7 +224,7 @@
   # List packages installed in system profile.
   environment = {
     plasma5 = {
-      excludePackages = with pkgs.libsForQt5; [ elisa khelpcenter ];
+      excludePackages = with pkgs.libsForQt5; [elisa khelpcenter];
     };
 
     systemPackages = with pkgs; [
@@ -288,17 +296,17 @@
   };
 
   #Flatpak fix for themes and fonts
-  system.fsPackages = [ pkgs.bindfs ];
+  system.fsPackages = [pkgs.bindfs];
   fileSystems = let
     mkRoSymBind = path: {
       device = path;
       fsType = "fuse.bindfs";
-      options = [ "ro" "resolve-symlinks" "x-gvfs-hide" ];
+      options = ["ro" "resolve-symlinks" "x-gvfs-hide"];
     };
     aggregatedFonts = pkgs.buildEnv {
       name = "system-fonts";
       paths = config.fonts.fonts;
-      pathsToLink = [ "/share/fonts" ];
+      pathsToLink = ["/share/fonts"];
     };
   in {
     # Create an FHS mount to support flatpak host icons/fonts
@@ -307,5 +315,4 @@
   };
 
   system.stateVersion = "23.11";
-
 }

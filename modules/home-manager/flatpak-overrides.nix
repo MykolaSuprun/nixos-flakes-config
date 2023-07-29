@@ -1,5 +1,4 @@
-{ inputs, ... }: {
-
+{inputs, ...}: {
   home.file.".local/share/flatpak/overrides/global".text = ''
 
     [Context]
@@ -11,5 +10,4 @@
     GTK_THEME=WhiteSur-Light-solid
     ICON_THEME=WhiteSur
   '';
-
 }
