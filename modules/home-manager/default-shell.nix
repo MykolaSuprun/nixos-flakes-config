@@ -10,11 +10,12 @@
           xhost +SI:localuser:$USER
           #PROMPT="%B%F{47}%n%f%b%B:%b%B%F{39}%m%f%b%B>%b "
           alias vi="nvim"
-          alias vim="nvim"
-          alias nano="nvim"
+          alias vim="nix run ~/src/neovim-flake -- "
+          alias nano="nix run ~/src/neovim-flake -- "
           alias tmux='tmux -2'
         fi
         export GPG_TTY=$(tty)
+        setxkbmap -option "caps:escape_shifted_capslock"
         gpgconf --launch gpg-agent
         export VI_MODE_SET_CURSOR=true
         export NIXPKGS_ALLOW_UNFREE=1
@@ -51,8 +52,10 @@
         nixgc = "nix-collect-garbage";
         arch-build = "~/.dotfiles/home/mykolas/distrobox/build-arch.sh";
         arch = "distrobox-enter arch";
-        vim = "nvim";
+        nvim = "nix run ~/src/neovim-flake -- ";
+        vim = "nix run ~/src/neovim-flake -- ";
         nv = "nix run ~/src/neovim-flake -- ";
+        vi = "nvim";
         tmux = "tmux -2";
       };
     };
@@ -66,8 +69,8 @@
           distrobox-host-exec xhost +local:
           xhost +SI:localuser:$USER
           alias vi='nvim'
-          alias vim='nvim'
-          alias nano='nvim'
+          alias vim='nix run ~/src/neovim-flake -- '
+          alias nano='nix run ~/src/neovim-flake -- '
           alias tmux='tmux -2'
           zsh
           # echo "in Arch" 
@@ -77,13 +80,15 @@
           clear
         fi
         export GPG_TTY=$(tty)
+        setxkbmap -option "caps:escape_shifted_capslock"
         gpgconf --launch gpg-agent
       '';
       shellAliases = {
         vi = "nvim";
-        vim = "nvim";
-        nano = "nvim";
-        nv = "nix run ~/src/neovim-flake -- .";
+        nvim = "nix run ~/src/neovim-flake -- ";
+        vim = "nix run ~/src/neovim-flake -- ";
+        nv = "nix run ~/src/neovim-flake -- ";
+        nano = "nix run ~/src/neovim-flake -- ";
         editconf = "cd ~/.dotfiles/; nvim ";
         nixos-build = "~/.dotfiles/nixos-build.sh";
         home-build = "~/.dotfiles/home-build.sh";

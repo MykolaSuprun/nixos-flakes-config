@@ -1,6 +1,13 @@
+# vim: ft=gitconfig
 [user]
-  name = MykolaSuprun 
-  email = mykola.surpun@protonmail.com
+  email = mykola.suprun@protonmail.com
+  name = Mykola Suprun
+[credential "https://github.com"]
+  helper =
+  helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+  helper =
+  helper = !gh auth git-credential
 [color]
   ui = auto
 [core]
@@ -14,9 +21,10 @@
 [gpg]
   program = gpg
 [commit]
+  gpgsign = true
 [tag]
 [pull]
-  rebase = false 
+  rebase = false
 [github]
   user = MykolaSuprun
 [filter "lfs"]
@@ -24,10 +32,5 @@
   smudge = git-lfs smudge -- %f
   process = git-lfs filter-process
   required = true
-[credential "https://github.com"]
-  helper = 
-  helper = !/run/current-system/sw/bin/gh auth git-credential
-[credential "https://gist.github.com"]
-  helper = 
-  helper = !/run/current-system/sw/bin/gh auth git-credential
-
+[alias]
+  logs = log --show-signature
