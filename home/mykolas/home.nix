@@ -65,11 +65,6 @@
 
   # create home configuration files
   home.file = {
-    "./.config/nvim/" = {
-      source = ./nvim;
-      recursive = true;
-      enable = true;
-    };
     "./.config/helix" = {
       source = ./helix;
       recursive = true;
