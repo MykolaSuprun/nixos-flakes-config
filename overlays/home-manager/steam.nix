@@ -1,6 +1,5 @@
-{ inputs, ... }:
-(self: super: {
+{inputs, ...}: (self: super: {
   steam = super.steam.override {
-    extraPkgs = pkgs: with pkgs; [ pango harfbuzz libthai ];
+    extraPkgs = pkgs: with pkgs; [pango harfbuzz libthai];
   };
 })

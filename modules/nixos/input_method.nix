@@ -1,7 +1,11 @@
-{ inputs, pkgs, ... }: {
+{
+  inputs,
+  pkgs,
+  ...
+}: {
   i18n.inputMethod = {
     # enabled = "ibus";
-    # ibus.engines = with pkgs.ibus-engines; [ 
+    # ibus.engines = with pkgs.ibus-engines; [
     #   hangul
     #   m17n
     #   mozc
