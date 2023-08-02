@@ -50,6 +50,10 @@
     settings.experimental-features = ["nix-command" "flakes"];
     settings.auto-optimise-store = true;
     package = pkgs.nixFlakes;
+    gc = {
+      automatic = true;
+      options = "--delete-older-than 10d";
+    };
   };
 
   # security
@@ -201,23 +205,23 @@
   programs = {
     zsh.enable = true;
     kdeconnect.enable = true;
-    tmux = {
-      enable = true;
-      terminal = "xterm-256color";
-      escapeTime = 10;
-      keyMode = "vi";
-      plugins = with pkgs.tmuxPlugins; [
-        yank
-        resurrect
-        continuum
-        vim-tmux-navigator
-        tmux-fzf
-        better-mouse-mode
-        fzf-tmux-url
-        sidebar
-        sysstat
-      ];
-    };
+    # tmux = {
+    #   enable = true;
+    #   terminal = "xterm-256color";
+    #   escapeTime = 10;
+    #   keyMode = "vi";
+    #   plugins = with pkgs.tmuxPlugins; [
+    #     yank
+    #     resurrect
+    #     continuum
+    #     vim-tmux-navigator
+    #     tmux-fzf
+    #     better-mouse-mode
+    #     fzf-tmux-url
+    #     sidebar
+    #     sysstat
+    #   ];
+    # };
     gnupg.agent.pinentryFlavor = "tty";
   };
 
