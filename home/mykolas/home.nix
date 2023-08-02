@@ -74,7 +74,7 @@
       source = ./wezterm/wezterm.lua;
       enable = true;
     };
-    "./.tmux.conf" = {
+    "./.config/tmux.conf" = {
       source = ./tmux/tmux.conf;
       enable = true;
     };
@@ -108,7 +108,6 @@
     fzf-zsh
     rnix-lsp
     xclip
-    tmux
     tree
     cmake
     gnumake
