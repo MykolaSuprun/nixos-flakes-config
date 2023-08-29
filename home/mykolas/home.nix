@@ -20,8 +20,16 @@
 
       # You can also split up your configuration and import pieces of it here:
       # ./nvim.nix
-    ]
-    ++ outputs.homeManagerModules;
+
+      ./../../modules/home-manager/default-shell.nix
+      ./../../modules/home-manager/chromium.nix
+      ./../../modules/home-manager/flatpak-overrides.nix
+      ./../../modules/home-manager/tmux.nix
+      ./../../modules/home-manager/dev-packages.nix
+      ./../../modules/home-manager/wine-and-gaming-packages.nix
+      ./../../modules/home-manager/dektop-packages.nix.nix
+      #./modules/home-manager/firefox.nix
+    ];
 
   nixpkgs = {
     # You can add overlays here
@@ -49,18 +57,8 @@
   };
 
   programs = {
+    # enable home-manager
     home-manager.enable = true;
-
-    helix = {
-      enable = true;
-      package = pkgs.helix;
-    };
-    # neovim = {
-    #   enable = true;
-    #   package = my-neovim.packages.${system}.default;
-    # };
-    zsh.enable = true;
-    gpg.enable = true;
   };
 
   # create home configuration files
@@ -90,95 +88,6 @@
   };
 
   home.packages = with pkgs; [
-    # dev tools
-    my-neovim.packages.${system}.default
-    libgccjit
-    tree-sitter
-    lazygit
-    ripgrep
-    fd
-    nodejs
-    gh # Github CLI
-    meld
-    cargo
-    binutils
-    go
-    gcc
-    fzf
-    fzf-zsh
-    rnix-lsp
-    xclip
-    tree
-    cmake
-    gnumake
-    wezterm
-    git
-    git-crypt
-    gnupg
-    github-desktop
-    alejandra
-    # haskell
-    haskell-language-server
-    ghc
-    # nix
-    nil
-    nix-tree
-    nix-diff
-    nixfmt
-
-    # internet
-    mullvad-browser
-
-    # media
-    spotify
-    vlc
-    cider
-
-    # social
-    discord
-    signal-desktop
-    telegram-desktop
-
-    # other
-    megasync
-    qbittorrent
-    morgen
-    tusk
-    libreoffice-qt
-    ledger-live-desktop
-    partition-manager
-    obsidian
-    calibre
-
-    # plasma packages
-    libsForQt5.sddm-kcm
-    libsForQt5.ark
-    libsForQt5.yakuake
-    libsForQt5.qmltermwidget
-    libsForQt5.qt5.qtwebsockets
-    libsForQt5.qtstyleplugin-kvantum # flatpak plasma theming compatibility tool
-    libsForQt5.kpmcore
-    libsForQt5.plasma-browser-integration
-    libsForQt5.dolphin-plugins
-
-    #graphic, steam, wine libraries
-    steam
-    mesa
-    libdrm
-    wine-staging
-    winetricks
-    vulkan-tools
-    vulkan-loader
-    vulkan-extension-layer
-    vkBasalt
-    dxvk
-    vulkan-headers
-    vulkan-validation-layers
-    wine64Packages.fonts
-    winePackages.fonts
-    distrobox
-    gamescope
-    mangohud
   ];
 
   home.sessionVariables = {

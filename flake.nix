@@ -64,14 +64,6 @@
       ./modules/nixos/fonts.nix
     ];
 
-    homeManagerModules = [
-      ./modules/home-manager/default-shell.nix
-      ./modules/home-manager/chromium.nix
-      ./modules/home-manager/flatpak-overrides.nix
-      ./modules/home-manager/tmux.nix
-      #./modules/home-manager/firefox.nix
-    ];
-
     homeManagerModulesEnv = [./modules/home-manager/neovim.nix];
 
     homeManagerOverlays = args: {nixpkgs.overlays = import ./overlays/home-manager args;};
