@@ -7,7 +7,9 @@
     enable = true;
     package = pkgs.chromium;
     extensions = [
-      {id = "fdjamakpfbbddfjaooikfcpapjohcfmg";} # Dashlane
+      {id = "jplgfhpmjnbigmhklmmbgecoobifkmpa";} # ProtonVPN
+      {id = "ghmbeldphafepmbegfdlkpapadhbakde";} # ProtonPass
+      {id = "blkggjdmcfjdbmmmlfcpplkchpeaiiab";} # Omnivore 
       {id = "cjpalhdlnbpafiamejdnhcphjbkeiagm";} # Ublock origin
       {id = "dlnejlppicbjfcfcedcflplfjajinajd";} # Bonjourr
       {id = "pkehgijcmpdhfbdbbnkijodmdjhbjlgp";} # PrivacyBadger
@@ -23,9 +25,6 @@
       } # Editor for Docs, Sheets & Slides
       {id = "ecabifbgmdmgdllomnfinbmaellmclnh";} # Reader view
       {id = "cimiefiiaegbelhefglklhhakcgmhkai";} # Plasma integration
-      {id = "ailoabdmgclmfmhdagmlohpjlbpffblp";} # Surfshark vpn
-      {id = "dphilobhebphkdjbpfohgikllaljmgbn";} # SimpleLogin anonymous mail
-      {id = "pioclpoplcdbaefihamjohnefbikjilc";} # Evernote web clipper
     ];
   };
 }
