@@ -72,6 +72,12 @@
     networkmanager.wifi.backend = "iwd";
   };
 
+  systemd.services.NetworkManager-wait-online = {
+    serviceConfig = {
+      ExecStart = [ "" "${pkgs.networkmanager}/bin/nm-online -q" ];
+    };
+  };
+
   # Set your time zone.
   time.timeZone = "Europe/Warsaw";
 
@@ -186,7 +192,7 @@
       isNormalUser = true;
       shell = pkgs.zsh;
       description = "Mykola Suprun";
-      extraGroups = ["networkmanager" "wheel" "docker" "libvirtd" "kvm" "plugdev"];
+      extraGroups = ["networkmanager" "wheel" "docker" "libvirtd" "kvm" "plugdev" "gamemode"];
     };
     geks-home = {
       isNormalUser = true;
@@ -223,6 +229,10 @@
     #   ];
     # };
     gnupg.agent.pinentryFlavor = "tty";
+    gamemode = {
+      enable = true;
+      enableRenice = true;
+    };
   };
 
   # List packages installed in system profile.
