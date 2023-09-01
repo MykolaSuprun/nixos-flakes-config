@@ -1,8 +1,4 @@
-{
-  pkgs,
-  ...
-}:
-{
+{pkgs, ...}: {
   home.packages = with pkgs; [
     # plasma packages and basic applications
     libsForQt5.sddm-kcm
@@ -35,7 +31,7 @@
     obsidian
     calibre
 
-    # virtualization 
+    # virtualization
     distrobox
   ];
 }

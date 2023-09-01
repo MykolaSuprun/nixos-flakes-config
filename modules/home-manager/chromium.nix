@@ -9,7 +9,7 @@
     extensions = [
       {id = "jplgfhpmjnbigmhklmmbgecoobifkmpa";} # ProtonVPN
       {id = "ghmbeldphafepmbegfdlkpapadhbakde";} # ProtonPass
-      {id = "blkggjdmcfjdbmmmlfcpplkchpeaiiab";} # Omnivore 
+      {id = "blkggjdmcfjdbmmmlfcpplkchpeaiiab";} # Omnivore
       {id = "cjpalhdlnbpafiamejdnhcphjbkeiagm";} # Ublock origin
       {id = "dlnejlppicbjfcfcedcflplfjajinajd";} # Bonjourr
       {id = "pkehgijcmpdhfbdbbnkijodmdjhbjlgp";} # PrivacyBadger
