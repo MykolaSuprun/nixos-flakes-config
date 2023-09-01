@@ -17,6 +17,7 @@
 
     # internet
     mullvad-browser
+    protonvpn-gui
 
     # social
     discord

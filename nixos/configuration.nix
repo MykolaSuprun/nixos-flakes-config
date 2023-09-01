@@ -202,11 +202,11 @@
     };
   };
 
-  # Docker SearXNG instance
-  virtualisation.oci-containers.containers.searxng = {
-    image = "searxng/searxng:latest";
-    ports = ["127.0.0.1:80:8080"];
-  };
+  # Docker SearXNG instance (prevents sleep)
+  # virtualisation.oci-containers.containers.searxng = {
+  #   image = "searxng/searxng:latest";
+  #   ports = ["127.0.0.1:80:8080"];
+  # };
 
   programs = {
     zsh.enable = true;

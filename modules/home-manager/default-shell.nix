@@ -1,26 +1,45 @@
 {inputs, ...}: let
-  neovim = "nix run ~/src/neovim-flake -- ";
+  neovim-local = "nix run ~/src/neovim-flake -- ";
+  neovim_github = "nix run github:MykolaSuprun/neovim-flake #. -- ";
+  conf_root = "~/.dotfiles";
+  shell_init = ''
+    if [[ $(uname -a | grep arch) ]]
+    then
+      distrobox-host-exec xhost +local:
+      xhost +SI:localuser:$USER
+      #PROMPT="%B%F{47}%n%f%b%B:%b%B%F{39}%m%f%b%B>%b "
+      alias vi="nvim"
+      alias vim="${neovim-local}"
+      alias nano="nvim"
+      alias tmux='tmux -2'
+    fi
+    export GPG_TTY=$(tty)
+    gpgconf --launch gpg-agent
+    export VI_MODE_SET_CURSOR=true
+    export NIXPKGS_ALLOW_UNFREE=1
+    export confdir=${conf_root}
+    clear
+
+    # Aliases
+    alias editconf="cd $confdir; nvim ."
+    alias nixos-build="$confdir/nixos-build.sh"
+    alias home-build="$confdir/home-build.sh"
+    alias nix-update="$confdir/nix-update.sh"
+    alias confdir=$confdir
+    alias nixgc="nix-collect-garbage"
+    alias arch-build="$confdir/home/mykolas/distrobox/build-arch.sh"
+    alias arch="distrobox-enter arch"
+    alias vim="${neovim_github}"
+    alias nv="${neovim-local}"
+    alias vi="nvim"
+    alias tmux="tmux -2"
+  '';
 in {
   programs = {
     zsh = {
       enable = true;
       initExtra = ''
-        if [[ $(uname -a | grep arch) ]]
-        then
-          distrobox-host-exec xhost +local:
-          xhost +SI:localuser:$USER
-          #PROMPT="%B%F{47}%n%f%b%B:%b%B%F{39}%m%f%b%B>%b "
-          alias vi="nvim"
-          alias vim="${neovim}"
-          alias nano="nvim"
-          alias tmux='tmux -2'
-        fi
-        export GPG_TTY=$(tty)
-        setxkbmap -option "caps:escape_shifted_capslock"
-        gpgconf --launch gpg-agent
-        export VI_MODE_SET_CURSOR=true
-        export NIXPKGS_ALLOW_UNFREE=1
-        clear
+        ${shell_init}
       '';
       oh-my-zsh = {
         enable = true;
@@ -44,60 +63,14 @@ in {
           "archlinux"
         ];
       };
-      shellAliases = {
-        editconf = "cd ~/.dotfiles; nvim .";
-        nixos-build = "~/.dotfiles/nixos-build.sh";
-        home-build = "~/.dotfiles/home-build.sh";
-        nix-update = "~/.dotfiles/nix-update.sh";
-        confdir = "~/.dotfiles";
-        nixgc = "nix-collect-garbage";
-        arch-build = "~/.dotfiles/home/mykolas/distrobox/build-arch.sh";
-        arch = "distrobox-enter arch";
-        vim = "nvim";
-        nv = "${neovim}";
-        vi = "nvim";
-        tmux = "tmux -2";
-      };
     };
 
     bash = {
       enable = true;
       enableCompletion = true;
       bashrcExtra = ''
-        if [[ $(uname -a | grep arch) ]]
-        then
-          distrobox-host-exec xhost +local:
-          xhost +SI:localuser:$USER
-          alias vi='nvim'
-          alias vim='nix run ~/src/neovim-flake -- '
-          alias nano='nix run ~/src/neovim-flake -- '
-          alias tmux='tmux -2'
-          zsh
-          # echo "in Arch"
-          clear
-        else
-          # echo "in NixOS"
-          clear
-        fi
-        export GPG_TTY=$(tty)
-        setxkbmap -option "caps:escape_shifted_capslock"
-        gpgconf --launch gpg-agent
+        ${shell_init}
       '';
-      shellAliases = {
-        vim = "nvim";
-        nv = "${neovim}";
-        vi = "nvim";
-        nano = "nvim";
-        editconf = "cd ~/.dotfiles/; nvim ";
-        nixos-build = "~/.dotfiles/nixos-build.sh";
-        home-build = "~/.dotfiles/home-build.sh";
-        nix-update = "~/.dotfiles/nix-update.sh";
-        confdir = "~/.dotfiles";
-        nixgc = "nix-collect-garbage";
-        arch-build = "~/.dotfiles/home/mykolas/distrobox/build-arch.sh";
-        arch = "distrobox-enter arch";
-        tmux = "tmux -2";
-      };
     };
   };
 }
