@@ -1,35 +1,27 @@
-{
-  system,
-  inputs,
-  outputs,
-  lib,
-  config,
-  pkgs,
-  overlays,
-  my-neovim,
-  ...
-}: {
+{pkgs, ...}: let
+  hm_target = "mykolas-nixos";
+  shell_hm_target = "export home_manager_target=${hm_target}";
+in {
   # imports = [./default-shell.nix];
-  imports =
-    [
-      # If you want to use modules your own flake exports (from modules/home-manager):
-      # outputs.homeManagerModules.example
+  imports = [
+    # If you want to use modules your own flake exports (from modules/home-manager):
+    # outputs.homeManagerModules.example
 
-      # Or modules exported from other flakes (such as nix-colors):
-      # inputs.nix-colors.homeManagerModules.default
+    # Or modules exported from other flakes (such as nix-colors):
+    # inputs.nix-colors.homeManagerModules.default
 
-      # You can also split up your configuration and import pieces of it here:
-      # ./nvim.nix
+    # You can also split up your configuration and import pieces of it here:
+    # ./nvim.nix
 
-      ./../../modules/home-manager/default-shell.nix
-      ./../../modules/home-manager/chromium.nix
-      ./../../modules/home-manager/flatpak-overrides.nix
-      ./../../modules/home-manager/tmux.nix
-      ./../../modules/home-manager/dev-packages.nix
-      ./../../modules/home-manager/wine-and-gaming-packages.nix
-      ./../../modules/home-manager/dektop-packages.nix.nix
-      #./modules/home-manager/firefox.nix
-    ];
+    ./../../modules/home-manager/default-shell.nix
+    ./../../modules/home-manager/chromium.nix
+    ./../../modules/home-manager/flatpak-overrides.nix
+    ./../../modules/home-manager/tmux.nix
+    ./../../modules/home-manager/dev-packages.nix
+    ./../../modules/home-manager/wine-and-gaming-packages.nix
+    ./../../modules/home-manager/dektop-packages.nix.nix
+    #./modules/home-manager/firefox.nix
+  ];
 
   nixpkgs = {
     # You can add overlays here
@@ -59,10 +51,14 @@
   programs = {
     # enable home-manager
     home-manager.enable = true;
-
     zsh = {
       initExtra = ''
-        export home_manager_target="mykolas"
+        ${shell_hm_target}
+      '';
+    };
+    bash = {
+      bashrcExtra = ''
+        ${shell_hm_target}
       '';
     };
   };
