@@ -57,17 +57,9 @@
     };
 
     lib = nixpkgs.lib;
-  in rec {
-    nixosModules = [
-      ./modules/nixos/pipewire.nix
-      ./modules/nixos/input_method.nix
-      ./modules/nixos/fonts.nix
-    ];
-
-    homeManagerModulesEnv = [./modules/home-manager/neovim.nix];
 
     homeManagerOverlays = args: {nixpkgs.overlays = import ./overlays/home-manager args;};
-
+  in {
     nixosConfigurations = {
       Geks-Nixos = lib.nixosSystem {
         inherit system;

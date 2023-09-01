@@ -10,12 +10,13 @@
   pkgs-stable,
   ...
 }: {
-  imports =
-    [
-      # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ]
-    ++ outputs.nixosModules;
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    ./../modules/nixos/pipewire.nix
+    ./../modules/nixos/input_method.nix
+    ./../modules/nixos/fonts.nix
+  ];
 
   nixpkgs = {
     # Add overlays here
