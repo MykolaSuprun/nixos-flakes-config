@@ -77,9 +77,14 @@
     };
 
     homeConfigurations = {
-      mykolas = home-manager.lib.homeManagerConfiguration {
+      mykolas-nixos = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
-        modules = [./home/mykolas/home.nix homeManagerOverlays];
+        modules = [./home/mykolas/mykolas-nixos.nix homeManagerOverlays];
+        extraSpecialArgs = {inherit inputs outputs my-neovim system;};
+      };
+      mykolas-wsl = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [./home/mykolas/mykolas-wsl.nix homeManagerOverlays];
         extraSpecialArgs = {inherit inputs outputs my-neovim system;};
       };
     };
