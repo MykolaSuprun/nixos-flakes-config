@@ -59,6 +59,12 @@
   programs = {
     # enable home-manager
     home-manager.enable = true;
+
+    zsh = {
+      initExtra = ''
+        export home_manager_target="mykolas"
+      '';
+    };
   };
 
   # create home configuration files
