@@ -14,6 +14,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.05";
+    nixos-wsl.url = "github:nix-community/NixOS-WSL";
     home-manager = {
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -32,6 +33,7 @@
     self,
     nixpkgs,
     nixpkgs-stable,
+    nixos-wsl,
     home-manager,
     my-neovim,
     ...
@@ -63,7 +65,12 @@
     nixosConfigurations = {
       Geks-Nixos = lib.nixosSystem {
         inherit system;
-        modules = [./nixos/configuration.nix];
+        modules = [./nixos/geks-nixos/configuration.nix];
+        specialArgs = {inherit inputs outputs;};
+      };
+      Geks-WSL = lib.nixosSystem {
+        inherit system;
+        modules = [./nixos/geks-wsl/configuration.nix nixos-wsl.nixosModules.wsl];
         specialArgs = {inherit inputs outputs;};
       };
     };
