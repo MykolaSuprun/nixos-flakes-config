@@ -21,7 +21,7 @@
 [gpg]
   program = gpg
 [commit]
-  gpgsign = true
+  ; gpgsign = true
 [tag]
 [pull]
   rebase = false
