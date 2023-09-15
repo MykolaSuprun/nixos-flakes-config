@@ -86,6 +86,11 @@
         modules = [./home/mykolas/mykolas-wsl.nix homeManagerOverlays];
         extraSpecialArgs = {inherit inputs outputs my-neovim system;};
       };
+      mykolas-wsl-generic = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [./home/mykolas/wsl-generic.nix homeManagerOverlays];
+        extraSpecialArgs = {inherit inputs outputs my-neovim system;};
+      };
     };
   };
 }
