@@ -33,5 +33,14 @@
 
     # virtualization
     distrobox
+
+    # theming
+    papirus-icon-theme
+    # catppuccin-papirus-folders
+    catppuccin-kde
+    catppuccin-gtk
+    catppuccin-kvantum
+    catppuccin-cursors
+
   ];
 }
