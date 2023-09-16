@@ -13,9 +13,9 @@
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    ./../modules/nixos/pipewire.nix
-    ./../modules/nixos/input_method.nix
-    ./../modules/nixos/fonts.nix
+    ./../../modules/nixos/pipewire.nix
+    ./../../modules/nixos/input_method.nix
+    ./../../modules/nixos/fonts.nix
   ];
 
   nixpkgs = {
@@ -33,19 +33,28 @@
   boot = {
     loader = {
       timeout = 5;
-      efi = {efiSysMountPoint = "/boot";};
+      efi = {
+        efiSysMountPoint = "/boot";
+        canTouchEfiVariables = true;
+      };
       grub = {
         enable = true;
         efiSupport = true;
-        efiInstallAsRemovable = true;
+        # efiInstallAsRemovable = true;
         devices = ["nodev"];
+        useOSProber = true;
       };
     };
-    kernelPackages = pkgs.linuxPackages_zen;
+    kernelPackages = pkgs.linuxPackages_latest;
     kernelModules = ["wl"];
     initrd.kernelModules = ["wl"];
     extraModulePackages = [config.boot.kernelPackages.broadcom_sta];
   };
+
+  # Script to run on wake from sleep
+  powerManagement.resumeCommands = ''
+    echo "This should show up in the journal after resuming."
+  '';
 
   nix = {
     settings.experimental-features = ["nix-command" "flakes"];
@@ -58,9 +67,16 @@
   };
 
   # security
-  security.tpm2 = {
-    enable = true;
-    abrmd.enable = true;
+  security = { 
+    tpm2 = {
+      enable = true;
+      abrmd.enable = true;
+    }; 
+    pam.services.swaylock.text = ''
+      # PAM configuration file for the swaylock screen locker. By default, it includes
+      # the 'login' configuration file (see /etc/pam.d/login)
+      auth include login
+    '';
   };
   # security.tpm2.pkcs11.enable = true;
 
@@ -73,9 +89,18 @@
     networkmanager.wifi.backend = "iwd";
   };
 
-  systemd.services.NetworkManager-wait-online = {
-    serviceConfig = {
-      ExecStart = ["" "${pkgs.networkmanager}/bin/nm-online -q"];
+  systemd = {
+    services.NetworkManager-wait-online = {
+      serviceConfig = {
+        ExecStart = ["" "${pkgs.networkmanager}/bin/nm-online -q"];
+      };
+    };
+    targets = {
+      sleep.enable = true;
+      # suspend.enable = true;
+      # wake up from hibernate is bugged atm, disable or find a slution
+      hibernate.enable = true;
+      hybrid-sleep.enable = false;
     };
   };
 
@@ -99,6 +124,7 @@
 
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
+    WLR_NO_HARDWARE_CURSORS = "1";
     GTK_IM_MODULE = "fcitx";
     QT_IM_MODULE = "fcitx";
     XMODIFIERS = "@im=fcitx";
@@ -114,14 +140,17 @@
   services.xserver.desktopManager.plasma5.useQtScaling = true;
   # Remap caps-lock to esc
   services.xserver.xkbOptions = "caps:escape_shifted_capslock";
-
   # Enable proprietary nvidia drivers.
   services.xserver.videoDrivers = ["nvidia"];
+  # Fix for NVME devices instantly waking up pc from sleep
+  services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="pci", DRIVER=="pcieport", ATTR{power/wakeup}="disabled"
+    ACTION=="add" SUBSYSTEM=="pci" ATTR{vendor}=="0x1022" ATTR{device}=="0x1483" ATTR{power/wakeup}="disabled"
+  '';
 
   # hardware settings
   hardware = {
     enableAllFirmware = true;
-
     nvidia.open = true;
     nvidia.nvidiaSettings = true;
     nvidia.modesetting.enable = true;
@@ -155,8 +184,13 @@
     libvirtd.enable = true;
     libvirtd.qemu.swtpm.enable = true;
     libvirtd.qemu.ovmf.enable = true;
+    kvmgt.enable = true;
     spiceUSBRedirection.enable = true;
-    vmware.host.enable = true;
+    virtualbox.host.enable = true;
+    # TODO pin version to avoid constand recompilations
+    virtualbox.host.enableExtensionPack = true;
+    # vmware.host.package = pkgs-stable.vmware-workstation;
+    # vmware.host.enable = true;
 
     # Enable Podman
     podman = {
@@ -185,6 +219,7 @@
 
   environment.shells = with pkgs; [zsh];
   users.groups.plugdev = {};
+  users.extraGroups.vboxusers.members = [ "mykolas" ];
   users.defaultUserShell = pkgs.zsh;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -234,6 +269,11 @@
       enable = true;
       enableRenice = true;
     };
+    hyprland = {
+      enable = true;
+      enableNvidiaPatches = true;
+      xwayland.enable = true;
+    };
   };
 
   # List packages installed in system profile.
@@ -243,6 +283,17 @@
     };
 
     systemPackages = with pkgs; [
+      waybar
+      dunst
+      libnotify
+      rofi-wayland
+      rofi-bluetooth
+      rofi-power-menu
+      networkmanagerapplet
+      swww
+      waypaper
+      swaylock-effects
+
       # basic packages
       git
       gh
@@ -286,6 +337,8 @@
       numix-gtk-theme
       whitesur-gtk-theme
       whitesur-icon-theme
+      # sddm theme
+      catppuccin-sddm-corners
     ];
   };
 

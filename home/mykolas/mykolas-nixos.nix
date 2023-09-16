@@ -83,13 +83,15 @@ in {
       recursive = true;
       enable = true;
     };
-    # "./.gitconfig" = {
-    #   source = ./gitconfig/gitconfig;
-    #   enable = true;
-    # };
+    "./.gitconfig" = {
+      source = ./gitconfig/gitconfig;
+      enable = true;
+    };
   };
 
   home.packages = with pkgs; [
+    kitty
+    mpvpaper
   ];
 
   home.sessionVariables = {

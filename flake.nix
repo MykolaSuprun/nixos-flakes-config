@@ -66,7 +66,7 @@
       Geks-Nixos = lib.nixosSystem {
         inherit system;
         modules = [./nixos/geks-nixos/configuration.nix];
-        specialArgs = {inherit inputs outputs;};
+        specialArgs = {inherit inputs outputs pkgs pkgs-stable;};
       };
       Geks-WSL = lib.nixosSystem {
         inherit system;

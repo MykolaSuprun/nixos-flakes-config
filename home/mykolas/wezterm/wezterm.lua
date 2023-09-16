@@ -13,6 +13,7 @@ end
 -- This is where you actually apply your config choices
 
 config.window_decorations = 'RESIZE'
+config.window_background_opacity = 0.7
 config.display_pixel_geometry = 'RGB'
 config.freetype_load_target = 'Light'
 
