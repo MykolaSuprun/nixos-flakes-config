@@ -92,5 +92,12 @@
         extraSpecialArgs = {inherit inputs outputs my-neovim system;};
       };
     };
+      homeManagerModules.wsl-generic = { ... }: {
+        imports = [ 
+          modules/home-manager/default-shell.nix
+          modules/home-manager/tmux.nix
+          modules/home-manager/dev-packages.nix 
+        ];
+      };
   };
 }
