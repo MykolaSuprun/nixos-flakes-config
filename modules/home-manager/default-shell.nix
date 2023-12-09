@@ -18,6 +18,8 @@
     export VI_MODE_SET_CURSOR=true
     export NIXPKGS_ALLOW_UNFREE=1
     export confdir=${conf_root}
+    export EDITOR=nvim
+    export VISUAL=nvim
     clear
 
     # Aliases
