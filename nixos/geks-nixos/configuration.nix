@@ -46,8 +46,8 @@
       };
     };
     kernelPackages = pkgs.linuxPackages_latest;
-    kernelModules = ["wl"];
-    initrd.kernelModules = ["wl"];
+    kernelModules = ["wl" "ecryptfs" ];
+    initrd.kernelModules = ["wl" "amdgpu" ];
     extraModulePackages = [config.boot.kernelPackages.broadcom_sta];
   };
 
@@ -72,6 +72,7 @@
       enable = true;
       abrmd.enable = true;
     }; 
+    pam.enableEcryptfs = true;
     pam.services.swaylock.text = ''
       # PAM configuration file for the swaylock screen locker. By default, it includes
       # the 'login' configuration file (see /etc/pam.d/login)
@@ -99,7 +100,7 @@
       sleep.enable = true;
       # suspend.enable = true;
       # wake up from hibernate is bugged atm, disable or find a slution
-      hibernate.enable = true;
+      # hibernate.enable = true;
       hybrid-sleep.enable = false;
     };
   };
@@ -131,17 +132,17 @@
   };
 
   # Enable the X11 windowing system.
-  services.xserver.enable = true;
+  services.xserver = {
+    enable = true;
+    videoDrivers = ["amdgpu"];
 
-  # Enable the KDE Plasma Desktop Environment.
-  services.xserver.displayManager.sddm.enable = true;
-  services.xserver.desktopManager.plasma5.enable = true;
-  services.xserver.desktopManager.plasma5.phononBackend = "gstreamer";
-  services.xserver.desktopManager.plasma5.useQtScaling = true;
-  # Remap caps-lock to esc
-  services.xserver.xkbOptions = "caps:escape_shifted_capslock";
-  # Enable proprietary nvidia drivers.
-  services.xserver.videoDrivers = ["nvidia"];
+    # Enable the KDE Plasma Desktop Environment.
+    displayManager.sddm.enable = true;
+    desktopManager.plasma5.enable = true;
+    desktopManager.plasma5.phononBackend = "vlc";
+    desktopManager.plasma5.useQtScaling = true;
+  };
+  #
   # Fix for NVME devices instantly waking up pc from sleep
   services.udev.extraRules = ''
     ACTION=="add", SUBSYSTEM=="pci", DRIVER=="pcieport", ATTR{power/wakeup}="disabled"
@@ -151,10 +152,6 @@
   # hardware settings
   hardware = {
     enableAllFirmware = true;
-    nvidia.open = true;
-    nvidia.nvidiaSettings = true;
-    nvidia.modesetting.enable = true;
-    nvidia.forceFullCompositionPipeline = true;
     cpu.amd.updateMicrocode = true; # needs unfree
 
     opengl = {
@@ -162,12 +159,23 @@
       #Enable other graphical drivers
       driSupport = true;
       driSupport32Bit = true;
-      extraPackages32 = with pkgs.pkgsi686Linux; [
-        libva
+      extraPackages = with pkgs; [
+        rocmPackages.clr.icd
+        amdvlk
+        libGL
+        libGLU
         intel-media-driver # LIBVA_DRIVER_NAME=iHD
-        vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+        vaapiIntel         # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
         vaapiVdpau
         libvdpau-va-gl
+      ];
+      extraPackages32 = with pkgs; [
+        driversi686Linux.amdvlk
+        pkgsi686Linux.libva
+        pkgsi686Linux.intel-media-driver
+        pkgsi686Linux.vaapiIntel
+        pkgsi686Linux.vaapiVdpau
+        pkgsi686Linux.libvdpau-va-gl
       ];
       setLdLibraryPath = true;
     };
@@ -186,16 +194,10 @@
     libvirtd.qemu.ovmf.enable = true;
     kvmgt.enable = true;
     spiceUSBRedirection.enable = true;
-    virtualbox.host.enable = true;
-    # TODO pin version to avoid constand recompilations
-    virtualbox.host.enableExtensionPack = true;
-    # vmware.host.package = pkgs-stable.vmware-workstation;
-    # vmware.host.enable = true;
 
     # Enable Podman
     podman = {
       enable = true;
-      enableNvidia = true;
       dockerCompat = true;
     };
   };
@@ -209,7 +211,7 @@
   # Enable CUPS to print documents.
   services.printing.enable = true;
   # wacom tablet server
-  services.xserver.wacom.enable = true;
+  # services.xserver.wacom.enable = true;
 
   services.mullvad-vpn = {
     enable = true;
@@ -247,6 +249,7 @@
   programs = {
     zsh.enable = true;
     kdeconnect.enable = true;
+    ecryptfs.enable = true;
     # tmux = {
     #   enable = true;
     #   terminal = "xterm-256color";
@@ -269,30 +272,15 @@
       enable = true;
       enableRenice = true;
     };
-    hyprland = {
-      enable = true;
-      enableNvidiaPatches = true;
-      xwayland.enable = true;
-    };
   };
 
   # List packages installed in system profile.
   environment = {
-    plasma5 = {
-      excludePackages = with pkgs.libsForQt5; [elisa khelpcenter];
-    };
+    # plasma5 = {
+    #   excludePackages = with pkgs.libsForQt5; [elisa khelpcenter];
+    # };
 
     systemPackages = with pkgs; [
-      waybar
-      dunst
-      libnotify
-      rofi-wayland
-      rofi-bluetooth
-      rofi-power-menu
-      networkmanagerapplet
-      swww
-      waypaper
-      swaylock-effects
 
       # basic packages
       git
@@ -326,19 +314,19 @@
       ncurses
 
       # QT and GTK themes
-      plasma-overdose-kde-theme
-      materia-kde-theme
-      graphite-kde-theme
-      arc-kde-theme
-      adapta-kde-theme
-      fluent-gtk-theme
-      adapta-gtk-theme
-      mojave-gtk-theme
-      numix-gtk-theme
-      whitesur-gtk-theme
-      whitesur-icon-theme
-      # sddm theme
-      catppuccin-sddm-corners
+      # plasma-overdose-kde-theme
+      # materia-kde-theme
+      # graphite-kde-theme
+      # arc-kde-theme
+      # adapta-kde-theme
+      # fluent-gtk-theme
+      # adapta-gtk-theme
+      # mojave-gtk-theme
+      # numix-gtk-theme
+      # whitesur-gtk-theme
+      # whitesur-icon-theme
+      # # sddm theme
+      # catppuccin-sddm-corners
     ];
   };
 
@@ -373,7 +361,7 @@
     };
     aggregatedFonts = pkgs.buildEnv {
       name = "system-fonts";
-      paths = config.fonts.fonts;
+      paths = config.fonts.packages;
       pathsToLink = ["/share/fonts"];
     };
   in {

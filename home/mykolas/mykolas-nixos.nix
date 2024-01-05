@@ -20,7 +20,7 @@ in {
     ./../../modules/home-manager/dev-packages.nix
     ./../../modules/home-manager/wine-and-gaming-packages.nix
     ./../../modules/home-manager/dektop-packages.nix.nix
-    #./modules/home-manager/firefox.nix
+    ./../../modules/home-manager/firefox.nix
   ];
 
   nixpkgs = {
@@ -32,7 +32,7 @@ in {
       # Workaround for https://github.com/nix-community/home-manager/issues/2942
       allowUnfreePredicate = _: true;
 
-      permittedInsecurePackages = ["openssl-1.1.1v"];
+      permittedInsecurePackages = ["openssl-1.1.1v" "electron-25.9.0"];
     };
   };
 

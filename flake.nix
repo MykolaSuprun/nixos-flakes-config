@@ -27,6 +27,10 @@
     #   url = "github:nix-community/NUR/master";
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
+    plasma6 = {
+      url = "github:nix-community/kde2nix";
+      flake = true;
+    };
   };
 
   outputs = inputs @ {
@@ -36,6 +40,7 @@
     nixos-wsl,
     home-manager,
     my-neovim,
+    plasma6,
     ...
   }: let
     inherit (self) outputs;
@@ -65,7 +70,7 @@
     nixosConfigurations = {
       Geks-Nixos = lib.nixosSystem {
         inherit system;
-        modules = [./nixos/geks-nixos/configuration.nix];
+        modules = [./nixos/geks-nixos/configuration.nix plasma6.nixosModules.plasma6 ];
         specialArgs = {inherit inputs outputs pkgs pkgs-stable;};
       };
       Geks-WSL = lib.nixosSystem {
