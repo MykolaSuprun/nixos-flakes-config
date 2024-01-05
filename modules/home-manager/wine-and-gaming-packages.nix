@@ -17,6 +17,8 @@
     winePackages.fonts
     gamescope
     mangohud
+    heroic
+    gogdl
 
     # media
     spotify
