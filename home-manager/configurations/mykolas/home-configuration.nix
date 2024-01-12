@@ -76,6 +76,11 @@ in {
       source = ./tmux/tmux.conf;
       enable = true;
     };
+    "./.config/libvirt" = {
+      source = ./libvirt;
+      recursive = true;
+      enable = true;
+    };
     "./.gnupg/" = {
       source = ./gnupg;
       recursive = true;
