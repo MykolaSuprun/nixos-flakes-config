@@ -1,51 +1,53 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ config, pkgs, my-neovim, ... }:
-
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      ./../../modules/fonts.nix
-      ./../../modules/input_method.nix
-    ];
+  config,
+  pkgs,
+  my-neovim,
+  ...
+}: {
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    ./../../modules/fonts.nix
+    ./../../modules/input_method.nix
+  ];
 
   # nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Bootloader.
-boot = {
-  loader = {
-    systemd-boot.enable = false;
-    efi = {
-      canTouchEfiVariables = true;
-      efiSysMountPoint = "/boot"; # ← use the same mount point here.
+  boot = {
+    loader = {
+      systemd-boot.enable = false;
+      efi = {
+        canTouchEfiVariables = true;
+        efiSysMountPoint = "/boot"; # ← use the same mount point here.
+      };
+      grub = {
+        enable = true;
+        efiSupport = true;
+        #efiInstallAsRemovable = true; # in case canTouchEfiVariables doesn't work for your system
+        devices = ["nodev"];
+        useOSProber = true;
+      };
     };
-    grub = {
-      enable = true;
-      efiSupport = true;
-      #efiInstallAsRemovable = true; # in case canTouchEfiVariables doesn't work for your system
-      devices = ["nodev"];
-      useOSProber = true;
-    };
+
+    kernelPackages = pkgs.linuxPackages_latest;
+    kernelModules = ["wl" "ecryptfs"];
+    initrd.kernelModules = ["wl"];
+    extraModulePackages = [config.boot.kernelPackages.broadcom_sta];
   };
 
-  kernelPackages = pkgs.linuxPackages_latest;
-  kernelModules = ["wl" "ecryptfs" ];
-  initrd.kernelModules = ["wl"];
-  extraModulePackages = [config.boot.kernelPackages.broadcom_sta];
-};
-
-nix = {
-  settings.experimental-features = ["nix-command" "flakes"];
-  settings.auto-optimise-store = true;
-  package = pkgs.nixFlakes;
-  gc = {
-    automatic = true;
-    options = "--delete-older-than 10d";
+  nix = {
+    settings.experimental-features = ["nix-command" "flakes"];
+    settings.auto-optimise-store = true;
+    package = pkgs.nixFlakes;
+    gc = {
+      automatic = true;
+      options = "--delete-older-than 10d";
+    };
   };
-};
 
   # networking
   networking = {
@@ -86,7 +88,6 @@ nix = {
     desktopManager.plasma5.useQtScaling = true;
   };
 
-
   # Enable sound with pipewire.
   sound.enable = true;
   hardware.pulseaudio.enable = false;
@@ -108,9 +109,8 @@ nix = {
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  environment.shells = with pkgs; [zsh];
   users.groups.plugdev = {};
-  users.extraGroups.vboxusers.members = [ "mykolas" ];
+  users.extraGroups.vboxusers.members = ["mykolas"];
   users.defaultUserShell = pkgs.zsh;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -119,7 +119,7 @@ nix = {
       isNormalUser = true;
       shell = pkgs.zsh;
       description = "Mykola Suprun";
-      extraGroups = ["networkmanager" "wheel" "docker" "libvirtd" "kvm" "plugdev" "gamemode"];
+      extraGroups = ["networkmanager" "wheel" "docker" "libvirtd" "kvm" "qemu-libvirtd" "plugdev" "gamemode"];
     };
     geks-home = {
       isNormalUser = true;
@@ -127,6 +127,17 @@ nix = {
       description = "Geks Home";
       extraGroups = ["networkmanager" "wheel" "docker" "libvirtd" "kvm" "plugdev"];
     };
+  };
+
+  virtualisation = {
+    libvirtd = {
+      enable = true;
+      qemu = {
+        ovmf.enable = true;
+        swtpm.enable = true;
+      };
+    };
+    spiceUSBRedirection.enable = true;
   };
 
   programs = {
@@ -138,73 +149,79 @@ nix = {
       enable = true;
       enableRenice = true;
     };
+    virt-manager.enable = true;
   };
 
   # List packages installed in system profile.
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [
+  environment = {
+    shells = with pkgs; [zsh];
+    sessionVariables = {
+      LIBVIRT_DEFAULT_URI = ["qemu:///system"];
+    };
 
-    my-neovim.packages.${system}.default
-    sublime4
-    vscode
-    lazygit
+    systemPackages = with pkgs; [
+      my-neovim.packages.${system}.default
+      sublime4
+      vscode
+      lazygit
 
-    libGL
-    libGLU
-    libglvnd
+      libGL
+      libGLU
+      libglvnd
 
-    # basic packages
-    ecryptfs
-    git
-    gh
-    helix
-    wezterm
-    wget
-    p7zip
-    rar
-    xorg.xhost
-    ntfs3g
-    tpm2-tools
-    libtpms
-    swtpm
-    virt-manager
-    qemu
-    kvmtool
-    spice
-    spice-gtk
-    appimage-run
-    x264
-    x265
-    wacomtablet
-    libwacom
-    xf86_input_wacom
-    xsettingsd
-    file
-    wl-clipboard
-    # wl-clipboard-x11
-    xclip
-    ncurses
+      # basic packages
+      ecryptfs
+      git
+      gh
+      helix
+      wezterm
+      wget
+      p7zip
+      rar
+      xorg.xhost
+      ntfs3g
+      spice
+      spice-gtk
+      appimage-run
+      x264
+      x265
+      wacomtablet
+      libwacom
+      xf86_input_wacom
+      xsettingsd
+      file
+      wl-clipboard
+      # wl-clipboard-x11
+      xclip
+      ncurses
 
-    # QT and GTK themes
-    plasma-overdose-kde-theme
-    materia-kde-theme
-    graphite-kde-theme
-    arc-kde-theme
-    adapta-kde-theme
-    fluent-gtk-theme
-    adapta-gtk-theme
-    mojave-gtk-theme
-    numix-gtk-theme
-    whitesur-gtk-theme
-    whitesur-icon-theme
-    # sddm theme
-    catppuccin-sddm-corners
+      #virtualisation
+      libtpms
+      virt-manager
+      win-virtio
+      qemu
+      kvmtool
+      tpm2-tools
 
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
-  ];
+      # QT and GTK themes
+      plasma-overdose-kde-theme
+      materia-kde-theme
+      graphite-kde-theme
+      arc-kde-theme
+      adapta-kde-theme
+      fluent-gtk-theme
+      adapta-gtk-theme
+      mojave-gtk-theme
+      numix-gtk-theme
+      whitesur-gtk-theme
+      whitesur-icon-theme
+      # sddm theme
+      catppuccin-sddm-corners
+    ];
+  };
 
   # Enable flatpak
   services.flatpak.enable = true;
@@ -247,5 +264,4 @@ nix = {
   };
 
   system.stateVersion = "23.11"; # Did you read the comment?
-
 }
