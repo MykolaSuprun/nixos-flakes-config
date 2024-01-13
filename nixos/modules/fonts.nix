@@ -30,5 +30,6 @@
     paratype-pt-serif
     caladea
     carlito
+    corefonts # windows fonts
   ];
 }
