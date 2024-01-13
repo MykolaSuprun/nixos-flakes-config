@@ -50,6 +50,7 @@
     catppuccin-cursors
 
     # wine, steam and other gaming related packages
+    bottles
     steam
     mesa
     libdrm
