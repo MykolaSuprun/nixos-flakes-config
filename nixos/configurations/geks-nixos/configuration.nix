@@ -84,6 +84,7 @@
 
     # Enable the KDE Plasma Desktop Environment.
     displayManager.sddm.enable = true;
+    displayManager.defaultSession = "plasmawayland";
     desktopManager.plasma5.enable = true;
     desktopManager.plasma5.phononBackend = "vlc";
     desktopManager.plasma5.useQtScaling = true;
@@ -158,7 +159,7 @@
     sessionVariables = {
       LIBVIRT_DEFAULT_URI = ["qemu:///system"];
       NIXOS_OZONE_WL = "1";
-    };
+   };
 
     systemPackages = with pkgs; [
       # dev tools
