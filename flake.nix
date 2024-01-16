@@ -27,10 +27,10 @@
       url = "github:MykolaSuprun/neovim-flake";
       flake = true;
     };
-    plasma6 = {
-      url = "github:nix-community/kde2nix";
-      flake = true;
-    };
+    # plasma6 = {
+    #   url = "github:nix-community/kde2nix";
+    #   flake = true;
+    # };
   };
 
   outputs = {
@@ -40,7 +40,7 @@
     home-manager,
     nixgl,
     my-neovim,
-    plasma6,
+    # plasma6,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -84,7 +84,7 @@
         inherit system;
         modules = [
           ./nixos/configurations/geks-nixos/configuration.nix
-          plasma6.nixosModules.plasma6
+          # plasma6.nixosModules.plasma6
         ];
         specialArgs = {inherit inputs outputs pkgs pkgs-stable my-neovim;};
       };

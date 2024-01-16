@@ -51,22 +51,6 @@
 
     # wine, steam and other gaming related packages
     bottles
-    steam
-    mesa
-    libdrm
-    wine-staging
-    winetricks
-    vulkan-tools
-    vulkan-loader
-    vulkan-extension-layer
-    vkBasalt
-    dxvk
-    vulkan-headers
-    vulkan-validation-layers
-    wine64Packages.fonts
-    winePackages.fonts
-    gamescope
-    mangohud
 
     # media
     spotify

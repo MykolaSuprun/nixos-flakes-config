@@ -26,8 +26,9 @@ if [ -n "$1" ] && [ -n "$2" ]; then
           echo "No home manager target. Either set a home_manager_target variable or pass it as 2nd parameter"
         else
           pushd "$nxcnf_dir" || exit
-          nix build .#homeConfigurations."$home_manager_target".activationPackage
-          ./result/activate
+          home-manager switch --flake .#"$home_manager_target"
+          # nix build .#homeConfigurations."$home_manager_target".activationPackage
+          # ./result/activate
           popd || exit
         fi
       else

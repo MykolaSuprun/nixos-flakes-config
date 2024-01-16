@@ -12,6 +12,7 @@
     ./hardware-configuration.nix
     ./../../modules/fonts.nix
     ./../../modules/input_method.nix
+    ./../../modules/desktop-packages.nix
   ];
 
   # nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -33,7 +34,7 @@
       };
     };
 
-    kernelPackages = pkgs.linuxPackages_latest;
+    kernelPackages = pkgs.linuxPackages_zen;
     kernelModules = ["wl" "ecryptfs"];
     initrd.kernelModules = ["wl"];
     extraModulePackages = [config.boot.kernelPackages.broadcom_sta];
@@ -142,14 +143,10 @@
 
   programs = {
     zsh.enable = true;
-    kdeconnect.enable = true;
     ecryptfs.enable = true;
     gnupg.agent.pinentryFlavor = "tty";
-    gamemode = {
-      enable = true;
-      enableRenice = true;
-    };
     virt-manager.enable = true;
+    java.enable = true;
   };
 
   # List packages installed in system profile.
@@ -160,9 +157,11 @@
     shells = with pkgs; [zsh];
     sessionVariables = {
       LIBVIRT_DEFAULT_URI = ["qemu:///system"];
+      NIXOS_OZONE_WL = "1";
     };
 
     systemPackages = with pkgs; [
+      # dev tools
       my-neovim.packages.${system}.default
       sublime4
       vscode
@@ -205,21 +204,6 @@
       qemu
       kvmtool
       tpm2-tools
-
-      # QT and GTK themes
-      plasma-overdose-kde-theme
-      materia-kde-theme
-      graphite-kde-theme
-      arc-kde-theme
-      adapta-kde-theme
-      fluent-gtk-theme
-      adapta-gtk-theme
-      mojave-gtk-theme
-      numix-gtk-theme
-      whitesur-gtk-theme
-      whitesur-icon-theme
-      # sddm theme
-      catppuccin-sddm-corners
     ];
   };
 
