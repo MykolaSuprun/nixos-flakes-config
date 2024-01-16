@@ -22,12 +22,12 @@
     export VISUAL=nvim
     
     # obsidian fix:
-    export LD_LIBRARY_PATH=$(nix build --print-out-paths --no-link nixpkgs#libGL)/lib
+    # export LD_LIBRARY_PATH=$(nix build --print-out-paths --no-link nixpkgs#libGL)/lib
     clear
 
     # Aliases
     alias editconf="cd $confdir; nvim ."
-    alias nxconf="$confdir/nxcnf.sh"
+    alias nxcnf="$confdir/nxcnf.sh"
     alias nixos-build="$confdir/nxcnf.sh build os geks-nixos"
     alias home-build="$confdir/nxcnf.sh build home"
     alias nix-update="$confdir/nxcnf.sh update"

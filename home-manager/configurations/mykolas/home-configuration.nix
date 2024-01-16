@@ -18,7 +18,7 @@ in {
     ./../../modules/flatpak-overrides.nix
     ./../../modules/tmux.nix
     ./../../modules/dev-packages.nix
-    ./../../modules/dektop-packages.nix.nix
+    ./../../modules/dektop-packages.nix
   ];
 
   nixpkgs = {
@@ -98,9 +98,6 @@ in {
   ];
 
   home.sessionVariables = {
-    NIXOS_OZONE_WL = "1";
-    GTK_IM_MODULE = "fcitx";
-    QT_IM_MODULE = "fcitx";
-    XMODIFIERS = "@im=fcitx";
+      NIXOS_OZONE_WL = "1";
   };
 }

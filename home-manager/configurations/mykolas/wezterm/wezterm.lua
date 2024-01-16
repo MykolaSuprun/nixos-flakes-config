@@ -12,7 +12,7 @@ end
 
 -- This is where you actually apply your config choices
 
-config.window_decorations = 'RESIZE'
+config.window_decorations = 'TITLE | RESIZE'
 config.window_background_opacity = 0.7
 config.display_pixel_geometry = 'RGB'
 config.freetype_load_target = 'Light'
@@ -35,8 +35,8 @@ config.font = wezterm.font({
 -- })
 use_cap_height_to_scale_fallback_fonts = true
 -- window size on open
-config.initial_rows = 70
-config.initial_cols = 260
+config.initial_rows = 60
+config.initial_cols = 200
 -- disable close window confirmation
 config.window_close_confirmation = 'NeverPrompt'
 
