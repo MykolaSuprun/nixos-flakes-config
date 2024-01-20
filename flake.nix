@@ -4,9 +4,6 @@
   nixConfig = {
     experimental-features = ["nix-command" "flakes"];
     allowUnfree = true;
-    # permittedInsecurePackages = [
-    #   "openssl-1.1.1w"
-    # ];
     substituters = ["https://cache.nixos.org/"];
     extra-substituters = ["https://nix-community.cachix.org"];
     extra-trusted-public-keys = [
@@ -27,10 +24,6 @@
       url = "github:MykolaSuprun/neovim-flake";
       flake = true;
     };
-    # plasma6 = {
-    #   url = "github:nix-community/kde2nix";
-    #   flake = true;
-    # };
   };
 
   outputs = {
@@ -46,12 +39,6 @@
     inherit (self) outputs;
     system = "x86_64-linux";
 
-    # overlayMyNeovim = prev: final: {
-    #   myNeovim = import my-neovim.packages.${system}.default {
-    #     pkgs = final;
-    #   };
-    # };
-
     pkgs = import nixpkgs {
       inherit system;
       config = {
@@ -61,7 +48,9 @@
           "electron-25.9.0"
         ];
       };
-      overlays = [ nixgl.overlay ];
+      # overlays = [
+      #   nixgl.overlay
+      # ];
     };
 
     pkgs-stable = import nixpkgs-stable {
@@ -73,27 +62,33 @@
           "electron-25.9.0"
         ];
       };
-      overlays = [ nixgl.overlay ];
+      # overlays = [
+      #   nixgl.overlay
+      # ];
     };
 
     lib = nixpkgs.lib;
-    homeManagerOverlays = args: {nixpkgs.overlays = import ./home-manager/overlays args;};
   in {
     nixosConfigurations = {
       geks-nixos = lib.nixosSystem {
         inherit system;
         modules = [
           ./nixos/configurations/geks-nixos/configuration.nix
-          # plasma6.nixosModules.plasma6
+          # home-manager setup
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+
+              users.mykolas = import ./home-manager/configurations/mykolas/home-configuration.nix;
+              extraSpecialArgs = {inherit inputs outputs pkgs pkgs-stable my-neovim system;};
+            };
+          }
+          # overlays
+          (args: { nixpkgs.overlays = import ./overlays args; })
         ];
         specialArgs = {inherit inputs outputs pkgs pkgs-stable my-neovim;};
-      };
-    };
-    homeConfigurations = {
-      mykolas-nixos = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-        modules = [./home-manager/configurations/mykolas/home-configuration.nix homeManagerOverlays];
-        extraSpecialArgs = {inherit inputs outputs pkgs pkgs-stable my-neovim system;};
       };
     };
   };

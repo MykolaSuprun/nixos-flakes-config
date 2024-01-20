@@ -21,18 +21,19 @@ in {
     ./../../modules/dektop-packages.nix
   ];
 
-  nixpkgs = {
-    # You can add overlays here
-    # Configure your nixpkgs instance
-    config = {
-      # Disable if you don't want unfree packages
-      allowUnfree = true;
-      # Workaround for https://github.com/nix-community/home-manager/issues/2942
-      allowUnfreePredicate = _: true;
-
-      permittedInsecurePackages = ["openssl-1.1.1v" "electron-25.9.0"];
-    };
-  };
+  # nixpkgs = {
+  #   # You can add overlays here
+  #   # Configure your nixpkgs instance
+  #   config = {
+  #     # Disable if you don't want unfree packages
+  #     allowUnfree = true;
+  #     # Workaround for https://github.com/nix-community/home-manager/issues/2942
+  #     allowUnfreePredicate = _: true;
+  #
+  #     permittedInsecurePackages = ["openssl-1.1.1v" "electron-25.9.0"];
+  #   };
+  #   overlays = [];
+  # };
 
   home.username = "mykolas";
   home.homeDirectory = "/home/mykolas";
