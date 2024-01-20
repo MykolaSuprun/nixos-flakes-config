@@ -86,7 +86,7 @@
             };
           }
           # overlays
-          (args: { nixpkgs.overlays = import ./overlays args; })
+          (args: {nixpkgs.overlays = import ./overlays args;})
         ];
         specialArgs = {inherit inputs outputs pkgs pkgs-stable my-neovim;};
       };
