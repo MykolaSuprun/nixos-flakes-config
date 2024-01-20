@@ -31,8 +31,10 @@
     adapta-gtk-theme
     mojave-gtk-theme
     numix-gtk-theme
+    whitesur-kde
     whitesur-gtk-theme
     whitesur-icon-theme
+    whitesur-cursors
     # sddm theme
     catppuccin-sddm-corners
   ];
