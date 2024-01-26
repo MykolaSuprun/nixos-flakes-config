@@ -16,10 +16,19 @@
       enable = true;
       capSysNice = true;
     };
+    firefox = {
+      enable = true;
+      package = pkgs.firefox-bin;
+      preferences = {
+        "widget.use-xdg-desktop-portal.file-picker" = 1;
+      };
+    };
   };
 
   environment.systemPackages = with pkgs; [
     steam-run
+
+    veracrypt
 
     # QT and GTK themes
     plasma-overdose-kde-theme

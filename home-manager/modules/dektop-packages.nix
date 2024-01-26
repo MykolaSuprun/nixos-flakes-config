@@ -1,9 +1,5 @@
 {pkgs, pkgs-stable, ...}: {
 
-  programs.firefox = {
-    enable = true;
-    package = pkgs.firefox;
-  };
 
   home.packages = with pkgs; [
     # plasma packages and basic applications
