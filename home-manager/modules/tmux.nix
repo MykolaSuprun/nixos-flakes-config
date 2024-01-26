@@ -46,6 +46,9 @@
       set-window-option -g pane-base-index 1
       set-option -g renumber-windows on
 
+      # set tmux regularly save it's environment
+      set -g @continuum-restore 'on'
+
       # keybindings
       bind-key -T copy-mode-vi v send-keys -X begin-selection
       bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
@@ -53,35 +56,19 @@
       # open panes in the current directory
       bind '-' split-window -v -c "#{pane_current_path}"
       bind | split-window -h -c "#{pane_current_path}"
-      # set tmux regularly save it's environment
-      set -g @continuum-restore 'on'
-
-      # vim integration
-      # See: https://github.com/christoomey/vim-tmux-navigator
-      is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
-          | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|l?n?vim?x?|fzf)(diff)?$'"
-      # bind-key -n 'A-h' if-shell "$is_vim" 'send-keys A-h'  'select-pane -L'
-      # bind-key -n 'A-j' if-shell "$is_vim" 'send-keys A-j'  'select-pane -D'
-      # bind-key -n 'A-k' if-shell "$is_vim" 'send-keys A-k'  'select-pane -U'
-      # bind-key -n 'A-l' if-shell "$is_vim" 'send-keys A-l'  'select-pane -R'
-
-      tmux_version='$(tmux -V | sed -En "s/^tmux ([0-9]+(.[0-9]+)?).*/\1/p")'
-      if-shell -b '[ "$(echo "$tmux_version < 3.0" | bc)" = 1 ]' \
-          "bind-key -n 'A-\\' if-shell \"$is_vim\" 'send-keys A-\\'  'select-pane -l'"
-      if-shell -b '[ "$(echo "$tmux_version >= 3.0" | bc)" = 1 ]' \
-          "bind-key -n 'A-\\' if-shell \"$is_vim\" 'send-keys A-\\\\'  'select-pane -l'"
-
-      # bind-key -T copy-mode-vi 'A-h' select-pane -L
-      # bind-key -T copy-mode-vi 'A-j' select-pane -D
-      # bind-key -T copy-mode-vi 'A-k' select-pane -U
-      # bind-key -T copy-mode-vi 'A-l' select-pane -R
-      # bind-key -T copy-mode-vi 'A-\' select-pane -l
 
       # vim-like pane resizing  
       bind -r C-k resize-pane -U
       bind -r C-j resize-pane -D
       bind -r C-h resize-pane -L
       bind -r C-l resize-pane -R
+
+      is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
+      bind-key -n 'M-h' if-shell "$is_vim" 'send-keys M-h' 'select-pane -L'
+      bind-key -n 'M-j' if-shell "$is_vim" 'send-keys M-j' 'select-pane -D'
+      bind-key -n 'M-k' if-shell "$is_vim" 'send-keys M-k' 'select-pane -U'
+      bind-key -n 'M-l' if-shell "$is_vim" 'send-keys M-l' 'select-pane -R'
+      bind-key -n 'M-\' if-shell "$is_vim" 'send-keys M-\' 'select-pane -l'
     '';
   };
 }

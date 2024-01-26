@@ -37,6 +37,7 @@
     alias arch="distrobox-enter arch"
     alias vim="${neovim_github}"
     alias nv="${neovim-local}"
+    alias nxv="nix run ~/src/my-nixvim/ -- "
     alias vi="nvim"
     alias tmux="tmux -2"
   '';

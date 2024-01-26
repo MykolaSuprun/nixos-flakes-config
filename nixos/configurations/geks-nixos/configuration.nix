@@ -147,6 +147,10 @@
       };
     };
     spiceUSBRedirection.enable = true;
+    vmware = {
+      host.enable = true;
+      host.extraPackages = with pkgs; [];
+    };
   };
 
   programs = {
@@ -166,7 +170,7 @@
     sessionVariables = {
       LIBVIRT_DEFAULT_URI = ["qemu:///system"];
       NIXOS_OZONE_WL = "1";
-   };
+    };
 
     systemPackages = with pkgs; [
       # dev tools
@@ -232,25 +236,66 @@
     menus.enable = true;
     sounds.enable = true;
     icons.enable = true;
+    autostart.enable = true;
+
   };
 
   #Flatpak fix for themes and fonts
-  system.fsPackages = [pkgs.bindfs];
+  # system.fsPackages = [pkgs.bindfs];
+  # fileSystems = let
+  #   mkRoSymBind = path: {
+  #     device = path;
+  #     fsType = "fuse.bindfs";
+  #     options = ["ro" "resolve-symlinks" "x-gvfs-hide"];
+  #   };
+  #   aggregatedFonts = pkgs.buildEnv {
+  #     name = "system-fonts";
+  #     paths = config.fonts.packages;
+  #     pathsToLink = ["/share/fonts"];
+  #   };
+  # in {
+  #   # Create an FHS mount to support flatpak host icons/fonts
+  #   "/usr/share/icons" = mkRoSymBind (config.system.path + "/share/icons");
+  #   "/usr/share/fonts" = mkRoSymBind (aggregatedFonts + "/share/fonts");
+  # };
+  #
+
+  system.fsPackages = [ pkgs.bindfs ];
   fileSystems = let
     mkRoSymBind = path: {
       device = path;
       fsType = "fuse.bindfs";
-      options = ["ro" "resolve-symlinks" "x-gvfs-hide"];
+      options = [ "ro" "resolve-symlinks" "x-gvfs-hide" ];
+    };
+    aggregatedIcons = pkgs.buildEnv {
+      name = "system-icons";
+      paths = with pkgs; [
+        libsForQt5.breeze-qt5  # for plasma
+        plasma-overdose-kde-theme
+        materia-kde-theme
+        graphite-kde-theme
+        arc-kde-theme
+        adapta-kde-theme
+        fluent-gtk-theme
+        adapta-gtk-theme
+        mojave-gtk-theme
+        numix-gtk-theme
+        whitesur-kde
+        whitesur-gtk-theme
+        whitesur-icon-theme
+        whitesur-cursors
+        # gnome.gnome-themes-extra
+      ];
+      pathsToLink = [ "/share/icons" ];
     };
     aggregatedFonts = pkgs.buildEnv {
       name = "system-fonts";
       paths = config.fonts.packages;
-      pathsToLink = ["/share/fonts"];
+      pathsToLink = [ "/share/fonts" ];
     };
   in {
-    # Create an FHS mount to support flatpak host icons/fonts
-    "/usr/share/icons" = mkRoSymBind (config.system.path + "/share/icons");
-    "/usr/share/fonts" = mkRoSymBind (aggregatedFonts + "/share/fonts");
+    "/usr/share/icons" = mkRoSymBind "${aggregatedIcons}/share/icons";
+    "/usr/local/share/fonts" = mkRoSymBind "${aggregatedFonts}/share/fonts";
   };
 
   system.stateVersion = "23.11"; # Did you read the comment?
