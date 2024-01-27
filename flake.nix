@@ -21,7 +21,7 @@
     };
     nixgl.url = "github:guibou/nixGL";
     my-neovim = {
-      url = "github:MykolaSuprun/neovim-flake";
+      url = "github:MykolaSuprun/nixvim-config";
       flake = true;
     };
   };

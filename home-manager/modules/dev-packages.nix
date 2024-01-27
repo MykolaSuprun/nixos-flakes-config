@@ -58,8 +58,6 @@
     nix-diff
     nixfmt
 
-
     sqlcmd
-
   ];
 }
