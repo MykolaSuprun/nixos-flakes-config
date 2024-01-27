@@ -1,6 +1,6 @@
 {inputs, ...}: let
-  neovim-local = "nix run ~/src/neovim-flake -- ";
-  neovim_github = "nix run github:MykolaSuprun/neovim-flake #. -- ";
+  neovim-local = "nix run ~/src/nixvim-config -- ";
+  neovim_github = "nix run github:MykolaSuprun/nixvim-config #. -- ";
   conf_root = "~/.nixconf";
   shell_init = ''
     if [[ $(uname -a | grep arch) ]]
@@ -20,7 +20,7 @@
     export confdir=${conf_root}
     export EDITOR=nvim
     export VISUAL=nvim
-    
+
     # obsidian fix:
     # export LD_LIBRARY_PATH=$(nix build --print-out-paths --no-link nixpkgs#libGL)/lib
     clear
@@ -37,7 +37,6 @@
     alias arch="distrobox-enter arch"
     alias vim="${neovim_github}"
     alias nv="${neovim-local}"
-    alias nxv="nix run ~/src/my-nixvim/ -- "
     alias vi="nvim"
     alias tmux="tmux -2"
   '';
