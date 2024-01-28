@@ -74,6 +74,11 @@ in {
       source = ./wezterm/wezterm.lua;
       enable = true;
     };
+    "./.config/kitty" = {
+      source = ./kitty;
+      enable = true;
+      recursive = true;
+    };
     "./.config/tmux.conf" = {
       source = ./tmux/tmux.conf;
       enable = true;
