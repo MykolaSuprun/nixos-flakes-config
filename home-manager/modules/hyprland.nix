@@ -11,7 +11,9 @@
 
     ${pkgs.networkmanagerapplet}/bin/nm-applet --indicator &
 
-    ${pkgs.dunst}/bin/dunst
+    ${pkgs.dunst}/bin/dunst &
+
+    export LD_LIBRARY_PATH=$(nix build --print-out-paths --no-link nixpkgs#libGL)/lib
   '';
 in {
   wayland.windowManager.hyprland = {
@@ -29,9 +31,15 @@ in {
       ];
 
       "$mainMod" = "SUPER";
-      "$terminal" = "wezterm";
+      "$terminal" = "kitty";
       "$fileManager" = "dolphin";
       "$menu" = "rofi -show drun -show-icons";
+
+      input = {
+        sensitivity = "-0.55";
+        accel_profile = "flat";
+        kb_options = "caps:swapescape";
+      };
 
       bind = [
         # basic keymaps
@@ -41,6 +49,7 @@ in {
         "$mainMod, E, exec, $fileManager"
         "$mainMod, V, togglefloating,"
         "$mainMod, R, exec, $menu"
+        "ALT, SPACE, exec, $menu"
         "$mainMod, P, pseudo, # dwindle"
         "$mainMod, J, togglesplit, # dwindle"
 
@@ -79,6 +88,9 @@ in {
         "$mainMod, mouse_up, workspace, e-1"
       ];
 
+      bindr = [
+      ];
+
       bindm = [
         "$mainMod, mouse:272, movewindow"
         "$mainMod, mouse:273, resizewindow"
@@ -87,11 +99,18 @@ in {
   };
 
   home.packages = with pkgs; [
+    # terminal (use kitty for hyprland as wezterm is bugged atm)
+    kitty
+    # bar
     waybar
+    # app launcher
     rofi-wayland
+    # notifications
     dunst
     libnotify
+    # wallpaper engine
     swww
+    # network applet
     networkmanagerapplet
   ];
 }
