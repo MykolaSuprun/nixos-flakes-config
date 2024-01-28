@@ -19,6 +19,7 @@ in {
     ./../../modules/tmux.nix
     ./../../modules/dev-packages.nix
     ./../../modules/dektop-packages.nix
+    ./../../modules/hyprland.nix
   ];
 
   # nixpkgs = {
@@ -94,11 +95,9 @@ in {
   };
 
   home.packages = with pkgs; [
-    kitty
-    mpvpaper
   ];
 
   home.sessionVariables = {
-      NIXOS_OZONE_WL = "1";
+    NIXOS_OZONE_WL = "1";
   };
 }

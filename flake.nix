@@ -19,6 +19,11 @@
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    hyprland.url = "github:hyprwm/Hyprland";
+    hyprland-plugins = {
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
     nixgl.url = "github:guibou/nixGL";
     my-neovim = {
       url = "github:MykolaSuprun/nixvim-config";
@@ -31,9 +36,9 @@
     nixpkgs,
     nixpkgs-stable,
     home-manager,
+    hyprland,
     nixgl,
     my-neovim,
-    # plasma6,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -48,9 +53,11 @@
           "electron-25.9.0"
         ];
       };
-      # overlays = [
-      #   nixgl.overlay
-      # ];
+      overlays =
+        [
+          # nixgl.overlay
+        ]
+        ++ import ./overlays;
     };
 
     pkgs-stable = import nixpkgs-stable {
@@ -82,11 +89,9 @@
               useUserPackages = true;
 
               users.mykolas = import ./home-manager/configurations/mykolas/home-configuration.nix;
-              extraSpecialArgs = {inherit inputs outputs pkgs pkgs-stable my-neovim system;};
+              extraSpecialArgs = {inherit inputs outputs system pkgs pkgs-stable my-neovim hyprland;};
             };
           }
-          # overlays
-          (args: {nixpkgs.overlays = import ./overlays args;})
         ];
         specialArgs = {inherit inputs outputs pkgs pkgs-stable my-neovim;};
       };
