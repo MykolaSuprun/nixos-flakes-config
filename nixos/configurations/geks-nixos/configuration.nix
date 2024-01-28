@@ -2,6 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 {
+  inputs,
   config,
   pkgs,
   my-neovim,
@@ -163,6 +164,11 @@
       defaultEditor = true;
       vimAlias = true;
     };
+    hyprland = {
+      enable = true;
+      package = inputs.hyprland.packages."${pkgs.system}".hyprland;
+      xwayland.enable = true;
+    };
   };
 
   # List packages installed in system profile.
@@ -232,7 +238,6 @@
         xdg-desktop-portal-wlr
         xdg-desktop-portal-gtk
         libsForQt5.xdg-desktop-portal-kde
-        xdg-utils
       ];
       xdgOpenUsePortal = true;
     };
