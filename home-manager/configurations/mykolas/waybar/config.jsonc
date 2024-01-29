@@ -1,0 +1,21 @@
+{
+    "layer": "top",
+    "height" : 34,
+    "modules-center": ["battery", "clock"],
+    "modules-left": ["hyprland/workspaces","hyprland/window"],
+    "battery": {
+        "format": "{capacity}% {icon}",
+        "format-icons": ["", "", "", "", ""]
+    },
+    "clock": {
+        "format": "{:%a, %d. %b  %H:%M  %Z}",
+
+        "timezones": ["Europe/Warsaw", "Europe/Kyiv", "US/Pacific"],
+        "actions":  {
+                    "on-click-right": "mode",
+                    "on-scroll-up": "tz_up",
+                    "on-scroll-down": "tz_down"
+                    }
+    }
+}
+

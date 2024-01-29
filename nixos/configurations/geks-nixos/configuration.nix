@@ -167,6 +167,7 @@
     hyprland = {
       enable = true;
       package = inputs.hyprland.packages."${pkgs.system}".hyprland;
+      portalPackage = inputs.hyprland.packages."${pkgs.system}".xdg-desktop-portal-hyprland;
       xwayland.enable = true;
     };
   };
@@ -234,9 +235,8 @@
     portal = {
       enable = true;
       extraPortals = with pkgs; [
-        xdg-desktop-portal
-        xdg-desktop-portal-wlr
         xdg-desktop-portal-gtk
+        inputs.hyprland.packages."${pkgs.system}".xdg-desktop-portal-hyprland
         libsForQt5.xdg-desktop-portal-kde
       ];
       xdgOpenUsePortal = true;

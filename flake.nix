@@ -24,7 +24,6 @@
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
-    nixgl.url = "github:guibou/nixGL";
     my-neovim = {
       url = "github:MykolaSuprun/nixvim-config";
       flake = true;
@@ -37,7 +36,6 @@
     nixpkgs-stable,
     home-manager,
     hyprland,
-    nixgl,
     my-neovim,
     ...
   } @ inputs: let
@@ -55,7 +53,6 @@
       };
       overlays =
         [
-          # nixgl.overlay
         ]
         ++ import ./overlays;
     };

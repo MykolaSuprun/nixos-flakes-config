@@ -1,6 +1,8 @@
-{pkgs, pkgs-stable, ...}: {
-
-
+{
+  pkgs,
+  pkgs-stable,
+  ...
+}: {
   home.packages = with pkgs; [
     # plasma packages and basic applications
     libsForQt5.sddm-kcm
@@ -16,7 +18,6 @@
     # internet
     mullvad-browser
     protonvpn-gui
-
 
     # social
     discord
@@ -38,8 +39,7 @@
     distrobox
 
     # theming
-    papirus-icon-theme
-    # catppuccin-papirus-folders
+    catppuccin-papirus-folders
     catppuccin-kde
     catppuccin-gtk
     catppuccin-kvantum
@@ -53,4 +53,19 @@
     vlc
     cider
   ];
+
+  xdg.desktopEntries = {
+    obsidian = {
+      name = "Obsidian";
+      genericName = "Notes app";
+      # script with fix for libGL
+      exec = "./.local/share/home-scripts/run-obsidian.sh";
+      terminal = false;
+      categories = ["Office"];
+      noDisplay = false;
+      icon = "obsidian";
+      mimeType = ["x-scheme-handler/obsidian"];
+      type = "Application";
+    };
+  };
 }
