@@ -18,10 +18,10 @@
     };
     firefox = {
       enable = true;
-      package = pkgs.firefox-bin;
-      preferences = {
-        "widget.use-xdg-desktop-portal.file-picker" = 1;
-      };
+      package = pkgs.firefox;
+      # preferences = {
+      #   "widget.use-xdg-desktop-portal.file-picker" = 1;
+      # };
     };
   };
 
@@ -44,6 +44,14 @@
     whitesur-gtk-theme
     whitesur-icon-theme
     whitesur-cursors
+    catppuccin
+    catppuccin-kde
+    catppuccin-gtk
+    catppuccin-qt5ct
+    catppuccin-kvantum
+    catppuccin-cursors
+    catppuccin-papirus-folders
+
     # sddm theme
     catppuccin-sddm-corners
   ];

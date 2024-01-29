@@ -63,6 +63,10 @@ in {
     };
   };
 
+  xdg = {
+    enable = true;
+  };
+
   # create home configuration files
   home.file = {
     "./.config/helix" = {
@@ -76,8 +80,13 @@ in {
     };
     "./.config/kitty" = {
       source = ./kitty;
-      enable = true;
       recursive = true;
+      enable = true;
+    };
+    "./.config/waybar" = {
+      source = ./waybar;
+      recursive = true;
+      enable = true;
     };
     "./.config/tmux.conf" = {
       source = ./tmux/tmux.conf;
@@ -95,6 +104,11 @@ in {
     };
     "./.gitconfig" = {
       source = ./gitconfig/gitconfig;
+      enable = true;
+    };
+    "./.local/share/home-scripts" = {
+      source = ./home-scripts;
+      recursive = true;
       enable = true;
     };
   };

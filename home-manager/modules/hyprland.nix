@@ -6,6 +6,27 @@
   ...
 }: let
   initScript = pkgs.writeShellScriptBin "start" ''
+    # Log WLR errors and logs to the hyprland log. Recommended
+    export HYPRLAND_LOG_WLR=1
+
+    # set XDG session to wayland & hyprland
+    export XDG_SESSION_TYPE="wayland"
+    export XDG_SESSION_DESKTOP="Hyprland"
+    export XDG_CURRENT_DESKTOP="Hyprland"
+
+    # Set IM to fcitx
+    export GTK_IM_MODULE=fcitx
+    export QT_IM_MODULE=fcitx
+    export XMODIFIERS=@im=fcitx
+    export SDL_IM_MODULE=fcitx
+    export GLFW_IM_MODULE=fcitx
+
+    export XCURSOR_THEME=Breeze
+
+    # a fix for electron apps (run on init to always have it available in cache)
+    export LD_LIBRARY_PATH=$(nix build --print-out-paths --no-link nixpkgs#libGL)/lib &
+
+
     ${pkgs.waybar}/bin/waybar &
     # ${pkgs.swww}/bin/swww init &
 
@@ -13,14 +34,22 @@
 
     ${pkgs.dunst}/bin/dunst &
 
-    export LD_LIBRARY_PATH=$(nix build --print-out-paths --no-link nixpkgs#libGL)/lib
+    fcitx5-remote -r &
+    fcitx5 -d --replace &
+    fcitx5-remote -r &
+
+    # fix for xdg-open
+    exec systemctl --user import-environment PATH && \
+    systemctl --user restart xdg-desktop-portal.service
   '';
 in {
   wayland.windowManager.hyprland = {
     enable = true;
     package = inputs.hyprland.packages."${pkgs.system}".hyprland;
+    xwayland.enable = true;
+    systemd.enable = true;
     plugins = [
-      inputs.hyprland-plugins.packages.${pkgs.system}.hyprbars
+      # inputs.hyprland-plugins.packages.${pkgs.system}.hyprbars
     ];
     settings = {
       exec-once = ''${initScript}/bin/start'';
@@ -40,6 +69,53 @@ in {
         accel_profile = "flat";
         kb_options = "caps:swapescape";
       };
+
+      general = {
+        gaps_in = 5;
+        gaps_out = 20;
+
+        "col.active_border" = "rgba(33ccffee) rgba(00ff99ee) 45deg";
+        "col.inactive_border" = "rgba(595959aa)";
+
+        layout = "dwindle";
+      };
+
+      decoration = {
+        rounding = 10;
+
+        blur = {
+          enabled = true;
+          size = 3;
+          passes = 1;
+
+          vibrancy = 0.1696;
+        };
+
+        drop_shadow = true;
+        shadow_range = 4;
+        shadow_render_power = 3;
+        "col.shadow" = "rgba(1a1a1aee)";
+      };
+
+      animations = {
+        enabled = true;
+
+        # Some default animations, see https://wiki.hyprland.org/Configuring/Animations/ for more
+
+        bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
+        animation = [
+          "windows, 1, 7, myBezier"
+          "windowsOut, 1, 7, default, popin 80%"
+          "border, 1, 10, default"
+          "borderangle, 1, 8, default"
+          "fade, 1, 7, default"
+          "workspaces, 1, 6, default"
+        ];
+      };
+
+      windowrule = [
+        "pseudo,fcitx"
+      ];
 
       bind = [
         # basic keymaps
@@ -98,19 +174,66 @@ in {
     };
   };
 
-  home.packages = with pkgs; [
-    # terminal (use kitty for hyprland as wezterm is bugged atm)
-    kitty
-    # bar
-    waybar
-    # app launcher
-    rofi-wayland
-    # notifications
-    dunst
-    libnotify
-    # wallpaper engine
-    swww
-    # network applet
-    networkmanagerapplet
-  ];
+  programs.waybar = {
+    enable = true;
+    package = pkgs.waybar;
+  };
+
+  home = {
+    packages = with pkgs; [
+      # terminal (use kitty for hyprland as wezterm is bugged atm)
+      kitty
+      # bar
+      waybar
+      # app launcher
+      rofi-wayland
+      # notifications
+      dunst
+      libnotify
+      # wallpaper engine
+      swww
+      # network applet
+      networkmanagerapplet
+    ];
+
+    sessionVariables = {
+      GTK_IM_MODULE = "fcitx";
+      QT_IM_MODULE = "fcitx";
+      XMODIFIERS = "@im=fcitx";
+      GLFW_IM_MODULE = "fcitx";
+      INPUT_METHOD = "fcitx";
+      IMSETTINGS_MODULE = "fcitx";
+    };
+
+    pointerCursor = {
+      gtk.enable = true;
+      # x11.enable = true;
+      package = pkgs.catppuccin-cursors.mochaDark;
+      name = "Catppuccin-Mocha-Dark-Cursors";
+      size = 16;
+    };
+  };
+
+  gtk = {
+    enable = true;
+    theme = {
+      name = "Catppuccin-Macchiato-Compact-Pink-Dark";
+      package = pkgs.catppuccin-gtk.override {
+        accents = ["pink"];
+        size = "compact";
+        tweaks = ["rimless" "black"];
+        variant = "macchiato";
+      };
+    };
+
+    iconTheme = {
+      package = pkgs.catppuccin-papirus-folders;
+      name = "catppuccin-pairus-folders";
+    };
+
+    font = {
+      name = "Serif";
+      size = 10;
+    };
+  };
 }
