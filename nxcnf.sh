@@ -10,11 +10,13 @@ if [ -n "$1" ] && [ -n "$2" ]; then
         if [ -z "$nixos_target" ]; then
           echo "No nixos target. Either set a nixos_target variable or pass it as 2nd parameter"
         else
+          rm ~/.gtkrc-2.0
           pushd "$nxcnf_dir" || exit
           sudo nixos-rebuild switch --flake .#"$nixos_target"
           popd || exit
         fi
       else
+        rm ~/.gtkrc-2.0
         pushd "$nxcnf_dir" || exit
         sudo nixos-rebuild switch --flake .#"$3"
         popd || exit

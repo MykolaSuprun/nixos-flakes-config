@@ -29,6 +29,8 @@
       # sysstat
     ];
     extraConfig = ''
+      # set tmux attach to create new session if none is available
+      new-session -n $HOST
       # fix teminal colors
       set-option -sa terminal-overrides ",xterm*:Tc"
       # better window switching
@@ -57,7 +59,7 @@
       bind '-' split-window -v -c "#{pane_current_path}"
       bind | split-window -h -c "#{pane_current_path}"
 
-      # vim-like pane resizing  
+      # vim-like pane resizing
       bind -r C-k resize-pane -U
       bind -r C-j resize-pane -D
       bind -r C-h resize-pane -L
