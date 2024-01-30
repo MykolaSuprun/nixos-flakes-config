@@ -175,6 +175,7 @@ in {
         "$mainMod SHIFT,O,layoutmsg,orientationcycle left top right bottom center"
         "$mainMod,I,layoutmsg,addmaster"
         "$mainMod SHIFT,I,layoutmsg,removemaster"
+        "$mainMod ALT SHIFT,L, exec, swaylock-fancy"
 
         # move focus
         "$mainMod, h, movefocus, l"
@@ -248,6 +249,8 @@ in {
     packages = with pkgs; [
       # terminal (use kitty for hyprland as wezterm is bugged atm)
       kitty
+      # screen lock
+      swaylock-fancy
       # bar
       waybar
       # app launcher
