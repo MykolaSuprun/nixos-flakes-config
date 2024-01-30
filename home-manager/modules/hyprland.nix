@@ -5,7 +5,29 @@
   hyprland,
   ...
 }: let
-  initScript = pkgs.writeShellScriptBin "start" ''
+  initScript = pkgs.writeShellScriptBin "pre_init" ''
+    # launch xdg portal
+    sleep 1
+    killall -e xdg-desktop-portal-hyprland
+    killall -e xdg-desktop-portal-wlr
+    killall xdg-desktop-portal
+    systemctl start --user xdg-desktop-portal-hyprland &
+    sleep 2
+    systemctl start --user xdg-desktop-portal &
+
+    systemctl --user import-environment XDG_SESSION_TYPE XDG_CURRENT_DESKTOP &
+    dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP &
+    # fix for xdg-portal
+    # exec systemctl --user import-environment PATH && \
+    # systemctl --user restart xdg-desktop-portal.service &
+
+    # start polkit agent
+    /nix/store/$(ls -la /nix/store | grep polkit-kde-agent | grep '^d' | \
+    awk '{print $9}')/libexec/polkit-kde-authentication-agent-1 &
+
+    # a fix for electron apps (run on init to always have it available in cache)
+    export LD_LIBRARY_PATH=$(nix build --print-out-paths --no-link nixpkgs#libGL)/lib &
+
     # Log WLR errors and logs to the hyprland log. Recommended
     export HYPRLAND_LOG_WLR=1
 
@@ -21,29 +43,18 @@
     export SDL_IM_MODULE=fcitx
     export GLFW_IM_MODULE=fcitx
 
-    export XCURSOR_THEME=Breeze
+    # launch fcitx5
+    fcitx5 -d --replace &
+    fcitx5-remote -r &
+    sleep 3 && fcitx5-remote -s keyboard-us &
 
-    # a fix for electron apps (run on init to always have it available in cache)
-    export LD_LIBRARY_PATH=$(nix build --print-out-paths --no-link nixpkgs#libGL)/lib &
-
-
-    ${pkgs.waybar}/bin/waybar &
     # ${pkgs.swww}/bin/swww init &
 
-    ${pkgs.networkmanagerapplet}/bin/nm-applet --indicator &
+    # ${pkgs.networkmanagerapplet}/bin/nm-applet --indicator &
 
     ${pkgs.dunst}/bin/dunst &
 
-    fcitx5-remote -r &
-    fcitx5 -d --replace &
-    fcitx5-remote -r &
-
-    # fix for xdg-open
-    exec systemctl --user import-environment PATH && \
-    systemctl --user restart xdg-desktop-portal.service &
-
-    /nix/store/$(ls -la /nix/store | grep polkit-kde-agent | grep '^d' | \
-    awk '{print $9}')/libexec/polkit-kde-authentication-agent-1 &
+    ${pkgs.waybar}/bin/waybar &
   '';
 in {
   wayland.windowManager.hyprland = {
@@ -56,17 +67,34 @@ in {
     ];
     settings = {
       exec-once = [
-        ''${initScript}/bin/start''
+        ''${initScript}/bin/pre_init''
         "[workspace 1 silent] kitty"
         "[workspace 1 silent] firefox"
         "[workspace 2 silent] telegram-desktop"
         "[workspace 2 silent] morgen"
         "[workspace 3 silent] spotify"
       ];
+      monitor = [
+        "DP-1,3440x1440@165,0x0,1,bitdepth,10"
+      ];
 
       env = [
         "XCURSOR_SIZE,24"
-        "QT_QPA_PLATFORMTHEME,qt5ct" # change to qt6ct if you have that
+        # XDG
+        "XDG_CURRENT_DESKTOP,Hyprland"
+        "XDG_SESSION_TYPE,wayland"
+        "XDG_SESSION_DESKTOP,Hyprland"
+        # QT
+        "QT_AUTO_SCREEN_SCALE_FACTOR,1"
+        "QT_QPA_PLATFORM=wayland;xcb"
+        "QT_WAYLAND_DISABLE_WINDOWDECORATION,1"
+        # "QT_QPA_PLATFORMTHEME,qt5ct" # change to qt6ct if you have that
+        "QT_QPA_PLATFORMTHEME,qt6ct"
+        # Toolkit
+        "SDL_VIDEODRIVER,wayland"
+        "_JAVA_AWT_WM_NONEREPARENTING,1"
+        "CLUTTER_BACKEND,wayland"
+        "GDK_BACKEND,wayland,x11"
       ];
 
       "$mainMod" = "SUPER";

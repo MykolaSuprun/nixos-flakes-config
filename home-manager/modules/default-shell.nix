@@ -39,6 +39,12 @@
     alias nv="${neovim-local}"
     alias vi="nvim"
     alias tmux="tmux -2"
+
+    if command -v tmux &> /dev/null && [ -n "$PS1" ] && \
+    [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+      exec tmux
+    fi
+
   '';
 in {
   programs = {
