@@ -85,11 +85,20 @@
       videoDrivers = ["amdgpu"];
 
       # Enable the KDE Plasma Desktop Environment.
-      displayManager.sddm.enable = true;
       displayManager.defaultSession = "plasmawayland";
-      desktopManager.plasma5.enable = true;
-      desktopManager.plasma5.phononBackend = "vlc";
-      desktopManager.plasma5.useQtScaling = true;
+      desktopManager.plasma5 = {
+        enable = true;
+        phononBackend = "vlc";
+        useQtScaling = true;
+      };
+
+      displayManager.sddm = {
+        enable = true;
+        wayland.enable = true;
+        enableHidpi = true;
+        theme = "catppuccin-sddm-corners";
+      };
+      xkbOptions = "caps:swapescape";
     };
 
     pipewire = {

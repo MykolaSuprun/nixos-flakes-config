@@ -40,7 +40,10 @@
 
     # fix for xdg-open
     exec systemctl --user import-environment PATH && \
-    systemctl --user restart xdg-desktop-portal.service
+    systemctl --user restart xdg-desktop-portal.service &
+
+    /nix/store/$(ls -la /nix/store | grep polkit-kde-agent | grep '^d' | \
+    awk '{print $9}')/libexec/polkit-kde-authentication-agent-1 &
   '';
 in {
   wayland.windowManager.hyprland = {
@@ -52,7 +55,14 @@ in {
       # inputs.hyprland-plugins.packages.${pkgs.system}.hyprbars
     ];
     settings = {
-      exec-once = ''${initScript}/bin/start'';
+      exec-once = [
+        ''${initScript}/bin/start''
+        "[workspace 1 silent] kitty"
+        "[workspace 1 silent] firefox"
+        "[workspace 2 silent] telegram-desktop"
+        "[workspace 2 silent] morgen"
+        "[workspace 3 silent] spotify"
+      ];
 
       env = [
         "XCURSOR_SIZE,24"
@@ -67,6 +77,7 @@ in {
       input = {
         sensitivity = "-0.55";
         accel_profile = "flat";
+        kb_layout = "us,pl";
         kb_options = "caps:swapescape";
       };
 
@@ -77,7 +88,10 @@ in {
         "col.active_border" = "rgba(33ccffee) rgba(00ff99ee) 45deg";
         "col.inactive_border" = "rgba(595959aa)";
 
-        layout = "dwindle";
+        layout = "master";
+      };
+      master = {
+        orientation = "center";
       };
 
       decoration = {
@@ -126,8 +140,13 @@ in {
         "$mainMod, V, togglefloating,"
         "$mainMod, R, exec, $menu"
         "ALT, SPACE, exec, $menu"
-        "$mainMod, P, pseudo, # dwindle"
-        "$mainMod, J, togglesplit, # dwindle"
+        "$mainMod, P, pseudo, #"
+        "$mainMod, S, layoutmsg, swapwithmaster master"
+        "$mainMod, F, fullscreen, 1"
+        "$mainMod SHIFT, F, fullscreen"
+        "$mainMod SHIFT,O,layoutmsg,orientationcycle left top right bottom center"
+        "$mainMod,I,layoutmsg,addmaster"
+        "$mainMod SHIFT,I,layoutmsg,removemaster"
 
         # move focus
         "$mainMod, h, movefocus, l"
@@ -162,6 +181,24 @@ in {
         # Scroll through existing workspaces with mainMod + scroll
         "$mainMod, mouse_down, workspace, e+1"
         "$mainMod, mouse_up, workspace, e-1"
+
+        # adjust volume
+        ", XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"
+        ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+        ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+
+        # adjust brightness
+        ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
+        ", XF86MonBrightnessUp, exec, brightnessctl set 5%+"
+        ", xf86KbdBrightnessUp, exec, brightnessctl -d *::kbd_backlight set +33%"
+        ", xf86KbdBrightnessDown, exec, brightnessctl -d *::kbd_backlight set 33%-"
+
+        # media buttons
+        ", XF86AudioPlay, exec, playerctl play-pause"
+        ", XF86AudioNext, exec, playerctl next"
+        ", XF86AudioPrev, exec, playerctl previous"
+        ", XF86audiostop, exec, playerctl stop"
       ];
 
       bindr = [
@@ -194,6 +231,18 @@ in {
       swww
       # network applet
       networkmanagerapplet
+      # authentication agent
+      libsForQt5.polkit-kde-agent
+      # qt wayland
+      qt6.qtwayland
+      libsForQt5.qt5.qtwayland
+      # pipewire control
+      helvum
+      # fonts
+      font-manager
+      # media control
+      playerctl
+      pwvucontrol # volume control
     ];
 
     sessionVariables = {
