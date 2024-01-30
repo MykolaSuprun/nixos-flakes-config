@@ -1,21 +1,43 @@
 {
-    "layer": "top",
-    "height" : 34,
-    "modules-center": ["battery", "clock"],
-    "modules-left": ["hyprland/workspaces","hyprland/window"],
-    "battery": {
-        "format": "{capacity}% {icon}",
-        "format-icons": ["", "", "", "", ""]
+  "layer": "top",
+  "height" : 34,
+  "modules-center": ["battery", "clock"],
+  "modules-left": ["hyprland/workspaces","hyprland/window"],
+  "modules-right": ["wireplumber"],
+  "battery": {
+    "format": "  {capacity}% {icon}  ",
+    "format-icons": ["", "", "", "", ""],
+  },
+  "hyprland/workspaces": {
+    "format": "{name}: {icon}",
+    "format-icons": {
+      "1": "",
+      "2": "",
+      "3": "",
+      "4": "",
+      "5": "",
+      "active": "",
+      "default": ""
     },
-    "clock": {
-        "format": "{:%a, %d. %b  %H:%M  %Z}",
-
-        "timezones": ["Europe/Warsaw", "Europe/Kyiv", "US/Pacific"],
-        "actions":  {
-                    "on-click-right": "mode",
-                    "on-scroll-up": "tz_up",
-                    "on-scroll-down": "tz_down"
-                    }
+    "persistent-workspaces": {
+          "*": 5, // 5 workspaces by default on every monitor
     }
+  },
+  "wireplumber": {
+    "format": "  {icon}: {volume}%  ",
+    "format-muted": "",
+    // "on-click": "pwvucontrol",
+    "max-volume": 100,
+    "scroll-step": 10,
+    "format-icons": ["", "", ""]
+  },
+  "clock": {
+    "format": "{:%a, %d. %b  %H:%M  %Z  }",
+    "timezones": ["Europe/Warsaw", "Europe/Kyiv", "US/Pacific"],
+    "actions":  {
+      "on-click-right": "mode",
+      "on-scroll-up": "tz_up",
+      "on-scroll-down": "tz_down"
+    }
+  },
 }
-

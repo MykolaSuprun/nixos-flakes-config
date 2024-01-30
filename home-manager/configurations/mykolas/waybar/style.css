@@ -4,6 +4,7 @@
 * {
   /* reference the color by using @color-name */
   color: @text;
+  font-family: Serif, Font Awesome, JetBrainsMono Nerd Font;
 }
 
 window#waybar {

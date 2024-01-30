@@ -49,7 +49,7 @@
     bottles
 
     # media
-    spotify
+    pkgs-stable.spotify
     vlc
     cider
   ];
