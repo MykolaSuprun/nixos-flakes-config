@@ -122,6 +122,10 @@
     rtkit.enable = true;
     pam = {
       enableEcryptfs = true;
+      services = {
+        # allow swaylock to unlock sessions
+        swaylock = {};
+      };
     };
   };
 
