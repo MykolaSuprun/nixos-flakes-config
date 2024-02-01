@@ -17,9 +17,9 @@
 
     systemctl --user import-environment XDG_SESSION_TYPE XDG_CURRENT_DESKTOP &
     dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP &
-    # fix for xdg-portal
-    # exec systemctl --user import-environment PATH && \
-    # systemctl --user restart xdg-desktop-portal.service &
+    # fix for xdg-portal open with
+    exec systemctl --user import-environment PATH && \
+    systemctl --user restart xdg-desktop-portal.service &
 
     # start polkit agent
     /nix/store/$(ls -la /nix/store | grep polkit-kde-agent | grep '^d' | \
@@ -72,13 +72,20 @@ in {
         "[workspace 1 silent] firefox"
         "[workspace 2 silent] telegram-desktop"
         "[workspace 2 silent] morgen"
+        "[workspace 2 silent] obsidian"
         "[workspace 3 silent] spotify"
+        "[workspace 10 silent] megasync"
       ];
       monitor = [
         "DP-1,3440x1440@165,0x0,1,bitdepth,10"
       ];
 
       env = [
+        # necessary for tearing to work
+        # remove when kernel versioin > = 6.8
+        "WLR_DRM_NO_ATOMIC,1"
+
+        # cursor size
         "XCURSOR_SIZE,24"
         # XDG
         "XDG_CURRENT_DESKTOP,Hyprland"
@@ -117,7 +124,11 @@ in {
         "col.inactive_border" = "rgba(595959aa)";
 
         layout = "master";
+
+        # allow tearing (reduce latency)
+        allow_tearing = true;
       };
+
       master = {
         orientation = "center";
       };
@@ -157,6 +168,12 @@ in {
 
       windowrule = [
         "pseudo,fcitx"
+      ];
+
+      windowrulev2 = [
+        "immediate, class:^(overwatch.*)$"
+        "immediate, class:^(titanfall.*)$"
+        "immediate, class:^(bioshock.*)$"
       ];
 
       bind = [
@@ -208,8 +225,8 @@ in {
         "$mainMod SHIFT, 0, movetoworkspace, 10"
 
         # Scroll through existing workspaces with mainMod + scroll
-        "$mainMod, mouse_down, workspace, e+1"
-        "$mainMod, mouse_up, workspace, e-1"
+        "$mainMod, mouse_down, workspace, e-1"
+        "$mainMod, mouse_up, workspace, e+1"
 
         # adjust volume
         ", XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"

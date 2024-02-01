@@ -106,8 +106,13 @@ in {
       source = ./gitconfig/gitconfig;
       enable = true;
     };
-    "./.local/share/home-scripts" = {
-      source = ./home-scripts;
+    "./.config/rofi" = {
+      source = ./rofi/config;
+      recursive = true;
+      enable = true;
+    };
+    "./.local/share/rofi/themes" = {
+      source = ./rofi/themes;
       recursive = true;
       enable = true;
     };

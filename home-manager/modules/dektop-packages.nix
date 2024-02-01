@@ -1,6 +1,7 @@
 {
   pkgs,
   pkgs-stable,
+  pkgs-obsidian-libgl,
   ...
 }: {
   home.packages = with pkgs; [
@@ -17,7 +18,7 @@
 
     # internet
     mullvad-browser
-    protonvpn-gui
+    pkgs-stable.protonvpn-gui
 
     # social
     discord
@@ -32,8 +33,9 @@
     libreoffice-qt
     ledger-live-desktop
     partition-manager
-    obsidian
     calibre
+
+    pkgs-obsidian-libgl.obsidian
 
     # virtualization
     distrobox
@@ -53,19 +55,4 @@
     vlc
     cider
   ];
-
-  xdg.desktopEntries = {
-    obsidian = {
-      name = "Obsidian";
-      genericName = "Notes app";
-      # script with fix for libGL
-      exec = "./.local/share/home-scripts/run-obsidian.sh";
-      terminal = false;
-      categories = ["Office"];
-      noDisplay = false;
-      icon = "obsidian";
-      mimeType = ["x-scheme-handler/obsidian"];
-      type = "Application";
-    };
-  };
 }

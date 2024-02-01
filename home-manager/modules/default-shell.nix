@@ -21,10 +21,6 @@
     export EDITOR=nvim
     export VISUAL=nvim
 
-    # obsidian fix:
-    # export LD_LIBRARY_PATH=$(nix build --print-out-paths --no-link nixpkgs#libGL)/lib
-    clear
-
     # Aliases
     alias editconf="cd $confdir; nvim ."
     alias nxcnf="$confdir/nxcnf.sh"
