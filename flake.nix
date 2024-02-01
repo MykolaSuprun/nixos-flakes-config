@@ -28,6 +28,7 @@
       url = "github:MykolaSuprun/nixvim-config";
       flake = true;
     };
+    obsidian-libgl.url = "github:yshui/nixpkgs/obsidion-libgl";
   };
 
   outputs = {
@@ -37,6 +38,7 @@
     home-manager,
     hyprland,
     my-neovim,
+    obsidian-libgl,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -44,13 +46,11 @@
 
     pkgs = import nixpkgs {
       inherit system;
-      config = {
-        allowUnfree = true;
-        permittedInsecurePackages = [
-          "openssl-1.1.1w"
-          "electron-25.9.0"
-        ];
-      };
+      config.allowUnfree = true;
+      config.permittedInsecurePackages = [
+        "openssl-1.1.1w"
+        "electron-25.9.0"
+      ];
       overlays =
         [
         ]
@@ -59,16 +59,18 @@
 
     pkgs-stable = import nixpkgs-stable {
       inherit system;
-      config = {
-        allowUnfree = true;
-        permittedInsecurePackages = [
-          "openssl-1.1.1w"
-          "electron-25.9.0"
-        ];
-      };
-      # overlays = [
-      #   nixgl.overlay
-      # ];
+      config.allowUnfree = true;
+      config.permittedInsecurePackages = [
+        "openssl-1.1.1w"
+        "electron-25.9.0"
+      ];
+    };
+    pkgs-obsidian-libgl = import obsidian-libgl {
+      inherit system;
+      config.allowUnfree = true;
+      config.permittedInsecurePackages = [
+        "electron-25.9.0"
+      ];
     };
 
     lib = nixpkgs.lib;
@@ -86,7 +88,18 @@
               useUserPackages = true;
 
               users.mykolas = import ./home-manager/configurations/mykolas/home-configuration.nix;
-              extraSpecialArgs = {inherit inputs outputs system pkgs pkgs-stable my-neovim hyprland;};
+              extraSpecialArgs = {
+                inherit
+                  inputs
+                  outputs
+                  system
+                  pkgs
+                  pkgs-stable
+                  my-neovim
+                  hyprland
+                  pkgs-obsidian-libgl
+                  ;
+              };
             };
           }
         ];

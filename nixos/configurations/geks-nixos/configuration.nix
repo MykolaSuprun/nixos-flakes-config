@@ -36,6 +36,7 @@
     };
 
     kernelPackages = pkgs.linuxPackages_zen;
+    # kernelPackages = pkgs.linuxPackages_latest;
     kernelModules = ["wl" "ecryptfs"];
     initrd.kernelModules = ["wl"];
     extraModulePackages = [config.boot.kernelPackages.broadcom_sta];
