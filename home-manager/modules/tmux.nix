@@ -58,6 +58,7 @@
       # open panes in the current directory
       bind '-' split-window -v -c "#{pane_current_path}"
       bind | split-window -h -c "#{pane_current_path}"
+      bind c new-window -c "#{pane_current_path}"
 
       # vim-like pane resizing
       bind -r C-k resize-pane -U

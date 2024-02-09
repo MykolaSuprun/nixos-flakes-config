@@ -58,6 +58,7 @@
       driSupport32Bit = true; # For 32 bit applications
       extraPackages = with pkgs; [
         rocmPackages.clr.icd
+        amdvlk
         libGL
         libGLU
         libglvnd
@@ -72,6 +73,7 @@
         pkgsi686Linux.vaapiIntel
         pkgsi686Linux.vaapiVdpau
         pkgsi686Linux.libvdpau-va-gl
+        driversi686Linux.amdvlk
       ];
     };
 

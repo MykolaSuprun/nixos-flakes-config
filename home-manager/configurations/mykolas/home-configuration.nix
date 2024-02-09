@@ -1,4 +1,8 @@
-{pkgs, ...}: let
+{
+  inputs,
+  pkgs,
+  ...
+}: let
   hm_target = "mykolas-nixos";
   shell_hm_target = "export home_manager_target=${hm_target}";
 in {
@@ -19,7 +23,7 @@ in {
     ./../../modules/tmux.nix
     ./../../modules/dev-packages.nix
     ./../../modules/dektop-packages.nix
-    ./../../modules/hyprland.nix
+    # ./../../modules/hyprland.nix
   ];
 
   # nixpkgs = {
@@ -88,10 +92,6 @@ in {
       recursive = true;
       enable = true;
     };
-    "./.config/tmux.conf" = {
-      source = ./tmux/tmux.conf;
-      enable = true;
-    };
     "./.config/libvirt" = {
       source = ./libvirt;
       recursive = true;
@@ -124,4 +124,27 @@ in {
   home.sessionVariables = {
     NIXOS_OZONE_WL = "1";
   };
+
+  # gtk = {
+  #   enable = true;
+  #   theme = {
+  #     name = "WhiteSur";
+  # package = pkgs.catppuccin-gtk.override {
+  #   accents = ["pink"];
+  #   size = "compact";
+  #   tweaks = ["rimless" "black"];
+  #   variant = "macchiato";
+  # };
+  # };
+
+  # iconTheme = {
+  #   package = pkgs.catppuccin-papirus-folders;
+  #   name = "catppuccin-pairus-folders";
+  # };
+  #
+  # font = {
+  #   name = "Serif";
+  #   size = 10;
+  # };
+  # };
 }

@@ -13,6 +13,11 @@
       enable = true;
       package = pkgs.helix;
     };
+    direnv = {
+      enable = true;
+      enableBashIntegration = true; # see note on other shells below
+      nix-direnv.enable = true;
+    };
     # neovim = {
     #   enable = true;
     #   package = my-neovim.packages.${system}.default;
@@ -59,5 +64,6 @@
     nixfmt
 
     sqlcmd
+    killall
   ];
 }
