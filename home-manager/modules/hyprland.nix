@@ -17,16 +17,10 @@
 
     systemctl --user import-environment XDG_SESSION_TYPE XDG_CURRENT_DESKTOP &
     dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP &
-    # fix for xdg-portal open with
-    exec systemctl --user import-environment PATH && \
-    systemctl --user restart xdg-desktop-portal.service &
 
     # start polkit agent
     /nix/store/$(ls -la /nix/store | grep polkit-kde-agent | grep '^d' | \
     awk '{print $9}')/libexec/polkit-kde-authentication-agent-1 &
-
-    # a fix for electron apps (run on init to always have it available in cache)
-    export LD_LIBRARY_PATH=$(nix build --print-out-paths --no-link nixpkgs#libGL)/lib &
 
     # Log WLR errors and logs to the hyprland log. Recommended
     export HYPRLAND_LOG_WLR=1
@@ -48,13 +42,26 @@
     fcitx5-remote -r &
     sleep 3 && fcitx5-remote -s keyboard-us &
 
-    # ${pkgs.swww}/bin/swww init &
+    ${pkgs.wpaperd}/bin/wpaperd &
+    # ${pkgs.mpvpaper}/bin/mpvpaper init &
 
     # ${pkgs.networkmanagerapplet}/bin/nm-applet --indicator &
 
     ${pkgs.dunst}/bin/dunst &
 
-    ${pkgs.waybar}/bin/waybar &
+
+    # fix for xdg-portal open with
+    exec systemctl --user import-environment PATH && \
+    systemctl --user restart xdg-desktop-portal.service &
+
+    gBar bar 0
+  '';
+  initWallpaper = pkgs.writeShellScriptBin "init_wallpaper" ''
+    #!/usr/bin/env zsh
+    FILE=~/.config/hypr-wallpaper/wallpaper.sh
+    if test -f "$FILE"; then
+      exec $FILE
+    fi
   '';
 in {
   wayland.windowManager.hyprland = {
@@ -68,6 +75,8 @@ in {
     settings = {
       exec-once = [
         ''${initScript}/bin/pre_init''
+        ''${initWallpaper}/bin/init_wallpaper''
+        "gbar"
         "[workspace 1 silent] kitty"
         "[workspace 1 silent] firefox"
         "[workspace 2 silent] telegram-desktop"
@@ -180,7 +189,7 @@ in {
         # basic keymaps
         "$mainMod, Q, exec, $terminal"
         "$mainMod, C, killactive,"
-        "$mainMod, M, exit,"
+        "$mainMod ALT SHIFT, M, exit,"
         "$mainMod, E, exec, $fileManager"
         "$mainMod, V, togglefloating,"
         "$mainMod, R, exec, $menu"
@@ -193,6 +202,7 @@ in {
         "$mainMod,I,layoutmsg,addmaster"
         "$mainMod SHIFT,I,layoutmsg,removemaster"
         "$mainMod ALT SHIFT,L, exec, swaylock-fancy"
+        "$mainMod ALT SHIFT,W, exec, ${initWallpaper}/bin/init_wallpaper"
 
         # move focus
         "$mainMod, h, movefocus, l"
@@ -257,9 +267,16 @@ in {
     };
   };
 
-  programs.waybar = {
+  programs.gBar = {
     enable = true;
-    package = pkgs.waybar;
+    config = {
+      Location = "T";
+      EnableSNI = true;
+      SNIIconSize = {
+        Discord = 26;
+      };
+      WorkspaceSymbols = [" " " "];
+    };
   };
 
   home = {
@@ -268,15 +285,15 @@ in {
       kitty
       # screen lock
       swaylock-fancy
-      # bar
-      waybar
       # app launcher
       rofi-wayland
       # notifications
       dunst
       libnotify
       # wallpaper engine
-      swww
+      # swww
+      mpvpaper
+      wpaperd
       # network applet
       networkmanagerapplet
       # authentication agent
@@ -314,23 +331,23 @@ in {
   gtk = {
     enable = true;
     theme = {
-      name = "Catppuccin-Macchiato-Compact-Pink-Dark";
-      package = pkgs.catppuccin-gtk.override {
-        accents = ["pink"];
-        size = "compact";
-        tweaks = ["rimless" "black"];
-        variant = "macchiato";
-      };
+      name = "whitesur-gtk-theme";
+      # package = pkgs.catppuccin-gtk.override {
+      #   accents = ["pink"];
+      #   size = "compact";
+      #   tweaks = ["rimless" "black"];
+      #   variant = "macchiato";
+      # };
     };
 
-    iconTheme = {
-      package = pkgs.catppuccin-papirus-folders;
-      name = "catppuccin-pairus-folders";
-    };
-
-    font = {
-      name = "Serif";
-      size = 10;
-    };
+    # iconTheme = {
+    #   package = pkgs.catppuccin-papirus-folders;
+    #   name = "catppuccin-pairus-folders";
+    # };
+    #
+    # font = {
+    #   name = "Serif";
+    #   size = 10;
+    # };
   };
 }

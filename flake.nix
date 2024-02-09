@@ -28,7 +28,8 @@
       url = "github:MykolaSuprun/nixvim-config";
       flake = true;
     };
-    obsidian-libgl.url = "github:yshui/nixpkgs/obsidion-libgl";
+    obsidian-libgl.url = "github:yshui/nixpkgs/master";
+    gBar.url = "github:scorpion-26/gBar";
   };
 
   outputs = {
@@ -87,7 +88,12 @@
               useGlobalPkgs = true;
               useUserPackages = true;
 
-              users.mykolas = import ./home-manager/configurations/mykolas/home-configuration.nix;
+              users.mykolas = {
+                imports = [
+                  ./home-manager/configurations/mykolas/home-configuration.nix
+                  inputs.gBar.homeManagerModules.x86_64-linux.default
+                ];
+              };
               extraSpecialArgs = {
                 inherit
                   inputs

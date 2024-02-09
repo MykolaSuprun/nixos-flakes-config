@@ -99,7 +99,6 @@
         enableHidpi = true;
         theme = "catppuccin-sddm-corners";
       };
-      xkbOptions = "caps:swapescape";
     };
 
     pipewire = {
@@ -178,12 +177,13 @@
       defaultEditor = true;
       vimAlias = true;
     };
-    hyprland = {
-      enable = true;
-      package = inputs.hyprland.packages."${pkgs.system}".hyprland;
-      portalPackage = inputs.hyprland.packages."${pkgs.system}".xdg-desktop-portal-hyprland;
-      xwayland.enable = true;
-    };
+    dconf.enable = true;
+    # hyprland = {
+    #   enable = true;
+    #   package = inputs.hyprland.packages."${pkgs.system}".hyprland;
+    #   portalPackage = inputs.hyprland.packages."${pkgs.system}".xdg-desktop-portal-hyprland;
+    #   xwayland.enable = true;
+    # };
   };
 
   # List packages installed in system profile.
@@ -214,6 +214,7 @@
       gh
       helix
       wezterm
+      kitty
       wget
       p7zip
       rar
@@ -241,6 +242,8 @@
       qemu
       kvmtool
       tpm2-tools
+
+      # plasma
     ];
   };
 

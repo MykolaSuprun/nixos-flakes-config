@@ -41,6 +41,8 @@
       exec tmux
     fi
 
+    # hook direnv
+    eval "$(direnv hook zsh)"
   '';
 in {
   programs = {
