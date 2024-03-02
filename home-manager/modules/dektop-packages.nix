@@ -6,15 +6,15 @@
 }: {
   home.packages = with pkgs; [
     # plasma packages and basic applications
-    libsForQt5.sddm-kcm
-    libsForQt5.ark
-    libsForQt5.yakuake
-    libsForQt5.qmltermwidget
-    libsForQt5.qt5.qtwebsockets
-    libsForQt5.qtstyleplugin-kvantum # flatpak plasma theming compatibility tool
-    libsForQt5.kpmcore
-    libsForQt5.plasma-browser-integration
-    libsForQt5.dolphin-plugins
+    kdePackages.sddm-kcm
+    kdePackages.ark
+    kdePackages.yakuake
+    kdePackages.qtstyleplugin-kvantum
+    kdePackages.qtwebsockets
+    kdePackages.qtstyleplugin-kvantum
+    kdePackages.plasma-browser-integration
+    kdePackages.dolphin-plugins
+    kdePackages.kfind
 
     # internet
     mullvad-browser
@@ -32,10 +32,10 @@
     tusk
     libreoffice-qt
     ledger-live-desktop
-    partition-manager
     calibre
+    protonup-qt
 
-    pkgs-obsidian-libgl.obsidian
+    obsidian
 
     # virtualization
     distrobox
@@ -46,6 +46,7 @@
     catppuccin-gtk
     catppuccin-kvantum
     catppuccin-cursors
+    ayu-theme-gtk
 
     # wine, steam and other gaming related packages
     bottles
@@ -54,5 +55,13 @@
     pkgs-stable.spotify
     vlc
     cider
+
+    # gaming
+    # steamtinkerlaunch dependencies
+    xdotool
+    xorg.xwininfo
+    yad
+    unzip
+    unixtools.xxd
   ];
 }

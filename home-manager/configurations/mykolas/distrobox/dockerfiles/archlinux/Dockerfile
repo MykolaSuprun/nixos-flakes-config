@@ -7,7 +7,7 @@ USER root
 #enable lib32
 RUN echo "[multilib]" >> /etc/pacman.conf
 RUN echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
-RUN yes | pacman -Syu
+RUN yes | pacman -Syu --noconfirm
 
 RUN yes | pacman -S archlinux-keyring 
 RUN yes | pacman-key --init
@@ -19,10 +19,12 @@ RUN pacman -S --noconfirm base base-devel
 RUN yes | pacman -S git
 RUN yes | pacman -Syu
 
-#install nvidia drivers
-RUN yes | pacman -S --needed nvidia-dkms nvidia-utils lib32-nvidia-utils nvidia-settings vulkan-icd-loader lib32-vulkan-icd-loader
+# install nvidia drivers
+# RUN yes | pacman -S --needed nvidia-dkms nvidia-utils lib32-nvidia-utils nvidia-settings vulkan-icd-loader lib32-vulkan-icd-loader
 
-#wine dependencies
+# install amd drivers
+RUN yes | pacman -S mesa lib32-mesa vulkan-radeon libva-mesa-driver lib32-libva-mesa-driver mesa-vdpau lib32-mesa-vdpau
+#wine dependencies 
 RUN yes | pacman -S --needed wine-staging giflib lib32-giflib libpng lib32-libpng libldap lib32-libldap gnutls lib32-gnutls \
   mpg123 lib32-mpg123 openal lib32-openal v4l-utils lib32-v4l-utils libpulse lib32-libpulse libgpg-error \
   lib32-libgpg-error alsa-plugins lib32-alsa-plugins alsa-lib lib32-alsa-lib libjpeg-turbo lib32-libjpeg-turbo \
@@ -62,7 +64,6 @@ RUN yes | pacman -S plasma-desktop pipewire-jack wireplumber ttf-dejavu ttf-libe
 #install fonts
 RUN yes | pacman -S ttf-liberation noto-fonts ttf-dejavu
 USER build
-RUN yes | paru -S ttf-inconsolata-g
 RUN yes | paru -S oh-my-zsh-git
 
 USER root
@@ -70,6 +71,7 @@ USER root
 #RUN yes | pacman -S flatpak xdg-desktop-portal-kde xdg-desktop-portal
 #vulkan
 RUN pacman -S --noconfirm gamemode gvfs lib32-vkd3d lib32-vulkan-icd-loader vkd3d vulkan-icd-loader
+RUN yes | pacman -S --noconfirm steam
 #bottles and lutris
 #RUN pacman -S --noconfirm lutris
 #USER build
@@ -80,20 +82,24 @@ RUN pacman -S --noconfirm gamemode gvfs lib32-vkd3d lib32-vulkan-icd-loader vkd3
 # install zsh
 RUN yes | pacman -S zsh zsh-completions fzf
 
+#update system
+RUN pacman -Syu --noconfirm
 
 USER build
-RUN paru -S --noconfirm evernote-beta-bin
+RUN yes | paru -S --noconfirm steamtinkerlaunch
 
 
 USER root
-#update system
-RUN pacman -Syu --noconfirm
 
 #remove build user
 RUN userdel build
 RUN rm -rf /home/build
 RUN mv /etc/sudoers.old /etc/sudoers
 
+
+RUN ln -s /run/host/run/systemd/system /run/systemd
+RUN mkdir -p /run/dbus
+RUN ln -s /run/host/run/dbus/system_bus_socket /run/dbus
 
 
 

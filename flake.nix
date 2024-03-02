@@ -19,17 +19,10 @@
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hyprland.url = "github:hyprwm/Hyprland";
-    hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
-      inputs.hyprland.follows = "hyprland";
-    };
     my-neovim = {
       url = "github:MykolaSuprun/nixvim-config";
       flake = true;
     };
-    obsidian-libgl.url = "github:yshui/nixpkgs/master";
-    gBar.url = "github:scorpion-26/gBar";
   };
 
   outputs = {
@@ -37,9 +30,7 @@
     nixpkgs,
     nixpkgs-stable,
     home-manager,
-    hyprland,
     my-neovim,
-    obsidian-libgl,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -51,6 +42,7 @@
       config.permittedInsecurePackages = [
         "openssl-1.1.1w"
         "electron-25.9.0"
+        "freeimage-unstable-2021-11-01"
       ];
       overlays =
         [
@@ -63,13 +55,6 @@
       config.allowUnfree = true;
       config.permittedInsecurePackages = [
         "openssl-1.1.1w"
-        "electron-25.9.0"
-      ];
-    };
-    pkgs-obsidian-libgl = import obsidian-libgl {
-      inherit system;
-      config.allowUnfree = true;
-      config.permittedInsecurePackages = [
         "electron-25.9.0"
       ];
     };
@@ -91,7 +76,6 @@
               users.mykolas = {
                 imports = [
                   ./home-manager/configurations/mykolas/home-configuration.nix
-                  inputs.gBar.homeManagerModules.x86_64-linux.default
                 ];
               };
               extraSpecialArgs = {
@@ -102,8 +86,6 @@
                   pkgs
                   pkgs-stable
                   my-neovim
-                  hyprland
-                  pkgs-obsidian-libgl
                   ;
               };
             };

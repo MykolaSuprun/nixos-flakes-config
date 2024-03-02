@@ -1,0 +1,246 @@
+STEP 1/44: FROM archlinux:latest
+STEP 2/44: USER root
+--> Using cache e5a43cfff76ff56effb9127a35a68260a74a998cb8707502220774731d8466e3
+--> e5a43cfff76f
+STEP 3/44: RUN echo "[multilib]" >> /etc/pacman.conf
+--> Using cache c2ec779401b12fd2102875732218d98acd660f2d8af9c718567c752675b6c6b9
+--> c2ec779401b1
+STEP 4/44: RUN echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+--> Using cache 289d741863a28256479721d7c897f9e9afcc44bcb02727190da49af4d71c5a15
+--> 289d741863a2
+STEP 5/44: RUN yes | pacman -Syu --noconfirm
+--> Using cache 86dbffdcacebbf94d7f0b3c4b31719d7abf3b60175e4cdce335cdfc17dc1b6f7
+--> 86dbffdcaceb
+STEP 6/44: RUN yes | pacman -S archlinux-keyring 
+--> Using cache e26535957414c06ab3af391e28f0ceaf96f19bd389510242947c600a97036ff6
+--> e26535957414
+STEP 7/44: RUN yes | pacman-key --init
+--> Using cache 357dbb6b6b631e1a03b580d4e836a61d9482aace0db46e1685a7c8b2886a7376
+--> 357dbb6b6b63
+STEP 8/44: RUN yes | pacman-key --populate archlinux
+--> Using cache b6ce4e1e331b733d262a145781d194104f9785b058611f13426e009e24154d86
+--> b6ce4e1e331b
+STEP 9/44: RUN yes | pacman -Sy glibc lib32-glibc 
+--> Using cache af6536dd9efd452e7542d163480c085395df492d8eae5468298d5b77c6721968
+--> af6536dd9efd
+STEP 10/44: RUN pacman -S --noconfirm base base-devel
+--> Using cache 1a5cc2d7942edf3e9b52a43171d8117e6420a0f58d8016b9f50f51c740c18977
+--> 1a5cc2d7942e
+STEP 11/44: RUN yes | pacman -S git
+--> Using cache ae081234a772b3bf80d3a1a9eac4df112ea3daa40a8200b0201ccc451bc459d4
+--> ae081234a772
+STEP 12/44: RUN yes | pacman -Syu
+--> Using cache c49fb11f3c9a592f905a3c3706dac4ebf08329a3d0a3caaf27f1a36f395d3577
+--> c49fb11f3c9a
+STEP 13/44: RUN yes | pacman -S mesa lib32-mesa vulkan-radeon libva-mesa-driver lib32-libva-mesa-driver mesa-vdpau lib32-mesa-vdpau
+--> Using cache 55255d688f592fa67b1b30c334bfc3106440f0bb65a544338d66ecc7bb163e05
+--> 55255d688f59
+STEP 14/44: RUN yes | pacman -S --needed wine-staging giflib lib32-giflib libpng lib32-libpng libldap lib32-libldap gnutls lib32-gnutls   mpg123 lib32-mpg123 openal lib32-openal v4l-utils lib32-v4l-utils libpulse lib32-libpulse libgpg-error   lib32-libgpg-error alsa-plugins lib32-alsa-plugins alsa-lib lib32-alsa-lib libjpeg-turbo lib32-libjpeg-turbo   sqlite lib32-sqlite libxcomposite lib32-libxcomposite libxinerama lib32-libgcrypt libgcrypt lib32-libxinerama   ncurses lib32-ncurses ocl-icd lib32-ocl-icd libxslt lib32-libxslt libva lib32-libva gtk3   lib32-gtk3 gst-plugins-base-libs lib32-gst-plugins-base-libs vulkan-icd-loader lib32-vulkan-icd-loader   pipewire-jack wireplumber
+--> Using cache 2fcaf9d1fc1a0dc37efa105deb7019244ea4f9b00f69b19f0c91ecfb0f297e9d
+--> 2fcaf9d1fc1a
+STEP 15/44: RUN useradd -m build && usermod -L build
+--> Using cache 13b26aa205811a7806286ff8d93b6d4aabd599f34266d47e31b5d26dd270a403
+--> 13b26aa20581
+STEP 16/44: RUN cp /etc/sudoers /etc/sudoers.old
+--> Using cache f2cd6602155b10858b4b7b6a557c7d2ed6f2b48b74ec81b48d1daaf12454c776
+--> f2cd6602155b
+STEP 17/44: RUN echo "build ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+--> Using cache 7b968f6feff18e7c6befb15207169a321fe95b0e41f8a98ae4084fc4523de3c0
+--> 7b968f6feff1
+STEP 18/44: RUN echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+--> Using cache 80684a13d8f17bed001266a68c6c7061eb0fe469084c336b3253a1d0d3b325b8
+--> 80684a13d8f1
+STEP 19/44: USER build
+--> Using cache f385efb94cac8790a2da23e6dd0259c00f19458898dc7ebd0b747f85456943ff
+--> f385efb94cac
+STEP 20/44: RUN git clone https://aur.archlinux.org/paru.git /home/build/paru
+--> Using cache 5f2f7f132f3fb0fd04c9f2f9e41e5e853ffc1c7c317235f313026288f89912d0
+--> 5f2f7f132f3f
+STEP 21/44: RUN cd /home/build/paru
+--> Using cache 84d9922dcfc54ac8bc17602c9c34f9210821559abc7a2f7443323b2361e27c61
+--> 84d9922dcfc5
+STEP 22/44: RUN (cd /home/build/paru && makepkg -si --noconfirm) 
+--> Using cache 8a1e0eee24eb3514b18ba0ec53b4388c1be42ebbb7cceebd51814a91bf386a79
+--> 8a1e0eee24eb
+STEP 23/44: RUN rm -rf /home/build/paru
+--> Using cache d84053dc1c5c26b15270e873c8d42b6523a24e83ce48009d8c9ca2fe72beb3a7
+--> d84053dc1c5c
+STEP 24/44: USER root
+--> Using cache ef4a0a55ec29589ee2eb6dc045b32df8fe1f711e8465374fa09246df9f8b27e7
+--> ef4a0a55ec29
+STEP 25/44: RUN yes | pacman -S --noconfirm neovim python xorg-xhost helix
+--> Using cache 8a0fbdc94450d828cdb09219257390bdac69cd68bb55ac28d4e54dce3a079a66
+--> 8a0fbdc94450
+STEP 26/44: RUN yes | pacman -S gcc --noconfirm clang binutils luajit stylua lazygit fd ripgrep tree-sitter go
+--> Using cache 3402f9a29a435e3e82974932222f26fb239f287302ee168b6915103fce1b9420
+--> 3402f9a29a43
+STEP 27/44: USER build
+--> Using cache ff07ffa26ae5d36c6fdd1c6e7a9d2d41b6be0bf3e963b61c9cff3c7525e8c78a
+--> ff07ffa26ae5
+STEP 28/44: RUN yes | paru -S --noconfirm rnix-lsp
+--> Using cache 4a56c6d6c47a181dd28a4cf222bf7d567b884fe7743ae20b0520ddf128b32c5b
+--> 4a56c6d6c47a
+STEP 29/44: USER root
+--> Using cache 0ac1967639ece56d061818aa5c7c5343abf885934cfb6315bfce3460d3b24dea
+--> 0ac1967639ec
+STEP 30/44: RUN yes | pacman -S plasma-desktop pipewire-jack wireplumber ttf-dejavu ttf-liberation phonon-qt5-vlc
+--> Using cache bc2c5f50ff829a130f0116413bb6ad72da2314d7af4c8f8b2b7a5284a9540d1a
+--> bc2c5f50ff82
+STEP 31/44: RUN yes | pacman -S ttf-liberation noto-fonts ttf-dejavu
+--> Using cache a5360d108bf351cfd7b0c1a368dd828168c7c9813b6a7e2cfcc89035e1c1db9c
+--> a5360d108bf3
+STEP 32/44: USER build
+--> Using cache e58929ed41ec574e7a14d3dcb4132b5250a6293e6ce849fa950bd0a1b6a5705d
+--> e58929ed41ec
+STEP 33/44: RUN yes | paru -S oh-my-zsh-git
+--> Using cache ba7a8a6a94dde2703581b8ec89e57608936c896dd77a0ead3db72c0089594820
+--> ba7a8a6a94dd
+STEP 34/44: USER root
+--> Using cache 00486cc2c8e36b1d676b21763538e3883c46de433521ec4e1d1b59e39d895760
+--> 00486cc2c8e3
+STEP 35/44: RUN pacman -S --noconfirm gamemode gvfs lib32-vkd3d lib32-vulkan-icd-loader vkd3d vulkan-icd-loader
+--> Using cache d9b6e044818bbfc3cc7431e434b84126adc44773b6b3d1b283173b3f47223bce
+--> d9b6e044818b
+STEP 36/44: RUN yes | pacman -S steam
+resolving dependencies...
+:: There are 6 providers available for lib32-vulkan-driver:
+:: Repository multilib
+STEP 1/44: FROM archlinux:latest
+STEP 2/44: USER root
+--> Using cache e5a43cfff76ff56effb9127a35a68260a74a998cb8707502220774731d8466e3
+--> e5a43cfff76f
+STEP 3/44: RUN echo "[multilib]" >> /etc/pacman.conf
+--> Using cache c2ec779401b12fd2102875732218d98acd660f2d8af9c718567c752675b6c6b9
+--> c2ec779401b1
+STEP 4/44: RUN echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+--> Using cache 289d741863a28256479721d7c897f9e9afcc44bcb02727190da49af4d71c5a15
+--> 289d741863a2
+STEP 5/44: RUN yes | pacman -Syu --noconfirm
+--> Using cache 86dbffdcacebbf94d7f0b3c4b31719d7abf3b60175e4cdce335cdfc17dc1b6f7
+--> 86dbffdcaceb
+STEP 6/44: RUN yes | pacman -S archlinux-keyring 
+--> Using cache e26535957414c06ab3af391e28f0ceaf96f19bd389510242947c600a97036ff6
+--> e26535957414
+STEP 7/44: RUN yes | pacman-key --init
+--> Using cache 357dbb6b6b631e1a03b580d4e836a61d9482aace0db46e1685a7c8b2886a7376
+--> 357dbb6b6b63
+STEP 8/44: RUN yes | pacman-key --populate archlinux
+--> Using cache b6ce4e1e331b733d262a145781d194104f9785b058611f13426e009e24154d86
+--> b6ce4e1e331b
+STEP 9/44: RUN yes | pacman -Sy glibc lib32-glibc 
+--> Using cache af6536dd9efd452e7542d163480c085395df492d8eae5468298d5b77c6721968
+--> af6536dd9efd
+STEP 10/44: RUN pacman -S --noconfirm base base-devel
+--> Using cache 1a5cc2d7942edf3e9b52a43171d8117e6420a0f58d8016b9f50f51c740c18977
+--> 1a5cc2d7942e
+STEP 11/44: RUN yes | pacman -S git
+--> Using cache ae081234a772b3bf80d3a1a9eac4df112ea3daa40a8200b0201ccc451bc459d4
+--> ae081234a772
+STEP 12/44: RUN yes | pacman -Syu
+--> Using cache c49fb11f3c9a592f905a3c3706dac4ebf08329a3d0a3caaf27f1a36f395d3577
+--> c49fb11f3c9a
+STEP 13/44: RUN yes | pacman -S mesa lib32-mesa vulkan-radeon libva-mesa-driver lib32-libva-mesa-driver mesa-vdpau lib32-mesa-vdpau
+--> Using cache 55255d688f592fa67b1b30c334bfc3106440f0bb65a544338d66ecc7bb163e05
+--> 55255d688f59
+STEP 14/44: RUN yes | pacman -S --needed wine-staging giflib lib32-giflib libpng lib32-libpng libldap lib32-libldap gnutls lib32-gnutls   mpg123 lib32-mpg123 openal lib32-openal v4l-utils lib32-v4l-utils libpulse lib32-libpulse libgpg-error   lib32-libgpg-error alsa-plugins lib32-alsa-plugins alsa-lib lib32-alsa-lib libjpeg-turbo lib32-libjpeg-turbo   sqlite lib32-sqlite libxcomposite lib32-libxcomposite libxinerama lib32-libgcrypt libgcrypt lib32-libxinerama   ncurses lib32-ncurses ocl-icd lib32-ocl-icd libxslt lib32-libxslt libva lib32-libva gtk3   lib32-gtk3 gst-plugins-base-libs lib32-gst-plugins-base-libs vulkan-icd-loader lib32-vulkan-icd-loader   pipewire-jack wireplumber
+--> Using cache 2fcaf9d1fc1a0dc37efa105deb7019244ea4f9b00f69b19f0c91ecfb0f297e9d
+--> 2fcaf9d1fc1a
+STEP 15/44: RUN useradd -m build && usermod -L build
+--> Using cache 13b26aa205811a7806286ff8d93b6d4aabd599f34266d47e31b5d26dd270a403
+--> 13b26aa20581
+STEP 16/44: RUN cp /etc/sudoers /etc/sudoers.old
+--> Using cache f2cd6602155b10858b4b7b6a557c7d2ed6f2b48b74ec81b48d1daaf12454c776
+--> f2cd6602155b
+STEP 17/44: RUN echo "build ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+--> Using cache 7b968f6feff18e7c6befb15207169a321fe95b0e41f8a98ae4084fc4523de3c0
+--> 7b968f6feff1
+STEP 18/44: RUN echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+--> Using cache 80684a13d8f17bed001266a68c6c7061eb0fe469084c336b3253a1d0d3b325b8
+--> 80684a13d8f1
+STEP 19/44: USER build
+--> Using cache f385efb94cac8790a2da23e6dd0259c00f19458898dc7ebd0b747f85456943ff
+--> f385efb94cac
+STEP 20/44: RUN git clone https://aur.archlinux.org/paru.git /home/build/paru
+--> Using cache 5f2f7f132f3fb0fd04c9f2f9e41e5e853ffc1c7c317235f313026288f89912d0
+--> 5f2f7f132f3f
+STEP 21/44: RUN cd /home/build/paru
+--> Using cache 84d9922dcfc54ac8bc17602c9c34f9210821559abc7a2f7443323b2361e27c61
+--> 84d9922dcfc5
+STEP 22/44: RUN (cd /home/build/paru && makepkg -si --noconfirm) 
+--> Using cache 8a1e0eee24eb3514b18ba0ec53b4388c1be42ebbb7cceebd51814a91bf386a79
+--> 8a1e0eee24eb
+STEP 23/44: RUN rm -rf /home/build/paru
+--> Using cache d84053dc1c5c26b15270e873c8d42b6523a24e83ce48009d8c9ca2fe72beb3a7
+--> d84053dc1c5c
+STEP 24/44: USER root
+--> Using cache ef4a0a55ec29589ee2eb6dc045b32df8fe1f711e8465374fa09246df9f8b27e7
+--> ef4a0a55ec29
+STEP 25/44: RUN yes | pacman -S --noconfirm neovim python xorg-xhost helix
+--> Using cache 8a0fbdc94450d828cdb09219257390bdac69cd68bb55ac28d4e54dce3a079a66
+--> 8a0fbdc94450
+STEP 26/44: RUN yes | pacman -S gcc --noconfirm clang binutils luajit stylua lazygit fd ripgrep tree-sitter go
+--> Using cache 3402f9a29a435e3e82974932222f26fb239f287302ee168b6915103fce1b9420
+--> 3402f9a29a43
+STEP 27/44: USER build
+--> Using cache ff07ffa26ae5d36c6fdd1c6e7a9d2d41b6be0bf3e963b61c9cff3c7525e8c78a
+--> ff07ffa26ae5
+STEP 28/44: RUN yes | paru -S --noconfirm rnix-lsp
+--> Using cache 4a56c6d6c47a181dd28a4cf222bf7d567b884fe7743ae20b0520ddf128b32c5b
+--> 4a56c6d6c47a
+STEP 29/44: USER root
+--> Using cache 0ac1967639ece56d061818aa5c7c5343abf885934cfb6315bfce3460d3b24dea
+--> 0ac1967639ec
+STEP 30/44: RUN yes | pacman -S plasma-desktop pipewire-jack wireplumber ttf-dejavu ttf-liberation phonon-qt5-vlc
+--> Using cache bc2c5f50ff829a130f0116413bb6ad72da2314d7af4c8f8b2b7a5284a9540d1a
+--> bc2c5f50ff82
+STEP 31/44: RUN yes | pacman -S ttf-liberation noto-fonts ttf-dejavu
+--> Using cache a5360d108bf351cfd7b0c1a368dd828168c7c9813b6a7e2cfcc89035e1c1db9c
+--> a5360d108bf3
+STEP 32/44: USER build
+--> Using cache e58929ed41ec574e7a14d3dcb4132b5250a6293e6ce849fa950bd0a1b6a5705d
+--> e58929ed41ec
+STEP 33/44: RUN yes | paru -S oh-my-zsh-git
+--> Using cache ba7a8a6a94dde2703581b8ec89e57608936c896dd77a0ead3db72c0089594820
+--> ba7a8a6a94dd
+STEP 34/44: USER root
+--> Using cache 00486cc2c8e36b1d676b21763538e3883c46de433521ec4e1d1b59e39d895760
+--> 00486cc2c8e3
+STEP 35/44: RUN pacman -S --noconfirm gamemode gvfs lib32-vkd3d lib32-vulkan-icd-loader vkd3d vulkan-icd-loader
+--> Using cache d9b6e044818bbfc3cc7431e434b84126adc44773b6b3d1b283173b3f47223bce
+--> d9b6e044818b
+STEP 36/44: RUN yes | pacman -S --noconfirm steam
+resolving dependencies...
+:: There are 6 providers available for lib32-vulkan-driver:
+:: Repository multilib
+   1) lib32-amdvlk  2) lib32-nvidia-utils  3) lib32-vulkan-intel  4) lib32-vulkan-radeon  5) lib32-vulkan-swrast  6) lib32-vulkan-virtio
+
+Enter a number (default=1): 
+looking for conflicting packages...
+
+Package (19)                     New Version        Net Change  Download Size
+
+extra/gssdp                      1.6.3-1              0.24 MiB       0.06 MiB
+extra/gst-plugins-bad-libs       1.22.10-1           10.31 MiB       2.39 MiB
+extra/gtk4                       1:4.12.5-1          33.25 MiB       6.36 MiB
+extra/gupnp                      1:1.6.6-1            0.70 MiB       0.12 MiB
+extra/gupnp-igd                  1.6.0-1              0.11 MiB       0.03 MiB
+multilib/lib32-amdvlk            2024.Q1.1-1         74.88 MiB      18.77 MiB
+multilib/lib32-libxcrypt-compat  4.4.36-1             0.18 MiB       0.07 MiB
+multilib/lib32-libxss            1.2.4-1              0.01 MiB       0.01 MiB
+multilib/lib32-nspr              4.35-2               0.29 MiB       0.11 MiB
+multilib/lib32-nss               3.97-1               3.23 MiB       1.18 MiB
+extra/libadwaita                 1:1.4.3-1            3.92 MiB       0.55 MiB
+extra/libnice                    0.1.21-2             1.84 MiB       0.31 MiB
+core/libxcrypt-compat            4.4.36-1             0.17 MiB       0.07 MiB
+extra/lsb-release                2.0.r53.a86f885-1    0.02 MiB       0.01 MiB
+extra/lsof                       4.99.0-1             0.35 MiB       0.14 MiB
+core/usbutils                    017-1                0.33 MiB       0.09 MiB
+extra/xorg-xrandr                1.5.2-1              0.07 MiB       0.04 MiB
+extra/zenity                     4.0.1-1              5.36 MiB       2.95 MiB
+multilib/steam                   1.0.0.78-2           3.83 MiB       3.64 MiB
+
+Total Download Size:    36.89 MiB
+Total Installed Size:  139.10 MiB
+
+:: Proceed with installation? [Y/n] 
+:: Retrieving packages...

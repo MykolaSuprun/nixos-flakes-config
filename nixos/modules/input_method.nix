@@ -24,7 +24,7 @@
         fcitx5-with-addons
         fcitx5-rime
         fcitx5-gtk
-        libsForQt5.fcitx5-qt
+        # libsForQt5.fcitx5-qt
         fcitx5-chinese-addons
         fcitx5-table-other
         fcitx5-configtool
