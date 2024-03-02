@@ -12,6 +12,8 @@
       alias vim="${neovim-local}"
       alias nano="nvim"
       alias tmux='tmux -2'
+      alias steamtinkerlaunch=/home/mykolas/.steam/root/compatibilitytools.d/SteamTinkerLaunch
+      clear
     fi
     export GPG_TTY=$(tty)
     gpgconf --launch gpg-agent
@@ -42,7 +44,7 @@
     fi
 
     # hook direnv
-    eval "$(direnv hook zsh)"
+    # eval "$(direnv hook zsh)"
   '';
 in {
   programs = {

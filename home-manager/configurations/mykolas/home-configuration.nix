@@ -45,8 +45,6 @@ in {
 
   home.stateVersion = "23.11";
 
-  # Let Home Manager install and manage itself.
-
   services.gpg-agent = {
     enable = true;
     pinentryFlavor = "tty";
@@ -123,6 +121,8 @@ in {
 
   home.sessionVariables = {
     NIXOS_OZONE_WL = "1";
+    STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
+    NIXOS_CONF_DIR = "$HOME/.nixconf";
   };
 
   # gtk = {

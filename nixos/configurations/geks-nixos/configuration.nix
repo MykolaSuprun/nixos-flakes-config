@@ -86,18 +86,17 @@
       videoDrivers = ["amdgpu"];
 
       # Enable the KDE Plasma Desktop Environment.
-      displayManager.defaultSession = "plasmawayland";
-      desktopManager.plasma5 = {
+      displayManager.defaultSession = "plasma";
+      desktopManager.plasma6 = {
         enable = true;
-        phononBackend = "vlc";
-        useQtScaling = true;
+        enableQt5Integration = false;
       };
 
       displayManager.sddm = {
         enable = true;
         wayland.enable = true;
         enableHidpi = true;
-        theme = "catppuccin-sddm-corners";
+        # theme = "catppuccin-sddm-corners";
       };
     };
 
@@ -165,11 +164,18 @@
       host.enable = true;
       host.extraPackages = with pkgs; [];
     };
+    podman = {
+      enable = true;
+      dockerCompat = true;
+      dockerSocket.enable = true;
+      defaultNetwork.settings.dns_enabled = true;
+    };
   };
 
   programs = {
     zsh.enable = true;
     ecryptfs.enable = true;
+    partition-manager.enable = true;
     gnupg.agent.pinentryFlavor = "tty";
     virt-manager.enable = true;
     java.enable = true;
@@ -178,6 +184,11 @@
       vimAlias = true;
     };
     dconf.enable = true;
+    nix-ld = {
+      enable = true;
+      libraries = with pkgs; [
+      ];
+    };
     # hyprland = {
     #   enable = true;
     #   package = inputs.hyprland.packages."${pkgs.system}".hyprland;
@@ -192,10 +203,14 @@
   # $ nix search wget
   environment = {
     shells = with pkgs; [zsh];
+
     sessionVariables = {
       LIBVIRT_DEFAULT_URI = ["qemu:///system"];
       NIXOS_OZONE_WL = "1";
     };
+
+    plasma6.excludePackages = with pkgs; [
+    ];
 
     systemPackages = with pkgs; [
       # dev tools
@@ -204,12 +219,9 @@
       vscode
       lazygit
 
-      libGL
-      libGLU
-      libglvnd
-
       # basic packages
       ecryptfs
+      cryptsetup
       git
       gh
       helix
@@ -242,6 +254,8 @@
       qemu
       kvmtool
       tpm2-tools
+      distrobox
+      podman-compose
 
       # plasma
     ];
@@ -252,9 +266,9 @@
     portal = {
       enable = true;
       extraPortals = with pkgs; [
+        kdePackages.xdg-desktop-portal-kde
         xdg-desktop-portal-gtk
-        inputs.hyprland.packages."${pkgs.system}".xdg-desktop-portal-hyprland
-        libsForQt5.xdg-desktop-portal-kde
+        # inputs.hyprland.packages."${pkgs.system}".xdg-desktop-portal-hyprland
       ];
       xdgOpenUsePortal = true;
     };
@@ -295,7 +309,6 @@
     aggregatedIcons = pkgs.buildEnv {
       name = "system-icons";
       paths = with pkgs; [
-        libsForQt5.breeze-qt5 # for plasma
         plasma-overdose-kde-theme
         materia-kde-theme
         graphite-kde-theme
@@ -309,7 +322,7 @@
         whitesur-gtk-theme
         whitesur-icon-theme
         whitesur-cursors
-        # gnome.gnome-themes-extra
+        gnome.gnome-themes-extra
       ];
       pathsToLink = ["/share/icons"];
     };
@@ -324,4 +337,20 @@
   };
 
   system.stateVersion = "23.11"; # Did you read the comment?
+
+  systemd.services.mykolas-ext-ssd = {
+    script = ''
+      #!/usr/bin/env bash
+      FILE=/home/mykolas/.config/ext-ssd/keyfile
+      if test -f "$FILE"; then
+        if ! grep '/dev/mapper/external-ssd' /etc/mtab > /dev/null 2>&1; then
+          ${pkgs.cryptsetup}/bin/cryptsetup luksOpen /dev/sda1 external-ssd --key-file /home/mykolas/.config/ext-ssd/keyfile
+        fi
+        if ! /run/current-system/sw/bin/mountpoint -q /mnt/external/ ; then
+          /run/wrappers/bin/mount /dev/mapper/external-ssd /mnt/external
+        fi
+      fi
+    '';
+    wantedBy = ["multi-user.target"];
+  };
 }
