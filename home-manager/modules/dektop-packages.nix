@@ -15,6 +15,8 @@
     kdePackages.plasma-browser-integration
     kdePackages.dolphin-plugins
     kdePackages.kfind
+    kdePackages.kimageformats
+    kdePackages.qtimageformats
 
     # internet
     mullvad-browser

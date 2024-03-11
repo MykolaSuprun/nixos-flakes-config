@@ -21,13 +21,13 @@
     fcitx5 = {
       waylandFrontend = true;
       addons = with pkgs; [
-        fcitx5-with-addons
         fcitx5-rime
         fcitx5-gtk
-        # libsForQt5.fcitx5-qt
+        kdePackages.fcitx5-with-addons
+        kdePackages.fcitx5-qt
+        kdePackages.fcitx5-configtool
         fcitx5-chinese-addons
         fcitx5-table-other
-        fcitx5-configtool
         fcitx5-hangul
         fcitx5-unikey
         fcitx5-m17n
