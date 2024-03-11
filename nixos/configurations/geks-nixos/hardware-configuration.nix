@@ -56,22 +56,8 @@
       driSupport32Bit = true; # For 32 bit applications
       extraPackages = with pkgs; [
         rocmPackages.clr.icd
-        amdvlk
-        # libGL
-        # libGLU
-        # libglvnd
-        # intel-media-driver # LIBVA_DRIVER_NAME=iHD
-        # vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
-        # vaapiVdpau
-        # libvdpau-va-gl
       ];
       extraPackages32 = with pkgs; [
-        # pkgsi686Linux.libva
-        # pkgsi686Linux.intel-media-driver
-        # pkgsi686Linux.vaapiIntel
-        # pkgsi686Linux.vaapiVdpau
-        # pkgsi686Linux.libvdpau-va-gl
-        driversi686Linux.amdvlk
       ];
     };
 
