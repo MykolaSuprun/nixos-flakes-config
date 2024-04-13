@@ -3,11 +3,6 @@
   my-neovim,
   ...
 }: {
-  services.gpg-agent = {
-    enable = true;
-    pinentryFlavor = "tty";
-  };
-
   programs = {
     helix = {
       enable = true;
@@ -43,7 +38,6 @@
     gcc
     fzf
     fzf-zsh
-    rnix-lsp
     xclip
     tree
     cmake
@@ -61,7 +55,7 @@
     nil
     nix-tree
     nix-diff
-    nixfmt
+    nixfmt-classic
 
     sqlcmd
     killall
