@@ -19,6 +19,10 @@
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL";
+      flake = true;
+    };
     my-neovim = {
       url = "github:MykolaSuprun/nixvim-config";
       flake = true;
@@ -30,6 +34,7 @@
     nixpkgs,
     nixpkgs-stable,
     home-manager,
+    nixos-wsl,
     my-neovim,
     ...
   } @ inputs: let
@@ -66,17 +71,65 @@
       geks-nixos = lib.nixosSystem {
         inherit system;
         modules = [
+          ./nixos/configurations/geks-nixos/hardware-configuration.nix
           ./nixos/configurations/geks-nixos/configuration.nix
+          ./nixos/modules/nix-conf.nix
+          ./nixos/modules/fonts.nix
+          ./nixos/modules/pipewire.nix
+          ./nixos/modules/input_method.nix
+          ./nixos/modules/desktop-packages.nix
           # home-manager setup
           home-manager.nixosModules.home-manager
           {
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-
               users.mykolas = {
                 imports = [
                   ./home-manager/configurations/mykolas/home-configuration.nix
+                  ./home-manager/modules/geks-nixos.nix
+                  ./home-manager/modules/shell.nix
+                  ./home-manager/modules/chromium.nix
+                  ./home-manager/modules/flatpak-overrides.nix
+                  ./home-manager/modules/tmux.nix
+                  ./home-manager/modules/dev-pkgs.nix
+                  ./home-manager/modules/dektop-config.nix
+                ];
+              };
+              extraSpecialArgs = {
+                inherit
+                  inputs
+                  outputs
+                  system
+                  pkgs
+                  pkgs-stable
+                  my-neovim
+                  ;
+              };
+            };
+          }
+        ];
+        specialArgs = {inherit inputs outputs pkgs pkgs-stable my-neovim;};
+      };
+      geks-wsl = lib.nixosSystem {
+        inherit system;
+        modules = [
+          ./nixos/configurations/geks-wsl/configuration.nix
+          ./nixos/modules/nix-conf.nix
+          # ./nixos/modules/fonts.nix
+          nixos-wsl.nixosModules.wsl
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.mykolas = {
+                imports = [
+                  ./home-manager/configurations/mykolas/home-configuration.nix
+                  ./home-manager/modules/geks-wsl.nix
+                  ./home-manager/modules/shell.nix
+                  ./home-manager/modules/tmux.nix
+                  ./home-manager/modules/dev-pkgs.nix
                 ];
               };
               extraSpecialArgs = {
