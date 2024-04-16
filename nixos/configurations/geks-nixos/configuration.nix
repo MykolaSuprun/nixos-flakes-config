@@ -10,10 +10,6 @@
 }: {
   imports = [
     # Include the results of the hardware scan.
-    ./hardware-configuration.nix
-    ./../../modules/fonts.nix
-    ./../../modules/input_method.nix
-    ./../../modules/desktop-packages.nix
   ];
 
   # nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -40,16 +36,6 @@
     kernelModules = ["wl" "ecryptfs"];
     initrd.kernelModules = ["wl"];
     extraModulePackages = [config.boot.kernelPackages.broadcom_sta];
-  };
-
-  nix = {
-    settings.experimental-features = ["nix-command" "flakes"];
-    settings.auto-optimise-store = true;
-    package = pkgs.nixFlakes;
-    gc = {
-      automatic = true;
-      options = "--delete-older-than 10d";
-    };
   };
 
   # networking
@@ -133,19 +119,19 @@
 
   users.groups.plugdev = {};
   users.extraGroups.vboxusers.members = ["mykolas"];
-  users.defaultUserShell = pkgs.zsh;
+  users.defaultUserShell = pkgs.fish;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users = {
     mykolas = {
       isNormalUser = true;
-      shell = pkgs.zsh;
+      shell = pkgs.fish;
       description = "Mykola Suprun";
       extraGroups = ["networkmanager" "wheel" "docker" "libvirtd" "kvm" "qemu-libvirtd" "plugdev" "gamemode"];
     };
     geks-home = {
       isNormalUser = true;
-      shell = pkgs.zsh;
+      shell = pkgs.fish;
       description = "Geks Home";
       extraGroups = ["networkmanager" "wheel" "docker" "libvirtd" "kvm" "plugdev"];
     };

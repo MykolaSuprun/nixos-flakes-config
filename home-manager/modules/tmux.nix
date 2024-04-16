@@ -29,6 +29,8 @@
       # sysstat
     ];
     extraConfig = ''
+      # set tmux default shell
+      set-option -g default-shell fish
       # set tmux attach to create new session if none is available
       new-session -n $HOST
       # fix teminal colors
@@ -47,6 +49,9 @@
       set -g pane-base-index 1
       set-window-option -g pane-base-index 1
       set-option -g renumber-windows on
+
+      # set tmux theme
+      set -g @catppuccin_flavour 'latte' # or frappe, macchiato, mocha
 
       # set tmux regularly save it's environment
       set -g @continuum-restore 'on'

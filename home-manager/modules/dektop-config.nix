@@ -1,9 +1,12 @@
 {
   pkgs,
   pkgs-stable,
-  pkgs-obsidian-libgl,
   ...
 }: {
+  xdg = {
+    enable = true;
+  };
+
   home.packages = with pkgs; [
     # plasma packages and basic applications
     kdePackages.sddm-kcm

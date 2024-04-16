@@ -55,7 +55,7 @@
     nil
     nix-tree
     nix-diff
-    nixfmt
+    nixfmt-classic
 
     sqlcmd
     killall
