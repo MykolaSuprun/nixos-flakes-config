@@ -16,34 +16,17 @@ in {
 
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
-
-    ./../../modules/default-shell.nix
-    ./../../modules/chromium.nix
-    ./../../modules/flatpak-overrides.nix
-    ./../../modules/tmux.nix
-    ./../../modules/dev-packages.nix
-    ./../../modules/dektop-packages.nix
-    # ./../../modules/hyprland.nix
   ];
-
-  # nixpkgs = {
-  #   # You can add overlays here
-  #   # Configure your nixpkgs instance
-  #   config = {
-  #     # Disable if you don't want unfree packages
-  #     allowUnfree = true;
-  #     # Workaround for https://github.com/nix-community/home-manager/issues/2942
-  #     allowUnfreePredicate = _: true;
-  #
-  #     permittedInsecurePackages = ["openssl-1.1.1v" "electron-25.9.0"];
-  #   };
-  #   overlays = [];
-  # };
 
   home.username = "mykolas";
   home.homeDirectory = "/home/mykolas";
 
   home.stateVersion = "23.11";
+
+  services.gpg-agent = {
+    enable = true;
+    pinentryPackage = pkgs.pinentry-tty;
+  };
 
   programs = {
     # enable home-manager
@@ -58,10 +41,6 @@ in {
         ${shell_hm_target}
       '';
     };
-  };
-
-  xdg = {
-    enable = true;
   };
 
   # create home configuration files
@@ -80,11 +59,11 @@ in {
       recursive = true;
       enable = true;
     };
-    "./.config/waybar" = {
-      source = ./waybar;
-      recursive = true;
-      enable = true;
-    };
+    # "./.config/waybar" = {
+    #   source = ./waybar;
+    #   recursive = true;
+    #   enable = true;
+    # };
     "./.config/libvirt" = {
       source = ./libvirt;
       recursive = true;
@@ -99,47 +78,22 @@ in {
       source = ./gitconfig/gitconfig;
       enable = true;
     };
-    "./.config/rofi" = {
-      source = ./rofi/config;
-      recursive = true;
-      enable = true;
-    };
-    "./.local/share/rofi/themes" = {
-      source = ./rofi/themes;
-      recursive = true;
-      enable = true;
-    };
+    # "./.config/rofi" = {
+    #   source = ./rofi/config;
+    #   recursive = true;
+    #   enable = true;
+    # };
+    # "./.local/share/rofi/themes" = {
+    #   source = ./rofi/themes;
+    #   recursive = true;
+    #   enable = true;
+    # };
   };
 
   home.packages = with pkgs; [
   ];
 
   home.sessionVariables = {
-    NIXOS_OZONE_WL = "1";
-    STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
     NIXOS_CONF_DIR = "$HOME/.nixconf";
   };
-
-  # gtk = {
-  #   enable = true;
-  #   theme = {
-  #     name = "WhiteSur";
-  # package = pkgs.catppuccin-gtk.override {
-  #   accents = ["pink"];
-  #   size = "compact";
-  #   tweaks = ["rimless" "black"];
-  #   variant = "macchiato";
-  # };
-  # };
-
-  # iconTheme = {
-  #   package = pkgs.catppuccin-papirus-folders;
-  #   name = "catppuccin-pairus-folders";
-  # };
-  #
-  # font = {
-  #   name = "Serif";
-  #   size = 10;
-  # };
-  # };
 }
