@@ -43,12 +43,12 @@
     distrobox
 
     # theming
-    catppuccin-papirus-folders
-    catppuccin-kde
-    catppuccin-gtk
-    catppuccin-kvantum
-    catppuccin-cursors
-    ayu-theme-gtk
+    # catppuccin-papirus-folders
+    # catppuccin-kde
+    # catppuccin-gtk
+    # catppuccin-kvantum
+    # catppuccin-cursors
+    # ayu-theme-gtk
 
     # wine, steam and other gaming related packages
     bottles

@@ -45,11 +45,6 @@ in {
 
   home.stateVersion = "23.11";
 
-  services.gpg-agent = {
-    enable = true;
-    pinentryFlavor = "tty";
-  };
-
   programs = {
     # enable home-manager
     home-manager.enable = true;

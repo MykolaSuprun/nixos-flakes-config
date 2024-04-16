@@ -27,6 +27,7 @@
     alias editconf="cd $confdir; nvim ."
     alias nxcnf="$confdir/nxcnf.sh"
     alias nixos-build="$confdir/nxcnf.sh build os geks-nixos"
+    alias exmnt="$confdir/home-manager/configurations/mykolas/scripts/mount_ext_ssd.sh"
     alias home-build="$confdir/nxcnf.sh build home"
     alias nix-update="$confdir/nxcnf.sh update"
     alias confdir=$confdir
