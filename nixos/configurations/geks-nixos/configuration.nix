@@ -87,17 +87,17 @@
 
       # Enable the KDE Plasma Desktop Environment.
       displayManager.defaultSession = "plasma";
-      desktopManager.plasma6 = {
-        enable = true;
-        enableQt5Integration = false;
-      };
-
       displayManager.sddm = {
         enable = true;
         wayland.enable = true;
         enableHidpi = true;
         # theme = "catppuccin-sddm-corners";
       };
+    };
+
+    desktopManager.plasma6 = {
+      enable = true;
+      enableQt5Integration = false;
     };
 
     pipewire = {
@@ -110,7 +110,7 @@
     flatpak.enable = true;
 
     fprintd = {
-      enable = true;
+      # enable = true;
     };
   };
 
@@ -176,7 +176,10 @@
     zsh.enable = true;
     ecryptfs.enable = true;
     partition-manager.enable = true;
-    gnupg.agent.pinentryFlavor = "tty";
+    gnupg.agent = {
+      enable = true;
+      # pinentryPackage = pkgs.pinentry-tty;
+    };
     virt-manager.enable = true;
     java.enable = true;
     neovim = {
@@ -248,6 +251,7 @@
       xclip
       ncurses
       lsof
+      gawk
       util-linux
 
       #virtualisation
@@ -341,26 +345,28 @@
 
   system.stateVersion = "23.11"; # Did you read the comment?
 
-  systemd.services.mykolas-ext-ssd = {
-    script = ''
-      #!/usr/bin/env bash
-      FILE=/home/mykolas/.config/ext-ssd/keyfile
-      if test -f "$FILE"; then
-        # if ! grep '/dev/mapper/external-ssd' /etc/mtab > /dev/null 2>&1; then
-        if /run/current-system/sw/bin/mountpoint -q /mnt/external/ ; then
-          lsof | grep "/mnt/external" | awk "{print $2}" | xargs -I -r kill
-          /run/wrappers/bin/umount /mnt/external
-        fi
-        if [ $(${pkgs.util-linux}/bin/lsblk -l -n /dev/disk/by-uuid/2826d16b-a4d0-408d-9c36-b45d476fbe14 | wc -l) -gt 1 ]; then
-          ${pkgs.cryptsetup}/bin/cryptsetup luksClose external-ssd
-        fi
-        if ${pkgs.util-linux}/bin/lsblk -f | grep -wq 2826d16b-a4d0-408d-9c36-b45d476fbe14; then
-          ${pkgs.cryptsetup}/bin/cryptsetup luksOpen /dev/disk/by-uuid/2826d16b-a4d0-408d-9c36-b45d476fbe14 external-ssd --key-file /home/mykolas/.config/ext-ssd/keyfile
-          /run/wrappers/bin/mount /dev/mapper/external-ssd /mnt/external
-          ${pkgs.megasync}/bin/megasync
-        fi
-      fi
-    '';
-    wantedBy = ["multi-user.target"];
-  };
+  # systemd.services.mykolas-ext-ssd = {
+  #   script = ''
+  #     #!/usr/bin/env bash
+  #     FILE=/home/mykolas/.config/ext-ssd/keyfile
+  #     if test -f "$FILE"; then
+  #       # if ! grep '/dev/mapper/external-ssd' /etc/mtab > /dev/null 2>&1; then
+  #       if /run/current-system/sw/bin/mountpoint -q /mnt/external/ ; then
+  #         ${pkgs.lsof}/bin/lsof | grep "/mnt/external" | ${pkgs.gawk}/bin/gawk '{print $2}' | xargs -I -r kill
+  #         /run/wrappers/bin/umount /mnt/external
+  #       fi
+  #       if [ $(${pkgs.util-linux}/bin/lsblk -l -n /dev/disk/by-uuid/2826d16b-a4d0-408d-9c36-b45d476fbe14 | wc -l) -gt 1 ]; then
+  #         ${pkgs.cryptsetup}/bin/cryptsetup luksClose external-ssd
+  #       fi
+  #       if [ $(${pkgs.util-linux}/bin/lsblk -l -n /dev/mapper/external-ssd | wc -l) -gt 1 ]; then
+  #         ${pkgs.cryptsetup}/bin/cryptsetup luksClose external-ssd
+  #       fi
+  #       if ${pkgs.util-linux}/bin/lsblk -f | grep -wq 2826d16b-a4d0-408d-9c36-b45d476fbe14; then
+  #         ${pkgs.cryptsetup}/bin/cryptsetup luksOpen /dev/disk/by-uuid/2826d16b-a4d0-408d-9c36-b45d476fbe14 external-ssd --key-file /home/mykolas/.config/ext-ssd/keyfile
+  #         /run/wrappers/bin/mount /dev/mapper/external-ssd /mnt/external
+  #       fi
+  #     fi
+  #   '';
+  #   wantedBy = ["multi-user.target"];
+  # };
 }
