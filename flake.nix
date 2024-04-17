@@ -77,7 +77,8 @@
           ./nixos/modules/fonts.nix
           ./nixos/modules/pipewire.nix
           ./nixos/modules/input_method.nix
-          ./nixos/modules/desktop-packages.nix
+          ./nixos/modules/sys-pkgs.nix
+          ./nixos/modules/desktop-pkgs.nix
           # home-manager setup
           home-manager.nixosModules.home-manager
           {
