@@ -40,7 +40,7 @@
 
   # networking
   networking = {
-    hostName = "Geks-Nixos"; # Define your hostname.
+    hostName = "geks-nixos"; # Define your hostname.
     wireless.iwd.enable = true;
     enableB43Firmware = true;
     networkmanager.enable = true;
@@ -67,18 +67,26 @@
 
   # Enable the X11 windowing system.
   services = {
+    displayManager = {
+      defaultSession = "plasma";
+      sddm = {
+        enable = true;
+        wayland = {
+          enable = true;
+          compositor = "kwin";
+        };
+        extraPackages = [
+          # pkgs.elegant-sddm
+        ];
+        enableHidpi = true;
+        # theme = "catppuccin-sddm-corners";
+      };
+    };
     xserver = {
       enable = true;
       videoDrivers = ["amdgpu"];
 
       # Enable the KDE Plasma Desktop Environment.
-      displayManager.defaultSession = "plasma";
-      displayManager.sddm = {
-        enable = true;
-        wayland.enable = true;
-        enableHidpi = true;
-        # theme = "catppuccin-sddm-corners";
-      };
     };
 
     desktopManager.plasma6 = {
@@ -159,7 +167,10 @@
   };
 
   programs = {
-    zsh.enable = true;
+    fish = {
+      enable = true;
+      useBabelfish = true;
+    };
     ecryptfs.enable = true;
     partition-manager.enable = true;
     gnupg.agent = {

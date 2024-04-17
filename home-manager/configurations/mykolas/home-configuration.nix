@@ -10,7 +10,6 @@ in {
   imports = [
     # If you want to use modules your own flake exports (from modules/home-manager):
     # outputs.homeManagerModules.example
-
     # Or modules exported from other flakes (such as nix-colors):
     # inputs.nix-colors.homeManagerModules.default
 
@@ -59,11 +58,6 @@ in {
       recursive = true;
       enable = true;
     };
-    # "./.config/waybar" = {
-    #   source = ./waybar;
-    #   recursive = true;
-    #   enable = true;
-    # };
     "./.config/libvirt" = {
       source = ./libvirt;
       recursive = true;
@@ -78,16 +72,6 @@ in {
       source = ./gitconfig/gitconfig;
       enable = true;
     };
-    # "./.config/rofi" = {
-    #   source = ./rofi/config;
-    #   recursive = true;
-    #   enable = true;
-    # };
-    # "./.local/share/rofi/themes" = {
-    #   source = ./rofi/themes;
-    #   recursive = true;
-    #   enable = true;
-    # };
   };
 
   home.packages = with pkgs; [

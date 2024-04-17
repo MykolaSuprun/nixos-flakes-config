@@ -29,8 +29,6 @@
       # sysstat
     ];
     extraConfig = ''
-      # set tmux default shell
-      set-option -g default-shell fish
       # set tmux attach to create new session if none is available
       new-session -n $HOST
       # fix teminal colors
