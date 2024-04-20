@@ -23,6 +23,7 @@
       url = "github:nix-community/NixOS-WSL";
       flake = true;
     };
+    catppuccin.url = "github:catppuccin/nix";
     my-neovim = {
       url = "github:MykolaSuprun/nixvim-config";
       flake = true;
@@ -35,6 +36,7 @@
     nixpkgs-stable,
     home-manager,
     nixos-wsl,
+    catppuccin,
     my-neovim,
     ...
   } @ inputs: let
@@ -76,9 +78,9 @@
           ./nixos/modules/nix-conf.nix
           ./nixos/modules/fonts.nix
           ./nixos/modules/pipewire.nix
-          ./nixos/modules/input_method.nix
           ./nixos/modules/sys-pkgs.nix
           ./nixos/modules/desktop-pkgs.nix
+          catppuccin.nixosModules.catppuccin
           # home-manager setup
           home-manager.nixosModules.home-manager
           {
@@ -89,12 +91,14 @@
                 imports = [
                   ./home-manager/configurations/mykolas/home-configuration.nix
                   ./home-manager/modules/geks-nixos.nix
+                  ./home-manager/modules/input_method.nix
                   ./home-manager/modules/shell.nix
                   ./home-manager/modules/chromium.nix
                   ./home-manager/modules/flatpak-overrides.nix
                   ./home-manager/modules/tmux.nix
                   ./home-manager/modules/dev-pkgs.nix
                   ./home-manager/modules/dektop-config.nix
+                  catppuccin.homeManagerModules.catppuccin
                 ];
               };
               extraSpecialArgs = {
@@ -117,6 +121,7 @@
         modules = [
           ./nixos/configurations/geks-wsl/configuration.nix
           ./nixos/modules/nix-conf.nix
+          catppuccin.nixosModules.catppuccin
           # ./nixos/modules/fonts.nix
           nixos-wsl.nixosModules.wsl
           home-manager.nixosModules.home-manager
@@ -131,6 +136,7 @@
                   ./home-manager/modules/shell.nix
                   ./home-manager/modules/tmux.nix
                   ./home-manager/modules/dev-pkgs.nix
+                  catppuccin.homeManagerModules.catppuccin
                 ];
               };
               extraSpecialArgs = {

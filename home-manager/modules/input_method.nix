@@ -4,22 +4,9 @@
   ...
 }: {
   i18n.inputMethod = {
-    # enabled = "ibus";
-    # ibus.engines = with pkgs.ibus-engines; [
-    #   hangul
-    #   m17n
-    #   mozc
-    #   rime
-    #   table
-    #   table-chinese
-    #   table-others
-    #   typing-booster uniemoji
-    # ];
-
     enabled = "fcitx5";
-
     fcitx5 = {
-      waylandFrontend = true;
+      catppuccin.enable = true;
       addons = with pkgs; [
         fcitx5-rime
         fcitx5-gtk
