@@ -117,6 +117,7 @@
         modules = [
           ./nixos/configurations/geks-wsl/configuration.nix
           ./nixos/modules/nix-conf.nix
+          ./nixos/modules/sys-pkgs.nix
           # ./nixos/modules/fonts.nix
           nixos-wsl.nixosModules.wsl
           home-manager.nixosModules.home-manager

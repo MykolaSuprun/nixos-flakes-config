@@ -40,6 +40,7 @@
     alias nv="${neovim-local}"
     alias vi="nvim"
     alias tmux="tmux -2"
+    alias ls="eza"
 
     # hook direnv
     # eval "$(direnv hook zsh)"
