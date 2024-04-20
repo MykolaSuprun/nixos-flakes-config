@@ -5,6 +5,7 @@
   inputs,
   config,
   pkgs,
+  catppuccin,
   my-neovim,
   ...
 }: {
@@ -13,7 +14,7 @@
   ];
 
   # nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
+  catppuccin.flavour = "latte";
   # Bootloader.
   boot = {
     loader = {
@@ -28,6 +29,7 @@
         #efiInstallAsRemovable = true; # in case canTouchEfiVariables doesn't work for your system
         devices = ["nodev"];
         useOSProber = true;
+        catppuccin.enable = true;
       };
     };
 
@@ -225,7 +227,6 @@
       cryptsetup
       git
       gh
-      helix
       wezterm
       kitty
       wget

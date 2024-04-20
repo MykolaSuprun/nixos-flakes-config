@@ -22,6 +22,8 @@ in {
 
   home.stateVersion = "23.11";
 
+  catppuccin.flavour = "latte";
+
   services.gpg-agent = {
     enable = true;
     pinentryPackage = pkgs.pinentry-tty;
