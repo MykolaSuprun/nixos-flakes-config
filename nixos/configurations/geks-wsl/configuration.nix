@@ -41,6 +41,7 @@
       wsl-open
     ];
   };
+  networking.hostName = "geks-wsl"; # Define your hostname.
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
