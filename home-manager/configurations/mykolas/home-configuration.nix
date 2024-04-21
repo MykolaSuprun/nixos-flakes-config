@@ -22,6 +22,10 @@ in {
 
   home.stateVersion = "23.11";
 
+  xdg = {
+    enable = true;
+  };
+
   catppuccin.flavour = "latte";
 
   services.gpg-agent = {
