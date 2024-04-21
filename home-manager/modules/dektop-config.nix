@@ -37,7 +37,6 @@
     tusk
     libreoffice-qt
     ledger-live-desktop
-    calibre
     protonup-qt
 
     obsidian
