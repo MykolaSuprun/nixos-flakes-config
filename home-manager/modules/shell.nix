@@ -30,7 +30,7 @@
     # Aliases
     alias editconf="cd $confdir; nvim ."
     alias nxcnf="$confdir/nxcnf.sh"
-    alias nixos-build="sudo nixos-rebuild switch --flake $confdir#$NIXOS_TARGET --accept-flake-config"
+    alias nixos-build="$confdir/scripts/nixos-build.sh"
     alias nix-update="cd $confdir; nix flake update; cd -"
     alias confdir="cd $confdir"
     alias nixgc="nix-collect-garbage"
