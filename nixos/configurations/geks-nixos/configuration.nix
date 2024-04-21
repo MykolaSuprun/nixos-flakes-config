@@ -5,6 +5,7 @@
   inputs,
   config,
   pkgs,
+  catppuccin,
   my-neovim,
   ...
 }: {
@@ -13,7 +14,7 @@
   ];
 
   # nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
+  catppuccin.flavour = "latte";
   # Bootloader.
   boot = {
     loader = {
@@ -28,6 +29,7 @@
         #efiInstallAsRemovable = true; # in case canTouchEfiVariables doesn't work for your system
         devices = ["nodev"];
         useOSProber = true;
+        catppuccin.enable = true;
       };
     };
 
@@ -106,6 +108,11 @@
     fprintd = {
       # enable = true;
     };
+    udev = {
+      packages = [
+        pkgs.bazecor
+      ];
+    };
   };
 
   # Enable sound with pipewire.
@@ -120,6 +127,7 @@
         swaylock = {};
       };
     };
+    polkit.enable = true;
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
@@ -225,7 +233,6 @@
       cryptsetup
       git
       gh
-      helix
       wezterm
       kitty
       wget
@@ -250,6 +257,8 @@
       lsof
       gawk
       util-linux
+      kdePackages.polkit-qt-1
+      kdePackages.polkit-kde-agent-1
 
       #virtualisation
       libtpms
@@ -341,29 +350,4 @@
   };
 
   system.stateVersion = "23.11"; # Did you read the comment?
-
-  # systemd.services.mykolas-ext-ssd = {
-  #   script = ''
-  #     #!/usr/bin/env bash
-  #     FILE=/home/mykolas/.config/ext-ssd/keyfile
-  #     if test -f "$FILE"; then
-  #       # if ! grep '/dev/mapper/external-ssd' /etc/mtab > /dev/null 2>&1; then
-  #       if /run/current-system/sw/bin/mountpoint -q /mnt/external/ ; then
-  #         ${pkgs.lsof}/bin/lsof | grep "/mnt/external" | ${pkgs.gawk}/bin/gawk '{print $2}' | xargs -I -r kill
-  #         /run/wrappers/bin/umount /mnt/external
-  #       fi
-  #       if [ $(${pkgs.util-linux}/bin/lsblk -l -n /dev/disk/by-uuid/2826d16b-a4d0-408d-9c36-b45d476fbe14 | wc -l) -gt 1 ]; then
-  #         ${pkgs.cryptsetup}/bin/cryptsetup luksClose external-ssd
-  #       fi
-  #       if [ $(${pkgs.util-linux}/bin/lsblk -l -n /dev/mapper/external-ssd | wc -l) -gt 1 ]; then
-  #         ${pkgs.cryptsetup}/bin/cryptsetup luksClose external-ssd
-  #       fi
-  #       if ${pkgs.util-linux}/bin/lsblk -f | grep -wq 2826d16b-a4d0-408d-9c36-b45d476fbe14; then
-  #         ${pkgs.cryptsetup}/bin/cryptsetup luksOpen /dev/disk/by-uuid/2826d16b-a4d0-408d-9c36-b45d476fbe14 external-ssd --key-file /home/mykolas/.config/ext-ssd/keyfile
-  #         /run/wrappers/bin/mount /dev/mapper/external-ssd /mnt/external
-  #       fi
-  #     fi
-  #   '';
-  #   wantedBy = ["multi-user.target"];
-  # };
 }

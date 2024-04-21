@@ -7,6 +7,7 @@
     helix = {
       enable = true;
       package = pkgs.helix;
+      catppuccin.enable = true;
     };
     direnv = {
       enable = true;
@@ -19,6 +20,15 @@
     # };
     zsh.enable = true;
     gpg.enable = true;
+    fzf = {
+      enable = true;
+      catppuccin.enable = true;
+      tmux.enableShellIntegration = true;
+    };
+    lazygit = {
+      enable = true;
+      catppuccin.enable = true;
+    };
   };
 
   home.packages = with pkgs; [
