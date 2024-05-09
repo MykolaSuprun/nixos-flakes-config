@@ -29,6 +29,10 @@
   environment.systemPackages = with pkgs; [
     bazecor
     steam-run
-    veracrypt
+
+    catppuccin
+    catppuccin-gtk
+    catppuccin-kvantum
+    catppuccin-cursors
   ];
 }

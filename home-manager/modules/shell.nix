@@ -115,11 +115,19 @@ in {
         if status is-interactive
         and not set -q TMUX
             if tmux has-session -t home
-          exec tmux attach-session -t home
+              read -l -P 'Attach to home? [Y/n] ' confirm
+              switch $confirm
+                case "" Y y
+                  exec tmux attach-session -t home
+                case N n
+                  exec tmux new-session
+              end
+        return 1
             else
                 tmux new-session -s home
             end
         end
+        fish_vi_key_bindings
       '';
     };
     bash = {
