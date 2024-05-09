@@ -5,6 +5,7 @@
   inputs,
   config,
   pkgs,
+  pkgs-stable,
   catppuccin,
   my-neovim,
   ...
@@ -162,8 +163,10 @@
       };
     };
     spiceUSBRedirection.enable = true;
+    # disable vmware for now
     vmware = {
-      host.enable = true;
+      host.enable = false;
+      host.package = pkgs-stable.vmware-workstation;
       host.extraPackages = with pkgs; [];
     };
     podman = {

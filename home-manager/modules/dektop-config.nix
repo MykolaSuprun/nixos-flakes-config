@@ -37,7 +37,8 @@
     tusk
     libreoffice-qt
     ledger-live-desktop
-    protonup-qt
+    pkgs-stable.protonup-qt
+    protonup-ng
 
     obsidian
 
