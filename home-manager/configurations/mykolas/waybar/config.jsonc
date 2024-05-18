@@ -1,12 +1,12 @@
 {
   "layer": "top",
-  "height" : 34,
+  "height" : 30,
   "modules-center": ["battery", "clock"],
   "modules-left": ["hyprland/workspaces","hyprland/window"],
   "modules-right": ["wireplumber"],
   "battery": {
     "format": "  {capacity}% {icon}  ",
-    "format-icons": ["", "", "", "", ""],
+    "format-icons": ["", "", "", "", ""]
   },
   "hyprland/workspaces": {
     "format": "{name}: {icon}",
@@ -20,7 +20,7 @@
       "default": ""
     },
     "persistent-workspaces": {
-          "*": 5, // 5 workspaces by default on every monitor
+          "*": 5 // 5 workspaces by default on every monitor
     }
   },
   "wireplumber": {
@@ -32,12 +32,12 @@
     "format-icons": ["", "", ""]
   },
   "clock": {
-    "format": "{:%a, %d. %b  %H:%M  %Z  }",
+    "format": "{:%a %d %b %H:%M %Z}",
     "timezones": ["Europe/Warsaw", "Europe/Kyiv", "US/Pacific"],
     "actions":  {
       "on-click-right": "mode",
       "on-scroll-up": "tz_up",
       "on-scroll-down": "tz_down"
     }
-  },
+  }
 }

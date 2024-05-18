@@ -6,7 +6,7 @@
   config,
   pkgs,
   pkgs-stable,
-  catppuccin,
+  hyprland,
   my-neovim,
   ...
 }: {
@@ -111,7 +111,7 @@
     };
     udev = {
       packages = [
-        pkgs.bazecor
+        pkgs-stable.bazecor
       ];
     };
   };
@@ -126,6 +126,7 @@
       services = {
         # allow swaylock to unlock sessions
         swaylock = {};
+        hyprlock = {};
       };
     };
     polkit.enable = true;
@@ -165,8 +166,7 @@
     spiceUSBRedirection.enable = true;
     # disable vmware for now
     vmware = {
-      host.enable = false;
-      host.package = pkgs-stable.vmware-workstation;
+      host.enable = true;
       host.extraPackages = with pkgs; [];
     };
     podman = {
@@ -201,12 +201,10 @@
         libglvnd
       ];
     };
-    # hyprland = {
-    #   enable = true;
-    #   package = inputs.hyprland.packages."${pkgs.system}".hyprland;
-    #   portalPackage = inputs.hyprland.packages."${pkgs.system}".xdg-desktop-portal-hyprland;
-    #   xwayland.enable = true;
-    # };
+    hyprland = {
+      enable = true;
+      xwayland.enable = true;
+    };
   };
 
   # List packages installed in system profile.
@@ -230,6 +228,7 @@
       sublime4
       vscode
       lazygit
+      bottom
 
       # basic packages
       ecryptfs
@@ -284,15 +283,18 @@
       extraPortals = with pkgs; [
         kdePackages.xdg-desktop-portal-kde
         xdg-desktop-portal-gtk
-        # inputs.hyprland.packages."${pkgs.system}".xdg-desktop-portal-hyprland
+        xdg-desktop-portal-hyprland
+        xdg-desktop-portal
       ];
       xdgOpenUsePortal = true;
+      wlr.enable = true;
     };
     mime.enable = true;
     menus.enable = true;
     sounds.enable = true;
     icons.enable = true;
     autostart.enable = true;
+    terminal-exec.enable = true;
   };
 
   #Flatpak fix for themes and fonts

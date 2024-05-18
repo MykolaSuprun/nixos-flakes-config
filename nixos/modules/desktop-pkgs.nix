@@ -27,7 +27,7 @@
   };
 
   environment.systemPackages = with pkgs; [
-    bazecor
+    pkgs-stable.bazecor
     steam-run
 
     catppuccin
