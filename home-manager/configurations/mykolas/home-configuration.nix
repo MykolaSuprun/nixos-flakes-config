@@ -64,6 +64,16 @@ in {
       recursive = true;
       enable = true;
     };
+    "./.config/alacritty" = {
+      source = ./alacritty;
+      recursive = true;
+      enable = true;
+    };
+    "./.config/waybar" = {
+      source = ./waybar;
+      recursive = true;
+      enable = true;
+    };
     "./.config/libvirt" = {
       source = ./libvirt;
       recursive = true;
@@ -76,6 +86,18 @@ in {
     };
     "./.gitconfig" = {
       source = ./gitconfig/gitconfig;
+      enable = true;
+    };
+    "./.config/hypr/hyprlock.conf" = {
+      source = ./hyprlock/hyprlock.conf;
+      enable = true;
+    };
+    "./.config/hypr/hypridle.conf" = {
+      source = ./hypridle/hypridle.conf;
+      enable = true;
+    };
+    "./.config/xdg-desktop-portal/hyprland-portals.conf" = {
+      source = ./hyprland-portals/hyprland-portals.conf;
       enable = true;
     };
   };

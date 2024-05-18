@@ -69,5 +69,6 @@
 
     sqlcmd
     killall
+    bottom
   ];
 }

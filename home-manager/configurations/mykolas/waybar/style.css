@@ -1,10 +1,11 @@
 
-@import "themes/macchiato.css";
+@import "themes/latte.css";
 
 * {
   /* reference the color by using @color-name */
   color: @text;
-  font-family: Serif, Font Awesome, JetBrainsMono Nerd Font;
+  /* font-family: Serif, Font Awesome, JetBrainsMono Nerd Font; */
+  font-family: JetBrainsMono NF
 }
 
 window#waybar {
