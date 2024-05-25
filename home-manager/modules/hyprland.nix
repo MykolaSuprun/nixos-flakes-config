@@ -2,6 +2,10 @@
   inputs,
   pkgs,
   pkgs-stable,
+  hyprland,
+  hyprland-plugins,
+  hy3,
+  anyrun,
   ...
 }: let
   initScript = pkgs.writeShellScriptBin "pre_init" ''
@@ -10,7 +14,8 @@
     ${pkgs.kdePackages.polkit-kde-agent-1}/pkgs/kde/plasma/polkit-kde-agent-1 &
     ${pkgs.hypridle}/bin/hypridle &
     sleep 5 && waybar &
-    # ${pkgs.swww}/bin/swww-daemon &
+    ${pkgs.swww}/bin/swww-daemon &
+    swww img ~/.cache/pictures/wallpaper.jpg
     # FILE=~/.config/de_init.sh && test -f $FILE && source $FILE
   '';
   hyprlock_script = pkgs.writeShellScriptBin "run_hyprlock" ''
@@ -22,18 +27,109 @@ in {
     waybar = {
       enable = true;
     };
+    anyrun = {
+      enable = true;
+      config = {
+        plugins = [
+          # An array of all the plugins you want, which either can be paths to the .so files, or their packages
+          inputs.anyrun.packages.${pkgs.system}.applications
+          inputs.anyrun.packages.${pkgs.system}.kidex
+          inputs.anyrun.packages.${pkgs.system}.websearch
+          inputs.anyrun.packages.${pkgs.system}.translate
+          # "${inputs.anyrun.packages.${pkgs.system}.anyrun-with-all-plugins}/lib/kidex"
+        ];
+        x = {fraction = 0.5;};
+        y = {fraction = 0.3;};
+        width = {fraction = 0.3;};
+        hideIcons = false;
+        ignoreExclusiveZones = false;
+        layer = "overlay";
+        hidePluginInfo = false;
+        closeOnClick = false;
+        showResultsImmediately = false;
+        maxEntries = null;
+      };
+      extraCss = ''
+        @define-color bg-col  rgba(30, 30, 46, 0.7);
+        @define-color bg-col-light rgba(150, 220, 235, 0.7);
+        @define-color border-col rgba(30, 30, 46, 0.7);
+        @define-color selected-col rgba(150, 205, 251, 0.7);
+        @define-color fg-col #D9E0EE;
+        @define-color fg-col2 #F28FAD;
+
+        * {
+          transition: 200ms ease;
+          font-family: "JetBrainsMono Nerd Font";
+          font-size: 1.3rem;
+        }
+
+        #window {
+          background: transparent;
+        }
+
+        #plugin,
+        #main {
+          border: 3px solid @border-col;
+          color: @fg-col;
+          background-color: @bg-col;
+        }
+        /* anyrun's input window - Text */
+        #entry {
+          color: @fg-col;
+          background-color: @bg-col;
+        }
+
+        /* anyrun's ouput matches entries - Base */
+        #match {
+          color: @fg-col;
+          background: @bg-col;
+        }
+
+        /* anyrun's selected entry - Red */
+        #match:selected {
+          color: @fg-col2;
+          background: @selected-col;
+        }
+
+        #match {
+          padding: 3px;
+          border-radius: 16px;
+        }
+
+        #entry, #plugin:hover {
+          border-radius: 16px;
+        }
+
+        box#main {
+          background: rgba(30, 30, 46, 0.7);
+          border: 1px solid @border-col;
+          border-radius: 15px;
+          padding: 5px;
+        }
+      '';
+
+      extraConfigFiles."some-plugin.ron".text = ''
+        Config(
+          // for any other plugin
+          // this file will be put in ~/.config/anyrun/some-plugin.ron
+          // refer to docs of xdg.configFile for available options
+        )
+      '';
+    };
   };
   # Packages necessary for hyprland
   home.packages = with pkgs; [
     hyprland-protocols
     hyprland-workspaces
     hyprlock
+    hyprcursor
     hypridle
     swaynotificationcenter
     kdePackages.polkit-kde-agent-1
     kdePackages.qtwayland
     rofi-wayland
-    anyrun
+    hyper
+    anyrun.packages.${system}.anyrun
     # terminal
     alacritty-theme
     alacritty
@@ -41,16 +137,18 @@ in {
     helvum
     # media control
     playerctl
-    pwvucontrol # volume control
+    pkgs-stable.pwvucontrol # volume control
     # wallpaper engine
     swww
   ];
 
   wayland.windowManager.hyprland = {
     enable = true;
+    # package = pkgs-stable.hyprland;
 
     plugins = [
-      pkgs.hyprlandPlugins.hy3
+      # pkgs.hyprlandPlugins.hy3
+      hy3.packages.x86_64-linux.hy3
     ];
 
     systemd = {
@@ -74,7 +172,7 @@ in {
       "$mainMod" = "SUPER";
       "$fileManager" = "dolphin";
       "$terminal" = "kitty";
-      "$menu" = "rofi -show drun -show-icons";
+      "$menu" = "anyrun";
 
       general = {
         # See https://wiki.hyprland.org/Configuring/Variables/ for more
@@ -91,11 +189,12 @@ in {
       };
 
       decoration = {
-        "rounding" = 15;
+        "rounding" = 30;
         "inactive_opacity" = 0.95;
       };
 
       env = [
+        "WLR_NO_HARDWARE_CURSORS,1"
         "WLR_DRM_NO_ATOMIC,1"
         "GDK_BACKEND,wayland,x11,*"
         "QT_QPA_PLATFORM,wayland;xcb"
@@ -109,8 +208,8 @@ in {
       };
 
       input = {
-        "follow_mouse" = "2";
-        "sensitivity" = -0.3;
+        "follow_mouse" = "1";
+        "sensitivity" = -0.6;
       };
 
       cursor = {

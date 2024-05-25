@@ -1,15 +1,18 @@
 {
   "layer": "top",
-  "height" : 30,
-  "modules-center": ["battery", "clock"],
-  "modules-left": ["hyprland/workspaces","hyprland/window"],
-  "modules-right": ["wireplumber"],
+  "output": ["DP-1"],
+  "position": "left",
+  // "height" : 30,
+  "width": 30,
+  "modules-center": ["battery"],
+  "modules-left": ["hyprland/workspaces"],
+  "modules-right": ["wireplumber", "clock"],
   "battery": {
     "format": "  {capacity}% {icon}  ",
     "format-icons": ["", "", "", "", ""]
   },
   "hyprland/workspaces": {
-    "format": "{name}: {icon}",
+    "format": "{icon} ",
     "format-icons": {
       "1": "",
       "2": "",
@@ -24,7 +27,7 @@
     }
   },
   "wireplumber": {
-    "format": "  {icon}: {volume}%  ",
+    "format": " {icon} \n{volume}%",
     "format-muted": "",
     "on-click": "pwvucontrol",
     "max-volume": 100,
@@ -32,8 +35,9 @@
     "format-icons": ["", "", ""]
   },
   "clock": {
-    "format": "{:%a %d %b %H:%M %Z}",
-    "timezones": ["Europe/Warsaw", "Europe/Kyiv", "US/Pacific"],
+    "format": "{:^%H:%M}",
+    "timezones": ["Europe/Warsaw"],
+    "rotate": 1,
     "actions":  {
       "on-click-right": "mode",
       "on-scroll-up": "tz_up",
@@ -41,3 +45,4 @@
     }
   }
 }
+
