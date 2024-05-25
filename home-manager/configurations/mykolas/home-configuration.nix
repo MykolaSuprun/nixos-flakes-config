@@ -26,7 +26,10 @@ in {
     enable = true;
   };
 
-  catppuccin.flavour = "latte";
+  catppuccin = {
+    enable = true;
+    flavor = "latte";
+  };
 
   services.gpg-agent = {
     enable = true;
@@ -45,6 +48,12 @@ in {
       bashrcExtra = ''
         ${shell_hm_target}
       '';
+    };
+  };
+  dconf.settings = {
+    "org/virt-manager/virt-manager/connections" = {
+      autoconnect = ["qemu:///system"];
+      uris = ["qemu:///system"];
     };
   };
 

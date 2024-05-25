@@ -1,6 +1,7 @@
 {
   inputs,
   pkgs,
+  pkgs-stable,
   ...
 }: {
   fonts.fontDir.enable = true;
@@ -21,7 +22,7 @@
     dejavu_fonts
     corefonts
     google-fonts
-    nerdfonts
+    pkgs-stable.nerdfonts
     font-awesome
     paratype-pt-sans
     paratype-pt-mono

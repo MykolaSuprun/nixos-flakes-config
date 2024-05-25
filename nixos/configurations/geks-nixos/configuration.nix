@@ -15,7 +15,8 @@
   ];
 
   # nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  catppuccin.flavour = "latte";
+  # nix.settings.trusted-users = ["mykolas"];
+  catppuccin.flavor = "latte";
   # Bootloader.
   boot = {
     loader = {
@@ -31,6 +32,7 @@
         devices = ["nodev"];
         useOSProber = true;
         catppuccin.enable = true;
+        catppuccin.flavor = "latte";
       };
     };
 
@@ -166,7 +168,7 @@
     spiceUSBRedirection.enable = true;
     # disable vmware for now
     vmware = {
-      host.enable = true;
+      # host.enable = true;
       host.extraPackages = with pkgs; [];
     };
     podman = {
@@ -203,6 +205,8 @@
     };
     hyprland = {
       enable = true;
+      package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+      portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
       xwayland.enable = true;
     };
   };
@@ -225,7 +229,6 @@
     systemPackages = with pkgs; [
       # dev tools
       my-neovim.packages.${system}.default
-      sublime4
       vscode
       lazygit
       bottom
@@ -283,8 +286,7 @@
       extraPortals = with pkgs; [
         kdePackages.xdg-desktop-portal-kde
         xdg-desktop-portal-gtk
-        xdg-desktop-portal-hyprland
-        xdg-desktop-portal
+        inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland
       ];
       xdgOpenUsePortal = true;
       wlr.enable = true;
