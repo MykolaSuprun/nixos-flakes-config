@@ -1,0 +1,21 @@
+[pyprland]
+plugins = [
+  "scratchpads",
+  "wallpapers"
+]
+
+[wallpapers]
+path = "~/megasync/Pictures/21x9/" # path to the folder with background images
+extentions = ["png", "jpg", "jpeg", "webp"]
+unique = true # set a different wallpaper for each screen
+interval = 15
+command = "swww img --transition-type any \"[file]\""
+clear_command = "swww clear"
+
+[scratchpads.term]
+animation = "fromTop"
+command = "kitty --class kitty-dropterm"
+class = "kitty-dropterm"
+size = "75% 60%"
+max_size = "1920px 100%"
+margin = 50

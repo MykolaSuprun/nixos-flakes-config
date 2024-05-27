@@ -18,6 +18,7 @@
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       "anyrun.cachix.org-1:pqBobmOjI7nKlsUMV25u9QHa9btJK65/C8vnO3p346s="
     ];
+    builders-use-substitutes = true;
   };
 
   inputs = {
@@ -34,14 +35,17 @@
     };
     hyprland = {
       url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+      # url = "git+https://github.com/hyprwm/Hyprland?submodules=1?ref=3025a015ea21a1fda84a5a5c847ca31e699fd237";
       # url = "git+https://github.com/hyprwm/Hyprland?submodules=1?ref=v0.40.0";
     };
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
+      # url = "github:hyprwm/hyprland-plugins/c28d1011f4868c1a1ee80b10d9ee79900686df82";
       inputs.hyprland.follows = "hyprland";
     };
     hy3 = {
       url = "github:outfoxxed/hy3"; # where {version} is the hyprland release version
+      # url = "github:outfoxxed/hy3/3025a015ea21a1fda84a5a5c847ca31e699fd237"; # where {version} is the hyprland release version
       # url = "github:outfoxxed/hy3?ref=hl0.40.0"; # where {version} is the hyprland release version
       # or "github:outfoxxed/hy3" to follow the development branch.
       # (you may encounter issues if you dont do the same for hyprland)

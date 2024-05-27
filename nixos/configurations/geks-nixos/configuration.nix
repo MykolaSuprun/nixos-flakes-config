@@ -15,7 +15,7 @@
   ];
 
   # nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  # nix.settings.trusted-users = ["mykolas"];
+  nix.settings.trusted-users = ["mykolas"];
   catppuccin.flavor = "latte";
   # Bootloader.
   boot = {

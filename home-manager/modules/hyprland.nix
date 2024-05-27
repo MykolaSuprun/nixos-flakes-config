@@ -13,9 +13,10 @@
     ${pkgs.swaynotificationcenter}/bin/swaync &
     ${pkgs.kdePackages.polkit-kde-agent-1}/pkgs/kde/plasma/polkit-kde-agent-1 &
     ${pkgs.hypridle}/bin/hypridle &
-    sleep 5 && waybar &
     ${pkgs.swww}/bin/swww-daemon &
-    swww img ~/.cache/pictures/wallpaper.jpg
+    sleep 5 && waybar &
+    sleep 5 && ${pkgs.pyprland}/bin/pypr &
+    # swww img ~/.cache/pictures/wallpaper.jpg
     # FILE=~/.config/de_init.sh && test -f $FILE && source $FILE
   '';
   hyprlock_script = pkgs.writeShellScriptBin "run_hyprlock" ''
@@ -124,6 +125,7 @@ in {
     hyprlock
     hyprcursor
     hypridle
+    pyprland
     swaynotificationcenter
     kdePackages.polkit-kde-agent-1
     kdePackages.qtwayland
@@ -177,9 +179,9 @@ in {
       general = {
         # See https://wiki.hyprland.org/Configuring/Variables/ for more
         "layout" = "hy3";
-        "gaps_in" = "2";
-        "gaps_out" = "2";
-        "border_size" = "5";
+        "gaps_in" = "3";
+        "gaps_out" = "3";
+        "border_size" = "3";
         "col.active_border" = "rgba(33ccffee) rgba(00ff99ee) 45deg";
         "col.inactive_border" = "rgba(595959aa)";
         "no_focus_fallback" = true;
@@ -189,7 +191,7 @@ in {
       };
 
       decoration = {
-        "rounding" = 30;
+        "rounding" = 10;
         "inactive_opacity" = 0.95;
       };
 
@@ -236,6 +238,7 @@ in {
           "$mainMod, P, pseudo, #"
           "$mainMod, F, fullscreen, 1"
           "$mainMod SHIFT, F, fullscreen"
+          "$mainMod,A,exec,pypr toggle term"
           "ALT, SPACE, exec, $menu"
 
           "$mainMod,I,layoutmsg,addmaster"
