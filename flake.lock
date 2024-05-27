@@ -318,6 +318,7 @@
       "original": {
         "owner": "outfoxxed",
         "repo": "hy3",
+        "rev": "3025a015ea21a1fda84a5a5c847ca31e699fd237",
         "type": "github"
       }
     },
@@ -370,6 +371,8 @@
         "url": "https://github.com/hyprwm/Hyprland"
       },
       "original": {
+        "ref": "refs/heads/main",
+        "rev": "2ff95bba3fec58b9f1a127fe72dda84b1420a7af",
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -397,6 +400,7 @@
       "original": {
         "owner": "hyprwm",
         "repo": "hyprland-plugins",
+        "rev": "c28d1011f4868c1a1ee80b10d9ee79900686df82",
         "type": "github"
       }
     },
