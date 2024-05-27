@@ -105,6 +105,10 @@ in {
       source = ./hypridle/hypridle.conf;
       enable = true;
     };
+    "./.config/hypr/pyprland.toml" = {
+      source = ./pyprland/pyprland.toml;
+      enable = true;
+    };
     "./.config/xdg-desktop-portal/hyprland-portals.conf" = {
       source = ./hyprland-portals/hyprland-portals.conf;
       enable = true;
