@@ -1,7 +1,8 @@
 [pyprland]
 plugins = [
   "scratchpads",
-  "wallpapers"
+  "wallpapers",
+  "monitors"
 ]
 
 [wallpapers]
@@ -16,6 +17,26 @@ clear_command = "swww clear"
 animation = "fromTop"
 command = "kitty --class kitty-dropterm"
 class = "kitty-dropterm"
-size = "75% 60%"
-max_size = "1920px 100%"
+size = "85% 75%"
+max_size = "2400px 100%"
 margin = 50
+
+[scratchpads.volume]
+animation = "fromRight"
+command = "pwvucontrol"
+class = "com.saivert.pwvucontrol"
+size = "40% 90%"
+unfocus = "hide"
+lazy = true
+
+[scratchpads.telegram]
+animation = "fromBottom"
+command = "telegram-desktop"
+class = "org.telegram.desktop"
+size = "50% 80%"
+
+[scratchpads.obsidian]
+animation = "fromBottom"
+command = "obsidian"
+class = "obsidian"
+size = "50% 80%"

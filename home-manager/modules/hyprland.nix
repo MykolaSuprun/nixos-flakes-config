@@ -223,6 +223,7 @@ in {
         "immediate, class:^(titanfall.*)$"
         "immediate, class:^(bioshock.*)$"
         "immediate, class:^(helldivers.*)$"
+        "float,class:(org.telegram.desktop),title:(Media viewer)"
         "float,class:^(org.wezfurlong.wezterm)$"
         "tile,class:^(org.wezfurlong.wezterm)$"
       ];
@@ -231,7 +232,7 @@ in {
         [
           "$mainMod, Q, exec, $terminal"
           "$mainMod, C, killactive,"
-          "$mainMod, M, exit"
+          "$mainMod SHIFT, M, exit"
           "$mainMod, E, exec, $fileManager"
           "$mainMod, V, togglefloating,"
           "$mainMod SHIFT, Q, exec, ${hyprlock_script}/bin/run_hyprlock"
@@ -239,6 +240,9 @@ in {
           "$mainMod, F, fullscreen, 1"
           "$mainMod SHIFT, F, fullscreen"
           "$mainMod,A,exec,pypr toggle term"
+          "$mainMod SHIFT,V,exec,pypr toggle volume"
+          "$mainMod,M,exec,pypr toggle telegram"
+          "$mainMod,N,exec,pypr toggle obsidian"
           "ALT, SPACE, exec, $menu"
 
           "$mainMod,I,layoutmsg,addmaster"
