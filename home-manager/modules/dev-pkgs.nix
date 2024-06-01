@@ -33,6 +33,7 @@
 
   home.packages = with pkgs; [
     # dev tools
+    cachix
     my-neovim.packages.${system}.default
     libgccjit
     tree-sitter
