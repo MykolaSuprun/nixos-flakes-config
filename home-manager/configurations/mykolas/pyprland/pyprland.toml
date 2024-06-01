@@ -35,8 +35,8 @@ command = "telegram-desktop"
 class = "org.telegram.desktop"
 size = "50% 80%"
 
-[scratchpads.obsidian]
-animation = "fromBottom"
-command = "obsidian"
-class = "obsidian"
-size = "50% 80%"
+# [scratchpads.obsidian]
+# animation = "fromLeft"
+# command = "obsidian"
+# class = "obsidian"
+# size = "50% 80%"

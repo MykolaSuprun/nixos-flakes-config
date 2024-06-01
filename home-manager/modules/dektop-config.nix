@@ -9,17 +9,17 @@
 
   home.packages = with pkgs; [
     # plasma packages and basic applications
-    kdePackages.sddm-kcm
+    # kdePackages.sddm-kcm
     kdePackages.ark
     kdePackages.yakuake
-    kdePackages.qtstyleplugin-kvantum
-    kdePackages.qtwebsockets
-    kdePackages.qtstyleplugin-kvantum
-    kdePackages.plasma-browser-integration
-    kdePackages.dolphin-plugins
-    kdePackages.kfind
-    kdePackages.kimageformats
-    kdePackages.qtimageformats
+    # kdePackages.qtstyleplugin-kvantum
+    # kdePackages.qtwebsockets
+    # kdePackages.qtstyleplugin-kvantum
+    # kdePackages.plasma-browser-integration
+    # kdePackages.dolphin-plugins
+    # kdePackages.kfind
+    # kdePackages.kimageformats
+    # kdePackages.qtimageformats
 
     # internet
     mullvad-browser
