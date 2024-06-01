@@ -1,7 +1,7 @@
 {
   "layer": "top",
   "output": ["DP-1"],
-  "position": "left",
+  "position": "top",
   // "height" : 30,
   "width": 30,
   "modules-center": ["battery"],
@@ -27,7 +27,7 @@
     }
   },
   "wireplumber": {
-    "format": " {icon} \n{volume}%",
+    "format": " {icon} {volume}%",
     "format-muted": "",
     "on-click": "pwvucontrol",
     "max-volume": 100,

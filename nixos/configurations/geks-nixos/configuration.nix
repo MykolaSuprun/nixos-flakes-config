@@ -73,12 +73,12 @@
   # Enable the X11 windowing system.
   services = {
     displayManager = {
-      defaultSession = "plasma";
+      defaultSession = "hyprland";
       sddm = {
         enable = true;
         wayland = {
           enable = true;
-          compositor = "kwin";
+          # compositor = "kwin";
         };
         extraPackages = [
           # pkgs.elegant-sddm
@@ -94,10 +94,10 @@
       # Enable the KDE Plasma Desktop Environment.
     };
 
-    desktopManager.plasma6 = {
-      enable = true;
-      enableQt5Integration = false;
-    };
+    # desktopManager.plasma6 = {
+    #   enable = true;
+    #   enableQt5Integration = false;
+    # };
 
     pipewire = {
       enable = true;
@@ -205,8 +205,10 @@
     };
     hyprland = {
       enable = true;
-      package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-      portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
+      package = pkgs.hyprland;
+      # package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+      portalPackage = pkgs.xdg-desktop-portal-hyprland;
+      # portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
       xwayland.enable = true;
     };
   };
@@ -222,9 +224,6 @@
       LIBVIRT_DEFAULT_URI = ["qemu:///system"];
       NIXOS_OZONE_WL = "1";
     };
-
-    plasma6.excludePackages = with pkgs; [
-    ];
 
     systemPackages = with pkgs; [
       # dev tools
@@ -286,7 +285,8 @@
       extraPortals = with pkgs; [
         kdePackages.xdg-desktop-portal-kde
         xdg-desktop-portal-gtk
-        inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland
+        xdg-desktop-portal-hyprland
+        # inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland
       ];
       xdgOpenUsePortal = true;
       wlr.enable = true;
@@ -329,20 +329,20 @@
     aggregatedIcons = pkgs.buildEnv {
       name = "system-icons";
       paths = with pkgs; [
-        plasma-overdose-kde-theme
-        materia-kde-theme
-        graphite-kde-theme
-        arc-kde-theme
-        adapta-kde-theme
-        fluent-gtk-theme
-        adapta-gtk-theme
-        mojave-gtk-theme
-        numix-gtk-theme
-        whitesur-kde
-        whitesur-gtk-theme
-        whitesur-icon-theme
-        whitesur-cursors
-        gnome.gnome-themes-extra
+        # plasma-overdose-kde-theme
+        # materia-kde-theme
+        # graphite-kde-theme
+        # arc-kde-theme
+        # adapta-kde-theme
+        # fluent-gtk-theme
+        # adapta-gtk-theme
+        # mojave-gtk-theme
+        # numix-gtk-theme
+        # whitesur-kde
+        # whitesur-gtk-theme
+        # whitesur-icon-theme
+        # whitesur-cursors
+        # gnome.gnome-themes-extra
       ];
       pathsToLink = ["/share/icons"];
     };

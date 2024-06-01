@@ -6,16 +6,16 @@
     allowUnfree = true;
     substituters = [
       "https://cache.nixos.org/"
-      "https://hyprland.cachix.org"
+      # "https://hyprland.cachix.org"
       "https://anyrun.cachix.org"
     ];
     trusted-public-keys = [
-      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+      # "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
     ];
     extra-substituters = ["https://nix-community.cachix.org"];
     extra-trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+      # "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       "anyrun.cachix.org-1:pqBobmOjI7nKlsUMV25u9QHa9btJK65/C8vnO3p346s="
     ];
     builders-use-substitutes = true;
@@ -33,24 +33,24 @@
       url = "github:nix-community/NixOS-WSL";
       flake = true;
     };
-    hyprland = {
-      # url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-      url = "git+https://github.com/hyprwm/Hyprland?ref=refs/heads/main&rev=2ff95bba3fec58b9f1a127fe72dda84b1420a7af&submodules=1";
-      # url = "git+https://github.com/hyprwm/Hyprland?submodules=1?ref=v0.40.0";
-    };
-    hyprland-plugins = {
-      # url = "github:hyprwm/hyprland-plugins";
-      url = "github:hyprwm/hyprland-plugins/c28d1011f4868c1a1ee80b10d9ee79900686df82";
-      inputs.hyprland.follows = "hyprland";
-    };
-    hy3 = {
-      # url = "github:outfoxxed/hy3"; # where {version} is the hyprland release version
-      url = "github:outfoxxed/hy3/3025a015ea21a1fda84a5a5c847ca31e699fd237"; # where {version} is the hyprland release version
-      # url = "github:outfoxxed/hy3?ref=hl0.40.0"; # where {version} is the hyprland release version
-      # or "github:outfoxxed/hy3" to follow the development branch.
-      # (you may encounter issues if you dont do the same for hyprland)
-      inputs.hyprland.follows = "hyprland";
-    };
+    # hyprland = {
+    #   # url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    #   url = "git+https://github.com/hyprwm/Hyprland?ref=refs/heads/main&rev=2ff95bba3fec58b9f1a127fe72dda84b1420a7af&submodules=1";
+    #   # url = "git+https://github.com/hyprwm/Hyprland?submodules=1?ref=v0.40.0";
+    # };
+    # hyprland-plugins = {
+    #   # url = "github:hyprwm/hyprland-plugins";
+    #   url = "github:hyprwm/hyprland-plugins/c28d1011f4868c1a1ee80b10d9ee79900686df82";
+    #   inputs.hyprland.follows = "hyprland";
+    # };
+    # hy3 = {
+    #   # url = "github:outfoxxed/hy3"; # where {version} is the hyprland release version
+    #   url = "github:outfoxxed/hy3/3025a015ea21a1fda84a5a5c847ca31e699fd237"; # where {version} is the hyprland release version
+    #   # url = "github:outfoxxed/hy3?ref=hl0.40.0"; # where {version} is the hyprland release version
+    #   # or "github:outfoxxed/hy3" to follow the development branch.
+    #   # (you may encounter issues if you dont do the same for hyprland)
+    #   inputs.hyprland.follows = "hyprland";
+    # };
     anyrun = {
       url = "github:Kirottu/anyrun";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -68,9 +68,9 @@
     nixpkgs-stable,
     home-manager,
     nixos-wsl,
-    hyprland,
-    hyprland-plugins,
-    hy3,
+    # hyprland,
+    # hyprland-plugins,
+    # hy3,
     anyrun,
     catppuccin,
     my-neovim,
@@ -134,7 +134,7 @@
                   ./home-manager/modules/tmux.nix
                   ./home-manager/modules/dev-pkgs.nix
                   ./home-manager/modules/dektop-config.nix
-                  hyprland.homeManagerModules.default
+                  # hyprland.homeManagerModules.default
                   ./home-manager/modules/hyprland.nix
                   anyrun.homeManagerModules.default
                   ./home-manager/modules/anyrun.nix
@@ -148,9 +148,12 @@
                   system
                   pkgs
                   pkgs-stable
-                  hyprland
-                  hyprland-plugins
-                  hy3
+                  # hyprland
+                  
+                  # hyprland-plugins
+                  
+                  # hy3
+                  
                   anyrun
                   my-neovim
                   ;
@@ -158,7 +161,7 @@
             };
           }
         ];
-        specialArgs = {inherit inputs outputs pkgs pkgs-stable hyprland my-neovim;};
+        specialArgs = {inherit inputs outputs pkgs pkgs-stable my-neovim;};
       };
       geks-wsl = lib.nixosSystem {
         inherit system;
