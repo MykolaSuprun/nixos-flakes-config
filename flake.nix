@@ -33,24 +33,17 @@
       url = "github:nix-community/NixOS-WSL";
       flake = true;
     };
-    # hyprland = {
-    #   # url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-    #   url = "git+https://github.com/hyprwm/Hyprland?ref=refs/heads/main&rev=2ff95bba3fec58b9f1a127fe72dda84b1420a7af&submodules=1";
-    #   # url = "git+https://github.com/hyprwm/Hyprland?submodules=1?ref=v0.40.0";
-    # };
-    # hyprland-plugins = {
-    #   # url = "github:hyprwm/hyprland-plugins";
-    #   url = "github:hyprwm/hyprland-plugins/c28d1011f4868c1a1ee80b10d9ee79900686df82";
-    #   inputs.hyprland.follows = "hyprland";
-    # };
-    # hy3 = {
-    #   # url = "github:outfoxxed/hy3"; # where {version} is the hyprland release version
-    #   url = "github:outfoxxed/hy3/3025a015ea21a1fda84a5a5c847ca31e699fd237"; # where {version} is the hyprland release version
-    #   # url = "github:outfoxxed/hy3?ref=hl0.40.0"; # where {version} is the hyprland release version
-    #   # or "github:outfoxxed/hy3" to follow the development branch.
-    #   # (you may encounter issues if you dont do the same for hyprland)
-    #   inputs.hyprland.follows = "hyprland";
-    # };
+    hyprland = {
+      url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    };
+    hyprland-plugins = {
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
+    hy3 = {
+      url = "git+https://github.com/outfoxxed/hy3?submodules=1";
+      inputs.hyprland.follows = "hyprland";
+    };
     anyrun = {
       url = "github:Kirottu/anyrun";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -68,9 +61,6 @@
     nixpkgs-stable,
     home-manager,
     nixos-wsl,
-    # hyprland,
-    # hyprland-plugins,
-    # hy3,
     anyrun,
     catppuccin,
     my-neovim,
@@ -125,6 +115,9 @@
               useUserPackages = true;
               users.mykolas = {
                 imports = [
+                  inputs.hyprland.homeManagerModules.default
+                  anyrun.homeManagerModules.default
+                  catppuccin.homeManagerModules.catppuccin
                   ./home-manager/configurations/mykolas/home-configuration.nix
                   ./home-manager/modules/geks-nixos.nix
                   ./home-manager/modules/input_method.nix
@@ -134,11 +127,8 @@
                   ./home-manager/modules/tmux.nix
                   ./home-manager/modules/dev-pkgs.nix
                   ./home-manager/modules/dektop-config.nix
-                  # hyprland.homeManagerModules.default
-                  ./home-manager/modules/hyprland.nix
-                  anyrun.homeManagerModules.default
                   ./home-manager/modules/anyrun.nix
-                  catppuccin.homeManagerModules.catppuccin
+                  ./home-manager/modules/hyprland.nix
                 ];
               };
               extraSpecialArgs = {
@@ -148,12 +138,6 @@
                   system
                   pkgs
                   pkgs-stable
-                  # hyprland
-                  
-                  # hyprland-plugins
-                  
-                  # hy3
-                  
                   anyrun
                   my-neovim
                   ;
