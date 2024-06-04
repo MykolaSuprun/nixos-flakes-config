@@ -67,6 +67,8 @@
     nix-tree
     nix-diff
     nixfmt-classic
+    nixVersions.latest
+    lf
 
     sqlcmd
     killall

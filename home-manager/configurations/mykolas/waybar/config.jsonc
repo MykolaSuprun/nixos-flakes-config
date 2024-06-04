@@ -2,11 +2,11 @@
   "layer": "top",
   "output": ["DP-1"],
   "position": "top",
-  // "height" : 30,
-  "width": 30,
-  "modules-center": ["battery"],
+  "height" : 30,
+  // "width": 30,
+  "modules-center": ["battery", "clock"],
   "modules-left": ["hyprland/workspaces"],
-  "modules-right": ["wireplumber", "clock"],
+  "modules-right": ["wireplumber"],
   "battery": {
     "format": "  {capacity}% {icon}  ",
     "format-icons": ["", "", "", "", ""]
