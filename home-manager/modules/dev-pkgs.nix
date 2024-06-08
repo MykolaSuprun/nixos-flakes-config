@@ -57,7 +57,6 @@
     git
     git-crypt
     gnupg
-    github-desktop
     alejandra
     # haskell
     haskell-language-server

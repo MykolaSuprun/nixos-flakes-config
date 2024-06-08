@@ -40,3 +40,15 @@ animation = "fromLeft"
 command = "obsidian"
 class = "obsidian"
 size = "50% 80%"
+lazy = true
+
+
+[scratchpads.mega]
+animation = "fromTop"
+command = "megasync"
+class = "nz.co.mega."
+size = "20% 50%"
+unfocus = "hide"
+
+
+

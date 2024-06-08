@@ -14,7 +14,7 @@
   ];
 
   # nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  # nix.settings.trusted-users = ["mykolas"];
+  nix.settings.trusted-users = ["mykolas"];
   catppuccin.flavor = "latte";
   # Bootloader.
   boot = {
@@ -35,8 +35,9 @@
       };
     };
 
-    kernelPackages = pkgs.linuxPackages_zen;
+    # kernelPackages = pkgs.linuxPackages_zen;
     # kernelPackages = pkgs.linuxPackages_latest;
+    kernelPackages = pkgs.linuxPackages;
     kernelModules = ["wl" "ecryptfs"];
     initrd.kernelModules = ["wl"];
     extraModulePackages = [config.boot.kernelPackages.broadcom_sta];
@@ -77,7 +78,7 @@
         enable = true;
         wayland = {
           enable = true;
-          # compositor = "kwin";
+          compositor = "kwin";
         };
         extraPackages = [
           # pkgs.elegant-sddm
@@ -93,10 +94,10 @@
       # Enable the KDE Plasma Desktop Environment.
     };
 
-    # desktopManager.plasma6 = {
-    #   enable = true;
-    #   enableQt5Integration = false;
-    # };
+    desktopManager.plasma6 = {
+      enable = true;
+      enableQt5Integration = false;
+    };
 
     pipewire = {
       enable = true;
@@ -166,10 +167,10 @@
     };
     spiceUSBRedirection.enable = true;
     # disable vmware for now
-    vmware = {
-      # host.enable = true;
-      host.extraPackages = with pkgs; [];
-    };
+    # vmware = {
+    #   host.enable = true;
+    #   host.extraPackages = with pkgs; [];
+    # };
     podman = {
       enable = true;
       dockerCompat = true;
@@ -204,8 +205,8 @@
     };
     hyprland = {
       enable = true;
-      package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-      portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
+      # package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+      # portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
       xwayland.enable = true;
     };
   };
@@ -246,9 +247,9 @@
       appimage-run
       x264
       x265
-      wacomtablet
-      libwacom
-      xf86_input_wacom
+      # wacomtablet
+      # libwacom
+      # xf86_input_wacom
       xsettingsd
       file
       wl-clipboard
@@ -282,10 +283,10 @@
       extraPortals = with pkgs; [
         kdePackages.xdg-desktop-portal-kde
         xdg-desktop-portal-gtk
-        inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland
+        # inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland
+        xdg-desktop-portal-hyprland
       ];
       xdgOpenUsePortal = true;
-      wlr.enable = true;
     };
     mime.enable = true;
     menus.enable = true;
