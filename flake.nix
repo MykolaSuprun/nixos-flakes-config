@@ -73,7 +73,6 @@
     nixpkgs-stable,
     home-manager,
     nixos-wsl,
-    # anyrun,
     catppuccin,
     my-neovim,
     ...
@@ -85,10 +84,6 @@
       inherit system;
       config.allowUnfree = true;
       config.permittedInsecurePackages = [
-        "openssl-1.1.1w"
-        "electron-25.9.0"
-        "freeimage-unstable-2021-11-01"
-        "nix-2.15.3"
       ];
       overlays =
         [
@@ -100,8 +95,6 @@
       inherit system;
       config.allowUnfree = true;
       config.permittedInsecurePackages = [
-        "openssl-1.1.1w"
-        "electron-25.9.0"
       ];
     };
 
