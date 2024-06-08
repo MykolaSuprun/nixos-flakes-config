@@ -116,6 +116,7 @@ in {
   };
 
   home.packages = with pkgs; [
+    dconf
   ];
 
   home.sessionVariables = {
