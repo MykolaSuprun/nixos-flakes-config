@@ -66,7 +66,7 @@
     nix-tree
     nix-diff
     nixfmt-classic
-    nixVersions.latest
+    # nixVersions.latest
     lf
 
     sqlcmd

@@ -192,12 +192,12 @@
       vimAlias = true;
     };
     dconf.enable = true;
-    nix-ld = {
-      enable = true;
-      libraries = with pkgs; [
-        libglvnd
-      ];
-    };
+    # nix-ld = {
+    #   enable = true;
+    #   libraries = with pkgs; [
+    #     libglvnd
+    #   ];
+    # };
     hyprland = {
       enable = true;
       # package = inputs.hyprland.packages.${pkgs.system}.hyprland;
