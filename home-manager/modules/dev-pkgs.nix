@@ -7,7 +7,6 @@
     helix = {
       enable = true;
       package = pkgs.helix;
-      catppuccin.enable = true;
     };
     direnv = {
       enable = true;
@@ -22,12 +21,10 @@
     gpg.enable = true;
     fzf = {
       enable = true;
-      catppuccin.enable = true;
       tmux.enableShellIntegration = true;
     };
     lazygit = {
       enable = true;
-      catppuccin.enable = true;
     };
   };
 
@@ -35,9 +32,7 @@
     # dev tools
     cachix
     my-neovim.packages.${system}.default
-    libgccjit
     tree-sitter
-    lazygit
     ripgrep
     fd
     nodejs
@@ -58,11 +53,8 @@
     git-crypt
     gnupg
     alejandra
-    # haskell
-    haskell-language-server
     ghc
     # nix
-    nil
     nix-tree
     nix-diff
     nixfmt-classic

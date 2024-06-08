@@ -27,12 +27,7 @@
   };
 
   environment.systemPackages = with pkgs; [
-    pkgs-stable.bazecor
+    bazecor
     steam-run
-
-    catppuccin
-    catppuccin-gtk
-    catppuccin-kvantum
-    catppuccin-cursors
   ];
 }

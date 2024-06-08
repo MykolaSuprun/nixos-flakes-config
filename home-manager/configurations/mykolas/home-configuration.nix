@@ -20,7 +20,7 @@ in {
   home.username = "mykolas";
   home.homeDirectory = "/home/mykolas";
 
-  home.stateVersion = "23.11";
+  home.stateVersion = "24.05";
 
   xdg = {
     enable = true;

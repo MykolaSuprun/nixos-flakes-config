@@ -17,6 +17,7 @@
   nix.settings.trusted-users = ["mykolas"];
   # Bootloader.
   boot = {
+    initrd.luks.devices."luks-16267be4-338a-4125-9e7f-ec112f3e166e".device = "/dev/disk/by-uuid/16267be4-338a-4125-9e7f-ec112f3e166e";
     loader = {
       systemd-boot.enable = false;
       efi = {
@@ -70,20 +71,20 @@
   # Enable the X11 windowing system.
   services = {
     displayManager = {
-      defaultSession = "hyprland";
+      # defaultSession = "hyprland";
       sddm = {
         enable = true;
         wayland = {
           enable = true;
-          compositor = "kwin";
+          # compositor = "kwin";
         };
         extraPackages = [
         ];
-        enableHidpi = true;
+        # enableHidpi = true;
       };
     };
     xserver = {
-      enable = true;
+      enable = false;
       videoDrivers = ["amdgpu"];
 
       # Enable the KDE Plasma Desktop Environment.
@@ -91,14 +92,6 @@
 
     desktopManager.plasma6 = {
       enable = true;
-      enableQt5Integration = false;
-    };
-
-    pipewire = {
-      enable = true;
-      alsa.enable = true;
-      alsa.support32Bit = true;
-      pulse.enable = true;
     };
 
     flatpak.enable = true;
@@ -113,11 +106,7 @@
     };
   };
 
-  # Enable sound with pipewire.
-  sound.enable = true;
-  hardware.pulseaudio.enable = false;
   security = {
-    rtkit.enable = true;
     pam = {
       enableEcryptfs = true;
       services = {
@@ -153,14 +142,15 @@
   };
 
   virtualisation = {
-    libvirtd = {
-      enable = true;
-      qemu = {
-        ovmf.enable = true;
-        swtpm.enable = true;
-      };
-    };
-    spiceUSBRedirection.enable = true;
+    # libvirtd = {
+    #   enable = true;
+    #   qemu = {
+    #     ovmf.enable = true;
+    #     swtpm.enable = true;
+    #   };
+    # };
+    # spiceUSBRedirection.enable = true;
+
     # disable vmware for now
     # vmware = {
     #   host.enable = true;
@@ -200,8 +190,6 @@
     # };
     hyprland = {
       enable = true;
-      # package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-      # portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
       xwayland.enable = true;
     };
   };
@@ -209,9 +197,8 @@
   # List packages installed in system profile.
 
   # List packages installed in system profile. To search, run:
-  # $ nix search wget
   environment = {
-    shells = with pkgs; [zsh];
+    shells = with pkgs; [fish];
 
     sessionVariables = {
       LIBVIRT_DEFAULT_URI = ["qemu:///system"];
@@ -271,26 +258,6 @@
     ];
   };
 
-  # XDG portal
-  xdg = {
-    portal = {
-      enable = true;
-      extraPortals = with pkgs; [
-        kdePackages.xdg-desktop-portal-kde
-        xdg-desktop-portal-gtk
-        # inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland
-        xdg-desktop-portal-hyprland
-      ];
-      xdgOpenUsePortal = true;
-    };
-    mime.enable = true;
-    menus.enable = true;
-    sounds.enable = true;
-    icons.enable = true;
-    autostart.enable = true;
-    terminal-exec.enable = true;
-  };
-
   #Flatpak fix for themes and fonts
   # system.fsPackages = [pkgs.bindfs];
   # fileSystems = let
@@ -348,5 +315,5 @@
     "/usr/local/share/fonts" = mkRoSymBind "${aggregatedFonts}/share/fonts";
   };
 
-  system.stateVersion = "23.11"; # Did you read the comment?
+  system.stateVersion = "24.05"; # Did you read the comment?
 }

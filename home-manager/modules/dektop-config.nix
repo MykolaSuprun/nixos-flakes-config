@@ -24,7 +24,7 @@
 
     # internet
     mullvad-browser
-    pkgs-stable.protonvpn-gui
+    protonvpn-gui
 
     # social
     discord
@@ -35,10 +35,9 @@
     megasync
     qbittorrent
     morgen
-    tusk
     libreoffice-qt
     ledger-live-desktop
-    pkgs-stable.protonup-qt
+    protonup-qt
     protonup-ng
 
     obsidian
@@ -58,7 +57,7 @@
     bottles
 
     # media
-    pkgs-stable.spotify
+    spotify
     vlc
     cider
 
