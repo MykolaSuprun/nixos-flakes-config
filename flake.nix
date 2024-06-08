@@ -8,12 +8,12 @@
     substituters = [
       "https://cache.nixos.org"
       "https://nix-community.cachix.org"
-      "https://hyprland.cachix.org"
+      # "https://hyprland.cachix.org"
     ];
     trusted-public-keys = [
       # "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+      # "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
     ];
     # extra-substituters = [
     #   "https://anyrun.cachix.org"
@@ -26,9 +26,15 @@
   inputs = {
     # nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs = {
+      url = "github:NixOS/nixpkgs/nixos-24.05";
+      flake = true;
+    };
     # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2405.*.tar.gz";
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs-stable = {
+      url = "github:NixOS/nixpkgs/nixos-24.05";
+      flake = true;
+    };
     # nixpkgs-stable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2405.*.tar.gz";
     home-manager = {
       # url = "github:nix-community/home-manager/master";
@@ -105,6 +111,7 @@
       geks-nixos = lib.nixosSystem {
         inherit system;
         modules = [
+          catppuccin.nixosModules.catppuccin
           ./nixos/configurations/geks-nixos/hardware-configuration.nix
           ./nixos/configurations/geks-nixos/configuration.nix
           ./nixos/modules/nix-conf.nix
@@ -112,7 +119,7 @@
           ./nixos/modules/pipewire.nix
           ./nixos/modules/sys-pkgs.nix
           ./nixos/modules/desktop-pkgs.nix
-          catppuccin.nixosModules.catppuccin
+          ./nixos/modules/catppuccin.nix
           # home-manager setup
           home-manager.nixosModules.home-manager
           {
@@ -133,8 +140,9 @@
                   ./home-manager/modules/tmux.nix
                   ./home-manager/modules/dev-pkgs.nix
                   ./home-manager/modules/dektop-config.nix
+                  ./home-manager/modules/catppuccin.nix
                   # ./home-manager/modules/anyrun.nix
-                  ./home-manager/modules/hyprland.nix
+                  # ./home-manager/modules/hyprland.nix
                 ];
               };
               extraSpecialArgs = {
@@ -164,18 +172,20 @@
           # ./nixos/modules/fonts.nix
           nixos-wsl.nixosModules.wsl
           home-manager.nixosModules.home-manager
+          ./nixos/modules/catppuccin.nix
           {
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
               users.mykolas = {
                 imports = [
+                  catppuccin.homeManagerModules.catppuccin
                   ./home-manager/configurations/mykolas/home-configuration.nix
                   ./home-manager/modules/geks-wsl.nix
                   ./home-manager/modules/shell.nix
                   ./home-manager/modules/tmux.nix
                   ./home-manager/modules/dev-pkgs.nix
-                  catppuccin.homeManagerModules.catppuccin
+                  ./home-manager/modules/catppuccin.nix
                 ];
               };
               extraSpecialArgs = {

@@ -6,7 +6,6 @@
   i18n.inputMethod = {
     enabled = "fcitx5";
     fcitx5 = {
-      catppuccin.enable = true;
       addons = with pkgs; [
         fcitx5-rime
         fcitx5-gtk

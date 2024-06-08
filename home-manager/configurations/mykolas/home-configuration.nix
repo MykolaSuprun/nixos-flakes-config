@@ -26,11 +26,6 @@ in {
     enable = true;
   };
 
-  catppuccin = {
-    enable = true;
-    flavor = "latte";
-  };
-
   services.gpg-agent = {
     enable = true;
     pinentryPackage = pkgs.pinentry-tty;
