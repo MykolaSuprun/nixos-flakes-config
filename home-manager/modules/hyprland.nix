@@ -11,7 +11,7 @@
     ${pkgs.kdePackages.polkit-kde-agent-1}/pkgs/kde/plasma/polkit-kde-agent-1 &
     ${pkgs.hypridle}/bin/hypridle &
     ${pkgs.swww}/bin/swww-daemon &
-    sleep 5 && waybar &
+    killall .waybar-wrapped && sleep 2 && waybar &
     sleep 5 && ${pkgs.pyprland}/bin/pypr &
     # swww img ~/.cache/pictures/wallpaper.jpg
     # FILE=~/.config/de_init.sh && test -f $FILE && source $FILE
@@ -38,7 +38,7 @@ in {
     kdePackages.polkit-kde-agent-1
     kdePackages.qtwayland
     rofi-wayland
-    hyper
+    # hyper
     anyrun.packages.${system}.anyrun
     # terminal
     alacritty-theme
@@ -54,11 +54,9 @@ in {
 
   wayland.windowManager.hyprland = {
     enable = true;
-    package = pkgs.hyprland;
 
     plugins = [
-      # pkgs.hyprlandPlugins.hy3
-      # hy3.packages.x86_64-linux.hy3
+      inputs.hy3.packages.x86_64-linux.hy3
     ];
 
     systemd = {
@@ -86,7 +84,7 @@ in {
 
       general = {
         # See https://wiki.hyprland.org/Configuring/Variables/ for more
-        "layout" = "dwindle";
+        "layout" = "hy3";
         "gaps_in" = "3";
         "gaps_out" = "3";
         "border_size" = "3";
@@ -126,6 +124,17 @@ in {
         # "no_warps" = true;
       };
 
+      workspace = [
+        "1,monitor:DP-1,default:true,defaultName:default"
+        "2,monitor:DP-1,default:false,defaultName:browser"
+        "3,monitor:DP-1,default:false,defaultName:code"
+        "4,monitor:DP-1,default:false,defaultName:games"
+        "7,monitor:DP-2,default:true,defaultName:side_default"
+        "8,monitor:DP-2,default:false,defaultName:side_2"
+        "9,monitor:DP-2,default:false,defaultName:side_3"
+        "0,monitor:DP-2,default:false,defaultName:side_4"
+      ];
+
       windowrulev2 = [
         "immediate, class:^(overwatch.*)$"
         "immediate, class:^(titanfall.*)$"
@@ -155,10 +164,16 @@ in {
 
           "$mainMod,I,layoutmsg,addmaster"
           "$mainMod SHIFT,I,layoutmsg,removemaster"
-          "$mainMod, h, movefocus, l"
-          "$mainMod, l, movefocus, r"
-          "$mainMod, k, movefocus, u"
-          "$mainMod, j, movefocus, d"
+          "$mainMod, H, movefocus, l"
+          "$mainMod, L, movefocus, r"
+          "$mainMod, K, movefocus, u"
+          "$mainMod, J, movefocus, d"
+
+          "$mainMod SHIFT, H, movewindow, l"
+          "$mainMod SHIFT, L, movewindow, r"
+          "$mainMod SHIFT, K, movewindow, u"
+          "$mainMod SHIFT, J, movewindow, d"
+
           "$mainMod SHIFT,O,layoutmsg,orientationcycle left top right bottom center"
 
           # adjust volume
@@ -172,6 +187,12 @@ in {
           ", XF86AudioNext, exec, playerctl next"
           ", XF86AudioPrev, exec, playerctl previous"
           ", XF86audiostop, exec, playerctl stop"
+
+          # workspaces
+          "$mainMod, U, workspace, 1"
+          "$mainMod, I, workspace, 2"
+          "$mainMod, O, workspace, 3"
+          "$mainMod, P, workspace, 4"
         ]
         ++ (
           # workspaces

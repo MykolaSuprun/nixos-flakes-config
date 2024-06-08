@@ -33,6 +33,7 @@
 
   home.packages = with pkgs; [
     # dev tools
+    cachix
     my-neovim.packages.${system}.default
     libgccjit
     tree-sitter
@@ -66,6 +67,8 @@
     nix-tree
     nix-diff
     nixfmt-classic
+    nixVersions.latest
+    lf
 
     sqlcmd
     killall

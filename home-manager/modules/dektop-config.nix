@@ -12,6 +12,7 @@
     # kdePackages.sddm-kcm
     kdePackages.ark
     kdePackages.yakuake
+    kdePackages.dolphin
     # kdePackages.qtstyleplugin-kvantum
     # kdePackages.qtwebsockets
     # kdePackages.qtstyleplugin-kvantum

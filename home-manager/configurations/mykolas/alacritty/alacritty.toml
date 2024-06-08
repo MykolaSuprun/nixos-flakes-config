@@ -3,6 +3,8 @@ normal = { family = "JetBrainsMono NFM", style = "Regular" }
 # bold = "JetBrainsMono NFM Bold" 
 size = 10
 
+[env]
+TERM = "xterm-256color"
 
 [colors.primary]
 background = "#eff1f5"

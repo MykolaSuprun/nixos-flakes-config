@@ -25,7 +25,7 @@ margin = 50
 animation = "fromRight"
 command = "pwvucontrol"
 class = "com.saivert.pwvucontrol"
-size = "40% 90%"
+size = "20% 50%"
 unfocus = "hide"
 lazy = true
 
@@ -35,8 +35,8 @@ command = "telegram-desktop"
 class = "org.telegram.desktop"
 size = "50% 80%"
 
-# [scratchpads.obsidian]
-# animation = "fromLeft"
-# command = "obsidian"
-# class = "obsidian"
-# size = "50% 80%"
+[scratchpads.obsidian]
+animation = "fromLeft"
+command = "obsidian"
+class = "obsidian"
+size = "50% 80%"
