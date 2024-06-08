@@ -2,7 +2,7 @@
   inputs,
   pkgs,
   pkgs-stable,
-  anyrun,
+  # anyrun,
   ...
 }: let
   initScript = pkgs.writeShellScriptBin "pre_init" ''
@@ -11,7 +11,8 @@
     ${pkgs.kdePackages.polkit-kde-agent-1}/pkgs/kde/plasma/polkit-kde-agent-1 &
     ${pkgs.hypridle}/bin/hypridle &
     ${pkgs.swww}/bin/swww-daemon &
-    killall .waybar-wrapped && sleep 2 && waybar &
+    # killall .waybar-wrapped && sleep 4 && waybar &
+    killall .waybar-wrapped && waybar &
     sleep 5 && ${pkgs.pyprland}/bin/pypr &
     # swww img ~/.cache/pictures/wallpaper.jpg
     # FILE=~/.config/de_init.sh && test -f $FILE && source $FILE
@@ -39,7 +40,7 @@ in {
     kdePackages.qtwayland
     rofi-wayland
     # hyper
-    anyrun.packages.${system}.anyrun
+    anyrun
     # terminal
     alacritty-theme
     alacritty
@@ -56,7 +57,8 @@ in {
     enable = true;
 
     plugins = [
-      inputs.hy3.packages.x86_64-linux.hy3
+      # inputs.hy3.packages.x86_64-linux.hy3
+      pkgs.hyprlandPlugins.hy3
     ];
 
     systemd = {
@@ -156,10 +158,11 @@ in {
           "$mainMod, P, pseudo, #"
           "$mainMod, F, fullscreen, 1"
           "$mainMod SHIFT, F, fullscreen"
-          "$mainMod,A,exec,pypr toggle term"
-          "$mainMod SHIFT,V,exec,pypr toggle volume"
-          "$mainMod,M,exec,pypr toggle telegram"
-          "$mainMod,N,exec,pypr toggle obsidian"
+          "$mainMod, A,exec, pypr toggle term"
+          "$mainMod SHIFT, V, exec, pypr toggle volume"
+          "$mainMod, M, exec, pypr toggle telegram"
+          "$mainModu, [, exec, pypr toggle mega"
+          "$mainMod, N, exec, pypr toggle obsidian"
           "ALT, SPACE, exec, $menu"
 
           "$mainMod,I,layoutmsg,addmaster"
@@ -193,6 +196,10 @@ in {
           "$mainMod, I, workspace, 2"
           "$mainMod, O, workspace, 3"
           "$mainMod, P, workspace, 4"
+          "$mainMod SHIFT, U, movetoworkspace, 1"
+          "$mainMod SHIFT, I, movetoworkspace, 2"
+          "$mainMod SHIFT, O, movetoworkspace, 3"
+          "$mainMod SHIFT, P, movetoworkspace, 4"
         ]
         ++ (
           # workspaces
