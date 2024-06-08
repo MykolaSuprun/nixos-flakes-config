@@ -4,9 +4,6 @@
   my-neovim,
   ...
 }: {
-  console = {
-    catppuccin.enable = true;
-  };
   programs = {
     nh = {
       enable = true;

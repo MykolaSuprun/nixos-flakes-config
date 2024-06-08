@@ -15,7 +15,6 @@
 
   # nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.settings.trusted-users = ["mykolas"];
-  catppuccin.flavor = "latte";
   # Bootloader.
   boot = {
     loader = {
@@ -30,8 +29,6 @@
         #efiInstallAsRemovable = true; # in case canTouchEfiVariables doesn't work for your system
         devices = ["nodev"];
         useOSProber = true;
-        catppuccin.enable = true;
-        catppuccin.flavor = "latte";
       };
     };
 
@@ -81,10 +78,8 @@
           compositor = "kwin";
         };
         extraPackages = [
-          # pkgs.elegant-sddm
         ];
         enableHidpi = true;
-        # theme = "catppuccin-sddm-corners";
       };
     };
     xserver = {

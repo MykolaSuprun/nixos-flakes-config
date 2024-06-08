@@ -6,7 +6,6 @@
 }: {
   programs.tmux = {
     enable = true;
-    catppuccin.enable = true;
     # terminal = "xterm-256color";
     # escapeTime = 10;
     clock24 = true;
