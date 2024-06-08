@@ -33,7 +33,10 @@
       # set tmux attach to create new session if none is available
       new-session -n $HOST
       # fix teminal colors
-      set-option -sa terminal-overrides ",xterm*:Tc"
+      # set-option -sa terminal-overrides ",xterm*:Tc"
+      set -g default-terminal "tmux-256color"
+      set -ag terminal-overrides ",xterm-256color:RGB"
+      set-option -a terminal-overrides ",alacritty:RGB"
       # better window switching
       bind -n M-H previous-window
       bind -n M-L next-window

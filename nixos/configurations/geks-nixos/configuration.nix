@@ -6,7 +6,6 @@
   config,
   pkgs,
   pkgs-stable,
-  hyprland,
   my-neovim,
   ...
 }: {
@@ -15,7 +14,7 @@
   ];
 
   # nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  nix.settings.trusted-users = ["mykolas"];
+  # nix.settings.trusted-users = ["mykolas"];
   catppuccin.flavor = "latte";
   # Bootloader.
   boot = {
@@ -205,10 +204,8 @@
     };
     hyprland = {
       enable = true;
-      package = pkgs.hyprland;
-      # package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-      portalPackage = pkgs.xdg-desktop-portal-hyprland;
-      # portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
+      package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+      portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
       xwayland.enable = true;
     };
   };
@@ -285,8 +282,7 @@
       extraPortals = with pkgs; [
         kdePackages.xdg-desktop-portal-kde
         xdg-desktop-portal-gtk
-        xdg-desktop-portal-hyprland
-        # inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland
+        inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland
       ];
       xdgOpenUsePortal = true;
       wlr.enable = true;
