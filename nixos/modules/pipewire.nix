@@ -1,10 +1,9 @@
-{
-  inputs,
-  pkgs,
-  config,
-  ...
-}: {
+{...}: {
   # Enable sound with pipewire.
+  sound = {
+    enable = true;
+    mediaKeys.enable = true;
+  };
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;

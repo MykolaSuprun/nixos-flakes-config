@@ -11,7 +11,7 @@
       # "https://hyprland.cachix.org"
     ];
     trusted-public-keys = [
-      # "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       # "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
     ];
@@ -107,6 +107,7 @@
           catppuccin.nixosModules.catppuccin
           ./nixos/configurations/geks-nixos/hardware-configuration.nix
           ./nixos/configurations/geks-nixos/configuration.nix
+          ./nixos/modules/xdg.nix
           ./nixos/modules/nix-conf.nix
           ./nixos/modules/fonts.nix
           ./nixos/modules/pipewire.nix
@@ -135,7 +136,7 @@
                   ./home-manager/modules/dektop-config.nix
                   ./home-manager/modules/catppuccin.nix
                   # ./home-manager/modules/anyrun.nix
-                  # ./home-manager/modules/hyprland.nix
+                  ./home-manager/modules/hyprland.nix
                 ];
               };
               extraSpecialArgs = {
@@ -195,6 +196,37 @@
           }
         ];
         specialArgs = {inherit inputs outputs pkgs pkgs-stable my-neovim;};
+      };
+    };
+    homeConfigurations = {
+      mykolas = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [
+          # inputs.hyprland.homeManagerModules.default
+          # anyrun.homeManagerModules.default
+          catppuccin.homeManagerModules.catppuccin
+          ./home-manager/configurations/mykolas/home-configuration.nix
+          ./home-manager/modules/geks-nixos.nix
+          ./home-manager/modules/input_method.nix
+          ./home-manager/modules/shell.nix
+          ./home-manager/modules/chromium.nix
+          ./home-manager/modules/flatpak-overrides.nix
+          ./home-manager/modules/tmux.nix
+          ./home-manager/modules/dev-pkgs.nix
+          ./home-manager/modules/dektop-config.nix
+          ./home-manager/modules/catppuccin.nix
+          # ./home-manager/modules/anyrun.nix
+          ./home-manager/modules/hyprland.nix
+        ];
+        extraSpecialArgs = {
+          inherit
+            pkgs
+            pkgs-stable
+            # anyrun
+            
+            my-neovim
+            ;
+        };
       };
     };
   };

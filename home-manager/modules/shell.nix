@@ -31,7 +31,7 @@
     alias editconf="cd $confdir; nvim ."
     alias nxcnf="$confdir/nxcnf.sh"
     alias nixos-build="$confdir/scripts/nixos-build.sh"
-    alias nix-update="cd $confdir; nix flake update; cd -"
+    alias nix-update="cd $confdir; nix flake update --accept-flake-config; cd -"
     alias confdir="cd $confdir"
     alias nixgc="nix-collect-garbage"
     alias arch-build="$confdir/home/mykolas/distrobox/build-arch.sh"
