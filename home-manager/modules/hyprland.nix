@@ -7,13 +7,14 @@
 }: let
   initScript = pkgs.writeShellScriptBin "pre_init" ''
     systemctl --user mask xdg-desktop-portal-wlr
+    killall .waybar-wrapped &
     ${pkgs.swaynotificationcenter}/bin/swaync &
     ${pkgs.kdePackages.polkit-kde-agent-1}/pkgs/kde/plasma/polkit-kde-agent-1 &
     ${pkgs.hypridle}/bin/hypridle &
     ${pkgs.swww}/bin/swww-daemon &
     # killall .waybar-wrapped && sleep 4 && waybar &
-    killall .waybar-wrapped && waybar &
     sleep 5 && ${pkgs.pyprland}/bin/pypr &
+    waybar &
     # swww img ~/.cache/pictures/wallpaper.jpg
     # FILE=~/.config/de_init.sh && test -f $FILE && source $FILE
   '';
