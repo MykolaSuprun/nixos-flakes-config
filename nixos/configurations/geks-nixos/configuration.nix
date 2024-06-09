@@ -35,7 +35,7 @@
 
     # kernelPackages = pkgs.linuxPackages_zen;
     # kernelPackages = pkgs.linuxPackages_latest;
-    kernelPackages = pkgs.linuxPackages;
+    kernelPackages = pkgs.linuxPackages_6_8;
     kernelModules = ["wl" "ecryptfs"];
     initrd.kernelModules = ["wl"];
     extraModulePackages = [config.boot.kernelPackages.broadcom_sta];
@@ -151,11 +151,9 @@
     # };
     # spiceUSBRedirection.enable = true;
 
-    # disable vmware for now
-    # vmware = {
-    #   host.enable = true;
-    #   host.extraPackages = with pkgs; [];
-    # };
+    vmware = {
+      host.enable = true;
+    };
     podman = {
       enable = true;
       dockerCompat = true;
@@ -248,8 +246,8 @@
       libtpms
       virt-manager
       win-virtio
-      qemu
-      kvmtool
+      # qemu
+      # kvmtool
       tpm2-tools
       distrobox
       podman-compose

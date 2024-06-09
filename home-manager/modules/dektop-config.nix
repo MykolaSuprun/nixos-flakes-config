@@ -21,6 +21,7 @@
     # kdePackages.kfind
     # kdePackages.kimageformats
     # kdePackages.qtimageformats
+    libsForQt5.polonium
 
     # internet
     mullvad-browser
@@ -68,5 +69,6 @@
     yad
     unzip
     unixtools.xxd
+    bemenu
   ];
 }
