@@ -65,6 +65,10 @@
       url = "github:MykolaSuprun/nixvim-config";
       flake = true;
     };
+    bemenu = {
+      url = "github:Cloudef/bemenu";
+      flake = true;
+    };
   };
 
   outputs = {
@@ -75,6 +79,7 @@
     nixos-wsl,
     catppuccin,
     my-neovim,
+    bemenu,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -87,6 +92,7 @@
       ];
       overlays =
         [
+          (self: super: {bemenu = bemenu.packages."${system}".default;})
         ]
         ++ import ./overlays;
     };
@@ -146,6 +152,7 @@
                   system
                   pkgs
                   pkgs-stable
+                  bemenu
                   # anyrun
                   
                   my-neovim
