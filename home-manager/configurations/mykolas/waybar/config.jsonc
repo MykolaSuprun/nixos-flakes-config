@@ -27,7 +27,7 @@
     }
   },
   "wireplumber": {
-    "format": " {icon} {volume}%",
+    "format": " {icon}  {volume}% ",
     "format-muted": "",
     "on-click": "pwvucontrol",
     "max-volume": 100,

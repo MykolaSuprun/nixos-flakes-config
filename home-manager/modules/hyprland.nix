@@ -5,22 +5,29 @@
   # anyrun,
   ...
 }: let
-  initScript = pkgs.writeShellScriptBin "pre_init" ''
-    systemctl --user mask xdg-desktop-portal-wlr
-    killall .waybar-wrapped &
+  init_script = pkgs.writeShellScriptBin "pre_init" ''
+    killall .waybar-wrapped; sleep .5 waybar &
     ${pkgs.swaynotificationcenter}/bin/swaync &
     ${pkgs.kdePackages.polkit-kde-agent-1}/pkgs/kde/plasma/polkit-kde-agent-1 &
     ${pkgs.hypridle}/bin/hypridle &
     ${pkgs.swww}/bin/swww-daemon &
+
+    killall -q .waybar-wrapped; sleep .5 && waybar &
     # killall .waybar-wrapped && sleep 4 && waybar &
     sleep 5 && ${pkgs.pyprland}/bin/pypr &
-    waybar &
     # swww img ~/.cache/pictures/wallpaper.jpg
     # FILE=~/.config/de_init.sh && test -f $FILE && source $FILE
   '';
   hyprlock_script = pkgs.writeShellScriptBin "run_hyprlock" ''
     #!/usr/bin/env bash
     hyprlock
+  '';
+  menu_script = pkgs.writeShellScriptBin "run_menu" ''
+    #!/usr/bin/env bash
+    bemenu-run -n -c -B 3 -W 0.3 -l 10 -i -w -H 20 --counter always \
+          --scrollbar always --binding vim --vim-normal-mode --vim-esc-exits --single-instance \
+          --fb "#eff1f5" --ff "#4c4f69" --nb "#eff1f5" --nf "#4c4f69" --tb "#eff1f5" \
+          --hb "#eff1f5" --tf "#d20f39" --hf "#df8e1d" --af "#4c4f69" --ab "#eff1f5" --bdr "#898992"
   '';
 in {
   programs = {
@@ -49,7 +56,7 @@ in {
     helvum
     # media control
     playerctl
-    pkgs-stable.pwvucontrol # volume control
+    pwvucontrol # volume control
     # wallpaper engine
     swww
   ];
@@ -77,13 +84,17 @@ in {
       ];
 
       exec-once = [
-        "${initScript}/bin/pre_init"
+        "systemctl --user mask xdg-desktop-portal-wlr"
+        "systemctl --user import-environment XDG_SESSION_TYPE XDG_CURRENT_DESKTOP"
+        "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+        "${init_script}/bin/pre_init"
       ];
 
       "$mainMod" = "SUPER";
       "$fileManager" = "dolphin";
       "$terminal" = "kitty";
-      "$menu" = "anyrun";
+      # "$menu" = "anyrun";
+      "$menu" = "${menu_script}/bin/run_menu";
 
       general = {
         # See https://wiki.hyprland.org/Configuring/Variables/ for more
@@ -108,10 +119,23 @@ in {
         "WLR_NO_HARDWARE_CURSORS,1"
         "WLR_DRM_eNO_ATOMIC,1"
         "GDK_BACKEND,wayland,x11,*"
-        "QT_QPA_PLATFORM,wayland;xcb"
+        # XDG
         "XDG_CURRENT_DESKTOP,Hyprland"
         "XDG_SESSION_TYPE,wayland"
         "XDG_SESSION_DESKTOP,Hyprland"
+        "XDG_CURRENT_DESKTOP,Hyprland"
+        "XDG_SESSION_TYPE,wayland"
+        "XDG_SESSION_DESKTOP,Hyprland"
+        # QT
+        "QT_QPA_PLATFORM,wayland;xcb"
+        "QT_AUTO_SCREEN_SCALE_FACTOR,1"
+        "QT_WAYLAND_DISABLE_WINDOWDECORATION,1"
+        "QT_QPA_PLATFORMTHEME,qt6ct"
+        # Toolkit
+        "SDL_VIDEODRIVER,wayland"
+        "_JAVA_AWT_WM_NONEREPARENTING,1"
+        "CLUTTER_BACKEND,wayland"
+        "GDK_BACKEND,wayland,x11"
       ];
 
       misc = {

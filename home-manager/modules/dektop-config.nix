@@ -1,8 +1,4 @@
-{
-  pkgs,
-  pkgs-stable,
-  ...
-}: {
+{pkgs, ...}: {
   xdg = {
     enable = true;
   };
