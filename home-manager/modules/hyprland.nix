@@ -2,7 +2,6 @@
   inputs,
   pkgs,
   pkgs-stable,
-  # anyrun,
   ...
 }: let
   init_script = pkgs.writeShellScriptBin "pre_init" ''
@@ -19,21 +18,37 @@
     # FILE=~/.config/de_init.sh && test -f $FILE && source $FILE
   '';
   hyprlock_script = pkgs.writeShellScriptBin "run_hyprlock" ''
-    #!/usr/bin/env bash
     hyprlock
   '';
   menu_script = pkgs.writeShellScriptBin "run_menu" ''
-    #!/usr/bin/env bash
     bemenu-run -n -c -B 3 -W 0.3 -l 10 -i -w -H 20 --counter always \
-          --scrollbar always --binding vim --vim-normal-mode --vim-esc-exits --single-instance \
+          --scrollbar always --binding vim --vim-esc-exits --single-instance \
           --fb "#eff1f5" --ff "#4c4f69" --nb "#eff1f5" --nf "#4c4f69" --tb "#eff1f5" \
           --hb "#eff1f5" --tf "#d20f39" --hf "#df8e1d" --af "#4c4f69" --ab "#eff1f5" --bdr "#898992"
   '';
+  lock_screen = pkgs.writeShellScriptBin "lock_dp1" ''
+
+    state="''${XDG_STATE_HOME}/togglemonitorlock"
+    booleanvalue="false"
+
+    if [[ -f ''${state} ]]; then
+        booleanvalue=$(cat ''${state})
+    fi
+
+    if [[ ''${booleanvalue} == "true" ]]; then
+        wlr-randr --output DP-2 --pos 3440,0
+        echo "false" > ''${state}
+    else
+        wlr-randr --output DP-2 --pos 3500,2000
+        echo "true" > ''${state}
+    fi
+  '';
+  run_steam = pkgs.writeShellScriptBin "start" ''
+    gamescope -w 3440 -f -g -e -h 1440 -W 3440 -H 1440 --hdr-enabled --force-grab-cursor \
+      --adaptive-sync -f -r 165 -- steam -tenfoot -steamos -fulldesktopres
+  '';
 in {
   programs = {
-    waybar = {
-      enable = true;
-    };
   };
   # Packages necessary for hyprland
   home.packages = with pkgs; [
@@ -47,6 +62,7 @@ in {
     kdePackages.polkit-kde-agent-1
     kdePackages.qtwayland
     rofi-wayland
+    wlr-randr
     # hyper
     anyrun
     # terminal
@@ -59,6 +75,10 @@ in {
     pwvucontrol # volume control
     # wallpaper engine
     swww
+    # bluetooth manager
+    blueman
+    # network manager
+    kdePackages.networkmanager-qt
   ];
 
   wayland.windowManager.hyprland = {
@@ -88,6 +108,7 @@ in {
         "systemctl --user import-environment XDG_SESSION_TYPE XDG_CURRENT_DESKTOP"
         "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
         "${init_script}/bin/pre_init"
+        "[workspace 1 silent] firefox"
       ];
 
       "$mainMod" = "SUPER";
@@ -107,7 +128,7 @@ in {
         "no_focus_fallback" = true;
         "resize_on_border" = true;
         # Please see https://wiki.hyprland.org/Configuring/Tearing/ before you turn this on
-        "allow_tearing" = "true";
+        "allow_tearing" = true;
       };
 
       decoration = {
@@ -148,7 +169,6 @@ in {
       };
 
       cursor = {
-        # "no_warps" = true;
       };
 
       workspace = [
@@ -182,12 +202,15 @@ in {
           "$mainMod SHIFT, Q, exec, ${hyprlock_script}/bin/run_hyprlock"
           "$mainMod, P, pseudo, #"
           "$mainMod, F, fullscreen, 1"
+          "$mainMod, R, exec, ${lock_screen}/bin/lock_dp1"
+
           "$mainMod SHIFT, F, fullscreen"
           "$mainMod, A,exec, pypr toggle term"
           "$mainMod SHIFT, V, exec, pypr toggle volume"
           "$mainMod, M, exec, pypr toggle telegram"
           "$mainModu, [, exec, pypr toggle mega"
           "$mainMod, N, exec, pypr toggle obsidian"
+          "$mainMod SHIFT, S, exec, ${run_steam}/bin/start"
           "ALT, SPACE, exec, $menu"
 
           "$mainMod,I,layoutmsg,addmaster"

@@ -8,12 +8,12 @@
     substituters = [
       "https://cache.nixos.org"
       "https://nix-community.cachix.org"
-      # "https://hyprland.cachix.org"
+      "https://hyprland.cachix.org"
     ];
     trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      # "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
     ];
     # extra-substituters = [
     #   "https://anyrun.cachix.org"
@@ -37,7 +37,6 @@
     };
     # nixpkgs-stable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2405.*.tar.gz";
     home-manager = {
-      # url = "github:nix-community/home-manager/master";
       url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -45,28 +44,18 @@
       url = "github:nix-community/NixOS-WSL";
       flake = true;
     };
-    # hyprland = {
-    #   url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-    # };
-    # hyprland-plugins = {
-    #   url = "github:hyprwm/hyprland-plugins";
-    #   inputs.hyprland.follows = "hyprland";
-    # };
-    # hy3 = {
-    #   url = "git+https://github.com/outfoxxed/hy3?submodules=1";
-    #   inputs.hyprland.follows = "hyprland";
-    # };
-    # anyrun = {
-    #   url = "github:Kirottu/anyrun";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    hyprland-plugins = {
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
+    hy3 = {
+      url = "github:outfoxxed/hy3";
+      inputs.hyprland.follows = "hyprland";
+    };
     catppuccin.url = "github:catppuccin/nix";
     my-neovim = {
       url = "github:MykolaSuprun/nixvim-config";
-      flake = true;
-    };
-    bemenu = {
-      url = "github:Cloudef/bemenu";
       flake = true;
     };
   };
@@ -77,9 +66,11 @@
     nixpkgs-stable,
     home-manager,
     nixos-wsl,
+    hyprland,
+    hyprland-plugins,
+    hy3,
     catppuccin,
     my-neovim,
-    bemenu,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -91,9 +82,7 @@
       config.permittedInsecurePackages = [
       ];
       overlays =
-        [
-          (self: super: {bemenu = bemenu.packages."${system}".default;})
-        ]
+        []
         ++ import ./overlays;
     };
 
@@ -128,8 +117,7 @@
               useUserPackages = true;
               users.mykolas = {
                 imports = [
-                  # inputs.hyprland.homeManagerModules.default
-                  # anyrun.homeManagerModules.default
+                  inputs.hyprland.homeManagerModules.default
                   catppuccin.homeManagerModules.catppuccin
                   ./home-manager/configurations/mykolas/home-configuration.nix
                   ./home-manager/modules/geks-nixos.nix
@@ -138,11 +126,12 @@
                   ./home-manager/modules/chromium.nix
                   ./home-manager/modules/flatpak-overrides.nix
                   ./home-manager/modules/tmux.nix
+                  ./home-manager/modules/zellij.nix
                   ./home-manager/modules/dev-pkgs.nix
                   ./home-manager/modules/dektop-config.nix
                   ./home-manager/modules/catppuccin.nix
-                  # ./home-manager/modules/anyrun.nix
                   ./home-manager/modules/hyprland.nix
+                  ./home-manager/modules/waybar.nix
                 ];
               };
               extraSpecialArgs = {
@@ -152,7 +141,6 @@
                   system
                   pkgs
                   pkgs-stable
-                  bemenu
                   # anyrun
                   
                   my-neovim

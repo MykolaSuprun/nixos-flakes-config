@@ -6,7 +6,7 @@
   neovim-local = "nix run ~/src/nixvim-config -- ";
   neovim_github = "nix run github:MykolaSuprun/nixvim-config #. -- ";
   conf_root = "$NIXOS_CONF_DIR";
-  shell_init = ''
+  shell_init = pkgs.writeShellScriptBin "init_shell" ''
     # if [[ $(uname -a | grep arch) ]]
     # then
     #   distrobox-host-exec xhost +local:
@@ -44,6 +44,53 @@
 
     # hook direnv
     # eval "$(direnv hook zsh)"
+  '';
+  tmux_init = pkgs.writeShellScriptBin "start_tmux" ''
+    if tmux run 2>/dev/null; then
+      echo "Tmux server is running:"
+      exec tmux list-sessions -F '#S' | fzf --reverse | xargs tmux switch-client -t
+    else
+        echo "Tmux server is not running:"
+        exec tmux new-session -s home
+    fi
+  '';
+  fish_init = pkgs.writeShellScriptBin "init_fish" ''
+    #!/usr/bin/env fish
+    source ${shell_init}/bin/init_shell
+
+    # Emulates vim's cursor shape behavior
+    # Set the normal and visual mode cursors to a block
+    set fish_cursor_default block
+    # Set the insert mode cursor to a line
+    set fish_cursor_insert line
+    # Set the replace mode cursors to an underscore
+    set fish_cursor_replace_one underscore
+    set fish_cursor_replace underscore
+    # Set the external cursor to a line. The external cursor appears when a command is started.
+    # The cursor shape takes the value of fish_cursor_default when fish_cursor_external is not specified.
+    set fish_cursor_external line
+    # The following variable can be used to configure cursor shape in
+    # visual mode, but due to fish_cursor_default, is redundant here
+    set fish_cursor_visual block
+    set fish_vi_key_bindings --no-erase insert
+
+    fish_vi_key_bindings
+
+    # if status is-interactive
+    # and not set -q TMUX
+    #     if tmux has-session -t home
+    #       read -l -P 'Attach to home? [Y/n] ' confirm
+    #       switch $confirm
+    #         case "" Y y
+    #           exec tmux attach-session -t home
+    #         case N n
+    #           exec tmux new-session
+    #       end
+    # return 1
+    #     else
+    #         tmux new-session -s home
+    #     end
+    # end
   '';
 in {
   home.packages = with pkgs; [
@@ -93,40 +140,11 @@ in {
         }
       ];
       interactiveShellInit = ''
-        ${shell_init}
-
-        # Emulates vim's cursor shape behavior
-        # Set the normal and visual mode cursors to a block
-        set fish_cursor_default block
-        # Set the insert mode cursor to a line
-        set fish_cursor_insert line
-        # Set the replace mode cursors to an underscore
-        set fish_cursor_replace_one underscore
-        set fish_cursor_replace underscore
-        # Set the external cursor to a line. The external cursor appears when a command is started.
-        # The cursor shape takes the value of fish_cursor_default when fish_cursor_external is not specified.
-        set fish_cursor_external line
-        # The following variable can be used to configure cursor shape in
-        # visual mode, but due to fish_cursor_default, is redundant here
-        set fish_cursor_visual block
-        set fish_vi_key_bindings --no-erase insert
-
-        if status is-interactive
-        and not set -q TMUX
-            if tmux has-session -t home
-              read -l -P 'Attach to home? [Y/n] ' confirm
-              switch $confirm
-                case "" Y y
-                  exec tmux attach-session -t home
-                case N n
-                  exec tmux new-session
-              end
-        return 1
-            else
-                tmux new-session -s home
-            end
-        end
-        fish_vi_key_bindings
+        source ${fish_init}/bin/init_fish
+        # if status is-interactive
+        #     and not set -q TMUX
+        #         ${tmux_init}/bin/start_tmux
+        # end
       '';
     };
     bash = {

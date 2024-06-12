@@ -74,11 +74,11 @@ in {
       recursive = true;
       enable = true;
     };
-    "./.config/waybar" = {
-      source = ./waybar;
-      recursive = true;
-      enable = true;
-    };
+    # "./.config/waybar" = {
+    #   source = ./waybar;
+    #   recursive = true;
+    #   enable = true;
+    # };
     "./.config/libvirt" = {
       source = ./libvirt;
       recursive = true;
