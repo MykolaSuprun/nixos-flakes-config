@@ -1,8 +1,4 @@
-{
-  config,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   # XDG portal
   xdg = {
     portal = {
@@ -10,8 +6,6 @@
       extraPortals = with pkgs; [
         kdePackages.xdg-desktop-portal-kde
         xdg-desktop-portal-gtk
-        # inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland
-        xdg-desktop-portal-hyprland
       ];
       xdgOpenUsePortal = true;
     };

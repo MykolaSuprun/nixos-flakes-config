@@ -22,7 +22,7 @@ max_size = "2400px 100%"
 margin = 50
 
 [scratchpads.volume]
-animation = "fromRight"
+animation = "fromTop"
 command = "pwvucontrol"
 class = "com.saivert.pwvucontrol"
 size = "20% 50%"
@@ -33,10 +33,10 @@ lazy = true
 animation = "fromBottom"
 command = "telegram-desktop"
 class = "org.telegram.desktop"
-size = "50% 80%"
+size = "40% 80%"
 
 [scratchpads.obsidian]
-animation = "fromLeft"
+animation = "fromBottom"
 command = "obsidian"
 class = "obsidian"
 size = "50% 80%"
