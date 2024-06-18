@@ -15,26 +15,13 @@
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
     ];
-    # extra-substituters = [
-    #   "https://anyrun.cachix.org"
-    # ];
-    # extra-trusted-public-keys = [
-    #   "anyrun.cachix.org-1:pqBobmOjI7nKlsUMV25u9QHa9btJK65/C8vnO3p346s="
-    # ];
   };
 
   inputs = {
     # nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    nixpkgs = {
-      url = "github:NixOS/nixpkgs/nixos-24.05";
-      flake = true;
-    };
-    # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2405.*.tar.gz";
-    nixpkgs-stable = {
-      url = "github:NixOS/nixpkgs/nixos-24.05";
-      flake = true;
-    };
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
     # nixpkgs-stable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2405.*.tar.gz";
     home-manager = {
       url = "github:nix-community/home-manager/release-24.05";
@@ -66,9 +53,6 @@
     nixpkgs-stable,
     home-manager,
     nixos-wsl,
-    hyprland,
-    hyprland-plugins,
-    hy3,
     catppuccin,
     my-neovim,
     ...
@@ -102,13 +86,7 @@
           catppuccin.nixosModules.catppuccin
           ./nixos/configurations/geks-nixos/hardware-configuration.nix
           ./nixos/configurations/geks-nixos/configuration.nix
-          ./nixos/modules/xdg.nix
-          ./nixos/modules/nix-conf.nix
-          ./nixos/modules/fonts.nix
-          ./nixos/modules/pipewire.nix
-          ./nixos/modules/sys-pkgs.nix
-          ./nixos/modules/desktop-pkgs.nix
-          ./nixos/modules/catppuccin.nix
+          ./nixos/modules/geks-nixos.nix
           # home-manager setup
           home-manager.nixosModules.home-manager
           {
@@ -121,17 +99,6 @@
                   catppuccin.homeManagerModules.catppuccin
                   ./home-manager/configurations/mykolas/home-configuration.nix
                   ./home-manager/modules/geks-nixos.nix
-                  ./home-manager/modules/input_method.nix
-                  ./home-manager/modules/shell.nix
-                  ./home-manager/modules/chromium.nix
-                  ./home-manager/modules/flatpak-overrides.nix
-                  ./home-manager/modules/tmux.nix
-                  ./home-manager/modules/zellij.nix
-                  ./home-manager/modules/dev-pkgs.nix
-                  ./home-manager/modules/dektop-config.nix
-                  ./home-manager/modules/catppuccin.nix
-                  ./home-manager/modules/hyprland.nix
-                  ./home-manager/modules/waybar.nix
                 ];
               };
               extraSpecialArgs = {
@@ -141,8 +108,6 @@
                   system
                   pkgs
                   pkgs-stable
-                  # anyrun
-                  
                   my-neovim
                   ;
               };
@@ -158,7 +123,6 @@
           ./nixos/modules/nix-conf.nix
           ./nixos/modules/sys-pkgs.nix
           catppuccin.nixosModules.catppuccin
-          # ./nixos/modules/fonts.nix
           nixos-wsl.nixosModules.wsl
           home-manager.nixosModules.home-manager
           ./nixos/modules/catppuccin.nix
@@ -171,10 +135,6 @@
                   catppuccin.homeManagerModules.catppuccin
                   ./home-manager/configurations/mykolas/home-configuration.nix
                   ./home-manager/modules/geks-wsl.nix
-                  ./home-manager/modules/shell.nix
-                  ./home-manager/modules/tmux.nix
-                  ./home-manager/modules/dev-pkgs.nix
-                  ./home-manager/modules/catppuccin.nix
                 ];
               };
               extraSpecialArgs = {
@@ -197,28 +157,15 @@
       mykolas = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
         modules = [
-          # inputs.hyprland.homeManagerModules.default
-          # anyrun.homeManagerModules.default
+          inputs.hyprland.homeManagerModules.default
           catppuccin.homeManagerModules.catppuccin
           ./home-manager/configurations/mykolas/home-configuration.nix
           ./home-manager/modules/geks-nixos.nix
-          ./home-manager/modules/input_method.nix
-          ./home-manager/modules/shell.nix
-          ./home-manager/modules/chromium.nix
-          ./home-manager/modules/flatpak-overrides.nix
-          ./home-manager/modules/tmux.nix
-          ./home-manager/modules/dev-pkgs.nix
-          ./home-manager/modules/dektop-config.nix
-          ./home-manager/modules/catppuccin.nix
-          # ./home-manager/modules/anyrun.nix
-          ./home-manager/modules/hyprland.nix
         ];
         extraSpecialArgs = {
           inherit
             pkgs
             pkgs-stable
-            # anyrun
-            
             my-neovim
             ;
         };

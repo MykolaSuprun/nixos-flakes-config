@@ -2,12 +2,15 @@
 # and may be overwritten by future invocations.  Please make changes
 # to /etc/nixos/configuration.nix instead.
 {
+  inputs,
   config,
   lib,
   pkgs,
   modulesPath,
   ...
-}: {
+}: let
+  # pkgs-hyprland = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+in {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
@@ -51,6 +54,7 @@
       extraPackages = with pkgs; [
         rocmPackages.clr.icd
       ];
+      # package32 = pkgs-hyprland.pkgsi686Linux.mesa.drivers;
       extraPackages32 = with pkgs; [
       ];
     };

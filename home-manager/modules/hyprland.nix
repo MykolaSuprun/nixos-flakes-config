@@ -5,13 +5,13 @@
   ...
 }: let
   init_script = pkgs.writeShellScriptBin "pre_init" ''
-    killall .waybar-wrapped; sleep .5 waybar &
+    # killall .waybar-wrapped; sleep .5 waybar &
     ${pkgs.swaynotificationcenter}/bin/swaync &
     ${pkgs.kdePackages.polkit-kde-agent-1}/pkgs/kde/plasma/polkit-kde-agent-1 &
     ${pkgs.hypridle}/bin/hypridle &
     ${pkgs.swww}/bin/swww-daemon &
 
-    killall -q .waybar-wrapped; sleep .5 && waybar &
+    # killall -q .waybar-wrapped; sleep .5 && waybar &
     # killall .waybar-wrapped && sleep 4 && waybar &
     sleep 5 && ${pkgs.pyprland}/bin/pypr &
     # swww img ~/.cache/pictures/wallpaper.jpg
@@ -85,8 +85,9 @@ in {
     enable = true;
 
     plugins = [
-      # inputs.hy3.packages.x86_64-linux.hy3
-      pkgs.hyprlandPlugins.hy3
+      # inputs.hy3.packages.${pkgs.system}.hy3
+      # inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
+      # pkgs.hyprlandPlugins.hy3
     ];
 
     systemd = {
@@ -200,7 +201,7 @@ in {
           "$mainMod, E, exec, $fileManager"
           "$mainMod, V, togglefloating,"
           "$mainMod SHIFT, Q, exec, ${hyprlock_script}/bin/run_hyprlock"
-          "$mainMod, P, pseudo, #"
+          # "$mainMod, P, pseudo, #"
           "$mainMod, F, fullscreen, 1"
           "$mainMod, R, exec, ${lock_screen}/bin/lock_dp1"
 

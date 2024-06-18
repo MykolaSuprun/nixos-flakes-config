@@ -58,9 +58,8 @@
     nix-tree
     nix-diff
     nixfmt-classic
-    # nixVersions.latest
-    lf
 
+    lf
     sqlcmd
     killall
     bottom

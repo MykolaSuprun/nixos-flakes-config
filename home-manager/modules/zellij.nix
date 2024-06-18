@@ -3,7 +3,4 @@
     enable = true;
     enableFishIntegration = true;
   };
-  # settings = ''
-  #
-  # '';
 }

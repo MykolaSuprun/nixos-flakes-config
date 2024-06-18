@@ -55,59 +55,35 @@ in {
 
   # create home configuration files
   home.file = {
+    "./.wezterm.lua".source = ./wezterm/wezterm.lua;
+    "./.gitconfig".source = ./gitconfig/gitconfig;
+    "./.config/hypr/hyprlock.conf".source = ./hyprlock/hyprlock.conf;
+    "./.config/hypr/hypridle.conf".source = ./hypridle/hypridle.conf;
+    "./.config/hypr/pyprland.toml".source = ./pyprland/pyprland.toml;
+    "./.config/xdg-desktop-portal/hyprland-portals.conf".source = ./hyprland-portals/hyprland-portals.conf;
     "./.config/helix" = {
       source = ./helix;
       recursive = true;
-      enable = true;
-    };
-    "./.wezterm.lua" = {
-      source = ./wezterm/wezterm.lua;
-      enable = true;
     };
     "./.config/kitty" = {
       source = ./kitty;
       recursive = true;
-      enable = true;
     };
     "./.config/alacritty" = {
       source = ./alacritty;
       recursive = true;
-      enable = true;
     };
-    # "./.config/waybar" = {
-    #   source = ./waybar;
-    #   recursive = true;
-    #   enable = true;
-    # };
     "./.config/libvirt" = {
       source = ./libvirt;
       recursive = true;
-      enable = true;
     };
     "./.gnupg/" = {
       source = ./gnupg;
       recursive = true;
-      enable = true;
     };
-    "./.gitconfig" = {
-      source = ./gitconfig/gitconfig;
-      enable = true;
-    };
-    "./.config/hypr/hyprlock.conf" = {
-      source = ./hyprlock/hyprlock.conf;
-      enable = true;
-    };
-    "./.config/hypr/hypridle.conf" = {
-      source = ./hypridle/hypridle.conf;
-      enable = true;
-    };
-    "./.config/hypr/pyprland.toml" = {
-      source = ./pyprland/pyprland.toml;
-      enable = true;
-    };
-    "./.config/xdg-desktop-portal/hyprland-portals.conf" = {
-      source = ./hyprland-portals/hyprland-portals.conf;
-      enable = true;
+    ".config/zellij" = {
+      source = ./zellij;
+      recursive = true;
     };
   };
 
