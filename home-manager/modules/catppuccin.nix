@@ -19,14 +19,21 @@
       flavor = "latte";
     };
   };
-  gtk.catppuccin = {
-    enable = true;
-    flavor = "latte";
-    cursor.enable = true;
-    icon.enable = true;
-  };
-  qt.style.catppuccin = {
-    enable = true;
-    flavor = "latte";
-  };
+  # gtk.catppuccin = {
+  #   enable = true;
+  #   flavor = "latte";
+  #   cursor.enable = true;
+  #   icon.enable = true;
+  # };
+  # qt.style.catppuccin = {
+  #   enable = true;
+  #   flavor = "latte";
+  # };
+  home.packages = with pkgs; [
+    # catppuccin-kde
+    # catppuccin-gtk
+    # catppuccin-kvantum
+    # catppuccin-cursors
+    # catppuccin-papirus-folders
+  ];
 }

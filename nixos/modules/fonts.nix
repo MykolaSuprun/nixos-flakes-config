@@ -10,7 +10,7 @@
     noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
-    emojione
+    # emojione
     roboto-mono
     hack-font
     fira-code
@@ -22,7 +22,7 @@
     dejavu_fonts
     corefonts
     google-fonts
-    pkgs-stable.nerdfonts
+    nerdfonts
     font-awesome
     paratype-pt-sans
     paratype-pt-mono

@@ -1,23 +1,28 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
 {
   inputs,
   config,
   pkgs,
   pkgs-stable,
+  lib,
+  pkgs-vbox,
   my-neovim,
   ...
-}: {
+}: let
+  pkgs-hyprland = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+in {
   imports = [
-    # Include the results of the hardware scan.
   ];
 
-  # nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  nix.settings.trusted-users = ["mykolas"];
+  nix = {
+    settings.trusted-users = ["mykolas"];
+    gc = {
+      automatic = true;
+      randomizedDelaySec = "14m";
+      options = "--delete-older-than 10d";
+    };
+  };
   # Bootloader.
   boot = {
-    initrd.luks.devices."luks-16267be4-338a-4125-9e7f-ec112f3e166e".device = "/dev/disk/by-uuid/16267be4-338a-4125-9e7f-ec112f3e166e";
     loader = {
       systemd-boot.enable = false;
       efi = {
@@ -33,12 +38,28 @@
       };
     };
 
-    # kernelPackages = pkgs.linuxPackages_zen;
-    # kernelPackages = pkgs.linuxPackages_latest;
-    kernelPackages = pkgs.linuxPackages_6_8;
-    kernelModules = ["wl" "ecryptfs"];
+    kernelPackages = pkgs.linuxPackages_latest;
+
     initrd.kernelModules = ["wl"];
+    kernelModules = ["wl" "ecryptfs" "btintel" "btusb"];
     extraModulePackages = [config.boot.kernelPackages.broadcom_sta];
+  };
+
+  hardware = {
+    enableAllFirmware = true;
+    cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
+    opengl = {
+      driSupport32Bit = true; # For 32 bit applications
+      extraPackages = with pkgs; [
+        rocmPackages.clr.icd
+      ];
+      package32 = pkgs-hyprland.pkgsi686Linux.mesa.drivers;
+      extraPackages32 = with pkgs; [
+      ];
+    };
+
+    ledger.enable = true; # udev rules for ledger
   };
 
   # networking
@@ -76,20 +97,18 @@
         enable = true;
         wayland = {
           enable = true;
-          # compositor = "kwin";
+          compositor = "kwin";
         };
         extraPackages = [
         ];
-        # enableHidpi = true;
       };
     };
     xserver = {
       enable = false;
       videoDrivers = ["amdgpu"];
-
-      # Enable the KDE Plasma Desktop Environment.
     };
 
+    # Enable the KDE Plasma Desktop Environment.
     desktopManager.plasma6 = {
       enable = true;
     };
@@ -97,7 +116,7 @@
     flatpak.enable = true;
 
     fprintd = {
-      # enable = true;
+      enable = true;
     };
     udev = {
       packages = [
@@ -142,17 +161,10 @@
   };
 
   virtualisation = {
-    # libvirtd = {
-    #   enable = true;
-    #   qemu = {
-    #     ovmf.enable = true;
-    #     swtpm.enable = true;
-    #   };
-    # };
-    # spiceUSBRedirection.enable = true;
-
-    vmware = {
+    virtualbox = {
       host.enable = true;
+      # host.package = pkgs-vbox.virtualbox;
+      host.enableExtensionPack = true;
     };
     podman = {
       enable = true;
@@ -171,7 +183,6 @@
     partition-manager.enable = true;
     gnupg.agent = {
       enable = true;
-      # pinentryPackage = pkgs.pinentry-tty;
     };
     virt-manager.enable = true;
     java.enable = true;
@@ -186,16 +197,8 @@
     #     libglvnd
     #   ];
     # };
-    hyprland = {
-      enable = true;
-      package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-      xwayland.enable = true;
-    };
   };
 
-  # List packages installed in system profile.
-
-  # List packages installed in system profile. To search, run:
   environment = {
     shells = with pkgs; [fish];
 
@@ -228,9 +231,6 @@
       appimage-run
       x264
       x265
-      # wacomtablet
-      # libwacom
-      # xf86_input_wacom
       xsettingsd
       file
       wl-clipboard
@@ -243,17 +243,10 @@
       kdePackages.polkit-qt-1
       kdePackages.polkit-kde-agent-1
 
-      #virtualisation
-      libtpms
-      virt-manager
-      win-virtio
-      # qemu
-      # kvmtool
       tpm2-tools
       distrobox
       podman-compose
-
-      # plasma
+      rtl8761b-firmware
     ];
   };
 
@@ -287,20 +280,6 @@
     aggregatedIcons = pkgs.buildEnv {
       name = "system-icons";
       paths = with pkgs; [
-        # plasma-overdose-kde-theme
-        # materia-kde-theme
-        # graphite-kde-theme
-        # arc-kde-theme
-        # adapta-kde-theme
-        # fluent-gtk-theme
-        # adapta-gtk-theme
-        # mojave-gtk-theme
-        # numix-gtk-theme
-        # whitesur-kde
-        # whitesur-gtk-theme
-        # whitesur-icon-theme
-        # whitesur-cursors
-        # gnome.gnome-themes-extra
       ];
       pathsToLink = ["/share/icons"];
     };

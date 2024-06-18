@@ -33,7 +33,7 @@ lazy = true
 animation = "fromBottom"
 command = "telegram-desktop"
 class = "org.telegram.desktop"
-size = "40% 80%"
+size = "35% 90%"
 
 [scratchpads.obsidian]
 animation = "fromBottom"

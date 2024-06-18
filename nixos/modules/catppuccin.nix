@@ -5,4 +5,7 @@
   console = {
     catppuccin.enable = true;
   };
+  services.displayManager.sddm.catppuccin = {
+    enable = true;
+  };
 }
