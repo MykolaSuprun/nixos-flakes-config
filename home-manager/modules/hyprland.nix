@@ -5,13 +5,12 @@
   ...
 }: let
   init_script = pkgs.writeShellScriptBin "pre_init" ''
-    killall .waybar-wrapped; sleep .5 waybar &
+    # killall .waybar-wrapped; sleep .5 waybar &
     ${pkgs.swaynotificationcenter}/bin/swaync &
-    ${pkgs.kdePackages.polkit-kde-agent-1}/pkgs/kde/plasma/polkit-kde-agent-1 &
-    ${pkgs.hypridle}/bin/hypridle &
+    ${pkgs.kdePackages.polkit-kde-agent-1}/pkgs/kde/plasma/polkit-kde-agent-1 & ${pkgs.hypridle}/bin/hypridle &
     ${pkgs.swww}/bin/swww-daemon &
 
-    killall -q .waybar-wrapped; sleep .5 && waybar &
+    # killall -q .waybar-wrapped; sleep .5 && waybar &
     # killall .waybar-wrapped && sleep 4 && waybar &
     sleep 5 && ${pkgs.pyprland}/bin/pypr &
     # swww img ~/.cache/pictures/wallpaper.jpg
@@ -36,20 +35,28 @@
     fi
 
     if [[ ''${booleanvalue} == "true" ]]; then
-        wlr-randr --output DP-2 --pos 3440,0
+        wlr-randr --output DP-1 --pos 3440,0
         echo "false" > ''${state}
     else
-        wlr-randr --output DP-2 --pos 3500,2000
+        wlr-randr --output DP-1 --pos 3500,2000
         echo "true" > ''${state}
     fi
   '';
   run_steam = pkgs.writeShellScriptBin "start" ''
-    gamescope -w 3440 -f -g -e -h 1440 -W 3440 -H 1440 --hdr-enabled --force-grab-cursor \
-      --adaptive-sync -f -r 165 -- steam -tenfoot -steamos -fulldesktopres
+    gamescope -w 3440 -f -g -e -h 1440 -W 3440 -H 1440 -r 165 --hdr-enabled --force-grab-cursor \
+      --adaptive-sync --backend wayland --expose-wayland \
+      -- steam -tenfoot -steamos -fulldesktopres
   '';
 in {
   programs = {
   };
+  home.file = {
+    "./.config/hypr/hyprlock.conf".source = ./../configurations/mykolas/hyprlock/hyprlock.conf;
+    "./.config/hypr/hypridle.conf".source = ./../configurations/mykolas/hypridle/hypridle.conf;
+    "./.config/hypr/pyprland.toml".source = ./../configurations/mykolas/pyprland/pyprland.toml;
+    "./.config/xdg-desktop-portal/hyprland-portals.conf".source = ./../configurations/mykolas/hyprland-portals/hyprland-portals.conf;
+  };
+
   # Packages necessary for hyprland
   home.packages = with pkgs; [
     hyprland-protocols
@@ -58,7 +65,8 @@ in {
     hyprcursor
     hypridle
     pyprland
-    swaynotificationcenter
+    blueman
+    # swaynotificationcenter
     kdePackages.polkit-kde-agent-1
     kdePackages.qtwayland
     rofi-wayland
@@ -75,18 +83,16 @@ in {
     pwvucontrol # volume control
     # wallpaper engine
     swww
-    # bluetooth manager
-    blueman
-    # network manager
-    kdePackages.networkmanager-qt
   ];
 
   wayland.windowManager.hyprland = {
     enable = true;
+    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
 
     plugins = [
-      # inputs.hy3.packages.x86_64-linux.hy3
-      pkgs.hyprlandPlugins.hy3
+      inputs.hy3.packages.${pkgs.system}.hy3
+      # inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
+      # pkgs.hyprlandPlugins.hy3
     ];
 
     systemd = {
@@ -99,8 +105,8 @@ in {
 
     settings = {
       "monitor" = [
-        "DP-1,3440x1440@165,0x0,1,bitdepth,10"
-        # "DP-2,2560x1440@144,0x0,1"
+        "DP-2,3440x1440@165,0x0,1,bitdepth,10"
+        "DP-1,2560x1440@144,3440x0,1"
       ];
 
       exec-once = [
@@ -116,6 +122,8 @@ in {
       "$terminal" = "kitty";
       # "$menu" = "anyrun";
       "$menu" = "${menu_script}/bin/run_menu";
+      "$monitor_1" = "DP-2";
+      "$monitor_2" = "DP-1";
 
       general = {
         # See https://wiki.hyprland.org/Configuring/Variables/ for more
@@ -172,17 +180,18 @@ in {
       };
 
       workspace = [
-        "1,monitor:DP-1,default:true,defaultName:default"
-        "2,monitor:DP-1,default:false,defaultName:browser"
-        "3,monitor:DP-1,default:false,defaultName:code"
-        "4,monitor:DP-1,default:false,defaultName:games"
-        "7,monitor:DP-2,default:true,defaultName:side_default"
-        "8,monitor:DP-2,default:false,defaultName:side_2"
-        "9,monitor:DP-2,default:false,defaultName:side_3"
-        "0,monitor:DP-2,default:false,defaultName:side_4"
+        "1,monitor:$monitor_1,default:true,defaultName:default"
+        "2,monitor:$monitor_1,default:false,defaultName:browser"
+        "3,monitor:$monitor_1,default:false,defaultName:code"
+        "4,monitor:$monitor_1,default:false,defaultName:games"
+        "7,monitor:$monitor_2,default:true,defaultName:side_default"
+        "8,monitor:$monitor_2,default:false,defaultName:side_2"
+        "9,monitor:$monitor_2,default:false,defaultName:side_3"
+        "0,monitor:$monitor_2,default:false,defaultName:side_4"
       ];
 
       windowrulev2 = [
+        "immediate, class:^(gamescope.*)$"
         "immediate, class:^(overwatch.*)$"
         "immediate, class:^(titanfall.*)$"
         "immediate, class:^(bioshock.*)$"
@@ -196,17 +205,17 @@ in {
         [
           "$mainMod, Q, exec, $terminal"
           "$mainMod, C, killactive,"
-          "$mainMod SHIFT, M, exit"
+          "$mainMod SHIFT, ', exit"
           "$mainMod, E, exec, $fileManager"
-          "$mainMod, V, togglefloating,"
+          "$mainMod, G, togglefloating,"
           "$mainMod SHIFT, Q, exec, ${hyprlock_script}/bin/run_hyprlock"
-          "$mainMod, P, pseudo, #"
+          # "$mainMod, P, pseudo, #"
           "$mainMod, F, fullscreen, 1"
           "$mainMod, R, exec, ${lock_screen}/bin/lock_dp1"
 
           "$mainMod SHIFT, F, fullscreen"
           "$mainMod, A,exec, pypr toggle term"
-          "$mainMod SHIFT, V, exec, pypr toggle volume"
+          "$mainMod, S, exec, pypr toggle volume"
           "$mainMod, M, exec, pypr toggle telegram"
           "$mainModu, [, exec, pypr toggle mega"
           "$mainMod, N, exec, pypr toggle obsidian"
@@ -219,6 +228,8 @@ in {
           "$mainMod, L, movefocus, r"
           "$mainMod, K, movefocus, u"
           "$mainMod, J, movefocus, d"
+          "$mainMod, mouse_up, focusmonitor,+1"
+          "$mainMod, mouse_down, focusmonitor,-1"
 
           "$mainMod SHIFT, H, movewindow, l"
           "$mainMod SHIFT, L, movewindow, r"

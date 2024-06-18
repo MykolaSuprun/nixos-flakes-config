@@ -13,10 +13,6 @@
       enableBashIntegration = true; # see note on other shells below
       nix-direnv.enable = true;
     };
-    # neovim = {
-    #   enable = true;
-    #   package = my-neovim.packages.${system}.default;
-    # };
     zsh.enable = true;
     gpg.enable = true;
     fzf = {
@@ -54,13 +50,15 @@
     gnupg
     alejandra
     ghc
+    usbutils
+    pciutils
     # nix
     nix-tree
     nix-diff
     nixfmt-classic
-    # nixVersions.latest
-    lf
+    # fh
 
+    lf
     sqlcmd
     killall
     bottom

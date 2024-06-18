@@ -1,9 +1,4 @@
-{
-  config,
-  pkgs,
-  my-neovim,
-  ...
-}: {
+{pkgs, ...}: {
   programs = {
     nh = {
       enable = true;
