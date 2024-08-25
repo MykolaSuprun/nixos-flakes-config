@@ -61,6 +61,7 @@ in {
   home.packages = with pkgs; [
     hyprland-protocols
     hyprland-workspaces
+    hyprland-activewindow
     hyprlock
     hyprcursor
     hypridle
@@ -69,6 +70,7 @@ in {
     # swaynotificationcenter
     kdePackages.polkit-kde-agent-1
     kdePackages.qtwayland
+    xorg.xrdb
     rofi-wayland
     wlr-randr
     # hyper
@@ -87,12 +89,15 @@ in {
 
   wayland.windowManager.hyprland = {
     enable = true;
-    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    # package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
 
-    plugins = [
-      inputs.hy3.packages.${pkgs.system}.hy3
+    plugins = with pkgs.hyprlandPlugins; [
+      # inputs.hy3.packages.${pkgs.system}.hy3
       # inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
-      # pkgs.hyprlandPlugins.hy3
+      hy3
+      hyprexpo
+      # hyprspace
+      hyprfocus
     ];
 
     systemd = {
@@ -205,7 +210,7 @@ in {
         [
           "$mainMod, Q, exec, $terminal"
           "$mainMod, C, killactive,"
-          "$mainMod SHIFT, ', exit"
+          "$mainMod SHIFT, /, exec exit"
           "$mainMod, E, exec, $fileManager"
           "$mainMod, G, togglefloating,"
           "$mainMod SHIFT, Q, exec, ${hyprlock_script}/bin/run_hyprlock"

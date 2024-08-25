@@ -4,11 +4,10 @@
   pkgs,
   pkgs-stable,
   lib,
-  pkgs-vbox,
   my-neovim,
   ...
 }: let
-  pkgs-hyprland = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+  # pkgs-hyprland = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
 in {
   imports = [
   ];
@@ -16,11 +15,12 @@ in {
   nix = {
     settings.trusted-users = ["mykolas"];
     gc = {
-      automatic = true;
+      # automatic = true;
       randomizedDelaySec = "14m";
       options = "--delete-older-than 10d";
     };
   };
+
   # Bootloader.
   boot = {
     loader = {
@@ -40,9 +40,11 @@ in {
 
     kernelPackages = pkgs.linuxPackages_latest;
 
-    initrd.kernelModules = ["wl"];
-    kernelModules = ["wl" "ecryptfs" "btintel" "btusb"];
-    extraModulePackages = [config.boot.kernelPackages.broadcom_sta];
+    kernelModules = ["ecryptfs" "btintel" "btusb"];
+    initrd = {
+      # kernelModules = ["wl"];
+      luks.devices."luks-b6082ebc-6403-4f61-9a2b-fce8c51233e6".device = "/dev/disk/by-uuid/b6082ebc-6403-4f61-9a2b-fce8c51233e6";
+    };
   };
 
   hardware = {
@@ -54,7 +56,7 @@ in {
       extraPackages = with pkgs; [
         rocmPackages.clr.icd
       ];
-      package32 = pkgs-hyprland.pkgsi686Linux.mesa.drivers;
+      # package32 = pkgs-hyprland.pkgsi686Linux.mesa.drivers;
       extraPackages32 = with pkgs; [
       ];
     };
@@ -161,11 +163,11 @@ in {
   };
 
   virtualisation = {
-    virtualbox = {
-      host.enable = true;
-      # host.package = pkgs-vbox.virtualbox;
-      host.enableExtensionPack = true;
-    };
+    # virtualbox = {
+    #   host.enable = true;
+    #   # host.package = pkgs-vbox.virtualbox;
+    #   host.enableExtensionPack = true;
+    # };
     podman = {
       enable = true;
       dockerCompat = true;

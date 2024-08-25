@@ -2,37 +2,36 @@
 # and may be overwritten by future invocations.  Please make changes
 # to /etc/nixos/configuration.nix instead.
 {
-  inputs,
   config,
   lib,
   pkgs,
   modulesPath,
   ...
-}: let
-in {
+}: {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  boot.initrd.availableKernelModules = ["nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod"];
-  boot.initrd.kernelModules = ["amdgpu"];
-  boot.kernelModules = ["ecryptfs"];
-  boot.extraModulePackages = [config.boot.kernelPackages.broadcom_sta];
+  boot.initrd.availableKernelModules = ["thunderbolt" "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod"];
+  boot.initrd.kernelModules = [];
+  boot.kernelModules = ["kvm-amd"];
+  boot.extraModulePackages = [];
+
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/c7ce0001-8aa5-4351-a307-afff9885c5cc";
+    device = "/dev/disk/by-uuid/69a83c50-135b-47d3-baea-8e28435b7c22";
     fsType = "ext4";
   };
 
-  boot.initrd.luks.devices."luks-0e0bca1b-a9e0-4671-bced-57152cf99b04".device = "/dev/disk/by-uuid/0e0bca1b-a9e0-4671-bced-57152cf99b04";
-  boot.initrd.luks.devices."luks-16267be4-338a-4125-9e7f-ec112f3e166e".device = "/dev/disk/by-uuid/16267be4-338a-4125-9e7f-ec112f3e166e";
+  boot.initrd.luks.devices."luks-5a539ccb-8fa6-47ad-b591-90a9f8493314".device = "/dev/disk/by-uuid/5a539ccb-8fa6-47ad-b591-90a9f8493314";
+
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/3607-6805";
+    device = "/dev/disk/by-uuid/F185-5C93";
     fsType = "vfat";
-    options = ["fmask=0022" "dmask=0022"];
+    options = ["fmask=0077" "dmask=0077"];
   };
 
   swapDevices = [
-    {device = "/dev/disk/by-uuid/608b955c-0af2-4d27-9234-0af9261a53b0";}
+    {device = "/dev/disk/by-uuid/39022a9f-6ac6-4cae-a044-fab19e863756";}
   ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
@@ -40,7 +39,9 @@ in {
   # still possible to use this option, but it's recommended to use it in conjunction
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
-  # networking.interfaces.enp6s0.useDHCP = lib.mkDefault true;
+  # networking.interfaces.enp74s0.useDHCP = lib.mkDefault true;
+  # networking.interfaces.wlp73s0.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
