@@ -16,6 +16,19 @@
 
     # internet
     mullvad-browser
+    (vivaldi.overrideAttrs (old: {
+      buildInputs =
+        (old.buildInputs or [])
+        ++ [
+          libsForQt5.qtwayland
+          libsForQt5.qtx11extras
+          kdePackages.plasma-integration.qt5
+          kdePackages.kio-extras-kf5
+          kdePackages.breeze.qt5
+          vivaldi-ffmpeg-codecs
+        ];
+    }))
+    vivaldi-ffmpeg-codecs
     protonvpn-gui
     lbry
 
@@ -25,7 +38,7 @@
     telegram-desktop
 
     # other
-    megasync
+    pkgs-stable.megasync
     pkgs-stable.cryptomator
     qbittorrent
     morgen

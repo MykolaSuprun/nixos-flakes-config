@@ -35,15 +35,15 @@
       url = "github:nix-community/NixOS-WSL";
       flake = true;
     };
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-    hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
-      inputs.hyprland.follows = "hyprland";
-    };
-    hy3 = {
-      url = "github:outfoxxed/hy3";
-      inputs.hyprland.follows = "hyprland";
-    };
+    # hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    # hyprland-plugins = {
+    #   url = "github:hyprwm/hyprland-plugins";
+    #   inputs.hyprland.follows = "hyprland";
+    # };
+    # hy3 = {
+    #   url = "github:outfoxxed/hy3";
+    #   inputs.hyprland.follows = "hyprland";
+    # };
     catppuccin.url = "github:catppuccin/nix";
     my-neovim = {
       url = "github:MykolaSuprun/nixvim-config";
@@ -100,31 +100,31 @@
           ./nixos/configurations/geks-nixos/configuration.nix
           ./nixos/modules/geks-nixos.nix
           # home-manager setup
-          # home-manager.nixosModules.home-manager
-          # {
-          #   home-manager = {
-          #     useGlobalPkgs = true;
-          #     useUserPackages = true;
-          #     users.mykolas = {
-          #       imports = [
-          #         # inputs.hyprland.homeManagerModules.default
-          #         catppuccin.homeManagerModules.catppuccin
-          #         ./home-manager/configurations/mykolas/home-configuration.nix
-          #         ./home-manager/modules/geks-nixos.nix
-          #       ];
-          #     };
-          #     extraSpecialArgs = {
-          #       inherit
-          #         inputs
-          #         outputs
-          #         system
-          #         pkgs
-          #         pkgs-stable
-          #         my-neovim
-          #         ;
-          #     };
-          #   };
-          # }
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.mykolas = {
+                imports = [
+                  # inputs.hyprland.homeManagerModules.default
+                  catppuccin.homeManagerModules.catppuccin
+                  ./home-manager/configurations/mykolas/home-configuration.nix
+                  ./home-manager/modules/geks-nixos.nix
+                ];
+              };
+              extraSpecialArgs = {
+                inherit
+                  inputs
+                  outputs
+                  system
+                  pkgs
+                  pkgs-stable
+                  my-neovim
+                  ;
+              };
+            };
+          }
         ];
         specialArgs = {inherit inputs outputs pkgs pkgs-stable my-neovim pkgs-vbox;};
       };
@@ -165,25 +165,25 @@
         specialArgs = {inherit inputs outputs pkgs pkgs-stable my-neovim;};
       };
     };
-    homeConfigurations = {
-      mykolas = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-        modules = [
-          # inputs.hyprland.homeManagerModules.default
-          catppuccin.homeManagerModules.catppuccin
-          ./home-manager/configurations/mykolas/home-configuration.nix
-          ./home-manager/modules/geks-nixos.nix
-        ];
-        extraSpecialArgs = {
-          inherit
-            inputs
-            outputs
-            pkgs
-            pkgs-stable
-            my-neovim
-            ;
-        };
-      };
-    };
+    # homeConfigurations = {
+    #   mykolas = home-manager.lib.homeManagerConfiguration {
+    #     inherit pkgs;
+    #     modules = [
+    #       # inputs.hyprland.homeManagerModules.default
+    #       catppuccin.homeManagerModules.catppuccin
+    #       ./home-manager/configurations/mykolas/home-configuration.nix
+    #       ./home-manager/modules/geks-nixos.nix
+    #     ];
+    #     extraSpecialArgs = {
+    #       inherit
+    #         inputs
+    #         outputs
+    #         pkgs
+    #         pkgs-stable
+    #         my-neovim
+    #         ;
+    #     };
+    #   };
+    # };
   };
 }

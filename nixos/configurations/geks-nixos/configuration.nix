@@ -8,7 +8,7 @@
   my-neovim,
   ...
 }: let
-  pkgs-hyprland = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+  # pkgs-hyprland = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
 in {
   imports = [
   ];
@@ -16,7 +16,7 @@ in {
   nix = {
     settings.trusted-users = ["mykolas"];
     gc = {
-      automatic = true;
+      # automatic = true;
       randomizedDelaySec = "14m";
       options = "--delete-older-than 10d";
     };
@@ -54,7 +54,7 @@ in {
       extraPackages = with pkgs; [
         rocmPackages.clr.icd
       ];
-      package32 = pkgs-hyprland.pkgsi686Linux.mesa.drivers;
+      # package32 = pkgs-hyprland.pkgsi686Linux.mesa.drivers;
       extraPackages32 = with pkgs; [
       ];
     };
