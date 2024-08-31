@@ -52,6 +52,8 @@
     ghc
     usbutils
     pciutils
+    lshw-gui
+    glxinfo
     # nix
     nix-tree
     nix-diff
