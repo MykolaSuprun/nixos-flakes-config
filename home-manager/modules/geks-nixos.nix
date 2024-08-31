@@ -2,6 +2,7 @@
   imports = [
     ./shell.nix
     ./chromium.nix
+    ./fcitx5.nix
     # ./flatpak-overrides.nix
     ./tmux.nix
     # ./zellij.nix
