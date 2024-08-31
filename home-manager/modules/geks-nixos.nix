@@ -1,4 +1,4 @@
-{...}: {
+{pkgs, ...}: {
   imports = [
     ./shell.nix
     ./chromium.nix
@@ -19,6 +19,7 @@
     NIXOS_TARGET = "geks-nixos";
     BEMENU_BACKEND = "wayland";
     FLAKE = "/home/mykolas/.nixconf";
-    BROWSER = "firefox";
+    BROWSER = "${pkgs.firefox}/bin/firefox";
+    DEFAULT_BROWSER = "${pkgs.firefox}/bin/firefox";
   };
 }
