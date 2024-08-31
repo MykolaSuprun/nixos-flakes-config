@@ -1,6 +1,5 @@
 {...}: {
   imports = [
-    ./input_method.nix
     ./shell.nix
     ./chromium.nix
     # ./flatpak-overrides.nix
