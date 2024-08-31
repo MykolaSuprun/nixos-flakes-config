@@ -1,12 +1,8 @@
-{
-  pkgs,
-  pkgs-stable,
-  ...
-}: {
+{...}: {
   imports = [
     ./input_method.nix
     ./shell.nix
-    # ./chromium.nix
+    ./chromium.nix
     # ./flatpak-overrides.nix
     ./tmux.nix
     # ./zellij.nix
@@ -24,5 +20,6 @@
     NIXOS_TARGET = "geks-nixos";
     BEMENU_BACKEND = "wayland";
     FLAKE = "/home/mykolas/.nixconf";
+    BROWSER = "firefox";
   };
 }
