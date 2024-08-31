@@ -6,7 +6,7 @@
   imports = [
     ./input_method.nix
     ./shell.nix
-    ./chromium.nix
+    # ./chromium.nix
     # ./flatpak-overrides.nix
     ./tmux.nix
     # ./zellij.nix
