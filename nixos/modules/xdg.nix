@@ -9,7 +9,9 @@
       ];
       xdgOpenUsePortal = true;
     };
-    mime.enable = true;
+    mime = {
+      enable = true;
+    };
     menus.enable = true;
     sounds.enable = true;
     icons.enable = true;
