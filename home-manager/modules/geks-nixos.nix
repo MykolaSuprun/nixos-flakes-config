@@ -21,5 +21,8 @@
     FLAKE = "/home/mykolas/.nixconf";
     BROWSER = "${pkgs.firefox}/bin/firefox";
     DEFAULT_BROWSER = "${pkgs.firefox}/bin/firefox";
+    IGPU = "pci-0000_59_00_0";
+    DGPU = "pci-0000_03_00_0";
+    DRI_PRIME = "pci-0000_03_00_0";
   };
 }
