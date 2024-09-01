@@ -39,7 +39,7 @@
 
     # other
     pkgs-stable.megasync
-    pkgs-stable.cryptomator
+    cryptomator
     qbittorrent
     morgen
     libreoffice-qt
