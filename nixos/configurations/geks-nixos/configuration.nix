@@ -193,12 +193,12 @@ in {
       vimAlias = true;
     };
     dconf.enable = true;
-    # nix-ld = {
-    #   enable = true;
-    #   libraries = with pkgs; [
-    #     libglvnd
-    #   ];
-    # };
+    nix-ld = {
+      enable = true;
+      libraries = with pkgs; [
+        libglvnd
+      ];
+    };
   };
 
   environment = {
