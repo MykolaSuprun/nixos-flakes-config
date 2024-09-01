@@ -196,7 +196,9 @@ in {
     nix-ld = {
       enable = true;
       libraries = with pkgs; [
-        libglvnd
+        libGL
+        libGLU
+        libglibutil
       ];
     };
   };
