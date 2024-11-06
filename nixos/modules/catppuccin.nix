@@ -6,6 +6,6 @@
     catppuccin.enable = true;
   };
   services.displayManager.sddm.catppuccin = {
-    enable = true;
+    # enable = true;
   };
 }

@@ -7,7 +7,7 @@
   my-neovim,
   ...
 }: let
-  # pkgs-hyprland = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+  pkgs-hyprland = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
 in {
   imports = [
   ];
@@ -38,13 +38,25 @@ in {
       };
     };
 
-    kernelPackages = pkgs.linuxPackages_latest;
-
-    kernelModules = ["ecryptfs" "btintel" "btusb"];
+    kernelPackages = pkgs.linuxPackages_zen;
+    extraModulePackages = with config.boot.kernelPackages; [
+      # kvmfr
+    ];
+    kernelModules = ["ecryptfs" "btintel" "btusb" "vfio_virqfd" "vfio_pci" "vfio_iommu_type1" "vfi" "kvmfr"];
     initrd = {
       # kernelModules = ["wl"];
       luks.devices."luks-b6082ebc-6403-4f61-9a2b-fce8c51233e6".device = "/dev/disk/by-uuid/b6082ebc-6403-4f61-9a2b-fce8c51233e6";
     };
+    kernelParams = ["amd_iommu=on"];
+    extraModprobeConfig = "options vfio-pci ids=1002:164e";
+    postBootCommands = ''
+      DEVS="0000:59:00.0"
+
+      for DEV in $DEVS; do
+        echo "vfio-pci" > /sys/bus/pci/devices/$DEV/driver_override
+      done
+      modprobe -i vfio-pci
+    '';
   };
 
   hardware = {
@@ -56,6 +68,7 @@ in {
       extraPackages = with pkgs; [
         rocmPackages.clr.icd
       ];
+      # package = pkgs-hyprland.mesa.drivers;
       # package32 = pkgs-hyprland.pkgsi686Linux.mesa.drivers;
       extraPackages32 = with pkgs; [
       ];
@@ -94,12 +107,12 @@ in {
   # Enable the X11 windowing system.
   services = {
     displayManager = {
-      # defaultSession = "hyprland";
+      defaultSession = "hyprland";
       sddm = {
         enable = true;
         wayland = {
           enable = true;
-          compositor = "kwin";
+          # compositor = "kwin";
         };
         extraPackages = [
         ];
@@ -122,9 +135,14 @@ in {
     };
     udev = {
       packages = [
-        pkgs-stable.bazecor
+        pkgs.bazecor
       ];
+      extraRules = ''
+        SUBSYSTEM=="kvmfr", OWNER="mykolas", GROUP="kvm", MODE="0660"
+      '';
     };
+    spice-vdagentd.enable = true;
+    spice-autorandr.enable = true;
   };
 
   security = {
@@ -163,16 +181,27 @@ in {
   };
 
   virtualisation = {
-    # virtualbox = {
-    #   host.enable = true;
-    #   # host.package = pkgs-vbox.virtualbox;
-    #   host.enableExtensionPack = true;
-    # };
-    podman = {
+    docker = {
       enable = true;
-      dockerCompat = true;
-      dockerSocket.enable = true;
-      defaultNetwork.settings.dns_enabled = true;
+      rootless.enable = true;
+      enableOnBoot = true;
+    };
+    # podman = {
+    #   enable = true;
+    #   dockerCompat = true;
+    #   dockerSocket.enable = true;
+    #   defaultNetwork.settings.dns_enabled = true;
+    #   extraOptions = "--iptables=False";
+    # };
+    libvirtd = {
+      enable = true;
+      extraConfig = ''
+      '';
+      qemu = {
+        package = pkgs.qemu_full;
+        swtpm.enable = true;
+        ovmf.enable = true;
+      };
     };
   };
 
@@ -203,6 +232,10 @@ in {
     };
   };
 
+  systemd.tmpfiles.rules = [
+    "f /dev/shm/looking-glass 0660 mykolas kvm -"
+  ];
+
   environment = {
     shells = with pkgs; [fish];
 
@@ -217,6 +250,10 @@ in {
       vscode
       lazygit
       bottom
+
+      # sensors, fan control, etc
+      lm_sensors
+      fanctl
 
       # basic packages
       ecryptfs
@@ -249,8 +286,8 @@ in {
 
       tpm2-tools
       distrobox
-      podman-compose
-      rtl8761b-firmware
+      docker-compose
+      lazydocker
     ];
   };
 

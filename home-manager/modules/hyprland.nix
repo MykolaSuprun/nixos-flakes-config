@@ -1,20 +1,9 @@
-{
-  inputs,
-  pkgs,
-  pkgs-stable,
-  ...
-}: let
+{ inputs, pkgs, pkgs-stable, ... }:
+let
   init_script = pkgs.writeShellScriptBin "pre_init" ''
-    # killall .waybar-wrapped; sleep .5 waybar &
     ${pkgs.swaynotificationcenter}/bin/swaync &
     ${pkgs.kdePackages.polkit-kde-agent-1}/pkgs/kde/plasma/polkit-kde-agent-1 & ${pkgs.hypridle}/bin/hypridle &
     ${pkgs.swww}/bin/swww-daemon &
-
-    # killall -q .waybar-wrapped; sleep .5 && waybar &
-    # killall .waybar-wrapped && sleep 4 && waybar &
-    sleep 5 && ${pkgs.pyprland}/bin/pypr &
-    # swww img ~/.cache/pictures/wallpaper.jpg
-    # FILE=~/.config/de_init.sh && test -f $FILE && source $FILE
   '';
   hyprlock_script = pkgs.writeShellScriptBin "run_hyprlock" ''
     hyprlock
@@ -48,13 +37,16 @@
       -- steam -tenfoot -steamos -fulldesktopres
   '';
 in {
-  programs = {
-  };
+  programs = { };
   home.file = {
-    "./.config/hypr/hyprlock.conf".source = ./../configurations/mykolas/hyprlock/hyprlock.conf;
-    "./.config/hypr/hypridle.conf".source = ./../configurations/mykolas/hypridle/hypridle.conf;
-    "./.config/hypr/pyprland.toml".source = ./../configurations/mykolas/pyprland/pyprland.toml;
-    "./.config/xdg-desktop-portal/hyprland-portals.conf".source = ./../configurations/mykolas/hyprland-portals/hyprland-portals.conf;
+    "./.config/hypr/hyprlock.conf".source =
+      ./../configurations/mykolas/hyprlock/hyprlock.conf;
+    "./.config/hypr/hypridle.conf".source =
+      ./../configurations/mykolas/hypridle/hypridle.conf;
+    "./.config/hypr/pyprland.toml".source =
+      ./../configurations/mykolas/pyprland/pyprland.toml;
+    "./.config/xdg-desktop-portal/hyprland-portals.conf".source =
+      ./../configurations/mykolas/hyprland-portals/hyprland-portals.conf;
   };
 
   # Packages necessary for hyprland
@@ -65,6 +57,7 @@ in {
     hyprlock
     hyprcursor
     hypridle
+    hyprshot
     pyprland
     blueman
     # swaynotificationcenter
@@ -89,29 +82,30 @@ in {
 
   wayland.windowManager.hyprland = {
     enable = true;
-    # package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    package =
+      inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
 
     plugins = with pkgs.hyprlandPlugins; [
-      # inputs.hy3.packages.${pkgs.system}.hy3
-      # inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
-      hy3
-      hyprexpo
+      inputs.hy3.packages.${pkgs.system}.hy3
+      inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
+      # hy3
+      # hyprexpo
       # hyprspace
-      hyprfocus
+      # hyprfocus
     ];
 
     systemd = {
       enable = true;
       enableXdgAutostart = true;
-      variables = ["--all"];
+      variables = [ "--all" ];
     };
 
     xwayland.enable = true;
 
     settings = {
       "monitor" = [
-        "DP-2,3440x1440@165,0x0,1,bitdepth,10"
-        "DP-1,2560x1440@144,3440x0,1"
+        "DP-1,3440x1440@165,0x0,1,bitdepth,10"
+        # "DP-1,2560x1440@144,3440x0,1"
       ];
 
       exec-once = [
@@ -119,16 +113,20 @@ in {
         "systemctl --user import-environment XDG_SESSION_TYPE XDG_CURRENT_DESKTOP"
         "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
         "${init_script}/bin/pre_init"
+        "pypr --debug /tmp/pypr.log"
         "[workspace 1 silent] firefox"
+        "[workspace 2 silent] kitty"
+        "[workspace 3 silent] kitty lf"
+        "[workspace 8 silent] ${run_steam}/bin/start"
       ];
 
       "$mainMod" = "SUPER";
-      "$fileManager" = "dolphin";
+      "$fileManager" = "kitty lf";
       "$terminal" = "kitty";
       # "$menu" = "anyrun";
       "$menu" = "${menu_script}/bin/run_menu";
-      "$monitor_1" = "DP-2";
-      "$monitor_2" = "DP-1";
+      "$monitor_1" = "DP-1";
+      "$monitor_2" = "DP-2";
 
       general = {
         # See https://wiki.hyprland.org/Configuring/Variables/ for more
@@ -172,27 +170,24 @@ in {
         "GDK_BACKEND,wayland,x11"
       ];
 
-      misc = {
-        "vrr" = 1;
-      };
+      misc = { "vrr" = 1; };
 
       input = {
         "follow_mouse" = "1";
         "sensitivity" = -0.6;
       };
 
-      cursor = {
-      };
+      cursor = { };
 
       workspace = [
         "1,monitor:$monitor_1,default:true,defaultName:default"
-        "2,monitor:$monitor_1,default:false,defaultName:browser"
-        "3,monitor:$monitor_1,default:false,defaultName:code"
-        "4,monitor:$monitor_1,default:false,defaultName:games"
-        "7,monitor:$monitor_2,default:true,defaultName:side_default"
-        "8,monitor:$monitor_2,default:false,defaultName:side_2"
-        "9,monitor:$monitor_2,default:false,defaultName:side_3"
-        "0,monitor:$monitor_2,default:false,defaultName:side_4"
+        "2,monitor:$monitor_1,default:false,defaultName:code"
+        "3,monitor:$monitor_1,default:false,defaultName:filemanager"
+        "4,monitor:$monitor_1,default:false,defaultName:other"
+        "7,monitor:$monitor_1,default:false,defaultName:side_default"
+        "8,monitor:$monitor_1,default:false,defaultName:steam"
+        "9,monitor:$monitor_1,default:false,defaultName:side_3"
+        "0,monitor:$monitor_1,default:false,defaultName:side_4"
       ];
 
       windowrulev2 = [
@@ -206,88 +201,80 @@ in {
         "tile,class:^(org.wezfurlong.wezterm)$"
       ];
 
-      bind =
-        [
-          "$mainMod, Q, exec, $terminal"
-          "$mainMod, C, killactive,"
-          "$mainMod SHIFT, /, exec exit"
-          "$mainMod, E, exec, $fileManager"
-          "$mainMod, G, togglefloating,"
-          "$mainMod SHIFT, Q, exec, ${hyprlock_script}/bin/run_hyprlock"
-          # "$mainMod, P, pseudo, #"
-          "$mainMod, F, fullscreen, 1"
-          "$mainMod, R, exec, ${lock_screen}/bin/lock_dp1"
+      bind = [
+        "$mainMod, Q, exec, $terminal"
+        "$mainMod, C, killactive,"
+        "$mainMod CTRL SHIFT, M, exit"
+        # "$mainMod, E, exec, $fileManager"
+        "$mainMod, G, togglefloating,"
+        "$mainMod SHIFT, Q, exec, ${hyprlock_script}/bin/run_hyprlock"
+        "$mainMod CTRL SHIFT, P, exec, hyprshot -m region"
+        # "$mainMod, P, pseudo, #"
+        "$mainMod, F, fullscreen, 1"
+        "$mainMod, R, exec, ${lock_screen}/bin/lock_dp1"
 
-          "$mainMod SHIFT, F, fullscreen"
-          "$mainMod, A,exec, pypr toggle term"
-          "$mainMod, S, exec, pypr toggle volume"
-          "$mainMod, M, exec, pypr toggle telegram"
-          "$mainModu, [, exec, pypr toggle mega"
-          "$mainMod, N, exec, pypr toggle obsidian"
-          "$mainMod SHIFT, S, exec, ${run_steam}/bin/start"
-          "ALT, SPACE, exec, $menu"
+        "$mainMod SHIFT, F, fullscreen"
+        "$mainMod, A,exec, pypr toggle term"
+        "$mainMod, S, exec, pypr toggle volume"
+        "$mainMod, M, exec, pypr toggle telegram"
+        "$mainModu, [, exec, pypr toggle mega"
+        "$mainMod, N, exec, pypr toggle obsidian"
+        "$mainMod SHIFT, S, exec, ${run_steam}/bin/start"
+        "ALT, SPACE, exec, $menu"
 
-          "$mainMod,I,layoutmsg,addmaster"
-          "$mainMod SHIFT,I,layoutmsg,removemaster"
-          "$mainMod, H, movefocus, l"
-          "$mainMod, L, movefocus, r"
-          "$mainMod, K, movefocus, u"
-          "$mainMod, J, movefocus, d"
-          "$mainMod, mouse_up, focusmonitor,+1"
-          "$mainMod, mouse_down, focusmonitor,-1"
+        "$mainMod,I,layoutmsg,addmaster"
+        "$mainMod SHIFT,I,layoutmsg,removemaster"
+        "$mainMod, H, movefocus, l"
+        "$mainMod, L, movefocus, r"
+        "$mainMod, K, movefocus, u"
+        "$mainMod, J, movefocus, d"
+        "$mainMod, mouse_up, focusmonitor,+1"
+        "$mainMod, mouse_down, focusmonitor,-1"
 
-          "$mainMod SHIFT, H, movewindow, l"
-          "$mainMod SHIFT, L, movewindow, r"
-          "$mainMod SHIFT, K, movewindow, u"
-          "$mainMod SHIFT, J, movewindow, d"
+        "$mainMod SHIFT, H, movewindow, l"
+        "$mainMod SHIFT, L, movewindow, r"
+        "$mainMod SHIFT, K, movewindow, u"
+        "$mainMod SHIFT, J, movewindow, d"
 
-          "$mainMod SHIFT,O,layoutmsg,orientationcycle left top right bottom center"
+        "$mainMod SHIFT,O,layoutmsg,orientationcycle left top right bottom center"
 
-          # adjust volume
-          ", XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"
-          ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
-          ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-          ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+        # adjust volume
+        ", XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"
+        ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+        ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
 
-          # media buttons
-          ", XF86AudioPlay, exec, playerctl play-pause"
-          ", XF86AudioNext, exec, playerctl next"
-          ", XF86AudioPrev, exec, playerctl previous"
-          ", XF86audiostop, exec, playerctl stop"
+        # media buttons
+        ", XF86AudioPlay, exec, playerctl play-pause"
+        ", XF86AudioNext, exec, playerctl next"
+        ", XF86AudioPrev, exec, playerctl previous"
+        ", XF86audiostop, exec, playerctl stop"
 
-          # workspaces
-          "$mainMod, U, workspace, 1"
-          "$mainMod, I, workspace, 2"
-          "$mainMod, O, workspace, 3"
-          "$mainMod, P, workspace, 4"
-          "$mainMod SHIFT, U, movetoworkspace, 1"
-          "$mainMod SHIFT, I, movetoworkspace, 2"
-          "$mainMod SHIFT, O, movetoworkspace, 3"
-          "$mainMod SHIFT, P, movetoworkspace, 4"
-        ]
-        ++ (
-          # workspaces
-          # binds $mainMod + [shift +] {1..10} to [move to] workspace {1..10}
-          builtins.concatLists (builtins.genList (
-              x: let
-                ws = let
-                  c = (x + 1) / 10;
-                in
-                  builtins.toString (x + 1 - (c * 10));
-              in [
-                "$mainMod, ${ws}, workspace, ${toString (x + 1)}"
-                "$mainMod SHIFT, ${ws}, movetoworkspace, ${toString (x + 1)}"
-              ]
-            )
-            10)
-        );
+        # workspaces
+        "$mainMod, U, workspace, 1"
+        "$mainMod, I, workspace, 2"
+        "$mainMod, O, workspace, 3"
+        "$mainMod, P, workspace, 4"
+        "$mainMod SHIFT, U, movetoworkspace, 1"
+        "$mainMod SHIFT, I, movetoworkspace, 2"
+        "$mainMod SHIFT, O, movetoworkspace, 3"
+        "$mainMod SHIFT, P, movetoworkspace, 4"
+      ] ++ (
+        # workspaces
+        # binds $mainMod + [shift +] {1..10} to [move to] workspace {1..10}
+        builtins.concatLists (builtins.genList (x:
+          let
+            ws = let c = (x + 1) / 10; in builtins.toString (x + 1 - (c * 10));
+          in [
+            "$mainMod, ${ws}, workspace, ${toString (x + 1)}"
+            "$mainMod SHIFT, ${ws}, movetoworkspace, ${toString (x + 1)}"
+          ]) 10));
       bindm = [
         # Move/resize windows with mainMod + LMB/RMB and dragging
         "bindm = $mainMod, mouse:272, movewindow"
         "bindm = $mainMod, mouse:273, resizewindow"
       ];
     };
-    extraConfig = ''
-    '';
+    extraConfig = "";
   };
 }
