@@ -3,12 +3,8 @@ plugins = [
   "scratchpads",
   "wallpapers",
   "monitors",
-  "expose",
-  "gbar"
+  "expose"
 ]
-
-[gbar]
-monitors = ["DP-1", "DP-2", "DP-3"]
 
 [wallpapers]
 path = "~/megasync/main/Pictures/Wallpapers_1/" # path to the folder with background images
