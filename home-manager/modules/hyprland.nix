@@ -115,9 +115,9 @@ in {
         "${init_script}/bin/pre_init"
         "pypr --debug /tmp/pypr.log"
         "[workspace 1 silent] firefox"
-        "[workspace 2 silent] kitty"
-        "[workspace 3 silent] kitty lf"
-        "[workspace 8 silent] ${run_steam}/bin/start"
+        "[workspace 2 silent] kitty lf"
+        "[workspace 3 silent] kitty"
+        "[workspace 4 silent] ${run_steam}/bin/start"
       ];
 
       "$mainMod" = "SUPER";
