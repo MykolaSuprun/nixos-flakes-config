@@ -1,7 +1,7 @@
 { ... }: {
   programs.waybar = {
     enable = true;
-    systemd.enable = true;
+    # systemd.enable = true;
     style = ''
       * {
         /* reference the color by using @color-name */
