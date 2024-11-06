@@ -1,11 +1,5 @@
-{
-  pkgs,
-  pkgs-stable,
-  ...
-}: {
-  xdg = {
-    enable = true;
-  };
+{ pkgs, pkgs-stable, ... }: {
+  xdg = { enable = true; };
 
   home.packages = with pkgs; [
     # plasma packages and basic applications
@@ -15,6 +9,7 @@
     kdePackages.dolphin
     libsForQt5.kservice
     kdePackages.kservice
+    kdePackages.qtstyleplugin-kvantum
 
     # internet
     mullvad-browser
@@ -36,6 +31,7 @@
     protonup-qt
     protonup-ng
     ldacbt
+    spotify-player
 
     obsidian
 
@@ -59,7 +55,7 @@
     unzip
     unixtools.xxd
     bemenu
-    freerdp3
-    gtk-frdp
+    pkgs-stable.freerdp3
+    pkgs-stable.gtk-frdp
   ];
 }

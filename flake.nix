@@ -2,9 +2,9 @@
   description = "NixOS flake";
 
   nixConfig = {
-    experimental-features = ["nix-command" "flakes"];
+    experimental-features = [ "nix-command" "flakes" ];
     allowUnfree = true;
-    trusted-users = ["mykolas"];
+    trusted-users = [ "mykolas" ];
     substituters = [
       "https://cache.nixos.org"
       "https://nix-community.cachix.org"
@@ -19,6 +19,8 @@
 
   inputs = {
     # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2405.*.tar.gz";
+    determinate.url =
+      "https://flakehub.com/f/DeterminateSystems/determinate/0.1";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1.0.tar.gz";
@@ -57,137 +59,111 @@
     };
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    nixpkgs-stable,
-    home-manager,
-    nixos-wsl,
-    catppuccin,
-    my-neovim,
-    ...
-  } @ inputs: let
-    inherit (self) outputs;
-    system = "x86_64-linux";
+  outputs = { self, determinate, nixpkgs, nixpkgs-stable, home-manager
+    , nixos-wsl, catppuccin, my-neovim, ... }@inputs:
+    let
+      inherit (self) outputs;
+      system = "x86_64-linux";
 
-    pkgs = import nixpkgs {
-      inherit system;
-      config.allowUnfree = true;
-      config.permittedInsecurePackages = [
-        "electron-30.5.1"
-      ];
-      overlays = [ 
-        (
-          final: prev: {
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+        config.permittedInsecurePackages = [ "electron-30.5.1" ];
+        overlays = [
+          (final: prev: {
             pyprland = inputs.pyprland.packages.${system}.pyprland;
-          }
-        )
-      ]
-        ++ import ./overlays;
-    };
-
-    pkgs-stable = import nixpkgs-stable {
-      inherit system;
-      config.allowUnfree = true;
-      config.permittedInsecurePackages = [
-      ];
-    };
-
-    lib = nixpkgs.lib;
-  in {
-    nixosConfigurations = {
-      geks-nixos = lib.nixosSystem {
-        inherit system;
-        modules = [
-          catppuccin.nixosModules.catppuccin
-          ./nixos/configurations/geks-nixos/hardware-configuration.nix
-          ./nixos/configurations/geks-nixos/configuration.nix
-          ./nixos/modules/geks-nixos.nix
-          # home-manager setup
-          home-manager.nixosModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              users.mykolas = {
-                imports = [
-                  # inputs.hyprland.homeManagerModules.default
-                  catppuccin.homeManagerModules.catppuccin
-                  ./home-manager/configurations/mykolas/home-configuration.nix
-                  ./home-manager/modules/geks-nixos.nix
-                ];
-              };
-              extraSpecialArgs = {
-                inherit
-                  inputs
-                  outputs
-                  system
-                  pkgs
-                  pkgs-stable
-                  my-neovim
-                  ;
-              };
-            };
-          }
-        ];
-        specialArgs = {inherit inputs outputs pkgs pkgs-stable my-neovim;};
+          })
+        ] ++ import ./overlays;
       };
-      geks-wsl = lib.nixosSystem {
+
+      pkgs-stable = import nixpkgs-stable {
         inherit system;
-        modules = [
-          ./nixos/configurations/geks-wsl/configuration.nix
-          ./nixos/modules/nix-conf.nix
-          ./nixos/modules/sys-pkgs.nix
-          catppuccin.nixosModules.catppuccin
-          nixos-wsl.nixosModules.wsl
-          home-manager.nixosModules.home-manager
-          ./nixos/modules/catppuccin.nix
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              users.mykolas = {
-                imports = [
-                  catppuccin.homeManagerModules.catppuccin
-                  ./home-manager/configurations/mykolas/home-configuration.nix
-                  ./home-manager/modules/geks-wsl.nix
-                ];
-              };
-              extraSpecialArgs = {
-                inherit
-                  inputs
-                  outputs
-                  system
-                  pkgs
-                  pkgs-stable
-                  my-neovim
-                  ;
-              };
-            };
-          }
-        ];
-        specialArgs = {inherit inputs outputs pkgs pkgs-stable my-neovim;};
+        config.allowUnfree = true;
+        config.permittedInsecurePackages = [ ];
       };
+
+      lib = nixpkgs.lib;
+    in {
+      nixosConfigurations = {
+        geks-nixos = lib.nixosSystem {
+          inherit system;
+          modules = [
+            determinate.nixosModules.default
+            catppuccin.nixosModules.catppuccin
+            ./nixos/configurations/geks-nixos/hardware-configuration.nix
+            ./nixos/configurations/geks-nixos/configuration.nix
+            ./nixos/modules/geks-nixos.nix
+            # home-manager setup
+            home-manager.nixosModules.home-manager
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                users.mykolas = {
+                  imports = [
+                    # inputs.hyprland.homeManagerModules.default
+                    catppuccin.homeManagerModules.catppuccin
+                    ./home-manager/configurations/mykolas/home-configuration.nix
+                    ./home-manager/modules/geks-nixos.nix
+                  ];
+                };
+                extraSpecialArgs = {
+                  inherit inputs outputs system pkgs pkgs-stable my-neovim;
+                };
+              };
+            }
+          ];
+          specialArgs = { inherit inputs outputs pkgs pkgs-stable my-neovim; };
+        };
+        geks-wsl = lib.nixosSystem {
+          inherit system;
+          modules = [
+            ./nixos/configurations/geks-wsl/configuration.nix
+            ./nixos/modules/nix-conf.nix
+            ./nixos/modules/sys-pkgs.nix
+            catppuccin.nixosModules.catppuccin
+            nixos-wsl.nixosModules.wsl
+            home-manager.nixosModules.home-manager
+            ./nixos/modules/catppuccin.nix
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                users.mykolas = {
+                  imports = [
+                    catppuccin.homeManagerModules.catppuccin
+                    ./home-manager/configurations/mykolas/home-configuration.nix
+                    ./home-manager/modules/geks-wsl.nix
+                  ];
+                };
+                extraSpecialArgs = {
+                  inherit inputs outputs system pkgs pkgs-stable my-neovim;
+                };
+              };
+            }
+          ];
+          specialArgs = { inherit inputs outputs pkgs pkgs-stable my-neovim; };
+        };
+      };
+      # homeConfigurations = {
+      #   mykolas = home-manager.lib.homeManagerConfiguration {
+      #     inherit pkgs;
+      #     modules = [
+      #       # inputs.hyprland.homeManagerModules.default
+      #       catppuccin.homeManagerModules.catppuccin
+      #       ./home-manager/configurations/mykolas/home-configuration.nix
+      #       ./home-manager/modules/geks-nixos.nix
+      #     ];
+      #     extraSpecialArgs = {
+      #       inherit
+      #         inputs
+      #         outputs
+      #         pkgs
+      #         pkgs-stable
+      #         my-neovim
+      #         ;
+      #     };
+      #   };
+      # };
     };
-    # homeConfigurations = {
-    #   mykolas = home-manager.lib.homeManagerConfiguration {
-    #     inherit pkgs;
-    #     modules = [
-    #       # inputs.hyprland.homeManagerModules.default
-    #       catppuccin.homeManagerModules.catppuccin
-    #       ./home-manager/configurations/mykolas/home-configuration.nix
-    #       ./home-manager/modules/geks-nixos.nix
-    #     ];
-    #     extraSpecialArgs = {
-    #       inherit
-    #         inputs
-    #         outputs
-    #         pkgs
-    #         pkgs-stable
-    #         my-neovim
-    #         ;
-    #     };
-    #   };
-    # };
-  };
 }

@@ -1,8 +1,5 @@
-{
-  inputs,
-  pkgs,
-  ...
-}: let
+{ inputs, pkgs, ... }:
+let
   neovim-local = "nix run ~/src/nixvim-config -- ";
   neovim_github = "nix run github:MykolaSuprun/nixvim-config #. -- ";
   conf_root = "$NIXOS_CONF_DIR";
@@ -93,12 +90,14 @@
     # end
   '';
 in {
-  home.packages = with pkgs; [
-    babelfish
-    grc
-  ];
+  home.packages = with pkgs; [ babelfish grc ];
 
   programs = {
+    nushell = {
+      enable = true;
+      envFile.source = ./../configurations/mykolas/nushell/env.nu;
+      configFile.source = ./../configurations/mykolas/nushell/config.nu;
+    };
     fish = {
       enable = true;
       plugins = [

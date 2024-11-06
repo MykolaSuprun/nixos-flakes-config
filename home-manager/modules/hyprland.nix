@@ -1,4 +1,4 @@
-{ inputs, pkgs, pkgs-stable, ... }:
+{ config, inputs, pkgs, pkgs-stable, ... }:
 let
   init_script = pkgs.writeShellScriptBin "pre_init" ''
     ${pkgs.swaynotificationcenter}/bin/swaync &
@@ -7,6 +7,9 @@ let
   '';
   hyprlock_script = pkgs.writeShellScriptBin "run_hyprlock" ''
     hyprlock
+  '';
+  hyprlock_script_alt = pkgs.writeShellScriptBin "run_hyprlock" ''
+    hyprlock --config ${config.home.homeDirectory}/.config/hypr/hyprlock.conf.alt
   '';
   menu_script = pkgs.writeShellScriptBin "run_menu" ''
     bemenu-run -n -c -B 3 -W 0.3 -l 10 -i -w -H 20 --counter always \
@@ -32,15 +35,22 @@ let
     fi
   '';
   run_steam = pkgs.writeShellScriptBin "start" ''
-    gamescope -w 3440 -f -g -e -h 1440 -W 3440 -H 1440 -r 165 --hdr-enabled --force-grab-cursor \
-      --adaptive-sync --backend wayland --expose-wayland \
-      -- steam -tenfoot -steamos -fulldesktopres
+    gamescope -f -b -g -e --rt -w 3440 -h 1440 -W 3440 -H 1440 -r 165 \
+      --hdr-enabled --force-grab-cursor --immediate-flips --mangoapp \
+      --adaptive-sync --backend=wayland --expose-wayland \
+      -- steam
   '';
 in {
   programs = { };
   home.file = {
+    "./.config/hypr/hyprlock-assets" = {
+      source = ./../configurations/mykolas/hyprlock/hyprlock-assets;
+      recursive = true;
+    };
     "./.config/hypr/hyprlock.conf".source =
       ./../configurations/mykolas/hyprlock/hyprlock.conf;
+    "./.config/hypr/hyprlock.conf.alt".source =
+      ./../configurations/mykolas/hyprlock/hyprlock.conf.alt;
     "./.config/hypr/hypridle.conf".source =
       ./../configurations/mykolas/hypridle/hypridle.conf;
     "./.config/hypr/pyprland.toml".source =
@@ -208,6 +218,8 @@ in {
         # "$mainMod, E, exec, $fileManager"
         "$mainMod, G, togglefloating,"
         "$mainMod SHIFT, Q, exec, ${hyprlock_script}/bin/run_hyprlock"
+        "$mainMod CTRL SHIFT, L, exec, ${hyprlock_script_alt}/bin/run_hyprlock"
+        "$mainMod SHIFT, Q, exec, "
         "$mainMod CTRL SHIFT, P, exec, hyprshot -m region"
         # "$mainMod, P, pseudo, #"
         "$mainMod, F, fullscreen, 1"

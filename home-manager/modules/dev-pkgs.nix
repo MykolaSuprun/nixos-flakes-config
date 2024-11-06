@@ -1,8 +1,4 @@
-{
-  pkgs,
-  my-neovim,
-  ...
-}: {
+{ pkgs, my-neovim, ... }: {
   programs = {
     helix = {
       enable = true;
@@ -19,9 +15,7 @@
       enable = true;
       tmux.enableShellIntegration = true;
     };
-    lazygit = {
-      enable = true;
-    };
+    lazygit = { enable = true; };
   };
 
   home.packages = with pkgs; [
@@ -58,7 +52,7 @@
     nix-tree
     nix-diff
     nixfmt-classic
-    # fh
+    fh
 
     lf
     sqlcmd
