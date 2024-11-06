@@ -32,5 +32,7 @@
   environment.systemPackages = with pkgs; [
     bazecor
     steam-run
+    looking-glass-client
+    spice
   ];
 }

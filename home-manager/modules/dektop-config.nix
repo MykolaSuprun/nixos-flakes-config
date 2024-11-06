@@ -13,22 +13,11 @@
     kdePackages.ark
     kdePackages.yakuake
     kdePackages.dolphin
+    libsForQt5.kservice
+    kdePackages.kservice
 
     # internet
     mullvad-browser
-    (vivaldi.overrideAttrs (old: {
-      buildInputs =
-        (old.buildInputs or [])
-        ++ [
-          libsForQt5.qtwayland
-          libsForQt5.qtx11extras
-          kdePackages.plasma-integration.qt5
-          kdePackages.kio-extras-kf5
-          kdePackages.breeze.qt5
-          vivaldi-ffmpeg-codecs
-        ];
-    }))
-    vivaldi-ffmpeg-codecs
     protonvpn-gui
     lbry
 
@@ -38,8 +27,8 @@
     telegram-desktop
 
     # other
-    pkgs-stable.megasync
-    cryptomator
+    megasync
+    pkgs-stable.cryptomator
     qbittorrent
     morgen
     libreoffice-qt
@@ -52,12 +41,13 @@
 
     # virtualization
     distrobox
+    docker-compose
 
     # wine, steam and other gaming related packages
     bottles
 
     # media
-    pkgs-stable.spotify
+    spotify
     vlc
     cider
 
@@ -69,5 +59,7 @@
     unzip
     unixtools.xxd
     bemenu
+    freerdp3
+    gtk-frdp
   ];
 }

@@ -1,4 +1,4 @@
-{...}: {
+{ ... }: {
   programs.waybar = {
     enable = true;
     systemd.enable = true;
@@ -18,19 +18,13 @@
     '';
     settings = {
       mainBar = {
-        output = ["DP-1"];
+        output = [ "DP-1" ];
         layer = "top";
         position = "top";
-        height = 30;
-        modules-left = [
-          "hyprland/workspaces"
-        ];
-        modules-center = [
-          "clock"
-        ];
-        modules-right = [
-          "wireplumber"
-        ];
+        height = 24;
+        modules-left = [ "hyprland/window" ];
+        modules-center = [ "clock" ];
+        modules-right = [ "bluetooth" "wireplumber" ];
         "hyprland/workspaces" = {
           format = "{icon} ";
           format-icons = {
@@ -43,16 +37,38 @@
             default = "";
           };
           "persistent-workspaces" = {
-            "*" = 5; # 5 workspaces by default on every monitor
+            "*" = 8; # 5 workspaces by default on every monitor
           };
         };
+        "hyprland/window" = {
+          format = " {}";
+          rewrite = {
+            "(.*) — Mozilla Firefox" = "🌎 $1";
+            "(.*) - fish" = "> [$1]";
+            "(.*) - tmux" = "> [$1]";
+          };
+          "separate-outputs" = true;
+        };
+        bluetooth = {
+          format = " {status}";
+          format-disabled = "";
+          format-connected = " {num_connections} connected";
+          tooltip-format = "{controller_alias}	{controller_address}";
+          tooltip-format-connected = ''
+            {controller_alias}	{controller_address}
+
+            {device_enumerate}'';
+          tooltip-format-enumerate-connected =
+            "{device_alias}	{device_address}";
+          on-click = "hyprctl dispatch exec [floating] blueman-manager";
+        };
         wireplumber = {
-          format = " {icon}  {volume}% ";
+          format = " {icon} {volume}% ";
           format-muted = "";
-          on-click = "pwvucontrol";
+          on-click = "hyprctl dispatch exec pypr toggle volume";
           max-volume = 100;
           scroll-step = 10;
-          format-icons = ["" "" ""];
+          format-icons = [ "" "" "" ];
         };
       };
     };

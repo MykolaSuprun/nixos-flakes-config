@@ -20,8 +20,9 @@
   inputs = {
     # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2405.*.tar.gz";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1.0.tar.gz";
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
     # nixpkgs-stable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2405.*.tar.gz";
     home-manager = {
       # url = "https://flakehub.com/f/nix-community/home-manager/0.2405.*.tar.gz";
@@ -33,15 +34,22 @@
       url = "github:nix-community/NixOS-WSL";
       flake = true;
     };
-    # hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-    # hyprland-plugins = {
-    #   url = "github:hyprwm/hyprland-plugins";
-    #   inputs.hyprland.follows = "hyprland";
-    # };
-    # hy3 = {
-    #   url = "github:outfoxxed/hy3";
-    #   inputs.hyprland.follows = "hyprland";
-    # };
+    # hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1&ref=refs/tags/v0.44.1";
+    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    hyprland-plugins = {
+      # url = "github:hyprwm/hyprland-plugins?ref=v0.43.0";
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
+    hy3 = {
+      # url = "github:outfoxxed/hy3?ref=hl0.44.0";
+      url = "github:outfoxxed/hy3";
+      inputs.hyprland.follows = "hyprland";
+    };
+    pyprland = {
+      url = "github:hyprland-community/pyprland";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     catppuccin.url = "github:catppuccin/nix";
     my-neovim = {
       url = "github:MykolaSuprun/nixvim-config";
@@ -66,9 +74,15 @@
       inherit system;
       config.allowUnfree = true;
       config.permittedInsecurePackages = [
+        "electron-30.5.1"
       ];
-      overlays =
-        []
+      overlays = [ 
+        (
+          final: prev: {
+            pyprland = inputs.pyprland.packages.${system}.pyprland;
+          }
+        )
+      ]
         ++ import ./overlays;
     };
 

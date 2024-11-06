@@ -1,28 +1,23 @@
-{
-  inputs,
-  config,
-  pkgs,
-  ...
-}: {
+{ inputs, config, pkgs, ... }: {
   programs.tmux = {
     enable = true;
     # terminal = "xterm-256color";
     # escapeTime = 10;
     clock24 = true;
     plugins = with pkgs.tmuxPlugins; [
-      sensible
+      # sensible
       # vim-tmux-navigator
       catppuccin
-      tilish
-      yank
-      urlview
-      sidebar
-      logging
-      tmux-fzf
-      resurrect
-      tmux-thumbs
-      copy-toolkit
-      continuum
+      # tilish
+      # yank
+      # urlview
+      # sidebar
+      # logging
+      # tmux-fzf
+      # resurrect
+      # tmux-thumbs
+      # copy-toolkit
+      # continuum
       better-mouse-mode
       # fzf-tmux-url
       # sidebar

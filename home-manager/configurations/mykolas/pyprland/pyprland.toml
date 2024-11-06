@@ -2,16 +2,17 @@
 plugins = [
   "scratchpads",
   "wallpapers",
-  "monitors"
+  "monitors",
+  "expose"
 ]
 
-# [wallpapers]
-# path = "~/megasync/Pictures/21x9/" # path to the folder with background images
-# extentions = ["png", "jpg", "jpeg", "webp"]
-# unique = true # set a different wallpaper for each screen
-# interval = 15
-# command = "swww img --transition-type any \"[file]\""
-# clear_command = "swww clear"
+[wallpapers]
+path = "~/megasync/main/Pictures/Wallpapers_1/" # path to the folder with background images
+extentions = ["png", "jpg", "jpeg", "webp"]
+unique = true # set a different wallpaper for each screen
+interval = 15
+command = "swww img --transition-type any \"[file]\""
+clear_command = "swww clear"
 
 [scratchpads.term]
 animation = "fromTop"
@@ -34,6 +35,7 @@ animation = "fromBottom"
 command = "telegram-desktop"
 class = "org.telegram.desktop"
 size = "35% 90%"
+multi = true
 
 [scratchpads.obsidian]
 animation = "fromBottom"
@@ -46,7 +48,7 @@ lazy = true
 [scratchpads.mega]
 animation = "fromTop"
 command = "megasync"
-class = "nz.co.mega."
+class = "nz.co.mega"
 size = "20% 50%"
 unfocus = "hide"
 
