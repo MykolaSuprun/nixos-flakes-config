@@ -1,7 +1,7 @@
 { inputs, config, pkgs, pkgs-stable, lib, my-neovim, ... }:
 let
-  pkgs-hyprland =
-    inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+  # pkgs-hyprland =
+  #   inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
 in {
   imports = [ ];
 
@@ -27,7 +27,7 @@ in {
         efiSupport = true;
         #efiInstallAsRemovable = true; # in case canTouchEfiVariables doesn't work for your system
         devices = [ "nodev" ];
-        useOSProber = true;
+	useOSProber = true;
       };
     };
 
@@ -48,11 +48,7 @@ in {
       "vfi"
       "kvmfr"
     ];
-    initrd = {
-      # kernelModules = ["wl"];
-      luks.devices."luks-b6082ebc-6403-4f61-9a2b-fce8c51233e6".device =
-        "/dev/disk/by-uuid/b6082ebc-6403-4f61-9a2b-fce8c51233e6";
-    };
+
     kernelParams = [ "amd_iommu=on" ];
     extraModprobeConfig = "options vfio-pci ids=1002:164e";
     postBootCommands = ''
@@ -71,8 +67,8 @@ in {
       lib.mkDefault config.hardware.enableRedistributableFirmware;
 
     graphics = {
-      package = pkgs-hyprland.mesa.drivers;
-      package32 = pkgs-hyprland.pkgsi686Linux.mesa.drivers;
+      # package = pkgs-hyprland.mesa.drivers;
+      # package32 = pkgs-hyprland.pkgsi686Linux.mesa.drivers;
       enable32Bit = true; # For 32 bit applications
       extraPackages = with pkgs; [ rocmPackages.clr.icd ];
       extraPackages32 = with pkgs; [ ];
@@ -111,7 +107,7 @@ in {
   # Enable the X11 windowing system.
   services = {
     displayManager = {
-      defaultSession = "hyprland";
+      # defaultSession = "hyprland";
       sddm = {
         enable = true;
         wayland = {

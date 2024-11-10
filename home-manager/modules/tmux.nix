@@ -29,6 +29,9 @@
       # set tmux attach to create new session if none is available
       new-session -n $HOST
 
+      setw -g aggressive-resize on
+
+
       # fix teminal colors
       # set-option -sa terminal-overrides ",xterm*:Tc"
       set -g default-terminal "tmux-256color"
@@ -83,23 +86,16 @@
 
       # is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
 
-      is_vim="ps -o state= -o comm= -t '#{pane_tty}' \ 
-        | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
-      is_fzf="ps -o state= -o comm= -t '#{pane_tty}' \
-        | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?fzf$'"
+      is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
 
-      bind -n M-h run "($is_vim && tmux send-keys M-h) || \
-                          tmux select-pane -L"
-      bind -n M-j run "($is_vim && tmux send-keys M-j)  || \
-                         ($is_fzf && tmux send-keys C-j) || \
-                         tmux select-pane -D"
-      bind-key -n 'M-k' if-shell "$is_vim" 'send-keys M-k' 'select-pane -U'
-      bind -n M-k run "($is_vim && tmux send-keys M-k) || \
-                          ($is_fzf && tmux send-keys C-k)  || \
-                          tmux select-pane -U"
-      bind -n M-l run  "($is_vim && tmux send-keys M-l) || \
-                                tmux select-pane -R"
-      bind-key -n M-\ if-shell "$is_vim" "send-keys M-\\" "select-pane -l"
+      is_fzf="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?fzf$'"
+
+      bind -n M-h run "($is_vim && tmux send-keys M-h) || tmux select-pane -L"
+      bind -n M-j run "($is_vim && tmux send-keys M-j)  || ($is_fzf && tmux send-keys C-j) || tmux select-pane -D"
+      # bind-key -n 'M-k' if-shell "$is_vim" 'send-keys M-k' 'select-pane -U'
+      bind -n M-k run "($is_vim && tmux send-keys M-k) || ($is_fzf && tmux send-keys C-k)  || tmux select-pane -U"
+      bind -n M-l run  "($is_vim && tmux send-keys M-l) || tmux select-pane -R"
+      # bind-key -n C-\ if-shell "$is_vim" "send-keys M-\\" "select-pane -l"
     '';
   };
 }

@@ -1,4 +1,4 @@
-{...}: {
+{ ... }: {
   imports = [
     ./xdg.nix
     ./nix-conf.nix

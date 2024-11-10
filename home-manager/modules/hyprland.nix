@@ -1,21 +1,22 @@
 { config, inputs, pkgs, pkgs-stable, ... }:
 let
   init_script = pkgs.writeShellScriptBin "pre_init" ''
-    ${pkgs.swaynotificationcenter}/bin/swaync &
-    ${pkgs.kdePackages.polkit-kde-agent-1}/pkgs/kde/plasma/polkit-kde-agent-1 & ${pkgs.hypridle}/bin/hypridle &
-    ${pkgs.swww}/bin/swww-daemon &
+    # uwsm-app -- ${pkgs.waybar}/bin/waybar &
+    # uwsm-app -- ${pkgs.pyprland}/bin/pypr --debug /tmp/pypr.log &
+    # hyprctl dispatch exec "[workspace 1 silent;] uwsm-app -- ${pkgs.vivaldi}/bin/vivaldi" &
   '';
   hyprlock_script = pkgs.writeShellScriptBin "run_hyprlock" ''
-    hyprlock
+    uwsm-app -- hyprlock
   '';
   hyprlock_script_alt = pkgs.writeShellScriptBin "run_hyprlock" ''
-    hyprlock --config ${config.home.homeDirectory}/.config/hypr/hyprlock.conf.alt
+    uwsm-app -- hyprlock --config ${config.home.homeDirectory}/.config/hypr/hyprlock.conf.alt
   '';
   menu_script = pkgs.writeShellScriptBin "run_menu" ''
-    bemenu-run -n -c -B 3 -W 0.3 -l 10 -i -w -H 20 --counter always \
-          --scrollbar always --binding vim --vim-esc-exits --single-instance \
-          --fb "#eff1f5" --ff "#4c4f69" --nb "#eff1f5" --nf "#4c4f69" --tb "#eff1f5" \
-          --hb "#eff1f5" --tf "#d20f39" --hf "#df8e1d" --af "#4c4f69" --ab "#eff1f5" --bdr "#898992"
+    # bemenu-run -n -c -B 3 -W 0.3 -l 10 -i -w -H 20 --counter always \
+    #       --scrollbar always --binding vim --vim-esc-exits --single-instance \
+    #       --fb "#eff1f5" --ff "#4c4f69" --nb "#eff1f5" --nf "#4c4f69" --tb "#eff1f5" \
+    #       --hb "#eff1f5" --tf "#d20f39" --hf "#df8e1d" --af "#4c4f69" --ab "#eff1f5" --bdr "#898992"
+    rofi -show drun -run-command "uwsm-app -- {cmd}"
   '';
   lock_screen = pkgs.writeShellScriptBin "lock_dp1" ''
 
@@ -35,20 +36,31 @@ let
     fi
   '';
   run_steam = pkgs.writeShellScriptBin "start" ''
-    gamescope -f -b -g -e --rt -w 3440 -h 1440 -W 3440 -H 1440 -r 165 \
-      --hdr-enabled --force-grab-cursor --immediate-flips --mangoapp \
+    uwsm-app -- gamescope -f -b -g -e --rt -w 3440 -h 1440 -W 3440 -H 1440 -r 165 \
+      --hdr-enabled --force-grab-cursor --immediate-flips \
       --adaptive-sync --backend=wayland --expose-wayland \
-      -- steam
+      -- steam -tenfoot -steamos
   '';
 in {
+  wayland.windowManager.hyprland.systemd.enable = false;
   programs = { };
   home.file = {
+    "./.config/uwsm" = {
+      source = ./../configurations/mykolas/uwsm;
+      recursive = true;
+    };
+    "./.config/rofi" = {
+      source = ./../configurations/mykolas/rofi;
+      recursive = true;
+    };
     "./.config/hypr/hyprlock-assets" = {
       source = ./../configurations/mykolas/hyprlock/hyprlock-assets;
       recursive = true;
     };
     "./.config/hypr/hyprlock.conf".source =
       ./../configurations/mykolas/hyprlock/hyprlock.conf;
+    "./.config/hypr/hyprpaper.conf".source =
+      ./../configurations/mykolas/hyprpaper/hyprpaper.conf;
     "./.config/hypr/hyprlock.conf.alt".source =
       ./../configurations/mykolas/hyprlock/hyprlock.conf.alt;
     "./.config/hypr/hypridle.conf".source =
@@ -75,9 +87,9 @@ in {
     kdePackages.qtwayland
     xorg.xrdb
     rofi-wayland
+    dbus-broker
     wlr-randr
     # hyper
-    anyrun
     # terminal
     alacritty-theme
     alacritty
@@ -92,23 +104,18 @@ in {
 
   wayland.windowManager.hyprland = {
     enable = true;
-    package =
-      inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    # package =
+    #   inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
 
-    plugins = with pkgs.hyprlandPlugins; [
-      inputs.hy3.packages.${pkgs.system}.hy3
-      inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
-      # hy3
-      # hyprexpo
-      # hyprspace
-      # hyprfocus
-    ];
-
-    systemd = {
-      enable = true;
-      enableXdgAutostart = true;
-      variables = [ "--all" ];
-    };
+    plugins = with pkgs.hyprlandPlugins;
+      [
+        # inputs.hy3.packages.${pkgs.system}.hy3
+        # inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
+        hy3
+        # hyprexpo
+        # hyprspace
+        # hyprfocus
+      ];
 
     xwayland.enable = true;
 
@@ -118,25 +125,26 @@ in {
         # "DP-1,2560x1440@144,3440x0,1"
       ];
 
-      exec-once = [
-        "systemctl --user mask xdg-desktop-portal-wlr"
-        "systemctl --user import-environment XDG_SESSION_TYPE XDG_CURRENT_DESKTOP"
-        "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
-        "${init_script}/bin/pre_init"
-        "pypr --debug /tmp/pypr.log"
-        "[workspace 1 silent] firefox"
-        "[workspace 2 silent] kitty lf"
-        "[workspace 3 silent] kitty"
-        "[workspace 4 silent] ${run_steam}/bin/start"
-      ];
-
       "$mainMod" = "SUPER";
-      "$fileManager" = "kitty lf";
-      "$terminal" = "kitty";
-      # "$menu" = "anyrun";
+      "$fileManager" = "uwsm-app -- wezterm lf";
+      "$terminal" = "uwsm-app -- wezterm";
       "$menu" = "${menu_script}/bin/run_menu";
       "$monitor_1" = "DP-1";
       "$monitor_2" = "DP-2";
+
+      exec-once = [
+        # "systemctl --user mask xdg-desktop-portal-wlr"
+        # "systemctl --user import-environment XDG_SESSION_TYPE XDG_CURRENT_DESKTOP"
+        # "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+        "${init_script}/bin/pre_init"
+        # "[workspace 1 silent] uwsm-app -- ${pkgs.firefox}/bin/firefox"
+        # "[workspace 1 silent] uwsm-app -- vivaldi"
+        # "[workspace 2 silent] uwsm-app -- $terminal"
+        # "[workspace 3 silent] uwsm-app -- $fileManager"
+        # "[workspace 4 silent] ${run_steam}/bin/start"
+        # "[workspace 5 silent] uwsm-app -- megasync"
+        # "[workspace 5 silent] uwsm-app -- cryptomator"
+      ];
 
       general = {
         # See https://wiki.hyprland.org/Configuring/Variables/ for more
@@ -157,28 +165,7 @@ in {
         "inactive_opacity" = 0.95;
       };
 
-      env = [
-        "WLR_NO_HARDWARE_CURSORS,1"
-        "WLR_DRM_eNO_ATOMIC,1"
-        "GDK_BACKEND,wayland,x11,*"
-        # XDG
-        "XDG_CURRENT_DESKTOP,Hyprland"
-        "XDG_SESSION_TYPE,wayland"
-        "XDG_SESSION_DESKTOP,Hyprland"
-        "XDG_CURRENT_DESKTOP,Hyprland"
-        "XDG_SESSION_TYPE,wayland"
-        "XDG_SESSION_DESKTOP,Hyprland"
-        # QT
-        "QT_QPA_PLATFORM,wayland;xcb"
-        "QT_AUTO_SCREEN_SCALE_FACTOR,1"
-        "QT_WAYLAND_DISABLE_WINDOWDECORATION,1"
-        "QT_QPA_PLATFORMTHEME,qt6ct"
-        # Toolkit
-        "SDL_VIDEODRIVER,wayland"
-        "_JAVA_AWT_WM_NONEREPARENTING,1"
-        "CLUTTER_BACKEND,wayland"
-        "GDK_BACKEND,wayland,x11"
-      ];
+      env = [ ];
 
       misc = { "vrr" = 1; };
 
@@ -207,14 +194,15 @@ in {
         "immediate, class:^(bioshock.*)$"
         "immediate, class:^(helldivers.*)$"
         "float,class:(org.telegram.desktop),title:(Media viewer)"
-        "float,class:^(org.wezfurlong.wezterm)$"
-        "tile,class:^(org.wezfurlong.wezterm)$"
+        "float,class:^(nz.co.mega.)$"
+        "float,class:^(org.cryptomator.launcher.Cryptomator$MainApp)$"
+        # "float,tile:^(Picture in picture)$"
       ];
 
       bind = [
         "$mainMod, Q, exec, $terminal"
         "$mainMod, C, killactive,"
-        "$mainMod CTRL SHIFT, M, exit"
+        "$mainMod CTRL SHIFT, M, exec, uwsm stop"
         # "$mainMod, E, exec, $fileManager"
         "$mainMod, G, togglefloating,"
         "$mainMod SHIFT, Q, exec, ${hyprlock_script}/bin/run_hyprlock"
@@ -288,5 +276,57 @@ in {
       ];
     };
     extraConfig = "";
+  };
+
+  systemd.user = {
+    enable = true;
+    services = {
+      hyprland-swww-daemon = {
+        Unit = {
+          Description = "Swww wallpaper daemon for hyprland";
+          Documentation = "man:swww-daemon";
+          After = [ "graphical-session.target" ];
+        };
+        Service = {
+          Type = "exec";
+          ExecCondition = ''
+            ${pkgs.systemd}/lib/systemd/systemd-xdg-autostart-condition "Hyprland" ""'';
+          ExecStart = "${pkgs.swww}/bin/swww-daemon";
+          Restart = "on-failure ";
+          Slice = "background-graphical.slice";
+        };
+        Install = { WantedBy = [ "graphical-session.target" ]; };
+      };
+      hyprland-hypridle = {
+        Unit = {
+          Description = "Idle daemon for hyprland";
+          After = [ "graphical-session.target" ];
+        };
+        Service = {
+          Type = "exec";
+          ExecCondition = ''
+            ${pkgs.systemd}/lib/systemd/systemd-xdg-autostart-condition "Hyprland" ""'';
+          ExecStart = "${pkgs.hypridle}/bin/hypridle";
+          Restart = "on-failure ";
+          Slice = "background-graphical.slice";
+        };
+        Install = { WantedBy = [ "graphical-session.target" ]; };
+      };
+      hyprland-swaync = {
+        Unit = {
+          Description = "Notification daemon for hyprland";
+          After = [ "graphical-session.target" ];
+        };
+        Service = {
+          Type = "exec";
+          ExecCondition = ''
+            ${pkgs.systemd}/lib/systemd/systemd-xdg-autostart-condition "Hyprland" ""'';
+          ExecStart = "${pkgs.swaynotificationcenter}/bin/swaync";
+          Restart = "on-failure ";
+          Slice = "background-graphical.slice";
+        };
+        Install = { WantedBy = [ "graphical-session.target" ]; };
+      };
+    };
   };
 }

@@ -7,12 +7,12 @@ local config = {}
 -- In newer versions of wezterm, use the config_builder which will
 -- help provide clearer error messages
 if wezterm.config_builder then
-	config = wezterm.config_builder()
+  config = wezterm.config_builder()
 end
 
 -- This is where you actually apply your config choices
 
-config.window_decorations = "RESIZE"
+config.window_decorations = "NONE"
 config.window_background_opacity = 0.99
 config.display_pixel_geometry = "RGB"
 config.freetype_load_target = "Light"
@@ -21,8 +21,8 @@ config.freetype_load_target = "Light"
 config.color_scheme = "Catppuccin Latte"
 config.font_size = 10
 config.font = wezterm.font({
-	family = "JetBrainsMono Nerd Font",
-	weight = "Medium",
+  family = "JetBrainsMono Nerd Font",
+  weight = "Medium",
 })
 -- config.font = wezterm.font_with_fallback ({
 --   "JetBrainsMono Nerd Font",

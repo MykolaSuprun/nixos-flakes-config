@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Vivaldi
+GenericName=Vivaldi browser
+Comment=Vivaldi browser
+Categories=Utility;
+Keywords=browser;
+TryExec=vivaldi
+Exec=hyprctl dispatch exec "[workspace 1 silent;] vivaldi"
+StartupNotify=false
+Terminal=false
+#Icon=
+OnlyShowIn=wlroots;Hyprland
