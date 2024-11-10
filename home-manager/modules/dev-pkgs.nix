@@ -22,6 +22,7 @@
     # dev tools
     cachix
     my-neovim.packages.${system}.default
+    code-cursor
     tree-sitter
     ripgrep
     fd
@@ -48,6 +49,7 @@
     pciutils
     lshw-gui
     glxinfo
+    bat
     # nix
     nix-tree
     nix-diff

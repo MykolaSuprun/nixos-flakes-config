@@ -13,6 +13,8 @@
 
     # internet
     mullvad-browser
+    vivaldi
+    vivaldi-ffmpeg-codecs
     protonvpn-gui
     lbry
 
@@ -23,15 +25,15 @@
 
     # other
     megasync
-    pkgs-stable.cryptomator
+    cryptomator
     qbittorrent
-    morgen
     libreoffice-qt
     ledger-live-desktop
     protonup-qt
     protonup-ng
     ldacbt
     spotify-player
+    tidal-hifi
 
     obsidian
 
@@ -40,7 +42,8 @@
     docker-compose
 
     # wine, steam and other gaming related packages
-    bottles
+    # bottles
+    mangohud
 
     # media
     spotify
@@ -55,7 +58,7 @@
     unzip
     unixtools.xxd
     bemenu
-    pkgs-stable.freerdp3
+    pkgs.freerdp3
     pkgs-stable.gtk-frdp
   ];
 }

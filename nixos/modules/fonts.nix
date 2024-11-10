@@ -1,28 +1,32 @@
-{
-  inputs,
-  pkgs,
-  pkgs-stable,
-  ...
-}: {
+{ inputs, pkgs, pkgs-stable, ... }: {
   fonts.fontDir.enable = true;
 
   fonts.packages = with pkgs; [
     noto-fonts
     noto-fonts-cjk-sans
     noto-fonts-emoji
+    fira-code-symbols
     # emojione
-    roboto-mono
     hack-font
-    fira-code
-    fira-code-symbols
     liberation_ttf
-    fira-code
-    fira-code-symbols
-    inconsolata
     dejavu_fonts
     corefonts
     google-fonts
-    nerdfonts
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.zed-mono
+    nerd-fonts.roboto-mono
+    nerd-fonts.noto
+    nerd-fonts.liberation
+    nerd-fonts.iosevka-term
+    nerd-fonts.iosevka
+    nerd-fonts.inconsolata
+    nerd-fonts.inconsolata-lgc
+    nerd-fonts.fira-mono
+    nerd-fonts.fira-code
+    nerd-fonts.droid-sans-mono
+    nerd-fonts.dejavu-sans-mono
+    nerd-fonts.code-new-roman
+    nerd-fonts._0xproto
     font-awesome
     paratype-pt-sans
     paratype-pt-mono

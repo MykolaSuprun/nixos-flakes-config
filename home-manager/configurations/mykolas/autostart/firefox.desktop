@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Firefox
+GenericName=Firefox browser
+Comment=Firefox browser
+Categories=Utility;
+Keywords=browser;
+TryExec=firefox
+Exec=hyprctl dispatch exec "[workspace 1 silent;] firefox"
+StartupNotify=false
+Terminal=false
+#Icon=
+OnlyShowIn=wlroots;Hyprland

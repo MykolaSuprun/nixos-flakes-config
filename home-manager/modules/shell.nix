@@ -38,6 +38,7 @@ let
     alias vi="nvim"
     alias tmux="tmux -2"
     alias ls="eza"
+    alias cat="bat --theme base16-256"
 
     # hook direnv
     # eval "$(direnv hook zsh)"
