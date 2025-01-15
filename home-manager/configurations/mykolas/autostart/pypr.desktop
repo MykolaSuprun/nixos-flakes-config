@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Hyprland-Pyprland
+GenericName=Hyprland-pyprland
+Comment="Hyprland pyprland start"
+Categories=Utility;
+Keywords=notification-daemon;
+TryExec=pypr
+Exec=pypr
+StartupNotify=false
+Terminal=false
+#Icon=
+OnlyShowIn=wlroots;Hyprland

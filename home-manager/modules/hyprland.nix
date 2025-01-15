@@ -1,10 +1,5 @@
 { config, inputs, pkgs, pkgs-stable, ... }:
 let
-  init_script = pkgs.writeShellScriptBin "pre_init" ''
-    # uwsm-app -- ${pkgs.waybar}/bin/waybar &
-    # uwsm-app -- ${pkgs.pyprland}/bin/pypr --debug /tmp/pypr.log &
-    # hyprctl dispatch exec "[workspace 1 silent;] uwsm-app -- ${pkgs.vivaldi}/bin/vivaldi" &
-  '';
   hyprlock_script = pkgs.writeShellScriptBin "run_hyprlock" ''
     uwsm-app -- hyprlock
   '';
@@ -20,26 +15,33 @@ let
   '';
   lock_screen = pkgs.writeShellScriptBin "lock_dp1" ''
 
-    state="''${XDG_STATE_HOME}/togglemonitorlock"
-    booleanvalue="false"
+        state="''${XDG_STATE_HOME}/togglemonitorlock"
+        booleanvalue="false"
 
-    if [[ -f ''${state} ]]; then
-        booleanvalue=$(cat ''${state})
-    fi
-
+        if [[ -f ''${state} ]]; then
+            booleanvalue=$(cat ''${state})
+        fi
     if [[ ''${booleanvalue} == "true" ]]; then
-        wlr-randr --output DP-1 --pos 3440,0
-        echo "false" > ''${state}
-    else
-        wlr-randr --output DP-1 --pos 3500,2000
-        echo "true" > ''${state}
-    fi
+            wlr-randr --output DP-1 --pos 3440,0
+            echo "false" > ''${state}
+        else
+            wlr-randr --output DP-1 --pos 3500,2000
+            echo "true" > ''${state}
+        fi
   '';
   run_steam = pkgs.writeShellScriptBin "start" ''
-    uwsm-app -- gamescope -f -b -g -e --rt -w 3440 -h 1440 -W 3440 -H 1440 -r 165 \
+    uwsm-app -- ${pkgs.gamescope}/bin/gamescope -f -b -g -e --rt -w 3440 -h 1440 -W 3440 -H 1440 -r 165 \
       --hdr-enabled --force-grab-cursor --immediate-flips \
       --adaptive-sync --backend=wayland --expose-wayland \
-      -- steam -tenfoot -steamos
+      -- ${pkgs.steam}/bin/steam -tenfoot -steamos
+  '';
+  init_script = pkgs.writeShellScriptBin "pre_init" ''
+    # uwsm-app -- ${pkgs.waybar}/bin/waybar
+    # uwsm-app -- ${pkgs.hypridle}/bin/hypridle &
+    # uwsm-app -- ${pkgs.swaynotificationcenter}/bin/swaync &
+    # uwsm-app -- ${pkgs.swww}/bin/swww-daemon &&
+    # uwsm-app -- ${pkgs.pyprland}/bin/pypr --debug /tmp/pypr.log
+
   '';
 in {
   wayland.windowManager.hyprland.systemd.enable = false;
@@ -82,7 +84,7 @@ in {
     hyprshot
     pyprland
     blueman
-    # swaynotificationcenter
+    swaynotificationcenter
     kdePackages.polkit-kde-agent-1
     kdePackages.qtwayland
     xorg.xrdb
@@ -126,24 +128,21 @@ in {
       ];
 
       "$mainMod" = "SUPER";
-      "$fileManager" = "uwsm-app -- wezterm lf";
-      "$terminal" = "uwsm-app -- wezterm";
+      "$fileManager" = "uwsm-app -- ${pkgs.wezterm}/bin/wezterm lf";
+      "$terminal" = "uwsm-app -- ${pkgs.wezterm}/bin/wezterm";
       "$menu" = "${menu_script}/bin/run_menu";
       "$monitor_1" = "DP-1";
-      "$monitor_2" = "DP-2";
+      # "$monitor_2" = "DP-2";
 
       exec-once = [
-        # "systemctl --user mask xdg-desktop-portal-wlr"
-        # "systemctl --user import-environment XDG_SESSION_TYPE XDG_CURRENT_DESKTOP"
-        # "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
-        "${init_script}/bin/pre_init"
-        # "[workspace 1 silent] uwsm-app -- ${pkgs.firefox}/bin/firefox"
-        # "[workspace 1 silent] uwsm-app -- vivaldi"
-        # "[workspace 2 silent] uwsm-app -- $terminal"
-        # "[workspace 3 silent] uwsm-app -- $fileManager"
-        # "[workspace 4 silent] ${run_steam}/bin/start"
-        # "[workspace 5 silent] uwsm-app -- megasync"
-        # "[workspace 5 silent] uwsm-app -- cryptomator"
+        # "${init_script}/bin/pre_init >> /home/mykolas/init_log.txt"
+        "[workspace 1 silent] sleep 1 && uwsm-app vivaldi"
+        "[workspace 1 silent] sleep 2 && uwsm-app firefox"
+        "[workspace 2 silent] sleep 3 && uwsm-app wezterm"
+        "[workspace 3 silent] sleep 4 && uwsm-app -- wezterm -e lf"
+        "[workspace 5 silent] sleep 5 && uwsm-app megasync"
+        "[workspace 5 silent] sleep 6 && uwsm-app cryptomator"
+        # "[workspace 4 silent] sleep 10 && ${run_steam}/bin/start"
       ];
 
       general = {
@@ -167,6 +166,12 @@ in {
 
       env = [ ];
 
+      # experimental = {
+      #   "hdr" = true;
+      #   "wide_color_gamut" = true;
+      #   "xx_color_management_v4" = true;
+      # };
+
       misc = { "vrr" = 1; };
 
       input = {
@@ -189,13 +194,15 @@ in {
 
       windowrulev2 = [
         "immediate, class:^(gamescope.*)$"
+        "fullscreen, class:^(gamescope.*)$"
+        "fullscreenstate 3, class:^(gamescope.*)$"
         "immediate, class:^(overwatch.*)$"
         "immediate, class:^(titanfall.*)$"
         "immediate, class:^(bioshock.*)$"
         "immediate, class:^(helldivers.*)$"
-        "float,class:(org.telegram.desktop),title:(Media viewer)"
+        "float,class:^(org.telegram.desktop)$"
         "float,class:^(nz.co.mega.)$"
-        "float,class:^(org.cryptomator.launcher.Cryptomator$MainApp)$"
+        "float,class:^(org.cryptomator.*)$"
         # "float,tile:^(Picture in picture)$"
       ];
 
@@ -281,22 +288,6 @@ in {
   systemd.user = {
     enable = true;
     services = {
-      hyprland-swww-daemon = {
-        Unit = {
-          Description = "Swww wallpaper daemon for hyprland";
-          Documentation = "man:swww-daemon";
-          After = [ "graphical-session.target" ];
-        };
-        Service = {
-          Type = "exec";
-          ExecCondition = ''
-            ${pkgs.systemd}/lib/systemd/systemd-xdg-autostart-condition "Hyprland" ""'';
-          ExecStart = "${pkgs.swww}/bin/swww-daemon";
-          Restart = "on-failure ";
-          Slice = "background-graphical.slice";
-        };
-        Install = { WantedBy = [ "graphical-session.target" ]; };
-      };
       hyprland-hypridle = {
         Unit = {
           Description = "Idle daemon for hyprland";
@@ -310,23 +301,23 @@ in {
           Restart = "on-failure ";
           Slice = "background-graphical.slice";
         };
-        Install = { WantedBy = [ "graphical-session.target" ]; };
+        Install = { WantedBy = [ "hyprland-session.target" ]; };
       };
-      hyprland-swaync = {
-        Unit = {
-          Description = "Notification daemon for hyprland";
-          After = [ "graphical-session.target" ];
-        };
-        Service = {
-          Type = "exec";
-          ExecCondition = ''
-            ${pkgs.systemd}/lib/systemd/systemd-xdg-autostart-condition "Hyprland" ""'';
-          ExecStart = "${pkgs.swaynotificationcenter}/bin/swaync";
-          Restart = "on-failure ";
-          Slice = "background-graphical.slice";
-        };
-        Install = { WantedBy = [ "graphical-session.target" ]; };
-      };
+      # hyprland-swaync = {
+      #   Unit = {
+      #     Description = "Notification daemon for hyprland";
+      #     After = [ "graphical-session.target" ];
+      #   };
+      #   Service = {
+      #     Type = "exec";
+      #     ExecCondition = ''
+      #       ${pkgs.systemd}/lib/systemd/systemd-xdg-autostart-condition "Hyprland" ""'';
+      #     ExecStart = "${pkgs.swaynotificationcenter}/bin/swaync";
+      #     Restart = "on-failure ";
+      #     Slice = "background-graphical.slice";
+      #   };
+      #   Install = { WantedBy = [ "hyprland-session.target" ]; };
+      # };
     };
   };
 }

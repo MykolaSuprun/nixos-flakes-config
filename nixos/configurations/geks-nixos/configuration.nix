@@ -27,7 +27,7 @@ in {
         efiSupport = true;
         #efiInstallAsRemovable = true; # in case canTouchEfiVariables doesn't work for your system
         devices = [ "nodev" ];
-	useOSProber = true;
+        useOSProber = true;
       };
     };
 
@@ -236,7 +236,7 @@ in {
   systemd.tmpfiles.rules = [ "f /dev/shm/looking-glass 0660 mykolas kvm -" ];
 
   environment = {
-    shells = with pkgs; [ fish ];
+    shells = with pkgs; [ zsh fish nushell ];
 
     sessionVariables = {
       LIBVIRT_DEFAULT_URI = [ "qemu:///system" ];

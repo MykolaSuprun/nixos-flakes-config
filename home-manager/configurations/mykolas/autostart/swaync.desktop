@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Hyprland-Sway-notificaiton-center
+GenericName=Hyprland-swaync
+Comment="Hyprland swaync start"
+Categories=Utility;
+Keywords=notification-daemon;
+TryExec=swaync
+Exec=swaync
+StartupNotify=false
+Terminal=false
+#Icon=
+OnlyShowIn=wlroots;Hyprland

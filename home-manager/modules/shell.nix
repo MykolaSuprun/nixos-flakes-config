@@ -94,6 +94,9 @@ in {
   home.packages = with pkgs; [ babelfish grc ];
 
   programs = {
+    carapace.enable = true;
+    starship.enable = true;
+    starship.enableTransience = true;
     nushell = {
       enable = true;
       envFile.source = ./../configurations/mykolas/nushell/env.nu;
@@ -101,44 +104,44 @@ in {
     };
     fish = {
       enable = true;
-      plugins = [
-        {
-          name = "puffer";
-          src = pkgs.fishPlugins.puffer.src;
-        }
-        {
-          name = "sponge";
-          src = pkgs.fishPlugins.sponge.src;
-        }
-        {
-          name = "tide";
-          src = pkgs.fishPlugins.tide.src;
-        }
-        {
-          name = "grc";
-          src = pkgs.fishPlugins.grc.src;
-        }
-        {
-          name = "fzf-fish";
-          src = pkgs.fishPlugins.fzf-fish.src;
-        }
-        {
-          name = "forgit";
-          src = pkgs.fishPlugins.forgit.src;
-        }
-        {
-          name = "colored-man-pages";
-          src = pkgs.fishPlugins.colored-man-pages.src;
-        }
-        {
-          name = "bass";
-          src = pkgs.fishPlugins.bass.src;
-        }
-        {
-          name = "autopair";
-          src = pkgs.fishPlugins.autopair.src;
-        }
-      ];
+      # plugins = [
+      # {
+      #   name = "puffer";
+      #   src = pkgs.fishPlugins.puffer.src;
+      # }
+      # {
+      #   name = "sponge";
+      #   src = pkgs.fishPlugins.sponge.src;
+      # }
+      # {
+      #   name = "tide";
+      #   src = pkgs.fishPlugins.tide.src;
+      # }
+      # {
+      #   name = "grc";
+      #   src = pkgs.fishPlugins.grc.src;
+      # }
+      # {
+      #   name = "fzf-fish";
+      #   src = pkgs.fishPlugins.fzf-fish.src;
+      # }
+      # {
+      #   name = "forgit";
+      #   src = pkgs.fishPlugins.forgit.src;
+      # }
+      # {
+      #   name = "colored-man-pages";
+      #   src = pkgs.fishPlugins.colored-man-pages.src;
+      # }
+      # {
+      #   name = "bass";
+      #   src = pkgs.fishPlugins.bass.src;
+      # }
+      # {
+      #   name = "autopair";
+      #   src = pkgs.fishPlugins.autopair.src;
+      # }
+      # ];
       interactiveShellInit = ''
         source ${fish_init}/bin/init_fish
         # if status is-interactive
