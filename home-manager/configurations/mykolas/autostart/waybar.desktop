@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Hyprland-Waybar-Start
+GenericName=Hyprland-waybar
+Comment="Hyprland waybar init script"
+Categories=Utility;
+Keywords=bar;
+TryExec=waybar
+Exec=waybar
+StartupNotify=false
+Terminal=false
+#Icon=
+OnlyShowIn=wlroots;Hyprland

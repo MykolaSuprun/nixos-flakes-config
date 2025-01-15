@@ -9,5 +9,8 @@ nh os switch -- --accept-flake-config
 # nh home switch -- --accept-flake-config
 gen=$(sudo nix-env -p /nix/var/nix/profiles/system --list-generations | grep current)
 git commit -am "$gen"
+if [ -n "${HYPRLAND_INSTANCE_SIGNATURE+set}" ]; then
+  hyprctl reload && pypr reload
+fi
 cd -
 

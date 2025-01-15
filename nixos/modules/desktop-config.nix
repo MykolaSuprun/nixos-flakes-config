@@ -3,7 +3,28 @@
     steam = {
       enable = true;
       protontricks.enable = true;
-      gamescopeSession.enable = true;
+      extraCompatPackages = with pkgs; [ proton-ge-bin ];
+      extraPackages = with pkgs; [ mangohud gamescope ];
+      extest.enable = true;
+      gamescopeSession = {
+        enable = true;
+        env = { DXVK_HDR = "1"; };
+        args = [
+          "--adaptive-sync"
+          # "--hdr-enabled"
+          "--mangoapp"
+          # "--rt"
+          "--steam"
+          "--xwayland-count 2"
+          # "-b"
+          # "-f"
+          # "-w 3440"
+          # "-h 1440"
+          "-r 165"
+          # "--expose-wayland"
+          # "--backend wayland"
+        ];
+      };
       # gamescopeSession.args = [
       #   "-f -b -g -e --rt -w 3440 -h 1440 -W 3440 -H 1440 -r 165"
       #   "--hdr-enabled --force-grab-cursor --immediate-flips --mangoapp"
@@ -18,7 +39,6 @@
     kdeconnect.enable = true;
     gamescope = {
       enable = true;
-      package = pkgs-stable.gamescope;
       capSysNice = true;
     };
     firefox = {

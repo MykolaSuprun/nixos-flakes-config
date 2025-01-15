@@ -2,7 +2,6 @@
 plugins = [
   "scratchpads",
   "wallpapers",
-  "monitors",
   "expose"
 ]
 
@@ -34,6 +33,7 @@ lazy = true
 animation = "fromBottom"
 command = "telegram-desktop"
 class = "org.telegram.desktop"
+position = "5% 5%"
 size = "35% 90%"
 multi = true
 
@@ -44,13 +44,12 @@ class = "obsidian"
 size = "50% 80%"
 lazy = true
 
-
-[scratchpads.mega]
-animation = "fromTop"
-command = "megasync"
-class = "nz.co.mega"
-size = "20% 50%"
-unfocus = "hide"
+# [scratchpads.mega]
+# animation = "fromTop"
+# command = "megasync"
+# class = "nz.co.mega"
+# size = "20% 50%"
+# unfocus = "hide"
 
 
 

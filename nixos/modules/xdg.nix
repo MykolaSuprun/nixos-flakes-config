@@ -3,10 +3,7 @@
   xdg = {
     portal = {
       enable = true;
-      extraPortals = with pkgs; [
-        kdePackages.xdg-desktop-portal-kde
-        xdg-desktop-portal-hyprland
-      ];
+      extraPortals = with pkgs; [ kdePackages.xdg-desktop-portal-kde ];
       xdgOpenUsePortal = true;
     };
     mime = { enable = true; };

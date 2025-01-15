@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Hyprland-Swww
+GenericName=Hyprland-Swww
+Comment="Hyprland swww start"
+Categories=Utility;
+Keywords=wallpaper;
+TryExec=swww-daemon
+Exec=swww-daemon
+StartupNotify=false
+Terminal=false
+#Icon=
+OnlyShowIn=wlroots;Hyprland
