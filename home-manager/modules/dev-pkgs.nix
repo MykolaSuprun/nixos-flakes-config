@@ -22,6 +22,7 @@
     # dev tools
     cachix
     my-neovim.packages.${system}.default
+    lazydocker
     code-cursor
     tree-sitter
     ripgrep

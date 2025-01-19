@@ -20,7 +20,7 @@
     NIXOS_TARGET = "geks-nixos";
     BEMENU_BACKEND = "wayland";
     FLAKE = "/home/mykolas/.nixconf";
-    BROWSER = "${pkgs.firefox}/bin/firefox";
-    DEFAULT_BROWSER = "${pkgs.firefox}/bin/firefox";
+    BROWSER = "${pkgs.vivaldi}/bin/vivaldi";
+    DEFAULT_BROWSER = "${pkgs.vivaldi}/bin/vivaldi";
   };
 }

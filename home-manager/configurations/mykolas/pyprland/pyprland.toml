@@ -1,17 +1,17 @@
 [pyprland]
 plugins = [
   "scratchpads",
-  "wallpapers",
+  # "wallpapers",
   "expose"
 ]
 
-[wallpapers]
-path = "~/megasync/main/Pictures/Wallpapers_1/" # path to the folder with background images
-extentions = ["png", "jpg", "jpeg", "webp"]
-unique = true # set a different wallpaper for each screen
-interval = 15
-command = "swww img --transition-type any \"[file]\""
-clear_command = "swww clear"
+# [wallpapers]
+# path = "~/megasync/main/Pictures/Wallpapers_1/" # path to the folder with background images
+# extentions = ["png", "jpg", "jpeg", "webp"]
+# unique = true # set a different wallpaper for each screen
+# interval = 15
+# command = "swww img --transition-type any \"[file]\""
+# clear_command = "swww clear"
 
 [scratchpads.term]
 animation = "fromTop"
