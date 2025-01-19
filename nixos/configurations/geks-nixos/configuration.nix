@@ -255,6 +255,7 @@ in {
       fanctl
 
       # basic packages
+      gperftools
       ecryptfs
       cryptsetup
       git

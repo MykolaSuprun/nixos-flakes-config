@@ -8,12 +8,12 @@
     substituters = [
       "https://cache.nixos.org"
       "https://nix-community.cachix.org"
-      # "https://hyprland.cachix.org"
+      "https://hyprland.cachix.org"
     ];
     trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      # "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
     ];
   };
 
@@ -37,18 +37,18 @@
       flake = true;
     };
     # hyprland.url =
-    #   "git+https://github.com/hyprwm/Hyprland?submodules=1&ref=refs/tags/v0.46.2";
-    # hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-    # hyprland-plugins = {
-    #   url = "github:hyprwm/hyprland-plugins?ref=v0.46.0";
-    #   # url = "github:hyprwm/hyprland-plugins";
-    #   inputs.hyprland.follows = "hyprland";
-    # };
-    # hy3 = {
-    #   # url = "github:outfoxxed/hy3?ref=hl0.46.0";
-    #   url = "github:outfoxxed/hy3";
-    #   inputs.hyprland.follows = "hyprland";
-    # };
+    # "git+https://github.com/hyprwm/Hyprland?submodules=1&ref=refs/tags/v0.47.1";
+    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    hyprland-plugins = {
+      # url = "github:hyprwm/hyprland-plugins?ref=v0.46.0";
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
+    hy3 = {
+      # url = "github:outfoxxed/hy3?ref=hl0.47.0";
+      url = "github:outfoxxed/hy3";
+      inputs.hyprland.follows = "hyprland";
+    };
     # pyprland = {
     #   url = "github:hyprland-community/pyprland";
     #   inputs.nixpkgs.follows = "nixpkgs";
@@ -69,7 +69,6 @@
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        config.permittedInsecurePackages = [ "electron-30.5.1" ];
         overlays = [
           # (final: prev: {
           #   pyprland = inputs.pyprland.packages.${system}.pyprland;
@@ -101,7 +100,7 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
-                backupFileExtension = "backup";
+                backupFileExtension = "home-backup";
                 users.mykolas = {
                   imports = [
                     # inputs.hyprland.homeManagerModules.default

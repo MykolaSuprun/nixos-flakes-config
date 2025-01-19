@@ -24,7 +24,7 @@
     telegram-desktop
 
     # other
-    megasync
+    pkgs-stable.megasync
     cryptomator
     qbittorrent
     libreoffice-qt
