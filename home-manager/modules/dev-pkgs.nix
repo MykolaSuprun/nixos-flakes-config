@@ -32,6 +32,7 @@
     meld
     cargo
     binutils
+    openssl
     go
     gcc
     fzf

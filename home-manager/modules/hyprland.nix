@@ -1,10 +1,5 @@
-{
-  config,
-  inputs,
-  pkgs,
-  pkgs-stable,
-  ...
-}: let
+{ config, inputs, pkgs, pkgs-stable, ... }:
+let
   hyprlock_script = pkgs.writeShellScriptBin "run_hyprlock" ''
     uwsm-app -- hyprlock
   '';
@@ -49,7 +44,7 @@
   '';
 in {
   wayland.windowManager.hyprland.systemd.enable = false;
-  programs = {};
+  programs = { };
   home.file = {
     "./.config/uwsm" = {
       source = ./../configurations/mykolas/uwsm;
@@ -79,9 +74,6 @@ in {
 
   # Packages necessary for hyprland
   home.packages = with pkgs; [
-    hyprland-protocols
-    hyprland-workspaces
-    hyprland-activewindow
     hyprlock
     hyprcursor
     hypridle
@@ -110,17 +102,17 @@ in {
 
   wayland.windowManager.hyprland = {
     enable = true;
-    package =
-      inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-    portalPackage =
-      inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+    # package =
+    #   inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    # portalPackage =
+    #   inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
 
     plugins = with pkgs.hyprlandPlugins; [
-      inputs.hy3.packages.${pkgs.system}.hy3
+      # inputs.hy3.packages.${pkgs.system}.hy3
       # inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
-      # hy3
-      # hyprexpo
-      # hyprspace
+      hy3
+      hyprexpo
+      hyprspace
       # hyprfocus
     ];
 
@@ -169,7 +161,7 @@ in {
         "inactive_opacity" = 0.95;
       };
 
-      env = [];
+      env = [ ];
 
       experimental = {
         # "hdr" = true;
@@ -177,14 +169,14 @@ in {
         "xx_color_management_v4" = true;
       };
 
-      misc = {"vrr" = 1;};
+      misc = { "vrr" = 1; };
 
       input = {
         "follow_mouse" = "1";
         "sensitivity" = -0.75;
       };
 
-      cursor = {};
+      cursor = { };
 
       workspace = [
         "1,monitor:$monitor_1,default:true,defaultName:default"
@@ -215,79 +207,76 @@ in {
         # "float,tile:^(Picture in picture)$"
       ];
 
-      bind =
-        [
-          "$mainMod, Q, exec, $terminal"
-          "$mainMod, C, killactive,"
-          "$mainMod CTRL SHIFT, M, exec, uwsm stop"
-          # "$mainMod, E, exec, $fileManager"
-          "$mainMod, G, togglefloating,"
-          "$mainMod SHIFT, Q, exec, ${hyprlock_script}/bin/run_hyprlock"
-          "$mainMod CTRL SHIFT, L, exec, ${hyprlock_script_alt}/bin/run_hyprlock"
-          "$mainMod SHIFT, Q, exec, "
-          "$mainMod CTRL SHIFT, P, exec, hyprshot -m region"
-          # "$mainMod, P, pseudo, #"
-          "$mainMod, F, fullscreen, 1"
-          "$mainMod, R, exec, ${lock_screen}/bin/lock_dp1"
+      bind = [
+        "$mainMod, Q, exec, $terminal"
+        "$mainMod, C, killactive,"
+        "$mainMod CTRL SHIFT, M, exec, uwsm stop"
+        # "$mainMod, E, exec, $fileManager"
+        "$mainMod, G, togglefloating,"
+        "$mainMod SHIFT, Q, exec, ${hyprlock_script}/bin/run_hyprlock"
+        "$mainMod CTRL SHIFT, L, exec, ${hyprlock_script_alt}/bin/run_hyprlock"
+        "$mainMod SHIFT, Q, exec, "
+        "$mainMod CTRL SHIFT, P, exec, hyprshot -m region"
+        # "$mainMod, P, pseudo, #"
+        "$mainMod, F, fullscreen, 1"
+        "$mainMod, R, exec, ${lock_screen}/bin/lock_dp1"
 
-          "$mainMod SHIFT, F, fullscreen"
-          "$mainMod, A,exec, pypr toggle term"
-          "$mainMod, S, exec, pypr toggle volume"
-          "$mainMod, M, exec, pypr toggle telegram"
-          "$mainModu, [, exec, pypr toggle mega"
-          "$mainMod, N, exec, pypr toggle obsidian"
-          "$mainMod SHIFT, S, exec, ${run_steam}/bin/start"
-          "ALT, SPACE, exec, $menu"
+        "$mainMod SHIFT, F, fullscreen"
+        "$mainMod, A,exec, pypr toggle term"
+        "$mainMod, S, exec, pypr toggle volume"
+        "$mainMod, M, exec, pypr toggle telegram"
+        "$mainModu, [, exec, pypr toggle mega"
+        "$mainMod, N, exec, pypr toggle obsidian"
+        "$mainMod SHIFT, S, exec, ${run_steam}/bin/start"
+        "ALT, SPACE, exec, $menu"
 
-          "$mainMod,I,layoutmsg,addmaster"
-          "$mainMod SHIFT,I,layoutmsg,removemaster"
-          "$mainMod, H, movefocus, l"
-          "$mainMod, L, movefocus, r"
-          "$mainMod, K, movefocus, u"
-          "$mainMod, J, movefocus, d"
-          "$mainMod, mouse_up, focusmonitor,+1"
-          "$mainMod, mouse_down, focusmonitor,-1"
+        "$mainMod,I,layoutmsg,addmaster"
+        "$mainMod SHIFT,I,layoutmsg,removemaster"
+        "$mainMod, H, movefocus, l"
+        "$mainMod, L, movefocus, r"
+        "$mainMod, K, movefocus, u"
+        "$mainMod, J, movefocus, d"
+        "$mainMod, mouse_up, focusmonitor,+1"
+        "$mainMod, mouse_down, focusmonitor,-1"
 
-          "$mainMod SHIFT, H, movewindow, l"
-          "$mainMod SHIFT, L, movewindow, r"
-          "$mainMod SHIFT, K, movewindow, u"
-          "$mainMod SHIFT, J, movewindow, d"
+        "$mainMod SHIFT, H, movewindow, l"
+        "$mainMod SHIFT, L, movewindow, r"
+        "$mainMod SHIFT, K, movewindow, u"
+        "$mainMod SHIFT, J, movewindow, d"
 
-          "$mainMod SHIFT,O,layoutmsg,orientationcycle left top right bottom center"
+        "$mainMod SHIFT,O,layoutmsg,orientationcycle left top right bottom center"
 
-          # adjust volume
-          ", XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"
-          ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
-          ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-          ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+        # adjust volume
+        ", XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"
+        ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+        ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
 
-          # media buttons
-          ", XF86AudioPlay, exec, playerctl play-pause"
-          ", XF86AudioNext, exec, playerctl next"
-          ", XF86AudioPrev, exec, playerctl previous"
-          ", XF86audiostop, exec, playerctl stop"
+        # media buttons
+        ", XF86AudioPlay, exec, playerctl play-pause"
+        ", XF86AudioNext, exec, playerctl next"
+        ", XF86AudioPrev, exec, playerctl previous"
+        ", XF86audiostop, exec, playerctl stop"
 
-          # workspaces
-          "$mainMod, U, workspace, 1"
-          "$mainMod, I, workspace, 2"
-          "$mainMod, O, workspace, 3"
-          "$mainMod, P, workspace, 4"
-          "$mainMod SHIFT, U, movetoworkspace, 1"
-          "$mainMod SHIFT, I, movetoworkspace, 2"
-          "$mainMod SHIFT, O, movetoworkspace, 3"
-          "$mainMod SHIFT, P, movetoworkspace, 4"
-        ]
-        ++ (
-          # workspaces
-          # binds $mainMod + [shift +] {1..10} to [move to] workspace {1..10}
-          builtins.concatLists (builtins.genList (x: let
-              ws = let c = (x + 1) / 10; in builtins.toString (x + 1 - (c * 10));
-            in [
-              "$mainMod, ${ws}, workspace, ${toString (x + 1)}"
-              "$mainMod SHIFT, ${ws}, movetoworkspace, ${toString (x + 1)}"
-            ])
-            10)
-        );
+        # workspaces
+        "$mainMod, U, workspace, 1"
+        "$mainMod, I, workspace, 2"
+        "$mainMod, O, workspace, 3"
+        "$mainMod, P, workspace, 4"
+        "$mainMod SHIFT, U, movetoworkspace, 1"
+        "$mainMod SHIFT, I, movetoworkspace, 2"
+        "$mainMod SHIFT, O, movetoworkspace, 3"
+        "$mainMod SHIFT, P, movetoworkspace, 4"
+      ] ++ (
+        # workspaces
+        # binds $mainMod + [shift +] {1..10} to [move to] workspace {1..10}
+        builtins.concatLists (builtins.genList (x:
+          let
+            ws = let c = (x + 1) / 10; in builtins.toString (x + 1 - (c * 10));
+          in [
+            "$mainMod, ${ws}, workspace, ${toString (x + 1)}"
+            "$mainMod SHIFT, ${ws}, movetoworkspace, ${toString (x + 1)}"
+          ]) 10));
       bindm = [
         # Move/resize windows with mainMod + LMB/RMB and dragging
         "$mainMod, mouse:272, movewindow"
@@ -303,7 +292,7 @@ in {
       hyprland-hypridle = {
         Unit = {
           Description = "Idle daemon for hyprland";
-          After = ["graphical-session.target"];
+          After = [ "graphical-session.target" ];
         };
         Service = {
           Type = "exec";
@@ -313,7 +302,7 @@ in {
           Restart = "on-failure ";
           Slice = "background-graphical.slice";
         };
-        Install = {WantedBy = ["hyprland-session.target"];};
+        Install = { WantedBy = [ "hyprland-session.target" ]; };
       };
       # hyprland-swaync = {
       #   Unit = {

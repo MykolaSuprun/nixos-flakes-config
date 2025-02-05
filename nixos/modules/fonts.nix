@@ -1,5 +1,8 @@
 { inputs, pkgs, pkgs-stable, ... }: {
-  fonts.fontDir.enable = true;
+  fonts = {
+    fontDir.enable = true;
+    fontconfig.useEmbeddedBitmaps = true;
+  };
 
   fonts.packages = with pkgs; [
     noto-fonts

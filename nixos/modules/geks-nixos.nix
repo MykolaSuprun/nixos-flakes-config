@@ -9,6 +9,7 @@
     ./desktop-config.nix
     ./catppuccin.nix
     ./hyprland.nix
+    ./flatpak.nix
   ];
   environment.sessionVariables = {
     IGPU_ADDR = "pci-0000_59_00_0";
