@@ -38,17 +38,17 @@
     };
     # hyprland.url =
     # "git+https://github.com/hyprwm/Hyprland?submodules=1&ref=refs/tags/v0.47.1";
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-    hyprland-plugins = {
-      # url = "github:hyprwm/hyprland-plugins?ref=v0.46.0";
-      url = "github:hyprwm/hyprland-plugins";
-      inputs.hyprland.follows = "hyprland";
-    };
-    hy3 = {
-      # url = "github:outfoxxed/hy3?ref=hl0.47.0";
-      url = "github:outfoxxed/hy3";
-      inputs.hyprland.follows = "hyprland";
-    };
+    # hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    # hyprland-plugins = {
+    #   # url = "github:hyprwm/hyprland-plugins?ref=v0.46.0";
+    #   url = "github:hyprwm/hyprland-plugins";
+    #   inputs.hyprland.follows = "hyprland";
+    # };
+    # hy3 = {
+    #   # url = "github:outfoxxed/hy3?ref=hl0.47.0";
+    #   url = "github:outfoxxed/hy3";
+    #   inputs.hyprland.follows = "hyprland";
+    # };
     # pyprland = {
     #   url = "github:hyprland-community/pyprland";
     #   inputs.nixpkgs.follows = "nixpkgs";
@@ -100,7 +100,7 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
-                backupFileExtension = "home-backup";
+                backupFileExtension = "hm-bak";
                 users.mykolas = {
                   imports = [
                     # inputs.hyprland.homeManagerModules.default

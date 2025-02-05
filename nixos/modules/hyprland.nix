@@ -3,11 +3,11 @@
     hyprland = {
       enable = true;
       withUWSM = true;
-      package =
-        inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-      portalPackage =
-        inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
-      # portalPackage = pkgs.xdg-desktop-portal-hyprland;
+      # package =
+      #   inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+      # portalPackage =
+      #   inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+      portalPackage = pkgs.xdg-desktop-portal-hyprland;
       systemd.setPath.enable = true;
       xwayland.enable = true;
     };
@@ -23,7 +23,9 @@
       };
     };
   };
-  services.blueman.enable = true;
-  services.hypridle.enable = true;
-  services.dbus.implementation = "broker";
+  services = {
+    blueman.enable = true;
+    hypridle.enable = true;
+    dbus.implementation = "broker";
+  };
 }

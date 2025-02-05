@@ -1,5 +1,4 @@
 { pkgs, pkgs-stable, ... }: {
-  services = { searx = { enable = true; }; };
   programs = {
     steam = {
       enable = true;
