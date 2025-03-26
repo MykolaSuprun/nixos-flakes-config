@@ -1,6 +1,7 @@
 { inputs, pkgs, ... }:
 let
   neovim-local = "nix run ~/src/nixvim-config -- ";
+  nvf-local = "nix run ~/src/neovim-nvf-config -- ";
   neovim_github = "nix run github:MykolaSuprun/nixvim-config #. -- ";
   conf_root = "$NIXOS_CONF_DIR";
   shell_init = pkgs.writeShellScriptBin "init_shell" ''
@@ -34,7 +35,7 @@ let
     alias arch-build="$confdir/home/mykolas/distrobox/build-arch.sh"
     alias arch="distrobox-enter arch"
     alias vim="${neovim_github}"
-    alias nv="${neovim-local}"
+    alias nv="${nvf-local}"
     alias vi="nvim"
     alias tmux="tmux -2"
     alias ls="eza"

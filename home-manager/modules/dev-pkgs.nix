@@ -1,4 +1,8 @@
-{ pkgs, my-neovim, ... }: {
+{
+  pkgs,
+  my-neovim,
+  ...
+}: {
   programs = {
     helix = {
       enable = true;
@@ -15,13 +19,15 @@
       enable = true;
       tmux.enableShellIntegration = true;
     };
-    lazygit = { enable = true; };
+    lazygit = {enable = true;};
   };
 
   home.packages = with pkgs; [
     # dev tools
     cachix
     my-neovim.packages.${system}.default
+    nvtopPackages.amd
+    btop
     lazydocker
     code-cursor
     tree-sitter

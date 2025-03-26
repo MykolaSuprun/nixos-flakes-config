@@ -1,18 +1,16 @@
-{ inputs, config, pkgs, pkgs-stable, lib, my-neovim, ... }:
-let
+{
+  inputs,
+  config,
+  pkgs,
+  pkgs-stable,
+  lib,
+  my-neovim,
+  ...
+}: let
   # pkgs-hyprland =
   #   inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
 in {
-  imports = [ ];
-
-  nix = {
-    settings.trusted-users = [ "mykolas" ];
-    gc = {
-      # automatic = true;
-      randomizedDelaySec = "14m";
-      options = "--delete-older-than 10d";
-    };
-  };
+  imports = [];
 
   # Bootloader.
   boot = {
@@ -26,39 +24,39 @@ in {
         enable = true;
         efiSupport = true;
         #efiInstallAsRemovable = true; # in case canTouchEfiVariables doesn't work for your system
-        devices = [ "nodev" ];
+        devices = ["nodev"];
         useOSProber = true;
+        memtest86.enable = true;
       };
     };
 
     plymouth.enable = true;
 
     kernelPackages = pkgs.linuxPackages_zen;
-    extraModulePackages = with config.boot.kernelPackages;
-      [
-        # kvmfr
-      ];
+    extraModulePackages = with config.boot.kernelPackages; [
+      # kvmfr
+    ];
     kernelModules = [
       "ecryptfs"
       "btintel"
       "btusb"
-      "vfio_virqfd"
-      "vfio_pci"
-      "vfio_iommu_type1"
-      "vfi"
+      # "vfio_virqfd"
+      # "vfio_pci"
+      # "vfio_iommu_type1"
+      # "vfi"
       "kvmfr"
     ];
 
-    kernelParams = [ "amd_iommu=on" ];
-    extraModprobeConfig = "options vfio-pci ids=1002:164e";
-    postBootCommands = ''
-      DEVS="0000:59:00.0"
-
-      for DEV in $DEVS; do
-        echo "vfio-pci" > /sys/bus/pci/devices/$DEV/driver_override
-      done
-      modprobe -i vfio-pci
-    '';
+    # kernelParams = [ "amd_iommu=on" ];
+    # extraModprobeConfig = "options vfio-pci ids=1002:164e";
+    # postBootCommands = ''
+    #   DEVS="0000:59:00.0"
+    #
+    #   for DEV in $DEVS; do
+    #     echo "vfio-pci" > /sys/bus/pci/devices/$DEV/driver_override
+    #   done
+    #   modprobe -i vfio-pci
+    # '';
   };
 
   hardware = {
@@ -70,8 +68,8 @@ in {
       # package = pkgs-hyprland.mesa.drivers;
       # package32 = pkgs-hyprland.pkgsi686Linux.mesa.drivers;
       enable32Bit = true; # For 32 bit applications
-      extraPackages = with pkgs; [ rocmPackages.clr.icd ];
-      extraPackages32 = with pkgs; [ ];
+      extraPackages = with pkgs; [rocmPackages.clr.icd];
+      extraPackages32 = with pkgs; [];
     };
 
     ledger.enable = true; # udev rules for ledger
@@ -114,22 +112,22 @@ in {
           enable = true;
           # compositor = "kwin";
         };
-        extraPackages = [ ];
+        extraPackages = [];
       };
     };
     xserver = {
       enable = false;
-      videoDrivers = [ "amdgpu" ];
+      videoDrivers = ["amdgpu"];
     };
 
     # Enable the KDE Plasma Desktop Environment.
-    desktopManager.plasma6 = { enable = true; };
+    desktopManager.plasma6 = {enable = true;};
 
     flatpak.enable = true;
 
-    fprintd = { enable = true; };
+    fprintd = {enable = true;};
     udev = {
-      packages = [ pkgs.bazecor ];
+      packages = [pkgs.bazecor];
       extraRules = ''
         SUBSYSTEM=="kvmfr", OWNER="mykolas", GROUP="kvm", MODE="0660"
       '';
@@ -144,8 +142,8 @@ in {
       krb5.enable = true;
       services = {
         # allow swaylock to unlock sessions
-        swaylock = { };
-        hyprlock = { };
+        swaylock = {};
+        hyprlock = {};
       };
     };
     krb5 = {
@@ -158,8 +156,8 @@ in {
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  users.groups.plugdev = { };
-  users.extraGroups.vboxusers.members = [ "mykolas" ];
+  users.groups.plugdev = {};
+  users.extraGroups.vboxusers.members = ["mykolas"];
   users.defaultUserShell = pkgs.fish;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -183,8 +181,7 @@ in {
       isNormalUser = true;
       shell = pkgs.fish;
       description = "Geks Home";
-      extraGroups =
-        [ "networkmanager" "wheel" "docker" "libvirtd" "kvm" "plugdev" ];
+      extraGroups = ["networkmanager" "wheel" "docker" "libvirtd" "kvm" "plugdev"];
     };
   };
 
@@ -219,7 +216,7 @@ in {
     };
     ecryptfs.enable = true;
     partition-manager.enable = true;
-    gnupg.agent = { enable = true; };
+    gnupg.agent = {enable = true;};
     virt-manager.enable = true;
     java.enable = true;
     neovim = {
@@ -229,17 +226,17 @@ in {
     dconf.enable = true;
     nix-ld = {
       enable = true;
-      libraries = with pkgs; [ libGL libGLU libglibutil ];
+      libraries = with pkgs; [libGL libGLU libglibutil];
     };
   };
 
-  systemd.tmpfiles.rules = [ "f /dev/shm/looking-glass 0660 mykolas kvm -" ];
+  systemd.tmpfiles.rules = ["f /dev/shm/looking-glass 0660 mykolas kvm -"];
 
   environment = {
-    shells = with pkgs; [ zsh fish nushell ];
+    shells = with pkgs; [zsh fish nushell];
 
     sessionVariables = {
-      LIBVIRT_DEFAULT_URI = [ "qemu:///system" ];
+      LIBVIRT_DEFAULT_URI = ["qemu:///system"];
       NIXOS_OZONE_WL = "1";
     };
 

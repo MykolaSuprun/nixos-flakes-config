@@ -1,14 +1,19 @@
-{ pkgs, pkgs-stable, ... }: {
+{
+  pkgs,
+  pkgs-stable,
+  ...
+}: {
+  services.hardware.bolt.enable = true;
   programs = {
     steam = {
       enable = true;
       protontricks.enable = true;
-      extraCompatPackages = with pkgs; [ proton-ge-bin ];
-      extraPackages = with pkgs; [ mangohud gamescope ];
+      extraCompatPackages = with pkgs; [proton-ge-bin];
+      extraPackages = with pkgs; [mangohud gamescope];
       extest.enable = true;
       gamescopeSession = {
         enable = true;
-        env = { DXVK_HDR = "1"; };
+        env = {DXVK_HDR = "1";};
         args = [
           "--adaptive-sync"
           # "--hdr-enabled"
@@ -48,6 +53,10 @@
   };
 
   environment.systemPackages = with pkgs; [
+    thunderbolt
+    bolt
+    tbtools
+    kdePackages.plasma-thunderbolt
     bazecor
     steam-run
     # looking-glass-client

@@ -2,9 +2,13 @@
   catppuccin = {
     enable = true;
     flavor = "latte";
-    accent = "sapphire";
+    accent = "mauve";
 
-    pointerCursor.enable = true;
+    hyprland.enable = true;
+    cursors = {
+      enable = true;
+      accent = "mauve";
+    };
     fcitx5.enable = true;
     kitty.enable = true;
     alacritty.enable = true;

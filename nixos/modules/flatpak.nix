@@ -11,8 +11,8 @@
     aggregated = pkgs.buildEnv {
       name = "system-fonts-and-icons";
       paths = config.fonts.packages ++ (with pkgs; [
-        # Add your cursor themes and icon packages here
-        catppuccin-cursors
+        # Add your cursor themessdf and icon packages here
+        catppuccin-cursors.latteMauve
         catppuccin-papirus-folders
         # etc.
       ]);
