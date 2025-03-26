@@ -1,4 +1,4 @@
-{ ... }: {
+{...}: {
   programs.waybar = {
     enable = true;
     # systemd.enable = true;
@@ -19,13 +19,13 @@
     '';
     settings = {
       mainBar = {
-        output = [ "DP-1" ];
+        # output = ["DP-2"];
         layer = "top";
         position = "top";
         height = 24;
-        modules-left = [ "hyprland/window" ];
-        modules-center = [ "clock" ];
-        modules-right = [ "bluetooth" "wireplumber" ];
+        modules-left = ["hyprland/window"];
+        modules-center = ["clock"];
+        modules-right = ["bluetooth" "wireplumber"];
         "hyprland/workspaces" = {
           format = "{icon} ";
           format-icons = {
@@ -59,8 +59,7 @@
             {controller_alias}	{controller_address}
 
             {device_enumerate}'';
-          tooltip-format-enumerate-connected =
-            "{device_alias}	{device_address}";
+          tooltip-format-enumerate-connected = "{device_alias}	{device_address}";
           on-click = "hyprctl dispatch exec [floating] blueman-manager";
         };
         wireplumber = {
@@ -69,7 +68,7 @@
           on-click = "hyprctl dispatch exec pypr toggle volume";
           max-volume = 100;
           scroll-step = 10;
-          format-icons = [ "" "" "" ];
+          format-icons = ["" "" ""];
         };
       };
     };

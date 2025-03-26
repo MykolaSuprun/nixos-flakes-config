@@ -1,17 +1,16 @@
 [pyprland]
 plugins = [
   "scratchpads",
-  # "wallpapers",
-  "expose"
+  "wallpapers",
 ]
 
-# [wallpapers]
-# path = "~/megasync/main/Pictures/Wallpapers_1/" # path to the folder with background images
-# extentions = ["png", "jpg", "jpeg", "webp"]
-# unique = true # set a different wallpaper for each screen
-# interval = 15
-# command = "swww img --transition-type any \"[file]\""
-# clear_command = "swww clear"
+[wallpapers]
+path = "~/.config/wallpapers_ln" # path to the folder with background images
+extentions = ["png", "jpg", "jpeg", "webp"]
+unique = true # set a different wallpaper for each screen
+interval = 15
+command = 'swww img --transition-type any "[file]"'
+clear_command = "swww clear"
 
 [scratchpads.term]
 animation = "fromTop"
@@ -20,6 +19,7 @@ class = "kitty-dropterm"
 size = "85% 75%"
 max_size = "2400px 100%"
 margin = 50
+allow_special_workspaces = true
 
 [scratchpads.volume]
 animation = "fromTop"
@@ -28,28 +28,21 @@ class = "com.saivert.pwvucontrol"
 size = "33% 50%"
 unfocus = "hide"
 lazy = true
+allow_special_workspaces = true
 
 [scratchpads.telegram]
 animation = "fromBottom"
 command = "telegram-desktop"
 class = "org.telegram.desktop"
+multi = false
 position = "5% 5%"
 size = "35% 90%"
-multi = true
+allow_special_workspaces = true
 
 [scratchpads.obsidian]
 animation = "fromBottom"
 command = "obsidian"
 class = "obsidian"
+multi = false
 size = "50% 80%"
 lazy = true
-
-# [scratchpads.mega]
-# animation = "fromTop"
-# command = "megasync"
-# class = "nz.co.mega"
-# size = "20% 50%"
-# unfocus = "hide"
-
-
-

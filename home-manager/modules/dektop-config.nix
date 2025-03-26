@@ -1,5 +1,10 @@
-{ pkgs, pkgs-stable, ... }: {
-  xdg = { enable = true; };
+{
+  inputs,
+  pkgs,
+  pkgs-stable,
+  ...
+}: {
+  xdg = {enable = true;};
 
   home.packages = with pkgs; [
     # plasma packages and basic applications
@@ -13,6 +18,7 @@
 
     # internet
     mullvad-browser
+    inputs.zen-browser.packages.${pkgs.system}.default
     vivaldi
     vivaldi-ffmpeg-codecs
     protonvpn-gui
@@ -24,6 +30,8 @@
     telegram-desktop
 
     # other
+    onlyoffice-desktopeditors
+    bluetui
     pkgs-stable.megasync
     cryptomator
     qbittorrent

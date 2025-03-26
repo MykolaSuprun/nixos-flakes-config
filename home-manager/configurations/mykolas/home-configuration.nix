@@ -1,12 +1,12 @@
-{ pkgs, ... }: {
-  imports = [ ];
+{pkgs, ...}: {
+  imports = [];
 
   home.username = "mykolas";
   home.homeDirectory = "/home/mykolas";
 
   home.stateVersion = "24.11";
 
-  xdg = { enable = true; };
+  xdg = {enable = true;};
 
   services.gpg-agent = {
     enable = true;
@@ -20,8 +20,8 @@
   };
   dconf.settings = {
     "org/virt-manager/virt-manager/connections" = {
-      autoconnect = [ "qemu:///system" ];
-      uris = [ "qemu:///system" ];
+      autoconnect = ["qemu:///system"];
+      uris = ["qemu:///system"];
     };
   };
 
@@ -47,5 +47,5 @@
     };
   };
 
-  home.packages = with pkgs; [ ];
+  home.packages = with pkgs; [];
 }

@@ -2,7 +2,7 @@
   catppuccin = {
     enable = true;
     flavor = "latte";
-    accent = "sapphire";
+    accent = "mauve";
     cache.enable = true;
     grub.enable = true;
     plymouth.enable = true;

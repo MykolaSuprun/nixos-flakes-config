@@ -12,7 +12,7 @@ services:
       ARGUMENTS: "-device ich9-intel-hda -device hda-output -audio alsa"
     devices:
       - /dev/kvm
-    cap_add:
+   cap_add:
       - NET_ADMIN
     ports:
       - 8006:8006
