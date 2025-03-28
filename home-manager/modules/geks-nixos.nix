@@ -1,4 +1,8 @@
-{ pkgs, ... }: {
+{
+  inputs,
+  pkgs,
+  ...
+}: {
   imports = [
     ./shell.nix
     ./chromium.nix
@@ -20,7 +24,7 @@
     NIXOS_TARGET = "geks-nixos";
     BEMENU_BACKEND = "wayland";
     FLAKE = "/home/mykolas/.nixconf";
-    BROWSER = "${pkgs.vivaldi}/bin/vivaldi";
-    DEFAULT_BROWSER = "${pkgs.vivaldi}/bin/vivaldi";
+    BROWSER = "${inputs.zen-browser.packages.${pkgs.system}.default}/bin/zen";
+    DEFAULT_BROWSER = "${inputs.zen-browser.packages.${pkgs.system}.default}/bin/zen";
   };
 }

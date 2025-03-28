@@ -58,7 +58,7 @@
     # };
     catppuccin.url = "github:catppuccin/nix";
     my-neovim = {
-      url = "github:MykolaSuprun/neovim-nvf-config";
+      url = "git+ssh://git@github.com/MykolaSuprun/neovim-nvf-config.git?ref=main";
       flake = true;
     };
   };
@@ -113,7 +113,7 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              backupFileExtension = "hm-back";
+              backupFileExtension = "hm_back";
               users.mykolas = {
                 imports = [
                   # inputs.hyprland.homeManagerModules.default

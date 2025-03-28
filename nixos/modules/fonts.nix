@@ -1,4 +1,9 @@
-{ inputs, pkgs, pkgs-stable, ... }: {
+{
+  inputs,
+  pkgs,
+  pkgs-stable,
+  ...
+}: {
   fonts = {
     fontDir.enable = true;
     fontconfig.useEmbeddedBitmaps = true;
@@ -14,7 +19,6 @@
     liberation_ttf
     dejavu_fonts
     corefonts
-    google-fonts
     nerd-fonts.jetbrains-mono
     nerd-fonts.zed-mono
     nerd-fonts.roboto-mono
