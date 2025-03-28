@@ -158,13 +158,13 @@ in {
 
   users.groups.plugdev = {};
   users.extraGroups.vboxusers.members = ["mykolas"];
-  users.defaultUserShell = pkgs.fish;
+  users.defaultUserShell = pkgs.zsh;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users = {
     mykolas = {
       isNormalUser = true;
-      shell = pkgs.fish;
+      shell = pkgs.zsh;
       description = "Mykola Suprun";
       extraGroups = [
         "networkmanager"
@@ -213,6 +213,9 @@ in {
     fish = {
       enable = true;
       useBabelfish = true;
+    };
+    zsh = {
+      enable = true;
     };
     ecryptfs.enable = true;
     partition-manager.enable = true;
