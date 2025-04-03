@@ -1,13 +1,17 @@
-{ inputs, pkgs, ... }: {
+{
+  inputs,
+  pkgs,
+  ...
+}: {
   programs = {
     hyprland = {
       enable = true;
       withUWSM = true;
-      # package =
-      #   inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-      # portalPackage =
-      #   inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
-      portalPackage = pkgs.xdg-desktop-portal-hyprland;
+      package =
+        inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+      portalPackage =
+        inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+      # portalPackage = pkgs.xdg-desktop-portal-hyprland;
       systemd.setPath.enable = true;
       xwayland.enable = true;
     };
@@ -23,6 +27,15 @@
       };
     };
   };
+  # fix for video drivers mismatch causing fps drops when using stable nixos branch
+  # hardware.opengl = {
+  #   package = pkgs-unstable.mesa.drivers;
+  #
+  #   # if you also want 32-bit support (e.g for Steam)
+  #   driSupport32Bit = true;
+  #   package32 = pkgs-unstable.pkgsi686Linux.mesa.drivers;
+  # };
+
   services = {
     blueman.enable = true;
     hypridle.enable = true;

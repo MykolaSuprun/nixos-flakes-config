@@ -18,15 +18,13 @@
   };
 
   inputs = {
-    # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2405.*.tar.gz";
-    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/0.1";
+    # determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+    determinate.url = "github:DeterminateSystems/determinate/custom-conf";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1.0.tar.gz";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
     # nixpkgs-stable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2405.*.tar.gz";
     home-manager = {
-      # url = "https://flakehub.com/f/nix-community/home-manager/0.2405.*.tar.gz";
       # url = "https://flakehub.com/f/nix-community/home-manager/0.1.0.tar.gz";
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -41,12 +39,12 @@
     };
     # hyprland.url =
     #   "git+https://github.com/hyprwm/Hyprland?submodules=1&ref=refs/tags/v0.47.2";
-    # # hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-    # hyprland-plugins = {
-    #   url = "github:hyprwm/hyprland-plugins?ref=v0.47.0";
-    #   # url = "github:hyprwm/hyprland-plugins";
-    #   inputs.hyprland.follows = "hyprland";
-    # };
+    hyprland.url = "github:hyprwm/Hyprland";
+    hyprland-plugins = {
+      # url = "github:hyprwm/hyprland-plugins?ref=v0.47.0";
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
     # hy3 = {
     #   url = "github:outfoxxed/hy3?ref=hl0.47.0-1";
     #   # url = "github:outfoxxed/hy3";
@@ -113,11 +111,11 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              backupFileExtension = "hm_back";
+              backupFileExtension = "home-backup";
               users.mykolas = {
                 imports = [
                   # inputs.hyprland.homeManagerModules.default
-                  catppuccin.homeManagerModules.catppuccin
+                  catppuccin.homeModules.catppuccin
                   ./home-manager/configurations/mykolas/home-configuration.nix
                   ./home-manager/modules/geks-nixos.nix
                 ];
@@ -145,10 +143,10 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              backupFileExtension = "hm-backup";
+              backupFileExtension = "home-backup";
               users.mykolas = {
                 imports = [
-                  catppuccin.homeManagerModules.catppuccin
+                  catppuccin.homeModules.catppuccin
                   ./home-manager/configurations/mykolas/home-configuration.nix
                   ./home-manager/modules/geks-wsl.nix
                 ];
@@ -167,7 +165,7 @@
     #     inherit pkgs;
     #     modules = [
     #       # inputs.hyprland.homeManagerModules.default
-    #       catppuccin.homeManagerModules.catppuccin
+    #       catppuccin.homeModules.catppuccin
     #       ./home-manager/configurations/mykolas/home-configuration.nix
     #       ./home-manager/modules/geks-nixos.nix
     #     ];

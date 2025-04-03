@@ -48,7 +48,6 @@
 
   '';
 in {
-  wayland.windowManager.hyprland.systemd.enable = false;
   programs = {};
   home.file = {
     "./.config/uwsm" = {
@@ -107,10 +106,10 @@ in {
 
   wayland.windowManager.hyprland = {
     enable = true;
-    # package =
-    #   inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-    # portalPackage =
-    #   inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+    # set the Hyprland and XDPH packages to null to use the ones from the NixOS module
+    package = null;
+    portalPackage = null;
+    systemd.variables = ["--all"];
 
     plugins = with pkgs.hyprlandPlugins; [
       # inputs.hy3.packages.${pkgs.system}.hy3
@@ -152,8 +151,8 @@ in {
         "gaps_in" = "3";
         "gaps_out" = "3";
         "border_size" = "3";
-        "col.active_border" = "rgba(33ccffee) rgba(00ff99ee) 45deg";
-        "col.inactive_border" = "rgba(595959aa)";
+        # "col.active_border" = "rgba(33ccffee) rgba(00ff99ee) 45deg";
+        # "col.inactive_border" = "rgba(595959aa)";
         "no_focus_fallback" = true;
         "resize_on_border" = true;
         # Please see https://wiki.hyprland.org/Configuring/Tearing/ before you turn this on
