@@ -1,2 +1,8 @@
-eval "$(ssh-agent -s)"
-alias test="test alias"
+# Define the path to your custom file
+zshrc_lcl="~/.zshrc_lcl"
+
+# Check if the file exists and is a regular file (-f)
+if [[ -f "$zshrc_lcl" ]]; then
+  # Source the file if it exists
+  source "$zshrc_lcl"
+fi

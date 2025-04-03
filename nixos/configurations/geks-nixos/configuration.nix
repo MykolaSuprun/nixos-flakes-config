@@ -275,7 +275,7 @@ in {
       xsettingsd
       file
       wl-clipboard
-      # wl-clipboard-x11
+      wl-clipboard-x11
       xclip
       ncurses
       lsof
