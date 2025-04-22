@@ -7,7 +7,6 @@
 }: let
   hyprlock_script = pkgs.writeShellScriptBin "run_hyprlock" ''
     swaylock -k -l -i ${config.home.homeDirectory}/.config/hyprlock-background
-
   '';
   hyprlock_script_alt = pkgs.writeShellScriptBin "run_hyprlock" ''
     # hyprlock --config ${config.home.homeDirectory}/.config/hypr/hyprlock.conf.alt
@@ -58,6 +57,8 @@ in {
     };
     "./.config/hypr/hyprlock.conf".source =
       ./../configurations/mykolas/hyprlock/hyprlock.conf;
+    "./.config/swaync/style.css".source =
+      ./../configurations/mykolas/swaync/latte.css;
     "./.config/swaylock/config".source =
       ./../configurations/mykolas/swaylock/latte.conf;
     "./.config/hypr/hyprpaper.conf".source =
