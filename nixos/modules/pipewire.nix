@@ -1,10 +1,13 @@
 {pkgs, ...}: {
   # Enable sound with pipewire.
   security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    pulse.enable = true;
-    jack.enable = true;
+  services = {
+    pipewire = {
+      enable = true;
+      pulse.enable = true;
+      jack.enable = true;
+    };
+    pulseaudio.package = pkgs.pulseaudioFull;
   };
   # services = {
   #   jack.alsa.enable = true;
@@ -57,7 +60,6 @@
   # };
 
   hardware = {
-    pulseaudio.package = pkgs.pulseaudioFull;
     bluetooth = {
       enable = true;
       powerOnBoot = true;

@@ -45,6 +45,8 @@
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
+    hyprlock.url = "github:hyprwm/hyprlock";
+    hypridle.url = "github:hyprwm/hypridle";
     # hy3 = {
     #   url = "github:outfoxxed/hy3?ref=hl0.47.0-1";
     #   # url = "github:outfoxxed/hy3";
@@ -111,7 +113,7 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              backupFileExtension = "home-backup";
+              backupFileExtension = "hm-back";
               users.mykolas = {
                 imports = [
                   # inputs.hyprland.homeManagerModules.default
@@ -143,7 +145,7 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              backupFileExtension = "home-backup";
+              backupFileExtension = "hm-back";
               users.mykolas = {
                 imports = [
                   catppuccin.homeModules.catppuccin
