@@ -16,7 +16,7 @@
     # bemenu-run -n -c -B 3 -W 0.3 -l 10 -i -w -H 20 --counter always \ --scrollbar always --binding vim --vim-esc-exits --single-instance \
     #       --fb "#eff1f5" --ff "#4c4f69" --nb "#eff1f5" --nf "#4c4f69" --tb "#eff1f5" \
     #       --hb "#eff1f5" --tf "#d20f39" --hf "#df8e1d" --af "#4c4f69" --ab "#eff1f5" --bdr "#898992"
-    rofi -show drun -run-command "uwsm-app -- {cmd}"
+    rofi -show drun -run-command "uwsm app -- {cmd}"
   '';
   lock_screen = pkgs.writeShellScriptBin "lock_dp1" ''
 
@@ -84,8 +84,10 @@ in {
     hyprsysteminfo
     hyprland-qt-support
     hyprutils
+    overskride
     blueman
     rofi-wayland
+    rofi-network-manager
     swaynotificationcenter
     # kdePackages.polkit-kde-agent-1
     hyprpolkitagent
@@ -135,18 +137,17 @@ in {
       ];
 
       "$mainMod" = "SUPER";
-      "$fileManager" = "uwsm-app -- ${pkgs.wezterm}/bin/wezterm lf";
-      "$terminal" = "uwsm-app -- ${pkgs.wezterm}/bin/wezterm";
+      "$fileManager" = "uwsm app -- ${pkgs.wezterm}/bin/wezterm lf";
+      "$terminal" = "uwsm app -- ${pkgs.wezterm}/bin/wezterm";
       "$menu" = "${menu_script}/bin/run_menu";
 
       exec-once = [
         # "${init_script}/bin/pre_init >> /home/mykolas/init_log.txt"
         "systemctl --user enable --now hyprpolkitagent.service"
         "systemctl --user enable --now hypridle.service"
-        "[workspace 1 silent] sleep 1 && uwsm-app -s a zen"
-        "sleep 5 && uwsm-app -s a steam &"
-        "sleep 10 && uwsm-app -s a cryptomator &"
-        "sleep 11 && uwsm-app -s a megasync"
+        "[workspace 1 silent] uwsm app -s a zen"
+        "sleep 10 && uwsm app -s a cryptomator &"
+        "sleep 11 && uwsm app -s a megasync"
       ];
 
       general = {
@@ -184,14 +185,17 @@ in {
       cursor = {};
 
       workspace = [
-        "1,monitor:$monitor_1,default:true,defaultName:default"
-        "2,monitor:$monitor_1,default:false,defaultName:code"
-        "3,monitor:$monitor_1,default:false,defaultName:filemanager"
-        "4,monitor:$monitor_1,default:false,defaultName:other"
-        "7,monitor:$monitor_1,default:false,defaultName:side_default"
-        "8,monitor:$monitor_1,default:false,defaultName:steam"
-        "9,monitor:$monitor_1,default:false,defaultName:side_3"
-        "0,monitor:$monitor_1,default:false,defaultName:side_4"
+        "1,monitor:$monitor_1,default:true"
+        "2,monitor:$monitor_1,default:false"
+        "3,monitor:$monitor_1,default:false"
+        "4,monitor:$monitor_1,default:false"
+        "4,on-created-empty: pidof telegram-desktop || uwsm app telegram-desktop"
+        "7,monitor:$monitor_1,default:false"
+        "8,monitor:$monitor_1,default:false"
+        "9,monitor:$monitor_1,default:false"
+        "10,monitor:$monitor_1,default:false"
+        "11,monitor:$monitor_1,default:false"
+        "11,on-created-empty: pidof obsidian || uwsm app obsidian"
       ];
 
       windowrulev2 = [
@@ -206,20 +210,22 @@ in {
         "fullscreen, class:^(helldivers.*)$"
         "immediate, class:^(steam_app_2767030.*)$"
         "fullscreen, class:^(steam_app_2767030.*)$"
-        "float,class:^(org.telegram.desktop)$"
+        "workspace 4 silent, class:^(org.telegram.desktop)$"
+        "workspace 12, class:^(steam)$"
+        "fullscreen, class:^(steam)$"
         "float,class:^(nz.co.mega.)$"
         "workspace special:scratch_hidden silent, class:^(nz.co.mega.)$"
+        "float,class:^(xwaylandvideobridge)$"
+        "workspace special:scratch_hidden silent, class:^(xwaylandvideobridge)$"
         "float,class:^(org.cryptomator.*)$"
         "workspace special:scratch_hidden silent, class:^(org.cryptomator.*)$"
-        "workspace special:scratch_steam silent, class:^(steam)$"
-        "fullscreen, class:^(steam)$"
       ];
 
       bind =
         [
           "$mainMod, Q, exec, $terminal"
           "$mainMod, C, killactive,"
-          "$mainMod CTRL SHIFT, M, exec, uwsm stop"
+          "$mainMod CTRL SHIFT, M, exec, uwsm stop "
           # "$mainMod, E, exec, $fileManager"
           "$mainMod, G, togglefloating,"
           "$mainMod SHIFT, Q, exec, ${hyprlock_script}/bin/run_hyprlock"
@@ -229,13 +235,11 @@ in {
           # "$mainMod, P, pseudo, #"
           "$mainMod, F, fullscreen, 1"
           "$mainMod, R, exec, ${lock_screen}/bin/lock_dp1"
-          "$mainMod SHIFT, N, exec, swaync-client -t"
+          "$mainMod, N, exec, swaync-client -t"
 
           "$mainMod SHIFT, F, fullscreen"
           "$mainMod, A,exec, pypr toggle term"
           "$mainMod, S, exec, pypr toggle volume"
-          "$mainMod, M, exec, pypr toggle telegram"
-          "$mainMod, N, exec, pypr toggle obsidian"
           "ALT, SPACE, exec, $menu"
 
           "$mainMod,I,layoutmsg,addmaster"
@@ -276,10 +280,18 @@ in {
           "$mainMod, I, workspace, 2"
           "$mainMod, O, workspace, 3"
           "$mainMod, P, workspace, 4"
+          "$mainMod, M, workspace, 11"
+          "$mainMod, code:59, workspace, 12"
+          "$mainMod, code:60, workspace, 13"
+          "$mainMod, code:61, workspace, 14"
           "$mainMod SHIFT, U, movetoworkspace, 1"
           "$mainMod SHIFT, I, movetoworkspace, 2"
           "$mainMod SHIFT, O, movetoworkspace, 3"
           "$mainMod SHIFT, P, movetoworkspace, 4"
+          "$mainMod SHIFT, M, movetoworkspace, 11"
+          "$mainMod SHIFT, code:59, movetoworkspace, 12"
+          "$mainMod SHIFT, code:60, movetoworkspace, 13"
+          "$mainMod SHIFT, code:61, movetoworkspace, 14"
         ]
         ++ (
           # workspaces

@@ -94,7 +94,7 @@ in {
       enableCompletion = true;
       autosuggestion.enable = true;
       defaultKeymap = "viins";
-      initExtra = ''
+      initContent = ''
         source ${shell_init}/bin/init_shell
         ${builtins.readFile ./../configurations/mykolas/zsh/zshrc}
       '';

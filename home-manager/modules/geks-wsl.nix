@@ -13,6 +13,6 @@
   home.sessionVariables = {
     NIXOS_CONF_DIR = "$HOME/.nixconf";
     NIXOS_TARGET = "geks-wsl";
-    FLAKE = "/home/mykolas/.nixconf";
+    NH_FLAKE = "/home/mykolas/.nixconf";
   };
 }

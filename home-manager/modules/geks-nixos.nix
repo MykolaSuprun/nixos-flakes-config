@@ -23,7 +23,7 @@
     NIXOS_CONF_DIR = "$HOME/.nixconf";
     NIXOS_TARGET = "geks-nixos";
     BEMENU_BACKEND = "wayland";
-    FLAKE = "/home/mykolas/.nixconf";
+    NH_FLAKE = "/home/mykolas/.nixconf";
     BROWSER = "${inputs.zen-browser.packages.${pkgs.system}.default}/bin/zen";
     DEFAULT_BROWSER = "${inputs.zen-browser.packages.${pkgs.system}.default}/bin/zen";
   };
