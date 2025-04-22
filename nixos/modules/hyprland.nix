@@ -15,7 +15,10 @@
       systemd.setPath.enable = true;
       xwayland.enable = true;
     };
-    hyprlock.enable = true;
+    hyprlock = {
+      enable = true;
+      package = inputs.hyprlock.packages.${pkgs.system}.hyprlock;
+    };
     uwsm = {
       enable = true;
       waylandCompositors = {
@@ -27,6 +30,7 @@
       };
     };
   };
+
   # fix for video drivers mismatch causing fps drops when using stable nixos branch
   # hardware.opengl = {
   #   package = pkgs-unstable.mesa.drivers;
@@ -38,7 +42,10 @@
 
   services = {
     blueman.enable = true;
-    hypridle.enable = true;
+    hypridle = {
+      enable = true;
+      package = inputs.hypridle.packages.${pkgs.system}.hypridle;
+    };
     dbus.implementation = "broker";
   };
 }

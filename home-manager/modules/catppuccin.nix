@@ -29,20 +29,20 @@
       enable = true;
       flavor = "latte";
     };
+    kvantum = {
+      enable = true;
+      flavor = "latte";
+    };
+    gtk = {
+      enable = true;
+      flavor = "latte";
+      icon.enable = true;
+      gnomeShellTheme = true;
+    };
   };
 
   gtk = {
     enable = true;
-    catppuccin = {
-      enable = true;
-      flavor = "latte";
-      gnomeShellTheme = true;
-      icon.enable = true;
-    };
-  };
-  qt.style.catppuccin = {
-    enable = true;
-    flavor = "latte";
   };
 
   home.pointerCursor = {

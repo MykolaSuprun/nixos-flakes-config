@@ -39,14 +39,6 @@
       --adaptive-sync --backend=wayland --expose-wayland \
       -- ${pkgs.steam}/bin/steam -tenfoot -steamos
   '';
-  init_script = pkgs.writeShellScriptBin "pre_init" ''
-    # uwsm-app -- ${pkgs.waybar}/bin/waybar
-    # uwsm-app -- ${pkgs.hypridle}/bin/hypridle &
-    # uwsm-app -- ${pkgs.swaynotificationcenter}/bin/swaync &
-    # uwsm-app -- ${pkgs.swww}/bin/swww-daemon &&
-    # uwsm-app -- ${pkgs.pyprland}/bin/pypr --debug /tmp/pypr.log
-
-  '';
 in {
   programs = {};
   home.file = {
@@ -83,12 +75,16 @@ in {
     hypridle
     hyprshot
     pyprland
+    hyprsysteminfo
+    hyprland-qt-support
+    hyprutils
     blueman
+    rofi-wayland
     swaynotificationcenter
-    kdePackages.polkit-kde-agent-1
+    # kdePackages.polkit-kde-agent-1
+    hyprpolkitagent
     kdePackages.qtwayland
     xorg.xrdb
-    rofi-wayland
     dbus-broker
     wlr-randr
     # hyper
@@ -109,15 +105,16 @@ in {
     # set the Hyprland and XDPH packages to null to use the ones from the NixOS module
     package = null;
     portalPackage = null;
+    systemd.enable = false;
     systemd.variables = ["--all"];
 
     plugins = with pkgs.hyprlandPlugins; [
-      # inputs.hy3.packages.${pkgs.system}.hy3
+      # inputs.hyprland-plugins.packages.${pkgs.system}.hyprbars
       # inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
+      # inputs.hyprland-plugins.packages.${pkgs.system}.hyprtrails
+      # inputs.hy3.packages.${pkgs.system}.hy3
       # hy3
-      # hyprexpo
-      # hyprspace
-      # hyprfocus
+      hyprexpo
     ];
 
     xwayland.enable = true;
@@ -138,11 +135,12 @@ in {
 
       exec-once = [
         # "${init_script}/bin/pre_init >> /home/mykolas/init_log.txt"
-        "[workspace 1 silent] sleep 1 && uwsm-app zen"
-        "[workspace 2 silent] sleep 3 && uwsm-app wezterm"
-        "sleep 5 && uwsm-app steam &"
-        "sleep 10 && uwsm-app cryptomator &"
-        "sleep 11 && uwsm-app megasync"
+        "systemctl --user enable --now hyprpolkitagent.service"
+        "systemctl --user enable --now hypridle.service"
+        "[workspace 1 silent] sleep 1 && uwsm-app -s a zen"
+        "sleep 5 && uwsm-app -s a steam &"
+        "sleep 10 && uwsm-app -s a cryptomator &"
+        "sleep 11 && uwsm-app -s a megasync"
       ];
 
       general = {
@@ -299,21 +297,21 @@ in {
   systemd.user = {
     enable = true;
     services = {
-      hyprland-hypridle = {
-        Unit = {
-          Description = "Idle daemon for hyprland";
-          After = ["graphical-session.target"];
-        };
-        Service = {
-          Type = "exec";
-          ExecCondition = ''
-            ${pkgs.systemd}/lib/systemd/systemd-xdg-autostart-condition "Hyprland" ""'';
-          ExecStart = "${pkgs.hypridle}/bin/hypridle";
-          Restart = "on-failure ";
-          Slice = "background-graphical.slice";
-        };
-        Install = {WantedBy = ["hyprland-session.target"];};
-      };
+      # hyprland-hypridle = {
+      #   Unit = {
+      #     Description = "Idle daemon for hyprland";
+      #     After = ["graphical-session.target"];
+      #   };
+      #   Service = {
+      #     Type = "exec";
+      #     ExecCondition = ''
+      #       ${pkgs.systemd}/lib/systemd/systemd-xdg-autostart-condition "Hyprland" ""'';
+      #     ExecStart = "${pkgs.hypridle}/bin/hypridle";
+      #     Restart = "on-failure ";
+      #     Slice = "background-graphical.slice";
+      #   };
+      #   Install = {WantedBy = ["hyprland-session.target"];};
+      # };
       # hyprland-swaync = {
       #   Unit = {
       #     Description = "Notification daemon for hyprland";
