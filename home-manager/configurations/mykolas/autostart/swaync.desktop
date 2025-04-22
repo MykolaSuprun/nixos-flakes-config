@@ -2,7 +2,7 @@
 Version=1.0
 Type=Application
 Name=Hyprland-Sway-notificaiton-center
-GenericName=Hyprland-swaync
+enericName=Hyprland-swaync
 Comment="Hyprland swaync start"
 Categories=Utility;
 Keywords=notification-daemon;

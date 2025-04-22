@@ -8,6 +8,12 @@
       enable = true;
       flavor = "latte";
     };
+    swaync = {
+      enable = true;
+      flavor = "latte";
+      font = "JetBrainsMono Nerd Font";
+    };
+    swaylock = {enable = true;};
     cursors = {
       enable = true;
       accent = "mauve";

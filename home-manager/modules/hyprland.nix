@@ -6,10 +6,12 @@
   ...
 }: let
   hyprlock_script = pkgs.writeShellScriptBin "run_hyprlock" ''
-    uwsm-app -- hyprlock
+    swaylock -k -l -i ${config.home.homeDirectory}/.config/hyprlock-background
+
   '';
   hyprlock_script_alt = pkgs.writeShellScriptBin "run_hyprlock" ''
-    uwsm-app -- hyprlock --config ${config.home.homeDirectory}/.config/hypr/hyprlock.conf.alt
+    # hyprlock --config ${config.home.homeDirectory}/.config/hypr/hyprlock.conf.alt
+    swaylock -k -l -i ${config.home.homeDirectory}/.config/hyprlock-background-alt
   '';
   menu_script = pkgs.writeShellScriptBin "run_menu" ''
     # bemenu-run -n -c -B 3 -W 0.3 -l 10 -i -w -H 20 --counter always \ --scrollbar always --binding vim --vim-esc-exits --single-instance \
@@ -56,6 +58,8 @@ in {
     };
     "./.config/hypr/hyprlock.conf".source =
       ./../configurations/mykolas/hyprlock/hyprlock.conf;
+    "./.config/swaylock/config".source =
+      ./../configurations/mykolas/swaylock/latte.conf;
     "./.config/hypr/hyprpaper.conf".source =
       ./../configurations/mykolas/hyprpaper/hyprpaper.conf;
     "./.config/hypr/hyprlock.conf.alt".source =
@@ -71,6 +75,7 @@ in {
   # Packages necessary for hyprland
   home.packages = with pkgs; [
     hyprlock
+    swaylock
     hyprcursor
     hypridle
     hyprshot
@@ -223,6 +228,7 @@ in {
           # "$mainMod, P, pseudo, #"
           "$mainMod, F, fullscreen, 1"
           "$mainMod, R, exec, ${lock_screen}/bin/lock_dp1"
+          "$mainMod SHIFT, N, exec, swaync-client -t"
 
           "$mainMod SHIFT, F, fullscreen"
           "$mainMod, A,exec, pypr toggle term"
