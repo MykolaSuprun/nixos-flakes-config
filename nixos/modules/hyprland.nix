@@ -15,10 +15,10 @@
       systemd.setPath.enable = true;
       xwayland.enable = true;
     };
-    hyprlock = {
-      enable = true;
-      package = inputs.hyprlock.packages.${pkgs.system}.hyprlock;
-    };
+    # hyprlock = {
+    #   enable = true;
+    #   package = inputs.hyprlock.packages.${pkgs.system}.hyprlock;
+    # };
     uwsm = {
       enable = true;
       waylandCompositors = {
