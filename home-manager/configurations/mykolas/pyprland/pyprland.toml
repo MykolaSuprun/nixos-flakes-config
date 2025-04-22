@@ -30,19 +30,19 @@ unfocus = "hide"
 lazy = true
 allow_special_workspaces = true
 
-[scratchpads.telegram]
-animation = "fromBottom"
-command = "telegram-desktop"
-class = "org.telegram.desktop"
-multi = false
-position = "5% 5%"
-size = "35% 90%"
-allow_special_workspaces = true
-
-[scratchpads.obsidian]
-animation = "fromBottom"
-command = "obsidian"
-class = "obsidian"
-multi = false
-size = "50% 80%"
-lazy = true
+# [scratchpads.telegram]
+# animation = "fromBottom"
+# command = "telegram-desktop"
+# class = "org.telegram.desktop"
+# multi = false
+# position = "5% 5%"
+# size = "35% 90%"
+# allow_special_workspaces = true
+#
+# [scratchpads.obsidian]
+# animation = "fromBottom"
+# command = "obsidian"
+# class = "obsidian"
+# multi = false
+# size = "50% 80%"
+# lazy = true

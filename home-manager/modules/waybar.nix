@@ -5,16 +5,43 @@
     # systemd.target = "hyprland-session.target";
     style = ''
       * {
-        /* reference the color by using @color-name */
-        color: @text;
-        /* font-family: Serif, Font Awesome, JetBrainsMono Nerd Font; */
-        font-family: JetBrainsMono NF
+          border: none;
+          border-radius: 0;
+          font-family: JetBrainsMono NF, Roboto, Helvetica, Arial, sans-serif;
+          font-size: 13px;
+          min-height: 0;
       }
 
       window#waybar {
-        /* you can also GTK3 CSS functions! */
-        background-color: shade(@base, 0.9);
-        border: 2px solid alpha(@crust, 0.3);
+          background: alpha(@surface0, 0.9);
+          color: @text;
+
+          margin: 5px 10px; /* Adds 5px margin top/bottom,
+                            10px left/right. Adjust values as needed. */
+          border-radius: 10px; /* Rounds all corners with a 10px radius.
+                                Adjust value as needed. */
+          /* Optional: Add a subtle shadow for more depth */
+          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3); /* Example shadow */
+      }
+      #clock {
+          background: @base;
+          padding: 0 0.5em;
+          margin: 0.25em;
+          border-radius: 5px;
+      }
+      #workspaces {
+          background: @base;
+          color: @text;
+          padding: 0 0.5em;
+          margin: 0.25em;
+          border-radius: 5px;
+      }
+      #workspaces button {
+          padding: 0 0.5em;
+          color: @text;
+      }
+      #workspaces button.active {
+          color: @blue;
       }
     '';
     settings = {
@@ -22,23 +49,25 @@
         # output = ["DP-2"];
         layer = "top";
         position = "top";
-        height = 24;
-        modules-left = ["hyprland/window"];
-        modules-center = ["clock"];
-        modules-right = ["bluetooth" "wireplumber"];
+        height = 40;
+        margin-top = 3;
+        margin-bottom = 3;
+        margin-left = 8;
+        margin-right = 8;
+        modules-left = [];
+        modules-center = ["hyprland/workspaces"];
+        modules-right = ["bluetooth" "wireplumber" "clock"];
         "hyprland/workspaces" = {
-          format = "{icon} ";
+          format = "<span font='16' weight='bold'>{icon}</span>";
+          # active-only = true;
+          show-special = false;
           format-icons = {
-            "1" = "";
-            "2" = "";
-            "3" = "";
-            "4" = "";
-            "5" = "";
-            active = "";
-            default = "";
-          };
-          "persistent-workspaces" = {
-            "*" = 8; # 5 workspaces by default on every monitor
+            "1" = "";
+            "2" = "";
+            "3" = "";
+            "4" = "󰭹";
+            "7" = "";
+            "12" = "";
           };
         };
         "hyprland/window" = {
@@ -60,7 +89,7 @@
 
             {device_enumerate}'';
           tooltip-format-enumerate-connected = "{device_alias}	{device_address}";
-          on-click = "hyprctl dispatch exec [floating] blueman-manager";
+          on-click = "hyprctl dispatch exec [floating] overskride";
         };
         wireplumber = {
           format = " {icon} {volume}% ";

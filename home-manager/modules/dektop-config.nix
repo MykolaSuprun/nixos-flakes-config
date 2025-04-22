@@ -4,7 +4,9 @@
   pkgs-stable,
   ...
 }: {
-  xdg = {enable = true;};
+  xdg = {
+    enable = true;
+  };
 
   home.packages = with pkgs; [
     # plasma packages and basic applications
@@ -28,6 +30,7 @@
     discord
     signal-desktop
     telegram-desktop
+    tg
 
     # other
     onlyoffice-desktopeditors
@@ -41,7 +44,7 @@
     protonup-ng
     ldacbt
     spotify-player
-    tidal-hifi
+    ffmpeg-full
 
     obsidian
 
