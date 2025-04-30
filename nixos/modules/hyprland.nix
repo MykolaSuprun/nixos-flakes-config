@@ -41,7 +41,6 @@
   # };
 
   services = {
-    blueman.enable = true;
     hypridle = {
       enable = true;
       package = inputs.hypridle.packages.${pkgs.system}.hypridle;

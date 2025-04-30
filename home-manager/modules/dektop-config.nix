@@ -62,6 +62,7 @@
     cider
 
     # gaming
+    limo
     # steamtinkerlaunch dependencies
     xdotool
     xorg.xwininfo
