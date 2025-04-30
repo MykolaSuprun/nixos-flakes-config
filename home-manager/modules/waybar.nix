@@ -25,6 +25,21 @@
       }
       #clock {
           background: @base;
+          color: @text;
+          padding: 0 0.5em;
+          margin: 0.25em;
+          border-radius: 5px;
+      }
+      #wireplumber {
+          background: @base;
+          color: @text;
+          padding: 0 0.5em;
+          margin: 0.25em;
+          border-radius: 5px;
+      }
+      #bluetooth {
+          background: @base;
+          color: @text;
           padding: 0 0.5em;
           margin: 0.25em;
           border-radius: 5px;
@@ -43,6 +58,13 @@
       #workspaces button.active {
           color: @blue;
       }
+      #mpris {
+          background: @base;
+          color: @text;
+          padding: 0 0.5em;
+          margin: 0.25em;
+          border-radius: 5px;
+      }
     '';
     settings = {
       mainBar = {
@@ -54,9 +76,9 @@
         margin-bottom = 3;
         margin-left = 8;
         margin-right = 8;
-        modules-left = [];
-        modules-center = ["hyprland/workspaces"];
-        modules-right = ["bluetooth" "wireplumber" "clock"];
+        modules-left = ["hyprland/workspaces"];
+        modules-center = ["clock"];
+        modules-right = ["wireplumber" "mpris" "bluetooth"];
         "hyprland/workspaces" = {
           format = "<span font='16' weight='bold'>{icon}</span>";
           # active-only = true;
@@ -69,6 +91,10 @@
             "7" = "";
             "12" = "";
           };
+        };
+        "hyprland/language" = {
+          format = "Lang: {}";
+          # "format-en" = "AMERICA, HELL YEAH!";
         };
         "hyprland/window" = {
           format = " {}";
@@ -98,6 +124,17 @@
           max-volume = 100;
           scroll-step = 10;
           format-icons = ["" "" ""];
+        };
+        mpris = {
+          format = "DEFAULT: {player_icon} {dynamic}";
+          format-paused = "DEFAULT: {status_icon} <i>{dynamic}</i>";
+          player-icons = {
+            default = "▶";
+            mpv = "🎵";
+          };
+          status-icons = {
+            paused = "⏸";
+          };
         };
       };
     };

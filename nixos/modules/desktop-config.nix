@@ -65,4 +65,14 @@
     nexusmods-app
     steamtinkerlaunch
   ];
+
+  systemd.services.unblock-bluetooth = {
+    description = "Unblock Bluetooth using rfkill";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.util-linux}/bin/rfkill unblock bluetooth";
+      User = "root"; # Ensure it runs with necessary permissions
+    };
+    wantedBy = ["sysinit.target"]; # Run early in the boot process
+  };
 }
