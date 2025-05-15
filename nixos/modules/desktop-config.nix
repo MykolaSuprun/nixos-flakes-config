@@ -62,7 +62,7 @@
     # looking-glass-client
     spice
     virt-manager-qt
-    nexusmods-app
+    nexusmods-app-unfree
     steamtinkerlaunch
   ];
 

@@ -237,6 +237,7 @@ in {
   systemd.tmpfiles.rules = ["f /dev/shm/looking-glass 0660 mykolas kvm -"];
 
   environment = {
+    enableAllTerminfo = true;
     shells = with pkgs; [zsh fish nushell];
 
     sessionVariables = {

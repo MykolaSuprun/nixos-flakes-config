@@ -23,6 +23,7 @@
     nerd-fonts.zed-mono
     nerd-fonts.roboto-mono
     nerd-fonts.noto
+    nerd-fonts.overpass
     nerd-fonts.liberation
     nerd-fonts.iosevka-term
     nerd-fonts.iosevka
@@ -39,6 +40,7 @@
     paratype-pt-mono
     paratype-pt-serif
     corefonts # windows fonts
+    rubik
     hannom
     wqy_zenhei
     wqy_microhei

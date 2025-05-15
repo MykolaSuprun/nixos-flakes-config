@@ -14,7 +14,6 @@
       focusEvents = true;
       keyMode = "vi";
       mouse = true;
-      newSession = true;
       resizeAmount = 10;
       shell = "${pkgs.zsh}/bin/zsh";
 
@@ -40,7 +39,7 @@
       extraConfig = ''
         # GENERAL SETTINGS
         # set tmux attach to create new session if none is available
-        new-session -n $HOST
+        # new-session -n $HOST
 
         setw -g aggressive-resize on
 
