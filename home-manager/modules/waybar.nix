@@ -115,7 +115,7 @@
 
             {device_enumerate}'';
           tooltip-format-enumerate-connected = "{device_alias}	{device_address}";
-          on-click = "hyprctl dispatch exec [floating] overskride";
+          on-click = "hyprctl dispatch exec [floating] bluejay";
         };
         wireplumber = {
           format = " {icon} {volume}% ";

@@ -26,6 +26,7 @@
     # dev tools
     cachix
     my-neovim.packages.${system}.default
+    mynav
     nvtopPackages.amd
     btop
     lazydocker

@@ -97,6 +97,10 @@ in {
       initContent = ''
         source ${shell_init}/bin/init_shell
         ${builtins.readFile ./../configurations/mykolas/zsh/zshrc}
+        # Auto-start tmux if no serve is found. Otherwise choose session with fzf
+        # if [[ -z "$TMUX" ]]; then
+        #   ${tmux_init}/bin/start_tmux
+        # fi
       '';
       antidote = {
         enable = true;
@@ -110,7 +114,11 @@ in {
       enable = true;
       enableCompletion = true;
       initExtra = ''
-        ${shell_init}
+        source ${shell_init}/bin/init_shell
+        # Auto-start tmux if no serve is found. Otherwise choose session with fzf
+        # if [[ -z "$TMUX" ]]; then
+        #   ${tmux_init}/bin/start_tmux
+        # fi
       '';
     };
   };

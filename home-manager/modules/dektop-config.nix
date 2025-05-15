@@ -21,8 +21,6 @@
     # internet
     mullvad-browser
     inputs.zen-browser.packages.${pkgs.system}.default
-    vivaldi
-    vivaldi-ffmpeg-codecs
     protonvpn-gui
     lbry
 

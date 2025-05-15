@@ -84,8 +84,9 @@ in {
     hyprsysteminfo
     hyprland-qt-support
     hyprutils
-    overskride
-    blueman
+    bluejay
+    blueberry
+
     rofi-wayland
     rofi-network-manager
     swaynotificationcenter
@@ -189,7 +190,7 @@ in {
         "2,monitor:$monitor_1,default:false"
         "3,monitor:$monitor_1,default:false"
         "4,monitor:$monitor_1,default:false"
-        "4,on-created-empty: pidof telegram-desktop || uwsm app telegram-desktop"
+        "4,on-created-empty: pidof Telegram || uwsm app Telegram"
         "7,monitor:$monitor_1,default:false"
         "8,monitor:$monitor_1,default:false"
         "9,monitor:$monitor_1,default:false"
@@ -204,6 +205,11 @@ in {
         "fullscreenstate 3, class:^(gamescope.*)$"
         "immediate, class:^(overwatch.*)$"
         "immediate, class:^(titanfall.*)$"
+        # clair obscur expedition 33
+        "immediate, class:^(steam_app_1903340.*)$"
+        "idleinhibit focus, class:^(steam_app_1903340.*)$"
+        "immediate, class:^(steam_app_3564860.*)$"
+        "idleinhibit focus, class:^(steam_app_3564860.*)$"
         "fullscreen, class:^(titanfall.*)$"
         "immediate, class:^(bioshock.*)$"
         "immediate, class:^(helldivers.*)$"
