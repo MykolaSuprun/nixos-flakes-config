@@ -22,7 +22,7 @@
     determinate.url = "github:DeterminateSystems/determinate/custom-conf";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1.0.tar.gz";
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.05";
     # nixpkgs-stable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2405.*.tar.gz";
     home-manager = {
       # url = "https://flakehub.com/f/nix-community/home-manager/0.1.0.tar.gz";
@@ -32,6 +32,11 @@
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
       flake = true;
+    };
+    nix-on-droid = {
+      url = "github:nix-community/nix-on-droid";      
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
     zen-browser = {
       url = "github:youwen5/zen-browser-flake";
@@ -70,12 +75,14 @@
     nixpkgs-stable,
     home-manager,
     nixos-wsl,
+    nix-on-droid,
     catppuccin,
     my-neovim,
     ...
   } @ inputs: let
     inherit (self) outputs;
     system = "x86_64-linux";
+    system-droid = "aarch64-linux";
 
     pkgs = import nixpkgs {
       inherit system;
@@ -94,6 +101,15 @@
       config.allowUnfree = true;
       config.permittedInsecurePackages = [];
     };
+
+    pkgs-nix-on-droid = import nixpkgs {
+        system = system-droid;
+
+        overlays = [
+          nix-on-droid.overlays.default
+          # add other overlays
+        ];
+      };
 
     lib = nixpkgs.lib;
   in {
@@ -162,25 +178,35 @@
         specialArgs = {inherit inputs outputs pkgs-stable my-neovim;};
       };
     };
-    # homeConfigurations = {
-    #   mykolas = home-manager.lib.homeManagerConfiguration {
-    #     inherit pkgs;
-    #     modules = [
-    #       # inputs.hyprland.homeManagerModules.default
-    #       catppuccin.homeModules.catppuccin
-    #       ./home-manager/configurations/mykolas/home-configuration.nix
-    #       ./home-manager/modules/geks-nixos.nix
-    #     ];
-    #     extraSpecialArgs = {
-    #       inherit
-    #         inputs
-    #         outputs
-    #         pkgs
-    #         pkgs-stable
-    #         my-neovim
-    #         ;
-    #     };
-    #   };
-    # };
+
+    nixOnDroidConfigurations.nix-on-droid = nix-on-droid.lib.nixOnDroidConfiguration {
+      pkgs = pkgs-nix-on-droid;
+      modules = [ 
+      	./nixos/configurations/nix-on-droid/configuration.nix
+        ./nixos/modules/nix-on-droid.nix
+          # home-manager setup
+          # home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              backupFileExtension = "hm-back";
+              config = {
+                imports = [
+                  catppuccin.homeModules.catppuccin
+                  ./home-manager/configurations/mykolas/home-nix-on-droid.nix
+                  ./home-manager/modules/geks-nix-on-droid.nix
+                ];
+              };
+              extraSpecialArgs = {
+                inherit inputs outputs pkgs-stable my-neovim;
+              };
+            };
+          }
+      ];
+      extraSpecialArgs = {
+        # rootPath = ./.;
+      };
+    };
   };
 }
