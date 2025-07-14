@@ -27,7 +27,7 @@
   home.packages = with pkgs; [
     # dev tools
     cachix
-    # my-neovim.packages.${system}.default
+    # inputs.my-neovim.packages.${system}.default
     lazydocker
     nodejs
     gh # Github CLI

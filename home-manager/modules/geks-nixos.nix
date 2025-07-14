@@ -20,10 +20,10 @@
   home.sessionVariables = {
     NIXOS_OZONE_WL = "1";
     STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
-    NIXOS_CONF_DIR = "$HOME/.nixconf";
+    NIXOS_CONF_DIR = "$HOME/workspaces/src/nixconf";
+    NH_FLAKE = "$HOME/workspaces/src/nixconf";
     NIXOS_TARGET = "geks-nixos";
     BEMENU_BACKEND = "wayland";
-    NH_FLAKE = "/home/mykolas/.nixconf";
     BROWSER = "${inputs.zen-browser.packages.${pkgs.system}.default}/bin/zen";
     DEFAULT_BROWSER = "${inputs.zen-browser.packages.${pkgs.system}.default}/bin/zen";
   };

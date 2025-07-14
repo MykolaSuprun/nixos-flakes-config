@@ -24,18 +24,17 @@
     gpgconf --launch gpg-agent
     export VI_MODE_SET_CURSOR=true
     export NIXPKGS_ALLOW_UNFREE=1
-    export confdir=${conf_root}
     export EDITOR=nvim
     export VISUAL=nvim
 
     # Aliases
-    alias editconf="cd $confdir; nvim ."
-    alias nxcnf="$confdir/nxcnf.sh"
-    alias nixos-build="$confdir/scripts/nixos-build.sh"
-    alias nix-update="cd $confdir; nix flake update --accept-flake-config; cd -"
-    alias confdir="cd $confdir"
+    alias editconf="cd $NIXOS_CONF_DIR; nvim ."
+    alias nxcnf="$NIXOS_CONF_DIR/nxcnf.sh"
+    alias nixos-build="$NIXOS_CONF_DIR/scripts/nixos-build.sh"
+    alias nix-update="cd $NIXOS_CONF_DIR; nix flake update --accept-flake-config; cd -"
+    alias confdir="cd $NIXOS_CONF_DIR"
     alias nixgc="nix-collect-garbage"
-    alias arch-build="$confdir/home/mykolas/distrobox/build-arch.sh"
+    alias arch-build="$NIXOS_CONF_DIR/home/mykolas/distrobox/build-arch.sh"
     alias arch="distrobox-enter arch"
     alias vim="${neovim_github}"
     alias nv="${nvf-local}"
@@ -54,7 +53,10 @@
     fi
   '';
 in {
-  home.packages = with pkgs; [babelfish grc];
+  home.packages = with pkgs; [
+    babelfish
+    grc
+  ];
 
   programs = {
     nushell = {

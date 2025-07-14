@@ -138,8 +138,8 @@ in {
       ];
 
       "$mainMod" = "SUPER";
-      "$fileManager" = "uwsm app -- ${pkgs.wezterm}/bin/wezterm lf";
-      "$terminal" = "uwsm app -- ${pkgs.wezterm}/bin/wezterm";
+      "$fileManager" = "uwsm app -- ${pkgs.ghostty}/bin/ghostty -e lf";
+      "$terminal" = "uwsm app -- ${pkgs.ghostty}/bin/ghostty";
       "$menu" = "${menu_script}/bin/run_menu";
 
       exec-once = [
@@ -169,6 +169,10 @@ in {
         "rounding" = 10;
         "inactive_opacity" = 0.95;
       };
+
+      animation = [
+        "global, 1, 0.5, default" 
+      ];
 
       env = [];
 
@@ -205,9 +209,11 @@ in {
         "fullscreenstate 3, class:^(gamescope.*)$"
         "immediate, class:^(overwatch.*)$"
         "immediate, class:^(titanfall.*)$"
-        # clair obscur expedition 33
+        # Clair Obscur Uxpedition 33
         "immediate, class:^(steam_app_1903340.*)$"
         "idleinhibit focus, class:^(steam_app_1903340.*)$"
+        # Hogwarts Legacy
+        "immediate, class:^(steam_app_990080.*)$"
         "immediate, class:^(steam_app_3564860.*)$"
         "idleinhibit focus, class:^(steam_app_3564860.*)$"
         "fullscreen, class:^(titanfall.*)$"
