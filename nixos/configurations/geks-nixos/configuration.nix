@@ -4,7 +4,6 @@
   pkgs,
   pkgs-stable,
   lib,
-  my-neovim,
   ...
 }: let
   # pkgs-hyprland =
@@ -247,7 +246,6 @@ in {
 
     systemPackages = with pkgs; [
       # dev tools
-      my-neovim.packages.${system}.default
       vscode
       lazygit
       bottom

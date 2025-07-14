@@ -1,6 +1,6 @@
 {
+  inputs,
   pkgs,
-  my-neovim,
   ...
 }: {
   programs = {
@@ -25,8 +25,11 @@
   home.packages = with pkgs; [
     # dev tools
     cachix
-    my-neovim.packages.${system}.default
+    inputs.my-neovim.packages.${system}.default
+    inputs.my-nixvim.packages.${system}.nixvim
+    inputs.my-nixvim.packages.${system}.lazyvim
     mynav
+    ghostty
     nvtopPackages.amd
     btop
     lazydocker

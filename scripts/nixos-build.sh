@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-cd ~/.nixconf
+cd $NIXOS_CONF_DIR
 git diff -U0 *.nix
 # sudo nixos-rebuild switch --flake .#$NIXOS_TARGET --accept-flake-config
 nh os switch -- --accept-flake-config

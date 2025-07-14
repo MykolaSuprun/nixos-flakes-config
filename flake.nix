@@ -61,6 +61,10 @@
       url = "git+ssh://git@github.com/MykolaSuprun/neovim-nvf-config.git?ref=main";
       flake = true;
     };
+    my-nixvim = {
+      url = "git+ssh://git@github.com/MykolaSuprun/nixvim-config.git?ref=v2";
+      flake = true;
+    };
   };
 
   outputs = {
@@ -71,7 +75,6 @@
     home-manager,
     nixos-wsl,
     catppuccin,
-    my-neovim,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -123,12 +126,12 @@
                 ];
               };
               extraSpecialArgs = {
-                inherit inputs outputs system pkgs-stable my-neovim;
+                inherit inputs outputs system pkgs-stable;
               };
             };
           }
         ];
-        specialArgs = {inherit inputs outputs pkgs-stable my-neovim;};
+        specialArgs = {inherit inputs outputs pkgs-stable;};
       };
       geks-wsl = lib.nixosSystem {
         inherit system;
@@ -154,33 +157,13 @@
                 ];
               };
               extraSpecialArgs = {
-                inherit inputs outputs system pkgs pkgs-stable my-neovim;
+                inherit inputs outputs system pkgs pkgs-stable;
               };
             };
           }
         ];
-        specialArgs = {inherit inputs outputs pkgs-stable my-neovim;};
+        specialArgs = {inherit inputs outputs pkgs-stable;};
       };
     };
-    # homeConfigurations = {
-    #   mykolas = home-manager.lib.homeManagerConfiguration {
-    #     inherit pkgs;
-    #     modules = [
-    #       # inputs.hyprland.homeManagerModules.default
-    #       catppuccin.homeModules.catppuccin
-    #       ./home-manager/configurations/mykolas/home-configuration.nix
-    #       ./home-manager/modules/geks-nixos.nix
-    #     ];
-    #     extraSpecialArgs = {
-    #       inherit
-    #         inputs
-    #         outputs
-    #         pkgs
-    #         pkgs-stable
-    #         my-neovim
-    #         ;
-    #     };
-    #   };
-    # };
   };
 }
