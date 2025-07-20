@@ -20,9 +20,11 @@
 
     # internet
     mullvad-browser
+    ladybird
     inputs.zen-browser.packages.${pkgs.system}.default
     protonvpn-gui
     lbry
+    # teamviewer
 
     # social
     discord
@@ -39,6 +41,7 @@
     libreoffice-qt
     ledger-live-desktop
     protonup-qt
+    protonplus
     protonup-ng
     ldacbt
     spotify-player

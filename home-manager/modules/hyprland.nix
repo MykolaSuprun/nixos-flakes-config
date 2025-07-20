@@ -119,11 +119,11 @@ in {
 
     plugins = with pkgs.hyprlandPlugins; [
       # inputs.hyprland-plugins.packages.${pkgs.system}.hyprbars
-      # inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
+      inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
       # inputs.hyprland-plugins.packages.${pkgs.system}.hyprtrails
       # inputs.hy3.packages.${pkgs.system}.hy3
       # hy3
-      hyprexpo
+      # hyprexpo
     ];
 
     xwayland.enable = true;
@@ -167,11 +167,11 @@ in {
 
       decoration = {
         "rounding" = 10;
-        "inactive_opacity" = 0.95;
+        "inactive_opacity" = 0.98;
       };
 
       animation = [
-        "global, 1, 0.5, default" 
+        "global, 1, 0.5, default"
       ];
 
       env = [];
@@ -214,6 +214,7 @@ in {
         "idleinhibit focus, class:^(steam_app_1903340.*)$"
         # Hogwarts Legacy
         "immediate, class:^(steam_app_990080.*)$"
+        "immediate, class:^(steam_app_3489700.*)$"
         "immediate, class:^(steam_app_3564860.*)$"
         "idleinhibit focus, class:^(steam_app_3564860.*)$"
         "fullscreen, class:^(titanfall.*)$"

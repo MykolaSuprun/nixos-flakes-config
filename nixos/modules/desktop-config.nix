@@ -4,6 +4,7 @@
   ...
 }: {
   services.hardware.bolt.enable = true;
+  services.teamviewer.enable = true;
   programs = {
     steam = {
       enable = true;
