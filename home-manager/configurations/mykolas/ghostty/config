@@ -46,3 +46,7 @@ theme = catppuccin-latte
 # font-family = JetBrainsMono NF Regular
 font-size = 10
 gtk-single-instance = true
+window-theme = system
+gtk-titlebar = false
+gtk-wide-tabs = false
+gtk-adwaita = false

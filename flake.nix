@@ -56,6 +56,10 @@
     #   url = "github:hyprland-community/pyprland";
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
+    stylix = {
+      url = "github:danth/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     catppuccin.url = "github:catppuccin/nix";
     my-neovim = {
       url = "git+ssh://git@github.com/MykolaSuprun/neovim-nvf-config.git?ref=main";
@@ -74,6 +78,7 @@
     nixpkgs-stable,
     home-manager,
     nixos-wsl,
+    stylix,
     catppuccin,
     ...
   } @ inputs: let
@@ -83,6 +88,7 @@
     pkgs = import nixpkgs {
       inherit system;
       config.allowUnfree = true;
+      config.permittedInsecurePackages = ["openssl-1.1.1w"];
       overlays =
         [
           # (final: prev: {
@@ -106,6 +112,7 @@
         inherit pkgs;
         modules = [
           determinate.nixosModules.default
+          stylix.nixosModules.stylix
           catppuccin.nixosModules.catppuccin
           ./nixos/configurations/geks-nixos/hardware-configuration.nix
           ./nixos/configurations/geks-nixos/configuration.nix
@@ -120,6 +127,7 @@
               users.mykolas = {
                 imports = [
                   # inputs.hyprland.homeManagerModules.default
+                  # stylix.homeModules.stylix
                   catppuccin.homeModules.catppuccin
                   ./home-manager/configurations/mykolas/home-configuration.nix
                   ./home-manager/modules/geks-nixos.nix

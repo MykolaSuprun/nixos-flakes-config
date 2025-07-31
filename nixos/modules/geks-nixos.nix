@@ -7,7 +7,8 @@
     ./input_method.nix
     ./sys-pkgs.nix
     ./desktop-config.nix
-    ./catppuccin.nix
+    ./stylix.nix
+    # ./catppuccin.nix
     ./hyprland.nix
     ./flatpak.nix
   ];

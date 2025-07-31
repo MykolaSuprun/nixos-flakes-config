@@ -2,7 +2,12 @@
 plugins = [
   "scratchpads",
   "wallpapers",
+  "expose",
+  "shortcuts_menu"
 ]
+
+[expose]
+include_special = true
 
 [wallpapers]
 path = "~/.config/wallpapers_ln" # path to the folder with background images
@@ -16,12 +21,13 @@ clear_command = "swww clear"
 animation = "fromTop"
 # command = "kitty --class kitty-dropterm"
 # class = "kitty-dropterm"
-command = "ghostty"
-class = "com.mitchellh.ghostty"
+command = "ghostty --class=com.mitchellh.ghostty.dropdown"
+class = "com.mitchellh.ghostty.dropdown"
 size = "85% 75%"
 max_size = "2400px 100%"
 margin = 50
 allow_special_workspaces = true
+multi = false
 
 [scratchpads.volume]
 animation = "fromTop"
@@ -31,6 +37,9 @@ size = "33% 50%"
 unfocus = "hide"
 lazy = true
 allow_special_workspaces = true
+
+[shortcuts_menu.entries]
+"chromium" = "chromium"
 
 # [scratchpads.telegram]
 # animation = "fromBottom"

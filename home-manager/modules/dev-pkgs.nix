@@ -29,6 +29,7 @@
     inputs.my-nixvim.packages.${system}.nixvim
     inputs.my-nixvim.packages.${system}.lazyvim
     mynav
+    sublime4
     zed-editor
     ghostty
     nvtopPackages.amd

@@ -28,7 +28,7 @@
     export VISUAL=nvim
 
     # Aliases
-    alias editconf="cd $NIXOS_CONF_DIR; nvim ."
+    alias editconf="cd $NIXOS_CONF_DIR; nixvim ."
     alias nxcnf="$NIXOS_CONF_DIR/nxcnf.sh"
     alias nixos-build="$NIXOS_CONF_DIR/scripts/nixos-build.sh"
     alias nix-update="cd $NIXOS_CONF_DIR; nix flake update --accept-flake-config; cd -"
