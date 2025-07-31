@@ -39,12 +39,6 @@
       enable = true;
       flavor = "latte";
     };
-    gtk = {
-      enable = true;
-      flavor = "latte";
-      icon.enable = true;
-      gnomeShellTheme = true;
-    };
   };
 
   gtk = {

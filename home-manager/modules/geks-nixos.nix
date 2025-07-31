@@ -12,7 +12,8 @@
     # ./zellij.nix
     ./dev-pkgs.nix
     ./dektop-config.nix
-    ./catppuccin.nix
+    ./stylix.nix
+    # ./catppuccin.nix
     ./hyprland.nix
     ./waybar.nix
   ];

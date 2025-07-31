@@ -119,7 +119,7 @@ in {
 
     plugins = with pkgs.hyprlandPlugins; [
       # inputs.hyprland-plugins.packages.${pkgs.system}.hyprbars
-      inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
+      # inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
       # inputs.hyprland-plugins.packages.${pkgs.system}.hyprtrails
       # inputs.hy3.packages.${pkgs.system}.hy3
       # hy3
@@ -171,7 +171,7 @@ in {
       };
 
       animation = [
-        "global, 1, 0.5, default"
+        "global, 1, 0.1, default"
       ];
 
       env = [];

@@ -20,7 +20,6 @@
 
     # internet
     mullvad-browser
-    ladybird
     inputs.zen-browser.packages.${pkgs.system}.default
     protonvpn-gui
     lbry
