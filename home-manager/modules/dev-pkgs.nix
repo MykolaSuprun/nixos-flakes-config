@@ -20,6 +20,20 @@
       tmux.enableShellIntegration = true;
     };
     lazygit = {enable = true;};
+    ghostty = {
+      enable = true;
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      installVimSyntax = true;
+      settings = {
+        font-size = 10;
+        gtk-single-instance = true;
+        window-theme = "system";
+        gtk-titlebar = false;
+        gtk-wide-tabs = false;
+        gtk-adwaita = false;
+      };
+    };
   };
 
   home.packages = with pkgs; [
@@ -31,7 +45,6 @@
     mynav
     sublime4
     zed-editor
-    ghostty
     nvtopPackages.amd
     btop
     lazydocker

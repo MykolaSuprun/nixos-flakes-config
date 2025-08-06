@@ -3,6 +3,24 @@
     enable = true;
     # systemd.enable = true;
     # systemd.target = "hyprland-session.target";
+    # window#waybar, tooltip {
+    #     background: alpha(@base00, 1.000000);
+    # }
+    #
+    # * {
+    #     font-family: "JetBrainsMono Nerd Font";
+    #     font-size: 10pt;
+    # }
+    #
+    # @define-color base00 #eff1f5; @define-color base01 #e6e9ef;
+    # @define-color base02 #ccd0da; @define-color base03 #bcc0cc;
+    # @define-color base04 #acb0be; @define-color base05 #4c4f69;
+    # @define-color base06 #dc8a78; @define-color base07 #7287fd;
+    #
+    # @define-color base08 #d20f39; @define-color base09 #fe640b;
+    # @define-color base0A #df8e1d; @define-color base0B #40a02b;
+    # @define-color base0C #179299; @define-color base0D #1e66f5;
+    # @define-color base0E #8839ef; @define-color base0F #dd7878;
     style = ''
       * {
           border: none;
@@ -13,8 +31,7 @@
       }
 
       window#waybar {
-          background: alpha(@surface0, 0.9);
-          color: @text;
+          background: alpha(@base00, 0.0);
 
           margin: 5px 10px; /* Adds 5px margin top/bottom,
                             10px left/right. Adjust values as needed. */
@@ -24,43 +41,31 @@
           box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3); /* Example shadow */
       }
       #clock {
-          background: @base;
-          color: @text;
           padding: 0 0.5em;
           margin: 0.25em;
           border-radius: 5px;
       }
       #wireplumber {
-          background: @base;
-          color: @text;
           padding: 0 0.5em;
           margin: 0.25em;
           border-radius: 5px;
       }
       #bluetooth {
-          background: @base;
-          color: @text;
           padding: 0 0.5em;
           margin: 0.25em;
           border-radius: 5px;
       }
       #workspaces {
-          background: @base;
-          color: @text;
           padding: 0 0.5em;
           margin: 0.25em;
           border-radius: 5px;
       }
       #workspaces button {
           padding: 0 0.5em;
-          color: @text;
       }
       #workspaces button.active {
-          color: @blue;
       }
       #mpris {
-          background: @base;
-          color: @text;
           padding: 0 0.5em;
           margin: 0.25em;
           border-radius: 5px;
@@ -80,7 +85,7 @@
         modules-center = ["clock"];
         modules-right = ["wireplumber" "mpris" "bluetooth"];
         "hyprland/workspaces" = {
-          format = "<span font='16' weight='bold'>{icon}</span>";
+          format = "<span font='16' weight='bold'> {icon} </span>";
           # active-only = true;
           show-special = false;
           format-icons = {
