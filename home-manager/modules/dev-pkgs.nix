@@ -1,6 +1,7 @@
 {
   inputs,
   pkgs,
+  system,
   ...
 }: {
   programs = {
@@ -20,10 +21,17 @@
       tmux.enableShellIntegration = true;
     };
     lazygit = {enable = true;};
+    kitty = {
+      enable = true;
+      settings = {
+        force_ltr = "no";
+        disable_ligatures = "never";
+        sync_to_monitor = "no";
+        confirm_os_window_close = 0;
+      };
+    };
     ghostty = {
       enable = true;
-      enableBashIntegration = true;
-      enableZshIntegration = true;
       installVimSyntax = true;
       settings = {
         font-size = 10;
@@ -32,6 +40,7 @@
         gtk-titlebar = false;
         gtk-wide-tabs = false;
         gtk-adwaita = false;
+        # theme = "catppuccin-latte";
       };
     };
   };
@@ -40,8 +49,8 @@
     # dev tools
     cachix
     inputs.my-neovim.packages.${system}.default
-    inputs.my-nixvim.packages.${system}.nixvim
     inputs.my-nixvim.packages.${system}.lazyvim
+    inputs.my-nixvim.packages.${system}.nixvim
     mynav
     sublime4
     zed-editor

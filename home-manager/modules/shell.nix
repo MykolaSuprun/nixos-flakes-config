@@ -3,23 +3,7 @@
   pkgs,
   ...
 }: let
-  neovim-local = "nix run ~/src/nixvim-config -- ";
-  nvf-local = "nix run ~/src/neovim-nvf-config -- ";
-  neovim_github = "nix run github:MykolaSuprun/nixvim-config #. -- ";
-  conf_root = "$NIXOS_CONF_DIR";
   shell_init = pkgs.writeShellScriptBin "init_shell" ''
-    # if [[ $(uname -a | grep arch) ]]
-    # then
-    #   distrobox-host-exec xhost +local:
-    #   xhost +SI:localuser:$USER
-    #   #PROMPT="%B%F{47}%n%f%b%B:%b%B%F{39}%m%f%b%B>%b "
-    #   alias vi="nvim"
-    #   alias vim="${neovim-local}"
-    #   alias nano="nvim"
-    #   alias tmux='tmux -2'
-    #   alias steamtinkerlaunch=/home/mykolas/.steam/root/compatibilitytools.d/SteamTinkerLaunch
-    #   clear
-    # fi
     export GPG_TTY=$(tty)
     gpgconf --launch gpg-agent
     export VI_MODE_SET_CURSOR=true
@@ -34,12 +18,9 @@
     alias nix-update="cd $NIXOS_CONF_DIR; nix flake update --accept-flake-config; cd -"
     alias confdir="cd $NIXOS_CONF_DIR"
     alias nixgc="nix-collect-garbage"
-    alias arch-build="$NIXOS_CONF_DIR/home/mykolas/distrobox/build-arch.sh"
-    alias arch="distrobox-enter arch"
-    alias vim="${neovim_github}"
-    alias nv="${nvf-local}"
+    # alias arch-build="$NIXOS_CONF_DIR/home/mykolas/distrobox/build-arch.sh"
+    # alias arch="distrobox-enter arch"
     alias vi="nvim"
-    alias tmux="tmux -2"
     alias ls="eza"
     alias cat="bat --theme base16-256"
   '';
@@ -85,6 +66,16 @@ in {
       enableFishIntegration = true;
       enableNushellIntegration = true;
       enableTransience = true;
+    };
+    zoxide = {
+      enable = true;
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      enableFishIntegration = true;
+      enableNushellIntegration = true;
+      options = [
+        "--cmd cd"
+      ];
     };
     direnv = {
       enableZshIntegration = true;

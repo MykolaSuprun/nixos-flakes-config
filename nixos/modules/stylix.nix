@@ -32,4 +32,7 @@ in {
       };
     };
   };
+  environment.sessionVariables = {
+    STYLIX_COLORSCHEME = "${base16_scheme}";
+  };
 }
