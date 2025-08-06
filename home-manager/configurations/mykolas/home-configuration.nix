@@ -41,10 +41,10 @@
       source = ./kitty;
       recursive = true;
     };
-    "./.config/ghostty" = {
-      source = ./ghostty;
-      recursive = true;
-    };
+    # "./.config/ghostty" = {
+    #   source = ./ghostty;
+    #   recursive = true;
+    # };
     "./.gnupg/" = {
       source = ./gnupg;
       recursive = true;

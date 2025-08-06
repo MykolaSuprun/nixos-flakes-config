@@ -14,24 +14,24 @@ config.tab_bar_at_bottom = true -- render tab bar using terminal font
 config.tab_max_width = 32
 
 -- Appearance
-config.color_scheme = "Catppuccin Latte"
+-- config.color_scheme = "Catppuccin Latte"
 config.window_decorations = "NONE"
 config.window_background_opacity = 1
 config.macos_window_background_blur = 20
 config.display_pixel_geometry = "RGB"
 config.freetype_load_target = "Light"
 config.window_padding = {
-  left = 2,
-  right = 2,
-  top = 0,
-  bottom = 0,
+	left = 2,
+	right = 2,
+	top = 0,
+	bottom = 0,
 }
 
 config.font_size = 10
 config.font = wezterm.font({
-  family = "JetBrainsMono Nerd Font",
-  weight = "Medium",
-  harfbuzz_features = { "calt=1", "clig=1", "liga=1" },
+	family = "JetBrainsMono Nerd Font",
+	weight = "Medium",
+	harfbuzz_features = { "calt=1", "clig=1", "liga=1" },
 })
 use_cap_height_to_scale_fallback_fonts = true
 -- window size on open
@@ -46,8 +46,8 @@ config.front_end = "WebGpu" -- Options: "OpenGL", "Software", "WebGpu"
 
 config.term = "wezterm"
 config.set_environment_variables = {
-  TERM = "wezterm",
-  COLORTERM = "truecolor",
+	TERM = "wezterm",
+	COLORTERM = "truecolor",
 }
 
 return config

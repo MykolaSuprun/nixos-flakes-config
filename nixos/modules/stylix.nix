@@ -7,23 +7,28 @@ in {
     base16Scheme = "${pkgs.base16-schemes}/share/themes/${base16_scheme}.yaml";
     fonts = {
       serif = {
-        package = pkgs.dejavu_fonts;
-        name = "DejaVu Serif";
+        package = pkgs.noto-fonts;
+        name = "Noto Serif";
       };
 
       sansSerif = {
-        package = pkgs.dejavu_fonts;
-        name = "DejaVu Sans";
+        package = pkgs.noto-fonts;
+        name = "Noto Sans";
       };
 
       monospace = {
-        package = pkgs.dejavu_fonts;
-        name = "JetBrainsMono NF Regular";
+        package = pkgs.nerd-fonts.jetbrains-mono;
+        name = "JetBrainsMono Nerd Font";
       };
 
       emoji = {
         package = pkgs.noto-fonts-emoji;
         name = "Noto Color Emoji";
+      };
+      sizes = {
+        applications = 10;
+        desktop = 10;
+        terminal = 12;
       };
     };
   };
