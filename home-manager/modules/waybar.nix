@@ -7,8 +7,7 @@
     #     background: alpha(@base00, 1.000000);
     # }
     #
-    # * {
-    #     font-family: "JetBrainsMono Nerd Font";
+    # * { font-family: "JetBrainsMono Nerd Font";
     #     font-size: 10pt;
     # }
     #
@@ -25,7 +24,7 @@
       * {
           border: none;
           border-radius: 0;
-          font-family: JetBrainsMono NF, Roboto, Helvetica, Arial, sans-serif;
+          font-family: JetBrainsMono Nerd Font;
           font-size: 13px;
           min-height: 0;
       }
@@ -44,6 +43,7 @@
           padding: 0 0.5em;
           margin: 0.25em;
           border-radius: 5px;
+          background: @base08;
       }
       #wireplumber {
           padding: 0 0.5em;
@@ -61,14 +61,21 @@
           border-radius: 5px;
       }
       #workspaces button {
-          padding: 0 0.5em;
+          padding: 0em 0.55em 0em 0.2em;
+          margin: 0.25em;
+          border-radius: 5px;
       }
       #workspaces button.active {
+          padding: 0em 0.55em 0em 0.2em;
+          margin: 0.25em;
+          border-radius: 5px;
       }
       #mpris {
           padding: 0 0.5em;
           margin: 0.25em;
           border-radius: 5px;
+          background: @base0A;
+          color: @base00;
       }
     '';
     settings = {
@@ -85,28 +92,36 @@
         modules-center = ["clock"];
         modules-right = ["wireplumber" "mpris" "bluetooth"];
         "hyprland/workspaces" = {
-          format = "<span font='16' weight='bold'> {icon} </span>";
+          format = "<span font='16' weight='bold'> {icon} <sub>{name}</sub> </span>";
           # active-only = true;
           show-special = false;
           format-icons = {
-            "1" = "";
+            defalut = "󰧨";
+            "1" = "";
             "2" = "";
-            "3" = "";
+            "3" = "";
             "4" = "󰭹";
-            "7" = "";
+            "5" = "󰧨";
+            "6" = "󰧨";
+            "7" = "";
+            "8" = "󰧨";
+            "9" = "󰧨";
+            "10" = "󰧨";
+            "11" = "󱓧";
             "12" = "";
+            "13" = "󰧨";
+            "14" = "󰧨";
           };
         };
         "hyprland/language" = {
           format = "Lang: {}";
-          # "format-en" = "AMERICA, HELL YEAH!";
         };
         "hyprland/window" = {
           format = " {}";
           rewrite = {
-            "(.*) — Mozilla Firefox" = "🌎 $1";
-            "(.*) - fish" = "> [$1]";
-            "(.*) - tmux" = "> [$1]";
+            "(.*) — zen" = "🌎 $1";
+            "(.*) - ghostty" = ">  [$1]";
+            "(.*) - tmux" = ">  [$1]";
           };
           "separate-outputs" = true;
         };

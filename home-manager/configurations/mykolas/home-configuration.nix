@@ -37,10 +37,10 @@
     };
     "./.wezterm.lua".source = ./wezterm/wezterm.lua;
     "./.gitconfig".source = ./gitconfig/gitconfig;
-    "./.config/kitty" = {
-      source = ./kitty;
-      recursive = true;
-    };
+    # "./.config/kitty" = {
+    #   source = ./kitty;
+    #   recursive = true;
+    # };
     # "./.config/ghostty" = {
     #   source = ./ghostty;
     #   recursive = true;

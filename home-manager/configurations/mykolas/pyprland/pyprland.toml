@@ -19,10 +19,10 @@ clear_command = "swww clear"
 
 [scratchpads.term]
 animation = "fromTop"
-# command = "kitty --class kitty-dropterm"
-# class = "kitty-dropterm"
-command = "ghostty --class=com.mitchellh.ghostty.dropdown"
-class = "com.mitchellh.ghostty.dropdown"
+command = "kitty --class kitty-dropterm"
+class = "kitty-dropterm"
+# command = "ghostty --class=com.mitchellh.ghostty.dropdown"
+# class = "com.mitchellh.ghostty.dropdown"
 size = "85% 75%"
 max_size = "2400px 100%"
 margin = 50

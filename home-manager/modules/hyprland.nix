@@ -19,7 +19,6 @@
     rofi -show drun -run-command "uwsm app -- {cmd}"
   '';
   lock_screen = pkgs.writeShellScriptBin "lock_dp1" ''
-
         state="''${XDG_STATE_HOME}/togglemonitorlock"
         booleanvalue="false"
 
@@ -96,6 +95,7 @@ in {
     xorg.xrdb
     dbus-broker
     wlr-randr
+    wayland-bongocat
     # hyper
     # terminal
     alacritty-theme
@@ -134,12 +134,13 @@ in {
 
       "monitor" = [
         "$monitor_1,3440x1440@165,0x0,1,bitdepth,10,cm,hdr,sdrbrightness,1.35,sdrsaturation,1.0"
+        # "$monitor_1,3440x1440@165,0x0,1,bitdepth,10"
         # "DP-1,2560x1440@144,3440x0,1"
       ];
 
       "$mainMod" = "SUPER";
-      "$fileManager" = "uwsm app -- ${pkgs.ghostty}/bin/ghostty -e lf";
-      "$terminal" = "uwsm app -- ${pkgs.ghostty}/bin/ghostty";
+      "$terminal" = "uwsm app -- ${pkgs.kitty}/bin/kitty";
+      "$fileManager" = "uwsm app -- ${pkgs.kitty}/bin/kitty -e lf";
       "$menu" = "${menu_script}/bin/run_menu";
 
       exec-once = [
@@ -147,6 +148,7 @@ in {
         "systemctl --user enable --now hyprpolkitagent.service"
         "systemctl --user enable --now hypridle.service"
         "[workspace 1 silent] uwsm app -s a zen"
+        "[workspace 2 silent] uwsm app -s a kitty"
         "sleep 10 && uwsm app -s a cryptomator &"
         "sleep 11 && uwsm app -s a megasync"
       ];

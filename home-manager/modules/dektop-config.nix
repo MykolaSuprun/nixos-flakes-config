@@ -24,6 +24,9 @@
     protonvpn-gui
     lbry
     # teamviewer
+    rclone
+    rclone-ui
+    rclone-browser
 
     # social
     discord

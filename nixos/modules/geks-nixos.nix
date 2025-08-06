@@ -8,7 +8,7 @@
     ./sys-pkgs.nix
     ./desktop-config.nix
     ./stylix.nix
-    # ./catppuccin.nix
+    #  ./catppuccin.nix
     ./hyprland.nix
     ./flatpak.nix
   ];
