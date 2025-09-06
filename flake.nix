@@ -20,9 +20,7 @@
   inputs = {
     # determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
     determinate.url = "github:DeterminateSystems/determinate/custom-conf";
-    # pin nixpkgs until stylix qt platform issue is fixed
-    nixpkgs.url = "github:NixOS/nixpkgs/20075955deac2583bb12f07151c2df830ef346b4";
-    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1.0.tar.gz";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.05";
     # nixpkgs-stable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2405.*.tar.gz";

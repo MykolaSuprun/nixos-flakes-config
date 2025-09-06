@@ -9,6 +9,7 @@
     # ./fcitx5.nix
     # ./flatpak-overrides.nix
     ./tmux.nix
+    # ./kitty.nix
     # ./zellij.nix
     ./dev-pkgs.nix
     ./dektop-config.nix
