@@ -1,16 +1,15 @@
 {pkgs, ...}: {
-  program.kitty = {
+  programs.kitty = {
     enable = true;
+    enableGitIntegration = true;
     font = {
       name = "JetBrainsMono NF Normal";
-      size = 10;
+      size = 9;
     };
     shellIntegration = {
       enableZshIntegration = true;
       enableBashIntegration = true;
       enableFishIntegration = true;
-    };
-    setting = {
     };
   };
 }

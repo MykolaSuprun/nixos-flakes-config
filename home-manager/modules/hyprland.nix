@@ -6,11 +6,12 @@
   ...
 }: let
   hyprlock_script = pkgs.writeShellScriptBin "run_hyprlock" ''
-    swaylock -k -l -i ${config.home.homeDirectory}/.config/hyprlock-background
+    hyprlock
+    # swaylock -k -l -i ${config.home.homeDirectory}/.config/hyprlock-background
   '';
   hyprlock_script_alt = pkgs.writeShellScriptBin "run_hyprlock" ''
-    # hyprlock --config ${config.home.homeDirectory}/.config/hypr/hyprlock.conf.alt
-    swaylock -k -l -i ${config.home.homeDirectory}/.config/hyprlock-background-alt
+    hyprlock --config ${config.home.homeDirectory}/.config/hypr/hyprlock.conf.alt
+    # swaylock -k -l -i ${config.home.homeDirectory}/.config/hyprlock-background-alt
   '';
   menu_script = pkgs.writeShellScriptBin "run_menu" ''
     # bemenu-run -n -c -B 3 -W 0.3 -l 10 -i -w -H 20 --counter always \ --scrollbar always --binding vim --vim-esc-exits --single-instance \
