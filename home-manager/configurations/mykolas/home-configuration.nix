@@ -49,10 +49,10 @@
       source = ./gnupg;
       recursive = true;
     };
-    ".config/zellij" = {
-      source = ./zellij;
-      recursive = true;
-    };
+    # ".config/zellij" = {
+    #   source = ./zellij;
+    #   recursive = true;
+    # };
   };
 
   home.packages = with pkgs; [];

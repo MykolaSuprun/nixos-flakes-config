@@ -14,6 +14,9 @@
         enable = true;
         variant256Colors = true;
       };
+      zellij = {
+        enable = true;
+      };
     };
   };
 }
