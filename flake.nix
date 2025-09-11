@@ -18,8 +18,7 @@
   };
 
   inputs = {
-    # determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
-    determinate.url = "github:DeterminateSystems/determinate/custom-conf";
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1.0.tar.gz";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.05";
@@ -108,6 +107,7 @@
   in {
     homeModules = {
       tmux = import ./home-manager/modules/tmux.nix;
+      zellij = import ./home-manager/modules/zellij.nix;
       shell = import ./home-manager/modules/shell.nix;
     };
 
@@ -118,7 +118,7 @@
         modules = [
           determinate.nixosModules.default
           stylix.nixosModules.stylix
-          catppuccin.nixosModules.catppuccin
+          # catppuccin.nixosModules.catppuccin
           ./nixos/configurations/geks-nixos/hardware-configuration.nix
           ./nixos/configurations/geks-nixos/configuration.nix
           ./nixos/modules/geks-nixos.nix
@@ -133,7 +133,7 @@
                 imports = [
                   # inputs.hyprland.homeManagerModules.default
                   # stylix.homeModules.stylix
-                  catppuccin.homeModules.catppuccin
+                  # catppuccin.homeModules.catppuccin
                   ./home-manager/configurations/mykolas/home-configuration.nix
                   ./home-manager/modules/geks-nixos.nix
                 ];
@@ -150,10 +150,12 @@
         inherit system;
         inherit pkgs;
         modules = [
+          determinate.nixosModules.default
+          stylix.nixosModules.stylix
           ./nixos/configurations/geks-wsl/configuration.nix
           ./nixos/modules/nix-conf.nix
           ./nixos/modules/sys-pkgs.nix
-          catppuccin.nixosModules.catppuccin
+          # catppuccin.nixosModules.catppuccin
           nixos-wsl.nixosModules.wsl
           home-manager.nixosModules.home-manager
           ./nixos/modules/catppuccin.nix

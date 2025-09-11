@@ -10,7 +10,7 @@
     # ./flatpak-overrides.nix
     ./tmux.nix
     # ./kitty.nix
-    # ./zellij.nix
+    ./zellij.nix
     ./dev-pkgs.nix
     ./dektop-config.nix
     ./stylix.nix

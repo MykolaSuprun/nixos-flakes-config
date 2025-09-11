@@ -45,12 +45,24 @@
     kdeconnect.enable = true;
     gamescope = {
       enable = true;
-      capSysNice = true;
+      capSysNice = false;
     };
     firefox = {
       enable = true;
       package = pkgs.firefox;
     };
+  };
+
+  services.ananicy = {
+    enable = true;
+    package = pkgs.ananicy-cpp;
+    rulesProvider = pkgs.ananicy-cpp;
+    extraRules = [
+      {
+        "name" = "gamescope";
+        "nice" = -20;
+      }
+    ];
   };
 
   environment.systemPackages = with pkgs; [

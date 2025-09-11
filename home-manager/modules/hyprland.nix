@@ -87,7 +87,7 @@ in {
     bluejay
     blueberry
 
-    rofi-wayland
+    rofi
     rofi-network-manager
     swaynotificationcenter
     # kdePackages.polkit-kde-agent-1
@@ -228,7 +228,8 @@ in {
         "fullscreen, class:^(steam_app_2767030.*)$"
         "workspace 4 silent, class:^(org.telegram.desktop)$"
         "workspace 12, class:^(steam)$"
-        "fullscreen, class:^(steam)$"
+        "float,class:^(steam)$"
+        "pseudotile,class:^(steam)$"
         "float,class:^(nz.co.mega.)$"
         "workspace special:scratch_hidden silent, class:^(nz.co.mega.)$"
         "float,class:^(xwaylandvideobridge)$"
