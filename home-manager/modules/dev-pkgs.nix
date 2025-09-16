@@ -57,6 +57,7 @@
     nvtopPackages.amd
     btop
     lazydocker
+    lazysql
     code-cursor
     tree-sitter
     ripgrep
