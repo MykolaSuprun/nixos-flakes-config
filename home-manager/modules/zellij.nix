@@ -13,7 +13,7 @@
         pane_frames false
         copy_command "wl-copy"
         env {
-          IN_ZELLIJ_SESSION 1
+          ZELLIJ_SESSION 1
         }
 
         plugins {
@@ -39,11 +39,11 @@
         keybinds {
           normal {
             bind "Alt Shift h" { GoToPreviousTab; }
-            bind "Alt Shift k" { GoToPreviousTab; }
+            bind "Alt Shift l" { GoToPreviousTab; }
           }
           locked {
             bind "Alt Shift h" { GoToPreviousTab; }
-            bind "Alt Shift k" { GoToPreviousTab; }
+            bind "Alt Shift l" { GoToPreviousTab; }
             bind "Alt z" {
                 // Disable the autolock plugin.
                 MessagePlugin "autolock" {payload "disable";};

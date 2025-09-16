@@ -134,8 +134,8 @@ in {
       # "$monitor_2" = "DP-2";
 
       "monitor" = [
-        "$monitor_1,3440x1440@165,0x0,1,bitdepth,10,cm,hdr,sdrbrightness,1.35,sdrsaturation,1.0"
-        # "$monitor_1,3440x1440@165,0x0,1,bitdepth,10"
+        # "$monitor_1,3440x1440@165,0x0,1,bitdepth,10,cm,hdr,sdrbrightness,1.35,sdrsaturation,1.0"
+        "$monitor_1,3440x1440@165,0x0,1,bitdepth,10"
         # "DP-1,2560x1440@144,3440x0,1"
       ];
 
