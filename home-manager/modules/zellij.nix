@@ -29,7 +29,7 @@
             triggers "nvim|vim|git|fzf|zoxide|lazygit|lazydocker"
             // Reaction to input occurs after this many seconds.
             // (An existing scheduled reaction prevents additional reactions.)
-            reaction_seconds "2.0"
+            reaction_seconds "0.3"
           }
         }
         load_plugins {
