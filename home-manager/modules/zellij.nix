@@ -39,11 +39,11 @@
         keybinds {
           normal {
             bind "Alt Shift h" { GoToPreviousTab; }
-            bind "Alt Shift l" { GoToPreviousTab; }
+            bind "Alt Shift l" { GoToNextTab; }
           }
           locked {
             bind "Alt Shift h" { GoToPreviousTab; }
-            bind "Alt Shift l" { GoToPreviousTab; }
+            bind "Alt Shift l" { GoToNextTab; }
             bind "Alt z" {
                 // Disable the autolock plugin.
                 MessagePlugin "autolock" {payload "disable";};
