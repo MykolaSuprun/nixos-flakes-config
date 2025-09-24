@@ -112,8 +112,7 @@ in {
 
   wayland.windowManager.hyprland = {
     enable = true;
-    # set the Hyprland and XDPH packages to null to use the ones from the NixOS module
-    package = null;
+    # set the Hyprland and XDPH packages to null to use the ones from the NixOS module package = null;
     portalPackage = null;
     systemd.enable = false;
     systemd.variables = ["--all"];
@@ -131,11 +130,13 @@ in {
 
     settings = {
       "$monitor_1" = "desc:ASUSTek COMPUTER INC ASUS VG34V R1LMTF004674";
+      "$monitor_2" = "desc:GWD ARZOPA 0x48310206";
       # "$monitor_2" = "DP-2";
 
       "monitor" = [
         # "$monitor_1,3440x1440@165,0x0,1,bitdepth,10,cm,hdr,sdrbrightness,1.35,sdrsaturation,1.0"
         "$monitor_1,3440x1440@165,0x0,1,bitdepth,10"
+        "$monitor_2,2560x1600@60,440x1440,1.6,bitdepth,10,cm,hdr, sdrbrightness,1.4,sdrsaturation,1.0"
         # "DP-1,2560x1440@144,3440x0,1"
       ];
 
