@@ -4,10 +4,9 @@
   ...
 }: {
   imports = [
+    ./hyprland
     ./shell.nix
     ./chromium.nix
-    # ./fcitx5.nix
-    # ./flatpak-overrides.nix
     ./tmux.nix
     ./kitty.nix
     ./zellij.nix
@@ -15,7 +14,6 @@
     ./dektop-config.nix
     # ./stylix.nix
     ./catppuccin.nix
-    ./hyprland.nix
     ./waybar.nix
   ];
 

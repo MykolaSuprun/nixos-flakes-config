@@ -111,7 +111,7 @@
         margin-right = 8;
         modules-left = ["hyprland/workspaces"];
         modules-center = ["clock"];
-        modules-right = ["wireplumber" "mpris" "bluetooth"];
+        modules-right = ["mpris" "wireplumber" "bluetooth"];
         "hyprland/workspaces" = {
           format = "<span font='16' weight='bold'> {icon} <sub>{name}</sub> </span>";
           # active-only = true;

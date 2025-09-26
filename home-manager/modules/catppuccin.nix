@@ -34,7 +34,7 @@
   };
 
   gtk = {
-    enable = true;
+    enable = false;
   };
 
   home.packages = with pkgs; [
