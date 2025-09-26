@@ -9,12 +9,12 @@
     # ./fcitx5.nix
     # ./flatpak-overrides.nix
     ./tmux.nix
-    # ./kitty.nix
+    ./kitty.nix
     ./zellij.nix
     ./dev-pkgs.nix
     ./dektop-config.nix
-    ./stylix.nix
-    # ./catppuccin.nix
+    # ./stylix.nix
+    ./catppuccin.nix
     ./hyprland.nix
     ./waybar.nix
   ];

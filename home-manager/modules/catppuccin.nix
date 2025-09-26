@@ -1,6 +1,7 @@
 {pkgs, ...}: {
   catppuccin = {
     enable = true;
+    cache.enable = true;
     flavor = "latte";
     accent = "mauve";
 
@@ -8,54 +9,34 @@
       enable = true;
       flavor = "latte";
     };
-    swaync = {
-      enable = true;
-      flavor = "latte";
-      font = "JetBrainsMono Nerd Font";
-    };
-    swaylock = {enable = true;};
     cursors = {
       enable = true;
       accent = "mauve";
     };
-    fcitx5.enable = true;
-    kitty.enable = true;
-    alacritty.enable = true;
-    tmux.enable = true;
-    starship.enable = true;
-    fish.enable = true;
-    zsh-syntax-highlighting.enable = true;
-    bottom.enable = true;
-    helix.enable = true;
-    lazygit.enable = true;
-    zellij.enable = true;
-    spotify-player.enable = true;
-    vivaldi.enable = true;
-    waybar = {
+    fcitx5 = {
       enable = true;
-      flavor = "latte";
+      enableRounded = true;
     };
     kvantum = {
       enable = true;
+      apply = true;
       flavor = "latte";
     };
+    btop = {
+      enable = true;
+      flavor = "latte";
+    };
+  };
+  qt = {
+    enable = true;
+    platformTheme.name = "kvantum";
+    style.name = "kvantum";
   };
 
   gtk = {
     enable = true;
   };
 
-  home.pointerCursor = {
-    gtk.enable = true;
-    # package = pkgs.catppuccin-cursors;
-    # name = "mochaMauve";
-  };
-
   home.packages = with pkgs; [
-    # catppuccin-kde
-    # catppuccin-gtk
-    # catppuccin-kvantum
-    # catppuccin-cursors
-    # catppuccin-papirus-folders
   ];
 }

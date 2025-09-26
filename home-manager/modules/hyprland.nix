@@ -136,7 +136,7 @@ in {
       "monitor" = [
         # "$monitor_1,3440x1440@165,0x0,1,bitdepth,10,cm,hdr,sdrbrightness,1.35,sdrsaturation,1.0"
         "$monitor_1,3440x1440@165,0x0,1,bitdepth,10"
-        "$monitor_2,2560x1600@60,440x1440,1.6,bitdepth,10,cm,hdr, sdrbrightness,1.4,sdrsaturation,1.0"
+        "$monitor_2,2560x1600@60,704x1440,1.6,bitdepth,10,cm,hdr, sdrbrightness,1.4,sdrsaturation,1.0"
         # "DP-1,2560x1440@144,3440x0,1"
       ];
 
@@ -207,7 +207,7 @@ in {
         "11,on-created-empty: pidof obsidian || uwsm app obsidian"
       ];
 
-      windowrulev2 = [
+      windowrule = [
         "immediate, class:^(gamescope.*)$"
         "fullscreen, class:^(gamescope.*)$"
         "fullscreenstate 3, class:^(gamescope.*)$"
@@ -232,17 +232,17 @@ in {
         "float,class:^(steam)$"
         "pseudotile,class:^(steam)$"
         "float,class:^(nz.co.mega.)$"
-        "workspace special:scratch_hidden silent, class:^(nz.co.mega.)$"
+        # "workspace special:scratch_hidden silent, class:^(nz.co.mega.)$"
         "float,class:^(xwaylandvideobridge)$"
-        "workspace special:scratch_hidden silent, class:^(xwaylandvideobridge)$"
+        # "workspace special:scratch_hidden silent, class:^(xwaylandvideobridge)$"
         "float,class:^(org.cryptomator.*)$"
-        "workspace special:scratch_hidden silent, class:^(org.cryptomator.*)$"
+        # "workspace special:scratch_hidden silent, class:^(org.cryptomator.*)$"
       ];
 
       bind =
         [
-          "$mainMod, Q, exec, $terminal"
-          "$mainMod, C, killactive,"
+          "$mainMod, RETURN, exec, $terminal"
+          "$mainMod, W, killactive,"
           "$mainMod CTRL SHIFT, M, exec, uwsm stop "
           # "$mainMod, E, exec, $fileManager"
           "$mainMod, G, togglefloating,"

@@ -14,8 +14,11 @@
 
   services.gpg-agent = {
     enable = true;
+    grabKeyboardAndMouse = true;
+    pinentry = {
+      package = pkgs.pinentry-tty;
+    };
     # pinentryPackage = pkgs.pinentry-tty;
-    pinentryPackage = pkgs.pinentry-bemenu;
   };
 
   programs = {

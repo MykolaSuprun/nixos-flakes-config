@@ -219,7 +219,10 @@ in {
     };
     ecryptfs.enable = true;
     partition-manager.enable = true;
-    gnupg.agent = {enable = true;};
+    gnupg.agent = {
+      enable = true;
+      pinentryPackage = pkgs.pinentry-tty;
+    };
     virt-manager.enable = true;
     java.enable = true;
     neovim = {
@@ -231,6 +234,7 @@ in {
       enable = true;
       libraries = with pkgs; [libGL libGLU libglibutil];
     };
+    usbtop.enable = true;
   };
 
   systemd.tmpfiles.rules = ["f /dev/shm/looking-glass 0660 mykolas kvm -"];

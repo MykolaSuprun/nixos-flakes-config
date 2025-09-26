@@ -27,6 +27,7 @@
     rclone
     rclone-ui
     rclone-browser
+    vivaldi
 
     # social
     discord
