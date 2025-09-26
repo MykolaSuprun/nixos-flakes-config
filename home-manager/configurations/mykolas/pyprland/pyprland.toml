@@ -3,7 +3,8 @@ plugins = [
   "scratchpads",
   "wallpapers",
   "expose",
-  "shortcuts_menu"
+  "shortcuts_menu",
+  "toggle_special"
 ]
 
 [expose]
@@ -38,8 +39,6 @@ unfocus = "hide"
 lazy = true
 allow_special_workspaces = true
 
-[shortcuts_menu.entries]
-"chromium" = "chromium"
 
 # [scratchpads.telegram]
 # animation = "fromBottom"

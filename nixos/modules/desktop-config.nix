@@ -66,6 +66,7 @@
   };
 
   environment.systemPackages = with pkgs; [
+    ayugram-desktop
     thunderbolt
     bolt
     tbtools

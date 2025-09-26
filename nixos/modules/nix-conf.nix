@@ -1,4 +1,10 @@
-{pkgs, ...}: {
+{
+  inputs,
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   nix = {
     gc = {
       # automatic = true;

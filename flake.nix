@@ -36,18 +36,15 @@
       url = "github:youwen5/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # hyprland.url =
-    #   "git+https://github.com/hyprwm/Hyprland?submodules=1&ref=refs/tags/v0.47.2";
-    hyprland.url = "github:hyprwm/Hyprland";
-    hyprland-plugins = {
-      # url = "github:hyprwm/hyprland-plugins?ref=v0.47.0";
-      url = "github:hyprwm/hyprland-plugins";
-      inputs.hyprland.follows = "hyprland";
-    };
-    hyprlock.url = "github:hyprwm/hyprlock";
-    hypridle.url = "github:hyprwm/hypridle";
+    # hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1&ref=refs/tags/v0.50.1";
+    # # hyprland.url = "github:hyprwm/Hyprland";
+    # hyprland-plugins = {
+    #   url = "github:hyprwm/hyprland-plugins?ref=v0.50.0";
+    # url = "github:hyprwm/hyprland-plugins";
+    #   inputs.hyprland.follows = "hyprland";
+    # };
     # hy3 = {
-    #   url = "github:outfoxxed/hy3?ref=hl0.47.0-1";
+    #   url = "github:outfoxxed/hy3?ref=hl0.51.0";
     #   # url = "github:outfoxxed/hy3";
     #   inputs.hyprland.follows = "hyprland";
     # };
@@ -155,7 +152,7 @@
           ./nixos/configurations/geks-wsl/configuration.nix
           ./nixos/modules/nix-conf.nix
           ./nixos/modules/sys-pkgs.nix
-          # catppuccin.nixosModules.catppuccin
+          catppuccin.nixosModules.catppuccin
           nixos-wsl.nixosModules.wsl
           home-manager.nixosModules.home-manager
           ./nixos/modules/catppuccin.nix

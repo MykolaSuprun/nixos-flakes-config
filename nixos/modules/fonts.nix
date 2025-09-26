@@ -4,9 +4,18 @@
   pkgs-stable,
   ...
 }: {
+  console.font = "JetBrainsMono Nerd Font";
   fonts = {
     fontDir.enable = true;
-    fontconfig.useEmbeddedBitmaps = true;
+    enableDefaultPackages = true;
+    fontconfig = {
+      enable = true;
+      useEmbeddedBitmaps = true;
+      subpixel.rgba = "rgb";
+      defaultFonts = {
+        monospace = ["JetBrainsMono Nerd Font"];
+      };
+    };
   };
 
   fonts.packages = with pkgs; [
