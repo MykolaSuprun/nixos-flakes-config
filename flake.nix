@@ -55,10 +55,10 @@
     #   url = "github:hyprland-community/pyprland";
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
-    stylix = {
-      url = "github:danth/stylix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # stylix = {
+    #   url = "github:danth/stylix";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
     catppuccin.url = "github:catppuccin/nix";
     my-neovim = {
       url = "git+ssh://git@github.com/MykolaSuprun/neovim-nvf-config.git?ref=main";
@@ -77,7 +77,7 @@
     nixpkgs-stable,
     home-manager,
     nixos-wsl,
-    stylix,
+    # stylix,
     catppuccin,
     ...
   } @ inputs: let
@@ -117,8 +117,8 @@
         inherit pkgs;
         modules = [
           determinate.nixosModules.default
-          stylix.nixosModules.stylix
-          # catppuccin.nixosModules.catppuccin
+          # stylix.nixosModules.stylix
+          catppuccin.nixosModules.catppuccin
           ./nixos/configurations/geks-nixos/hardware-configuration.nix
           ./nixos/configurations/geks-nixos/configuration.nix
           ./nixos/modules/geks-nixos.nix
@@ -133,7 +133,7 @@
                 imports = [
                   # inputs.hyprland.homeManagerModules.default
                   # stylix.homeModules.stylix
-                  # catppuccin.homeModules.catppuccin
+                  catppuccin.homeModules.catppuccin
                   ./home-manager/configurations/mykolas/home-configuration.nix
                   ./home-manager/modules/geks-nixos.nix
                 ];
@@ -151,7 +151,7 @@
         inherit pkgs;
         modules = [
           determinate.nixosModules.default
-          stylix.nixosModules.stylix
+          # stylix.nixosModules.stylix
           ./nixos/configurations/geks-wsl/configuration.nix
           ./nixos/modules/nix-conf.nix
           ./nixos/modules/sys-pkgs.nix

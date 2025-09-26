@@ -3,8 +3,8 @@
     enable = true;
     enableGitIntegration = true;
     font = {
-      name = "JetBrainsMono NF Normal";
-      size = 9;
+      name = "JetBrainsMono Nerd Font";
+      size = 10;
     };
     shellIntegration = {
       enableZshIntegration = true;

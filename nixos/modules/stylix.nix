@@ -5,6 +5,7 @@ in {
     enable = true;
     autoEnable = true;
     base16Scheme = "${pkgs.base16-schemes}/share/themes/${base16_scheme}.yaml";
+    image = ../../wallpapers/catppuccin-latte/the_valley.png;
     fonts = {
       serif = {
         package = pkgs.noto-fonts;
@@ -31,7 +32,17 @@ in {
         terminal = 10;
       };
     };
+    targets = {
+      qt = {
+        enable = true;
+      };
+      nixos-icons.enable = true;
+    };
   };
+  qt = {
+    enable = true;
+  };
+
   environment.sessionVariables = {
     STYLIX_COLORSCHEME = "${base16_scheme}";
   };
