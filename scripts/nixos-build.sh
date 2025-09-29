@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 set -e
-cd $NIXOS_CONF_DIR
+cd "$NIXOS_CONF_DIR"
 git diff -U0 *.nix
-# sudo nixos-rebuild switch --flake .#$NIXOS_TARGET --accept-flake-config
-nh os switch -- --accept-flake-config --show-trace
-# nix build .#homeConfigurations.$USER.activationPackage --accept-flake-config
-# ./result/activate
-# nh home switch -- --accept-flake-config
+nh os switch -- \
+  --accept-flake-config --show-trace \
+  --option extra-substituters https://install.determinate.systems \
+  --option extra-trusted-public-keys cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=
 gen=$(sudo nix-env -p /nix/var/nix/profiles/system --list-generations | grep current)
 git commit -am "$gen"
 if [ -n "${HYPRLAND_INSTANCE_SIGNATURE+set}" ]; then

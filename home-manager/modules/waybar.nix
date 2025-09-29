@@ -1,4 +1,16 @@
-{...}: {
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: let
+  flakePath = "$NIXOS_CONF_DIR";
+in {
+  # home.activation.linkHyprlandStartup = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  #   mkdir -p ~/.config/waybar
+  #   rm -f ~/.config/waybar
+  #
+  # '';
   programs.waybar = {
     enable = true;
     # systemd.enable = true;
