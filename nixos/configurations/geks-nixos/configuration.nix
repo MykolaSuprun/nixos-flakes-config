@@ -9,8 +9,6 @@
   # pkgs-hyprland =
   #   inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
 in {
-  imports = [];
-
   # Bootloader.
   boot = {
     loader = {
@@ -204,7 +202,6 @@ in {
       qemu = {
         package = pkgs-stable.qemu_kvm;
         swtpm.enable = true;
-        ovmf.enable = true;
       };
     };
   };

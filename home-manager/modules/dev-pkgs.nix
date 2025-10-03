@@ -48,10 +48,11 @@
   home.packages = with pkgs; [
     # dev tools
     cachix
-    inputs.my-neovim.packages.${system}.default
+    # inputs.my-neovim.packages.${system}.default
     inputs.my-nixvim.packages.${system}.lazyvim
     inputs.my-nixvim.packages.${system}.nixvim
-    mynav
+    inputs.my-nixvim.packages.${system}.nvim
+    # mynav
     sublime4
     zed-editor
     nvtopPackages.amd
@@ -92,6 +93,8 @@
     nix-diff
     nixfmt-classic
     fh
+    # python
+    uv
 
     lf
     sqlcmd

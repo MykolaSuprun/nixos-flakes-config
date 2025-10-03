@@ -15,6 +15,7 @@
     "binds.conf"
     "settings.conf"
     "monitors.conf"
+    "workspaces.conf"
   ];
 
   filesToLink = srcPath: targetPath: files:
@@ -24,11 +25,10 @@
     '')
     files;
 in {
-  programs = {};
-
   # Create direct symlink to startup.conf in flake repo for live editing
   home.activation.linkHyprlandStartup = lib.hm.dag.entryAfter ["writeBoundary"] ''
     mkdir -p ${hyprTargetPath}
+    mkdir -p ~/.config/wallpapers
 
     ${lib.strings.concatLines (filesToLink hyprSrcPath hyprTargetPath hyprConfigs)}
   '';
@@ -64,6 +64,13 @@ in {
       ./../../configurations/mykolas/hyprland-portals/hyprland-portals.conf;
   };
 
+  # xdg.configFile = {
+  #   "./.config/hypr/hyprlock.conf".source = impurity.link ./../../configurations/mykolas/hyprlock/hyprlock.conf;
+  # };
+
+  # xdg.configFile."./config/hypr/hyprlock.conf".source =
+  #   impurity.link ./../../configurations/mykolas/hyprlock/hyprlock.conf;
+
   wayland.windowManager.hyprland = {
     enable = true;
     # set the Hyprland and XDPH packages to null to use the ones from the NixOS module package = null;
@@ -79,7 +86,7 @@ in {
 
     extraConfig = ''
       # Source the live-editable startup configuration
-      ${lib.strings.concatLines (builtins.map (x: "source = ${hyprTargetPath}/${x}") hyprConfigs)}
+      # ${lib.strings.concatLines (builtins.map (x: "source = ${hyprTargetPath}/${x}") hyprConfigs)}
     '';
   };
 

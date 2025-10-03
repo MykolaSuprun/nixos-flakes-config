@@ -11,7 +11,7 @@ plugins = [
 include_special = true
 
 [wallpapers]
-path = "~/.config/wallpapers_ln" # path to the folder with background images
+path = "~/.config/wallpapers" # path to the folder with background images
 extentions = ["png", "jpg", "jpeg", "webp"]
 unique = true # set a different wallpaper for each screen
 interval = 15
