@@ -95,10 +95,10 @@ in {
             padding: 0em 0.55em 0em 0.2em;
             margin: 0.25em;
             border-radius: 5px;
-            background: @lavender;
+            background: @surface1;
         }
         #workspaces button.active,  #workspaces button.focused {
-            background: @surface1;
+            background: @lavender;
         }
         #workspaces button.urgent {
           background: @red;

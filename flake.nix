@@ -31,6 +31,7 @@
       url = "github:nix-community/NixOS-WSL";
       flake = true;
     };
+    impurity.url = "github:outfoxxed/impurity.nix";
     zen-browser = {
       url = "github:youwen5/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -56,10 +57,6 @@
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
     catppuccin.url = "github:catppuccin/nix";
-    my-neovim = {
-      url = "git+ssh://git@github.com/MykolaSuprun/neovim-nvf-config.git?ref=main";
-      flake = true;
-    };
     my-nixvim = {
       url = "git+ssh://git@github.com/MykolaSuprun/nixvim-config.git?ref=v2";
       flake = true;
@@ -68,13 +65,11 @@
 
   outputs = {
     self,
-    determinate,
     nixpkgs,
     nixpkgs-stable,
     home-manager,
     nixos-wsl,
     # stylix,
-    catppuccin,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -112,9 +107,10 @@
         inherit system;
         inherit pkgs;
         modules = [
-          determinate.nixosModules.default
+          inputs.determinate.nixosModules.default
+          inputs.impurity.nixosModules.impurity
           # stylix.nixosModules.stylix
-          catppuccin.nixosModules.catppuccin
+          inputs.catppuccin.nixosModules.catppuccin
           ./nixos/configurations/geks-nixos/hardware-configuration.nix
           ./nixos/configurations/geks-nixos/configuration.nix
           ./nixos/modules/geks-nixos.nix
@@ -129,7 +125,7 @@
                 imports = [
                   # inputs.hyprland.homeManagerModules.default
                   # stylix.homeModules.stylix
-                  catppuccin.homeModules.catppuccin
+                  inputs.catppuccin.homeModules.catppuccin
                   ./home-manager/configurations/mykolas/home-configuration.nix
                   ./home-manager/modules/geks-nixos.nix
                 ];
@@ -146,12 +142,12 @@
         inherit system;
         inherit pkgs;
         modules = [
-          determinate.nixosModules.default
+          inputs.determinate.nixosModules.default
           # stylix.nixosModules.stylix
           ./nixos/configurations/geks-wsl/configuration.nix
           ./nixos/modules/nix-conf.nix
           ./nixos/modules/sys-pkgs.nix
-          catppuccin.nixosModules.catppuccin
+          inputs.catppuccin.nixosModules.catppuccin
           nixos-wsl.nixosModules.wsl
           home-manager.nixosModules.home-manager
           ./nixos/modules/catppuccin.nix
@@ -162,7 +158,7 @@
               backupFileExtension = "hm-back";
               users.mykolas = {
                 imports = [
-                  catppuccin.homeModules.catppuccin
+                  inputs.catppuccin.homeModules.catppuccin
                   ./home-manager/configurations/mykolas/home-configuration.nix
                   ./home-manager/modules/geks-wsl.nix
                 ];

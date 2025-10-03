@@ -23,10 +23,6 @@
     inputs.zen-browser.packages.${pkgs.system}.default
     protonvpn-gui
     lbry
-    # teamviewer
-    rclone
-    rclone-ui
-    rclone-browser
     vivaldi
 
     # social
