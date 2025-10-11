@@ -52,8 +52,8 @@ in {
       ./../../configurations/mykolas/swaync/latte.css;
     "./.config/swaylock/config".source =
       ./../../configurations/mykolas/swaylock/latte.conf;
-    "./.config/hypr/hyprpaper.conf".source =
-      ./../../configurations/mykolas/hyprpaper/hyprpaper.conf;
+    # "./.config/hypr/hyprpaper.conf".source =
+    #   ./../../configurations/mykolas/hyprpaper/hyprpaper.conf;
     "./.config/hypr/hyprlock.conf.alt".source =
       ./../../configurations/mykolas/hyprlock/hyprlock.conf.alt;
     "./.config/hypr/hypridle.conf".source =
@@ -63,13 +63,6 @@ in {
     "./.config/xdg-desktop-portal/hyprland-portals.conf".source =
       ./../../configurations/mykolas/hyprland-portals/hyprland-portals.conf;
   };
-
-  # xdg.configFile = {
-  #   "./.config/hypr/hyprlock.conf".source = impurity.link ./../../configurations/mykolas/hyprlock/hyprlock.conf;
-  # };
-
-  # xdg.configFile."./config/hypr/hyprlock.conf".source =
-  #   impurity.link ./../../configurations/mykolas/hyprlock/hyprlock.conf;
 
   wayland.windowManager.hyprland = {
     enable = true;
@@ -86,7 +79,7 @@ in {
 
     extraConfig = ''
       # Source the live-editable startup configuration
-      # ${lib.strings.concatLines (builtins.map (x: "source = ${hyprTargetPath}/${x}") hyprConfigs)}
+      ${lib.strings.concatLines (builtins.map (x: "source = ${hyprTargetPath}/${x}") hyprConfigs)}
     '';
   };
 

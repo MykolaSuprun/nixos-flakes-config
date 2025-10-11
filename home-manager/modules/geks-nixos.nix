@@ -24,7 +24,7 @@
     NH_FLAKE = "$HOME/workspaces/src/nixconf";
     NIXOS_TARGET = "geks-nixos";
     BEMENU_BACKEND = "wayland";
-    BROWSER = "${inputs.zen-browser.packages.${pkgs.system}.default}/bin/zen";
+    BROWSER = "${inputs.zen-browser.packages."${pkgs.system}".default}/bin/zen";
     DEFAULT_BROWSER = "${inputs.zen-browser.packages.${pkgs.system}.default}/bin/zen";
   };
 }

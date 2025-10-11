@@ -33,7 +33,9 @@
     };
     impurity.url = "github:outfoxxed/impurity.nix";
     zen-browser = {
-      url = "github:youwen5/zen-browser-flake";
+      url = "github:0xc000022070/zen-browser-flake";
+      # IMPORTANT: we're using "libgbm" and is only available in unstable so ensure
+      # to have it up-to-date or simply don't specify the nixpkgs input
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # hyprland.url = "https://flakehub.com/f/hyprwm/Hyprland/0.51.1";
@@ -58,7 +60,7 @@
     # };
     catppuccin.url = "github:catppuccin/nix";
     my-nixvim = {
-      url = "git+ssh://git@github.com/MykolaSuprun/nixvim-config.git?ref=v2";
+      url = "github:MykolaSuprun/nixvim-config";
       flake = true;
     };
   };
@@ -126,6 +128,7 @@
                   # inputs.hyprland.homeManagerModules.default
                   # stylix.homeModules.stylix
                   inputs.catppuccin.homeModules.catppuccin
+                  inputs.zen-browser.homeModules.beta
                   ./home-manager/configurations/mykolas/home-configuration.nix
                   ./home-manager/modules/geks-nixos.nix
                 ];

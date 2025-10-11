@@ -55,6 +55,7 @@ in {
     rofi
     rofi-network-manager
     swaynotificationcenter
+    libnotify
     # kdePackages.polkit-kde-agent-1
     hyprpolkitagent
     kdePackages.qtwayland

@@ -1,0 +1,6 @@
+{
+  "SDL_KeyModMask": [
+    "KMOD_RSHIFT"
+  ],
+  "SDL_Grab": "SDL_SCANCODE_G"
+}

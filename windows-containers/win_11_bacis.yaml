@@ -1,3 +1,4 @@
+---
 services:
   windows:
     image: dockurr/windows
@@ -7,12 +8,12 @@ services:
       LANGUAGE: English
       DISK_SIZE: "64G"
       RAM_SIZE: "16G"
-      CPU_CORES: "8"
+      CPU_CORES: "16"
       USERNAME: "VM"
       ARGUMENTS: "-device ich9-intel-hda -device hda-output -audio alsa"
     devices:
       - /dev/kvm
-   cap_add:
+    cap_add:
       - NET_ADMIN
     ports:
       - 8006:8006
@@ -20,4 +21,4 @@ services:
       - 3389:3389/udp
     stop_grace_period: 2m
     volumes:
-      - /home/mykolas/win:/storage
+      - /home/mykolas/win/storage:/storage
