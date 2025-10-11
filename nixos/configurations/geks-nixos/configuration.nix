@@ -137,16 +137,11 @@ in {
   security = {
     pam = {
       enableEcryptfs = true;
-      krb5.enable = true;
       services = {
         # allow swaylock to unlock sessions
         swaylock = {};
         hyprlock = {};
       };
-    };
-    krb5 = {
-      enable = true;
-      package = pkgs-stable.krb5;
     };
     polkit.enable = true;
   };
@@ -175,12 +170,12 @@ in {
         "gamemode"
       ];
     };
-    geks-home = {
-      isNormalUser = true;
-      shell = pkgs.fish;
-      description = "Geks Home";
-      extraGroups = ["networkmanager" "wheel" "docker" "libvirtd" "kvm" "plugdev"];
-    };
+    # geks-home = {
+    #   isNormalUser = true;
+    #   shell = pkgs.fish;
+    #   description = "Geks Home";
+    #   extraGroups = ["networkmanager" "wheel" "docker" "libvirtd" "kvm" "plugdev"];
+    # };
   };
 
   virtualisation = {
@@ -232,6 +227,10 @@ in {
       libraries = with pkgs; [libGL libGLU libglibutil];
     };
     usbtop.enable = true;
+    appimage = {
+      enable = true;
+      binfmt = true;
+    };
   };
 
   systemd.tmpfiles.rules = ["f /dev/shm/looking-glass 0660 mykolas kvm -"];

@@ -48,7 +48,6 @@
   home.packages = with pkgs; [
     # dev tools
     cachix
-    # inputs.my-neovim.packages.${system}.default
     inputs.my-nixvim.packages.${system}.lazyvim
     inputs.my-nixvim.packages.${system}.nixvim
     inputs.my-nixvim.packages.${system}.nvim

@@ -8,6 +8,8 @@
     enable = true;
   };
 
+  programs.zen-browser.enable = true;
+
   home.packages = with pkgs; [
     # plasma packages and basic applications
     # kdePackages.sddm-kcm
@@ -20,10 +22,10 @@
 
     # internet
     mullvad-browser
-    inputs.zen-browser.packages.${pkgs.system}.default
     protonvpn-gui
     lbry
     vivaldi
+    filen-desktop
 
     # social
     discord
@@ -47,6 +49,7 @@
     ffmpeg-full
 
     obsidian
+    basalt
 
     # virtualization
     distrobox
