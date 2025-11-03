@@ -70,7 +70,7 @@
     unzip
     unixtools.xxd
     bemenu
-    pkgs.freerdp3
+    pkgs.freerdp
     pkgs-stable.gtk-frdp
   ];
 }

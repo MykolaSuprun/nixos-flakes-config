@@ -86,7 +86,7 @@
     usbutils
     pciutils
     lshw-gui
-    glxinfo
+    mesa-demos
     bat
     # nix
     nix-tree
