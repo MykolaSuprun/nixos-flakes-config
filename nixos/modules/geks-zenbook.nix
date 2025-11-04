@@ -17,6 +17,7 @@
       startAgent = true;
       enableAskPassword = true;
     };
+    partition-manager.enable = true;
   };
 
   environment.sessionVariables = {

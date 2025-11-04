@@ -12,9 +12,9 @@
   hyprTargetPath = "~/.config/hypr";
 
   monitorsConf =
-    if config.hyprconf.hyprland.target == "geks-zenbook"
+    if config.hyprconf.target == "geks-zenbook"
     then "geks-zenbook-monitors.conf"
-    else if config.hyprconf.hyprland.target == "geks-nixos"
+    else if config.hyprconf.target == "geks-nixos"
     then "geks-nixos-monitors.conf"
     else "monitors-default.conf";
 
@@ -34,13 +34,14 @@
     files;
 in {
   options = {
-    hyprconf.hyprland = {
-      enable = lib.mkEnableOption "enables hyprland config";
-
+    hyprconf = {
       target = lib.mkOption {
         type = lib.types.enum ["geks-zenbook" "geks-nixos"];
         description = "Target system determining monitor configuration variant";
         example = "geks-zenbook";
+      };
+      hyprland = {
+        enable = lib.mkEnableOption "enables hyprland config";
       };
     };
   };
