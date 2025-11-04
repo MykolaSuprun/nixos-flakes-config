@@ -18,9 +18,9 @@
   ];
 
   hyprconf = {
+    target = "geks-zenbook";
     hyprland = {
       enable = true;
-      target = "geks-zenbook";
     };
   };
 
