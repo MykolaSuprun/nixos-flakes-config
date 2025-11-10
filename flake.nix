@@ -141,6 +141,39 @@
         ];
         specialArgs = {inherit inputs outputs pkgs-stable;};
       };
+      geks-zenbook = lib.nixosSystem {
+        inherit system;
+        inherit pkgs;
+        modules = [
+          inputs.determinate.nixosModules.default
+          inputs.catppuccin.nixosModules.catppuccin
+          ./nixos/configurations/geks-zenbook/hardware-configuration.nix
+          ./nixos/configurations/geks-zenbook/configuration.nix
+          ./nixos/modules/geks-zenbook.nix
+          # home-manager setup
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              backupFileExtension = "hm-back";
+              users.mykolas = {
+                imports = [
+                  # inputs.hyprland.homeManagerModules.default
+                  # stylix.homeModules.stylix
+                  inputs.catppuccin.homeModules.catppuccin
+                  ./home-manager/configurations/mykolas/home-configuration.nix
+                  ./home-manager/modules/geks-zenbook.nix
+                ];
+              };
+              extraSpecialArgs = {
+                inherit inputs outputs system pkgs-stable;
+              };
+            };
+          }
+        ];
+        specialArgs = {inherit inputs outputs pkgs-stable;};
+      };
       geks-wsl = lib.nixosSystem {
         inherit system;
         inherit pkgs;
