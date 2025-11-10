@@ -162,6 +162,7 @@
                   # inputs.hyprland.homeManagerModules.default
                   # stylix.homeModules.stylix
                   inputs.catppuccin.homeModules.catppuccin
+                  inputs.zen-browser.homeModules.beta
                   ./home-manager/configurations/mykolas/home-configuration.nix
                   ./home-manager/modules/geks-zenbook.nix
                 ];
