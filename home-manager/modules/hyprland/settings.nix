@@ -37,7 +37,7 @@ in {
     hyprconf = {
       target = lib.mkOption {
         type = lib.types.enum ["geks-zenbook" "geks-nixos"];
-        description = "Target system determining monitor configuration variant";
+        description = "Target system determining hyprland configuration variant";
         example = "geks-zenbook";
       };
       hyprland = {

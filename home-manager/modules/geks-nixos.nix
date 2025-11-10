@@ -17,6 +17,13 @@
     ./waybar.nix
   ];
 
+  hyprconf = {
+    target = "geks-nixos";
+    hyprland = {
+      enable = true;
+    };
+  };
+
   home.sessionVariables = {
     NIXOS_OZONE_WL = "1";
     STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
@@ -24,7 +31,7 @@
     NH_FLAKE = "$HOME/workspaces/src/nixconf";
     NIXOS_TARGET = "geks-nixos";
     BEMENU_BACKEND = "wayland";
-    BROWSER = "${inputs.zen-browser.packages."${pkgs.system}".default}/bin/zen";
-    DEFAULT_BROWSER = "${inputs.zen-browser.packages.${pkgs.system}.default}/bin/zen";
+    BROWSER = "${inputs.zen-browser.packages.${pkgs.system}.beta}/bin/zen";
+    DEFAULT_BROWSER = "${inputs.zen-browser.packages.${pkgs.system}.beta}/bin/zen";
   };
 }
