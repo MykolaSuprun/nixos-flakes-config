@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  config,
+  ...
+}: {
   imports = [
     ./xdg.nix
     ./nix-conf.nix
@@ -12,6 +16,11 @@
     ./flatpak.nix
   ];
 
+  catppuccin = {
+    flavor = "latte";
+    accent = "mauve";
+  };
+
   programs = {
     ssh = {
       startAgent = true;
@@ -22,6 +31,9 @@
 
   environment.sessionVariables = {
     SSH_ASKPASS_REQUIRE = "prefer";
-    SYS_THEME = "catppuccin-mocha";
+    SYS_THEME =
+      if config.catppuccin.enable
+      then "catppuccin-${config.catppuccin.flavor}"
+      else "";
   };
 }

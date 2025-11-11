@@ -18,6 +18,30 @@
     then "geks-nixos-monitors.conf"
     else "monitors-default.conf";
 
+  themes = [
+    "catppuccin-latte"
+    "catppuccin-mocha"
+    "catppuccin-frappe"
+    "catppuccin-macchiato"
+  ];
+
+  accents = [
+    "blue"
+    "flamingo"
+    "green"
+    "lavender"
+    "maroon"
+    "mauve"
+    "peach"
+    "pink"
+    "red"
+    "rosewater"
+    "sapphire"
+    "sky"
+    "teal"
+    "yellow"
+  ];
+
   hyprConfigs = [
     "startup.conf"
     "binds.conf"
@@ -40,6 +64,25 @@ in {
         description = "Target system determining hyprland configuration variant";
         example = "geks-zenbook";
       };
+      theme = lib.mkOption {
+        type = lib.types.enum themes;
+        default =
+          if config.catppuccin.enable
+          then "catppuccin-${config.catppuccin.flavor}"
+          else "catppucin-latte";
+        description = "Hyprland theme";
+        example = "catppucin-latte";
+      };
+      accent = lib.mkOption {
+        type = lib.types.enum accents;
+        default =
+          if config.catppuccin.enable
+          then config.catppuccin.accent
+          else "mauve";
+        description = "Hyprland theme accent";
+        example = "mauve";
+      };
+
       hyprland = {
         enable = lib.mkEnableOption "enables hyprland config";
       };
@@ -62,6 +105,29 @@ in {
       "./.config/rofi" = {
         source = ./../../configurations/mykolas/rofi;
         recursive = true;
+      };
+      "./.config/hypr/hyprqt6engine.conf" = {
+        text = let
+          themePath = "${config.hyprconf.theme}-${config.hyprconf.accent}";
+        in
+          #hyprlang
+          ''
+            theme {
+              color_scheme = ${pkgs.catppuccin-qt5ct}/share/qt6ct/colors/${themePath}
+              style = "kvantum"
+            }
+          '';
+      };
+      "./.config/hypr/hyprtoolkit.conf" = {
+        text = let
+          themePath = "${config.hyprconf.theme}/${config.hyprconf.accent}.conf";
+          themeFile = ./../../configurations/mykolas/hyprtoolkit/themes + "/${themePath}";
+          themeConfig = builtins.readFile themeFile;
+        in ''
+          ${themeConfig}
+          # Additional hyprtoolkit configuration
+          # see https://wiki.hypr.land/Hypr-Ecosystem/hyprtoolkit/ for more details
+        '';
       };
       "./.config/hypr/hyprlock-assets" = {
         source = ./../../configurations/mykolas/hyprlock/hyprlock-assets;
@@ -107,7 +173,7 @@ in {
 
       extraConfig = ''
         # Source the live-editable startup configuration
-        # ${lib.strings.concatLines (builtins.map (x: "source = ${hyprTargetPath}/${x}") hyprConfigs)}
+        ${lib.strings.concatLines (builtins.map (x: "source = ${hyprTargetPath}/${x}") hyprConfigs)}
       '';
     };
 

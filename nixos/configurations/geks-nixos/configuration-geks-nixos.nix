@@ -274,7 +274,7 @@ in {
       x265
       xsettingsd
       file
-      wl-clipboard
+      wl-clipboard-rs
       wl-clipboard-x11
       xclip
       ncurses

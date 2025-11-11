@@ -110,11 +110,10 @@
         inherit pkgs;
         modules = [
           inputs.determinate.nixosModules.default
-          inputs.impurity.nixosModules.impurity
           # stylix.nixosModules.stylix
           inputs.catppuccin.nixosModules.catppuccin
-          ./nixos/configurations/geks-nixos/hardware-configuration.nix
-          ./nixos/configurations/geks-nixos/configuration.nix
+          ./nixos/configurations/geks-nixos/hardware-configuration-geks-nixos.nix
+          ./nixos/configurations/geks-nixos/configuration-geks-nixos.nix
           ./nixos/modules/geks-nixos.nix
           # home-manager setup
           home-manager.nixosModules.home-manager
@@ -129,7 +128,7 @@
                   # stylix.homeModules.stylix
                   inputs.catppuccin.homeModules.catppuccin
                   inputs.zen-browser.homeModules.beta
-                  ./home-manager/configurations/mykolas/home-configuration.nix
+                  ./home-manager/configurations/mykolas/home-geks-nixos.nix
                   ./home-manager/modules/geks-nixos.nix
                 ];
               };
@@ -147,8 +146,8 @@
         modules = [
           inputs.determinate.nixosModules.default
           inputs.catppuccin.nixosModules.catppuccin
-          ./nixos/configurations/geks-zenbook/hardware-configuration.nix
-          ./nixos/configurations/geks-zenbook/configuration.nix
+          ./nixos/configurations/geks-zenbook/hardware-configuration-zenbook.nix
+          ./nixos/configurations/geks-zenbook/configuration-zenbook.nix
           ./nixos/modules/geks-zenbook.nix
           # home-manager setup
           home-manager.nixosModules.home-manager
