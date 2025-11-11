@@ -27,6 +27,10 @@
         ''
           # GENERAL SETTINGS
 
+          # set max session name length to 30
+          set -g status-left '#S '
+          set -g status-left-length 30
+
           # Plugins
           setw -g aggressive-resize on
 
@@ -34,7 +38,7 @@
           set -gq allow-passthrough on
           set -g visual-activity off
 
-          # fix teminal colors
+          # fix terminal colors
           # set-option -sa terminal-overrides ",xterm*:Tc"
           set -g default-terminal "tmux-256color"
           set -ag terminal-overrides ",xterm-256color:RGB"

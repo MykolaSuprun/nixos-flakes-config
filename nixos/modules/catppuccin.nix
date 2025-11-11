@@ -1,11 +1,7 @@
-{pkgs, ...}: let
-  base16_scheme = "catppuccin-latte";
-in {
+{config, ...}: {
   catppuccin = {
     enable = true;
     cache.enable = true;
-    flavor = "latte";
-    accent = "mauve";
     grub.enable = true;
     plymouth.enable = true;
     tty.enable = true;
@@ -15,6 +11,6 @@ in {
   qt.style = "kvantum";
 
   environment.sessionVariables = {
-    STYLIX_COLORSCHEME = "${base16_scheme}";
+    STYLIX_COLORSCHEME = "catppuccin-${config.catppuccin.flavor}";
   };
 }

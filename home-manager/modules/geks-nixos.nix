@@ -19,6 +19,9 @@
 
   hyprconf = {
     target = "geks-nixos";
+    # theme = "catppuccin-latte";
+    # accent = "mauve";
+    waybar.enable = true;
     hyprland = {
       enable = true;
     };

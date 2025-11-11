@@ -9,6 +9,10 @@
       enable = true;
       package = pkgs.helix;
     };
+    delta = {
+      enable = true;
+      enableGitIntegration = true;
+    };
     direnv = {
       enable = true;
       enableBashIntegration = true; # see note on other shells below
@@ -64,7 +68,7 @@
     fd
     nodejs
     gh # Github CLI
-    meld
+    delta
     cargo
     binutils
     openssl

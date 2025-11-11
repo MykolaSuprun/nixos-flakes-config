@@ -12,10 +12,18 @@
   ui = auto
 [core]
   editor = nvim
+  pager = delta
+[interactive]
+  diffFilter = delta --color-only
+[delta]
+    navigate = true  # use n and N to move between diff sections
+    side-by-side = true
 [merge]
-  conflictstyle = diff3
+  conflictstyle = zdiff3
   # Setup your merge tool here. This will allow you to see visual diffs with `git mergetool` or `git difftool`
-  tool = meld
+  tool = nvimdiff
+[mergetool "nvimdiff"]
+    cmd = nvim -d $LOCAL $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
 [gpg]
   program = gpg
 [commit]
