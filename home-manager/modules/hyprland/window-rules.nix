@@ -28,8 +28,9 @@
 
   workspace_scratch_hidden = [
     "class:^(nz\.co\.mega\.)$"
-    "class:^(org\.cryptomator)$"
+    "class:^(org.cryptomator.launcher.Cryptomator$MainApp)$"
     "class:^(xwaylandvideobridge)$"
+
     "class:^(Filen)$"
   ];
 

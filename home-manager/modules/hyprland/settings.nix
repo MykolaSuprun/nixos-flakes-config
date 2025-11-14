@@ -11,6 +11,16 @@
   hyprSrcPath = "${flakePath}/home-manager/configurations/mykolas/hyprland/";
   hyprTargetPath = "~/.config/hypr";
 
+  hypr_plugins_pkgs =
+    if config.hyprconf.hyprland.flake.enable
+    then inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}
+    else pkgs.hyprlandPlugins;
+
+  hy3_pkgs =
+    if config.hyprconf.hyprland.flake.enable
+    then inputs.hy3.packages.${pkgs.stdenv.hostPlatform.system}
+    else pkgs.hyprlandPlugins;
+
   monitorsConf =
     if config.hyprconf.target == "geks-zenbook"
     then "geks-zenbook-monitors.conf"
@@ -48,6 +58,7 @@
     "settings.conf"
     monitorsConf
     "workspaces.conf"
+    "gestures.conf"
   ];
 
   filesToLink = srcPath: targetPath: files:
@@ -85,6 +96,7 @@ in {
 
       hyprland = {
         enable = lib.mkEnableOption "enables hyprland config";
+        flake.enable = lib.mkEnableOption "enables upstream Hyprland flake";
       };
     };
   };
@@ -165,8 +177,9 @@ in {
       systemd.enable = false;
       systemd.variables = ["--all"];
 
-      plugins = with pkgs.hyprlandPlugins; [
-        hy3
+      plugins = [
+        hypr_plugins_pkgs.hyprexpo
+        hy3_pkgs.hy3
       ];
 
       xwayland.enable = true;
