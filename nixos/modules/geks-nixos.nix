@@ -22,6 +22,14 @@
     accent = "mauve";
   };
 
+  hyprconf = {
+    target = "geks-nixos";
+    hyprland = {
+      enable = true;
+      flake.enable = true;
+    };
+  };
+
   programs = {
     ssh = {
       startAgent = true;

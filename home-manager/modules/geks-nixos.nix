@@ -24,6 +24,7 @@
     waybar.enable = true;
     hyprland = {
       enable = true;
+      flake.enable = true;
     };
   };
 
@@ -34,7 +35,7 @@
     NH_FLAKE = "$HOME/workspaces/src/nixconf";
     NIXOS_TARGET = "geks-nixos";
     BEMENU_BACKEND = "wayland";
-    BROWSER = "${inputs.zen-browser.packages.${pkgs.system}.beta}/bin/zen";
-    DEFAULT_BROWSER = "${inputs.zen-browser.packages.${pkgs.system}.beta}/bin/zen";
+    DEFAULT_BROWSER = "$(which zen-beta)";
+    BROWSER = "$(which zen-beta)";
   };
 }

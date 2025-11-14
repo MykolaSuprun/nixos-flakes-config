@@ -24,7 +24,7 @@
     };
     btop = {
       enable = true;
-      flavor = "latte";
+      flavor = "mocha";
     };
   };
   qt = {

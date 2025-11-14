@@ -39,17 +39,17 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # hyprland.url = "https://flakehub.com/f/hyprwm/Hyprland/0.51.1";
-    # # hyprland.url = "github:hyprwm/Hyprland";
-    # hyprland-plugins = {
-    #   url = "github:hyprwm/hyprland-plugins?ref=v0.50.0";
-    # url = "github:hyprwm/hyprland-plugins";
-    #   inputs.hyprland.follows = "hyprland";
-    # };
-    # hy3 = {
-    #   url = "github:outfoxxed/hy3?ref=hl0.51.0";
-    #   # url = "github:outfoxxed/hy3";
-    #   inputs.hyprland.follows = "hyprland";
-    # };
+    hyprland.url = "github:hyprwm/Hyprland";
+    hyprland-plugins = {
+      # url = "github:hyprwm/hyprland-plugins?ref=v0.50.0";
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
+    hy3 = {
+      # url = "github:outfoxxed/hy3?ref=hl0.51.0";
+      url = "github:outfoxxed/hy3";
+      inputs.hyprland.follows = "hyprland";
+    };
     # pyprland = {
     #   url = "github:hyprland-community/pyprland";
     #   inputs.nixpkgs.follows = "nixpkgs";

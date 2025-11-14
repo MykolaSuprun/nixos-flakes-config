@@ -22,7 +22,7 @@
 
     # internet
     mullvad-browser
-    protonvpn-gui
+    pkgs-stable.protonvpn-gui
     lbry
     vivaldi
     filen-desktop
