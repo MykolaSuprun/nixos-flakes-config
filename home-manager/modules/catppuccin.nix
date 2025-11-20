@@ -38,5 +38,6 @@
   };
 
   home.packages = with pkgs; [
+    pkgs.catppuccin-kvantum
   ];
 }
