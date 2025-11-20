@@ -66,7 +66,7 @@
   };
 
   environment.systemPackages = with pkgs; [
-    pkgs-stable.ayugram-desktop
+    ayugram-desktop
     thunderbolt
     bolt
     tbtools
@@ -77,7 +77,7 @@
     spice
     nexusmods-app-unfree
     steamtinkerlaunch
-    winboat
+    # winboat
   ];
 
   systemd.services.unblock-bluetooth = {

@@ -109,58 +109,109 @@ in {
       ${lib.strings.concatLines (filesToLink hyprSrcPath hyprTargetPath hyprConfigs)}
     '';
 
-    home.file = {
-      "./.config/uwsm" = {
-        source = ./../../configurations/mykolas/uwsm;
-        recursive = true;
-      };
-      "./.config/rofi" = {
-        source = ./../../configurations/mykolas/rofi;
-        recursive = true;
-      };
-      "./.config/hypr/hyprqt6engine.conf" = {
-        text = let
-          themePath = "${config.hyprconf.theme}-${config.hyprconf.accent}";
-        in
-          #hyprlang
-          ''
-            theme {
-              color_scheme = ${pkgs.catppuccin-qt5ct}/share/qt6ct/colors/${themePath}
-              style = "kvantum"
+    services = {
+      hypridle = {
+        enable = true;
+        systemdTarget = "wayland-session@Hyprland.target";
+        settings = {
+          general = {
+            lock_cmd = "pidof hyprlock || hyprlock";
+            unlock_cmd = "notify-send \"test\" \"test\"";
+            before_sleep_cmd = "loginctl lock-session";
+            after_sleep_cmd = "hyprctl dispatch dpms on";
+            ignore_dbus_inhibit = false;
+          };
+
+          listener = [
+            {
+              timeout = 150;
+              on-timeout = "brightnessctl -s set 10";
+              on-resume = "brightnessctl -r";
             }
+            {
+              timeout = 150;
+              on-timeout = "brightnessctl -sd rgb:kbd_backlight set 0";
+              on-resume = "brightnessctl -rd rgb:kbd_backlight";
+            }
+            {
+              timeout = 300;
+              on-timeout = "loginctl lock-session";
+            }
+            {
+              timeout = 330;
+              on-timeout = "hyprctl dispatch dpms off";
+              on-resume = "hyprctl dispatch dpms on";
+            }
+            {
+              timeout = 1800;
+              on-timeout = "systemctl suspend";
+            }
+          ];
+        };
+      };
+      hyprpolkitagent.enable = true;
+    };
+
+    programs = {
+      hyprshot.enable = true;
+    };
+
+    home = {
+      pointerCursor.hyprcursor.enable = true;
+
+      file = {
+        "./.config/uwsm" = {
+          source = ./../../configurations/mykolas/uwsm;
+          recursive = true;
+        };
+        "./.config/rofi" = {
+          source = ./../../configurations/mykolas/rofi;
+          recursive = true;
+        };
+        "./.config/hypr/hyprqt6engine.conf" = {
+          text = let
+            themePath = "${config.hyprconf.theme}-${config.hyprconf.accent}";
+          in
+            #hyprlang
+            ''
+              theme {
+                color_scheme = ${pkgs.catppuccin-qt5ct}/share/qt6ct/colors/${themePath}
+                style = "kvantum"
+              }
+            '';
+        };
+        "./.config/hypr/hyprtoolkit.conf" = {
+          text = let
+            themePath = "${config.hyprconf.theme}/${config.hyprconf.accent}.conf";
+            themeFile = ./../../configurations/mykolas/hyprtoolkit/themes + "/${themePath}";
+            themeConfig = builtins.readFile themeFile;
+          in ''
+            ${themeConfig}
+            # Additional hyprtoolkit configuration
+            # see https://wiki.hypr.land/Hypr-Ecosystem/hyprtoolkit/ for more details
           '';
+        };
+        "./.config/hypr/hyprlock-assets" = {
+          source = ./../../configurations/mykolas/hyprlock/hyprlock-assets;
+          recursive = true;
+        };
+        "./.config/hypr/hyprlock.conf".source =
+          ./../../configurations/mykolas/hyprlock/hyprlock.conf;
+        "./.config/swaync/style.css".source =
+          ./../../configurations/mykolas/swaync/latte.css;
+        "./.config/swaylock/config".source =
+          ./../../configurations/mykolas/swaylock/latte.conf;
+        "./.config/hypr/hyprpaper.conf".source =
+          ./../../configurations/mykolas/hyprpaper/hyprpaper.conf;
+        "./.config/hypr/hyprlock.conf.alt".source =
+          ./../../configurations/mykolas/hyprlock/hyprlock.conf.alt;
+        "./.config/hypr/hypridle.conf".source =
+          ./../../configurations/mykolas/hypridle/hypridle.conf;
+        "./.config/hypr/pyprland.toml".source =
+          ./../../configurations/mykolas/pyprland/pyprland.toml;
+        "./.config/xdg-desktop-portal/hyprland-portals.conf".source =
+          ./../../configurations/mykolas/hyprland-portals/hyprland-portals.conf;
       };
-      "./.config/hypr/hyprtoolkit.conf" = {
-        text = let
-          themePath = "${config.hyprconf.theme}/${config.hyprconf.accent}.conf";
-          themeFile = ./../../configurations/mykolas/hyprtoolkit/themes + "/${themePath}";
-          themeConfig = builtins.readFile themeFile;
-        in ''
-          ${themeConfig}
-          # Additional hyprtoolkit configuration
-          # see https://wiki.hypr.land/Hypr-Ecosystem/hyprtoolkit/ for more details
-        '';
-      };
-      "./.config/hypr/hyprlock-assets" = {
-        source = ./../../configurations/mykolas/hyprlock/hyprlock-assets;
-        recursive = true;
-      };
-      "./.config/hypr/hyprlock.conf".source =
-        ./../../configurations/mykolas/hyprlock/hyprlock.conf;
-      "./.config/swaync/style.css".source =
-        ./../../configurations/mykolas/swaync/latte.css;
-      "./.config/swaylock/config".source =
-        ./../../configurations/mykolas/swaylock/latte.conf;
-      "./.config/hypr/hyprpaper.conf".source =
-        ./../../configurations/mykolas/hyprpaper/hyprpaper.conf;
-      "./.config/hypr/hyprlock.conf.alt".source =
-        ./../../configurations/mykolas/hyprlock/hyprlock.conf.alt;
-      "./.config/hypr/hypridle.conf".source =
-        ./../../configurations/mykolas/hypridle/hypridle.conf;
-      "./.config/hypr/pyprland.toml".source =
-        ./../../configurations/mykolas/pyprland/pyprland.toml;
-      "./.config/xdg-desktop-portal/hyprland-portals.conf".source =
-        ./../../configurations/mykolas/hyprland-portals/hyprland-portals.conf;
     };
 
     # xdg.configFile = {
@@ -192,38 +243,39 @@ in {
 
     systemd.user = {
       enable = true;
-      services = {
-        # hyprland-hypridle = {
-        #   Unit = {
-        #     Description = "Idle daemon for hyprland";
-        #     After = ["graphical-session.target"];
-        #   };
-        #   Service = {
-        #     Type = "exec";
-        #     ExecCondition = ''
-        #       ${pkgs.systemd}/lib/systemd/systemd-xdg-autostart-condition "Hyprland" ""'';
-        #     ExecStart = "${pkgs.hypridle}/bin/hypridle";
-        #     Restart = "on-failure ";
-        #     Slice = "background-graphical.slice";
-        #   };
-        #   Install = {WantedBy = ["hyprland-session.target"];};
-        # };
-        # hyprland-swaync = {
-        #   Unit = {
-        #     Description = "Notification daemon for hyprland";
-        #     After = [ "graphical-session.target" ];
-        #   };
-        #   Service = {
-        #     Type = "exec";
-        #     ExecCondition = ''
-        #       ${pkgs.systemd}/lib/systemd/systemd-xdg-autostart-condition "Hyprland" ""'';
-        #     ExecStart = "${pkgs.swaynotificationcenter}/bin/swaync";
-        #     Restart = "on-failure ";
-        #     Slice = "background-graphical.slice";
-        #   };
-        #   Install = { WantedBy = [ "hyprland-session.target" ]; };
-        # };
-      };
+      #   services = {
+      #     hyprpolkitagent = {
+      #       Unit = {
+      #         Description = "Hyprland Polkit Authentication Agent";
+      #         Documentation = "https://github.com/hyprwm/hyprpolkitagent";
+      #         PartOf = ["wayland-session@Hyprland.target"];
+      #         After = ["wayland-session@Hyprland.target"];
+      #       };
+      #       Service = {
+      #         Type = "simple";
+      #         ExecStart = "${pkgs.hyprpolkitagent}/libexec/hyprpolkitagent";
+      #         Restart = "on-failure";
+      #         Slice = "session.slice";
+      #       };
+      #       Install.WantedBy = ["wayland-session@Hyprland.target"];
+      #     };
+      #
+      #     hypridle = {
+      #       Unit = {
+      #         Description = "Hypridle Idle Daemon";
+      #         Documentation = "https://github.com/hyprwm/hypridle";
+      #         PartOf = ["wayland-session@Hyprland.target"];
+      #         After = ["wayland-session@Hyprland.target"];
+      #       };
+      #       Service = {
+      #         Type = "simple";
+      #         ExecStart = "${pkgs.hypridle}/bin/hypridle";
+      #         Restart = "on-failure";
+      #         Slice = "session.slice";
+      #       };
+      #       Install.WantedBy = ["wayland-session@Hyprland.target"];
+      #     };
+      #   };
     };
   };
 }
