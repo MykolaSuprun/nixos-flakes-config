@@ -14,7 +14,7 @@
     # ./stylix.nix
     ./catppuccin.nix
     ./hyprland.nix
-    ./flatpak.nix
+    # ./flatpak.nix
   ];
 
   catppuccin = {

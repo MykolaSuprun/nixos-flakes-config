@@ -113,8 +113,11 @@ in {
         extraPackages = [];
       };
     };
+    # enable systemd DNS resolver daemon
+    resolved.enable = true;
+
     xserver = {
-      enable = false;
+      enable = true;
       videoDrivers = ["amdgpu"];
     };
 
@@ -144,6 +147,12 @@ in {
       };
     };
     polkit.enable = true;
+    wrappers.gamescope = {
+      source = "${pkgs.gamescope}/bin/gamescope";
+      capabilities = "cap_sys_nice+ep";
+      owner = "root";
+      group = "root";
+    };
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
@@ -238,7 +247,10 @@ in {
   environment = {
     enableAllTerminfo = true;
     shells = with pkgs; [zsh fish nushell];
-
+    variables = {
+      MESA_SHADER_CACHE_MAX_SIZE = "16G";
+      __GL_SHADER_DISK_CACHE_SIZE = "16G";
+    };
     sessionVariables = {
       LIBVIRT_DEFAULT_URI = ["qemu:///system"];
       NIXOS_OZONE_WL = "1";
