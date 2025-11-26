@@ -244,39 +244,64 @@ in {
 
     systemd.user = {
       enable = true;
-      #   services = {
-      #     hyprpolkitagent = {
-      #       Unit = {
-      #         Description = "Hyprland Polkit Authentication Agent";
-      #         Documentation = "https://github.com/hyprwm/hyprpolkitagent";
-      #         PartOf = ["wayland-session@Hyprland.target"];
-      #         After = ["wayland-session@Hyprland.target"];
-      #       };
-      #       Service = {
-      #         Type = "simple";
-      #         ExecStart = "${pkgs.hyprpolkitagent}/libexec/hyprpolkitagent";
-      #         Restart = "on-failure";
-      #         Slice = "session.slice";
-      #       };
-      #       Install.WantedBy = ["wayland-session@Hyprland.target"];
-      #     };
-      #
-      #     hypridle = {
-      #       Unit = {
-      #         Description = "Hypridle Idle Daemon";
-      #         Documentation = "https://github.com/hyprwm/hypridle";
-      #         PartOf = ["wayland-session@Hyprland.target"];
-      #         After = ["wayland-session@Hyprland.target"];
-      #       };
-      #       Service = {
-      #         Type = "simple";
-      #         ExecStart = "${pkgs.hypridle}/bin/hypridle";
-      #         Restart = "on-failure";
-      #         Slice = "session.slice";
-      #       };
-      #       Install.WantedBy = ["wayland-session@Hyprland.target"];
-      #     };
-      #   };
+      services = {
+        swaync = {
+          Unit = {
+            Description = "Sway Notification Center";
+            Documentation = "https://github.com/ErikReider/SwayNotificationCenter";
+            PartOf = ["graphical-session.target"];
+            After = ["graphical-session.target"];
+            # Critical: Bind to Hyprland-specific target
+            BindsTo = ["wayland-session@Hyprland.target"];
+          };
+
+          Service = {
+            Type = "dbus";
+            BusName = "org.freedesktop.Notifications";
+            ExecStart = "${pkgs.swaynotificationcenter}/bin/swaync";
+            ExecReload = "${pkgs.coreutils}/bin/kill -SIGUSR1 $MAINPID";
+            Restart = "on-failure";
+          };
+
+          Install = {
+            WantedBy = ["wayland-session@Hyprland.target"];
+          };
+        };
+        hypridle.Install.WantedBy = lib.mkForce ["wayland-session@Hyprland.target"];
+        hyprpaper.Install.WantedBy = lib.mkForce ["wayland-session@Hyprland.target"];
+        waybar.Install.WantedBy = lib.mkForce ["wayland-session@Hyprland.target"];
+        #     hyprpolkitagent = {
+        #       Unit = {
+        #         Description = "Hyprland Polkit Authentication Agent";
+        #         Documentation = "https://github.com/hyprwm/hyprpolkitagent";
+        #         PartOf = ["wayland-session@Hyprland.target"];
+        #         After = ["wayland-session@Hyprland.target"];
+        #       };
+        #       Service = {
+        #         Type = "simple";
+        #         ExecStart = "${pkgs.hyprpolkitagent}/libexec/hyprpolkitagent";
+        #         Restart = "on-failure";
+        #         Slice = "session.slice";
+        #       };
+        #       Install.WantedBy = ["wayland-session@Hyprland.target"];
+        #     };
+        #
+        #     hypridle = {
+        #       Unit = {
+        #         Description = "Hypridle Idle Daemon";
+        #         Documentation = "https://github.com/hyprwm/hypridle";
+        #         PartOf = ["wayland-session@Hyprland.target"];
+        #         After = ["wayland-session@Hyprland.target"];
+        #       };
+        #       Service = {
+        #         Type = "simple";
+        #         ExecStart = "${pkgs.hypridle}/bin/hypridle";
+        #         Restart = "on-failure";
+        #         Slice = "session.slice";
+        #       };
+        #       Install.WantedBy = ["wayland-session@Hyprland.target"];
+        #     };
+      };
     };
   };
 }
