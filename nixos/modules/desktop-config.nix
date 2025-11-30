@@ -52,7 +52,7 @@
     kdeconnect.enable = true;
     gamescope = {
       enable = true;
-      capSysNice = false;
+      capSysNice = true;
     };
     firefox = {
       enable = true;
@@ -98,6 +98,7 @@
     };
   };
   environment.systemPackages = with pkgs; [
+    lutris
     ayugram-desktop
     thunderbolt
     bolt
