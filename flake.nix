@@ -100,7 +100,7 @@
 
     hostConfigs = {
       geks-nixos = {
-        useHyprlandFlake = false;
+        useHyprlandFlake = true;
       };
       geks-zenbook = {
         useHyprlandFlake = true;
@@ -120,37 +120,49 @@
       geks-nixos = lib.nixosSystem {
         inherit system;
         inherit pkgs;
-        modules = [
-          inputs.determinate.nixosModules.default
-          # stylix.nixosModules.stylix
-          inputs.catppuccin.nixosModules.catppuccin
-          ./nixos/configurations/geks-nixos/hardware-configuration-geks-nixos.nix
-          ./nixos/configurations/geks-nixos/configuration-geks-nixos.nix
-          ./nixos/modules/geks-nixos.nix
-          # home-manager setup
-          home-manager.nixosModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              backupFileExtension = "hm-back";
-              users.mykolas = {
-                imports = [
-                  # inputs.hyprland.homeManagerModules.default
-                  # stylix.homeModules.stylix
-                  inputs.catppuccin.homeModules.catppuccin
-                  inputs.zen-browser.homeModules.beta
-                  ./home-manager/configurations/mykolas/home-geks-nixos.nix
-                  ./home-manager/modules/geks-nixos.nix
-                ];
+        modules =
+          [
+            inputs.determinate.nixosModules.default
+            # stylix.nixosModules.stylix
+            inputs.catppuccin.nixosModules.catppuccin
+            ./nixos/configurations/geks-nixos/hardware-configuration-geks-nixos.nix
+            ./nixos/configurations/geks-nixos/configuration-geks-nixos.nix
+            ./nixos/modules/geks-nixos.nix
+            # home-manager setup
+            home-manager.nixosModules.home-manager
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                backupFileExtension = "hm-back";
+                users.mykolas = {
+                  imports =
+                    [
+                      # inputs.hyprland.homeManagerModules.default
+                      # stylix.homeModules.stylix
+                      inputs.catppuccin.homeModules.catppuccin
+                      inputs.zen-browser.homeModules.beta
+                      ./home-manager/configurations/mykolas/home-geks-nixos.nix
+                      ./home-manager/modules/geks-nixos.nix
+                    ]
+                    ++ lib.optionals hostConfigs.geks-nixos.useHyprlandFlake [
+                      inputs.hyprland.homeManagerModules.default
+                    ];
+                };
+                extraSpecialArgs = {
+                  inherit inputs outputs system pkgs-stable;
+                  inherit (hostConfigs.geks-nixos) useHyprlandFlake;
+                };
               };
-              extraSpecialArgs = {
-                inherit inputs outputs system pkgs-stable;
-              };
-            };
-          }
-        ];
-        specialArgs = {inherit inputs outputs pkgs-stable;};
+            }
+          ]
+          ++ lib.optionals hostConfigs.geks-nixos.useHyprlandFlake [
+            inputs.hyprland.nixosModules.default
+          ];
+        specialArgs = {
+          inherit inputs outputs pkgs-stable;
+          inherit (hostConfigs.geks-nixos) useHyprlandFlake;
+        };
       };
       geks-zenbook = lib.nixosSystem {
         inherit system;

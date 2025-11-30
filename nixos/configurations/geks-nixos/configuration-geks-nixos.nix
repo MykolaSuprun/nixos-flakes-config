@@ -147,12 +147,12 @@ in {
       };
     };
     polkit.enable = true;
-    wrappers.gamescope = {
-      source = "${pkgs.gamescope}/bin/gamescope";
-      capabilities = "cap_sys_nice+ep";
-      owner = "root";
-      group = "root";
-    };
+    # wrappers.gamescope = {
+    #   source = "${pkgs.gamescope}/bin/gamescope";
+    #   capabilities = "cap_sys_nice+ep";
+    #   owner = "root";
+    #   group = "root";
+    # };
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
