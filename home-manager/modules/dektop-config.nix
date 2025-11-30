@@ -26,6 +26,7 @@
     lbry
     vivaldi
     filen-desktop
+    impala # tui wifi manager
 
     # social
     discord
