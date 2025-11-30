@@ -4,6 +4,7 @@
   pkgs,
   pkgs-stable,
   lib,
+  useHyprlandFlake ? false,
   ...
 }: let
   # Use NIXOS_CONF_DIR environment variable defined in geks-nixos.nix
@@ -12,12 +13,12 @@
   hyprTargetPath = "~/.config/hypr";
 
   hypr_plugins_pkgs =
-    if config.hyprconf.hyprland.flake.enable
+    if useHyprlandFlake
     then inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}
     else pkgs.hyprlandPlugins;
 
   hy3_pkgs =
-    if config.hyprconf.hyprland.flake.enable
+    if useHyprlandFlake
     then inputs.hy3.packages.${pkgs.stdenv.hostPlatform.system}
     else pkgs.hyprlandPlugins;
 

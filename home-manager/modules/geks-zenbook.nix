@@ -21,6 +21,7 @@
     target = "geks-zenbook";
     hyprland = {
       enable = true;
+      flake.enable = true;
     };
   };
 

@@ -3,10 +3,11 @@
   pkgs,
   config,
   lib,
+  useHyprlandFlake ? false,
   ...
 }: let
   hypr_pkgs =
-    if config.hyprconf.hyprland.flake.enable
+    if useHyprlandFlake
     then inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}
     else pkgs;
 in {
