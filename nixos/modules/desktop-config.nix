@@ -3,7 +3,10 @@
   pkgs-stable,
   ...
 }: {
-  services.hardware.bolt.enable = true;
+  services.hardware = {
+    bolt.enable = true;
+  };
+  hardware.steam-hardware.enable = true;
   services.teamviewer.enable = true;
   programs = {
     steam = {
@@ -12,6 +15,10 @@
       extraCompatPackages = with pkgs; [proton-ge-bin];
       extraPackages = with pkgs; [mangohud gamescope];
       extest.enable = true;
+      dedicatedServer.openFirewall = true;
+      remotePlay.openFirewall = true;
+      localNetworkGameTransfers.openFirewall = true;
+
       gamescopeSession = {
         enable = true;
         env = {DXVK_HDR = "1";};
@@ -53,18 +60,43 @@
     };
   };
 
-  services.ananicy = {
-    enable = true;
-    package = pkgs.ananicy-cpp;
-    rulesProvider = pkgs.ananicy-cpp;
-    extraRules = [
-      {
-        "name" = "gamescope";
-        "nice" = -20;
-      }
+  services = {
+    displayManager.sessionPackages = [
+      (pkgs.writeTextFile {
+        name = "gamescope-steam-session";
+        destination = "/share/wayland-sessions/gamescope-steam.desktop";
+        text = ''
+          [Desktop Entry]
+          Name=Steam (Gamescope)
+          Comment=Steam Big Picture Mode via Gamescope
+          Exec=${pkgs.writeShellScript "gamescope-steam-optimized" ''
+            ${pkgs.gamescope}/bin/gamescope \
+              --rt \
+              --prefer-vk-device 1002:744c \
+              --expose-wayland \
+              --force-grab-cursor \
+              --adaptive-sync \
+              -W 3840 -H 2160 -r 165 \
+              -- ${pkgs.steam}/bin/steam -gamepadui -steamos
+          ''}
+          Type=Application
+        '';
+        passthru.providedSessions = ["gamescope-steam"];
+      })
     ];
-  };
 
+    ananicy = {
+      enable = true;
+      package = pkgs.ananicy-cpp;
+      rulesProvider = pkgs.ananicy-cpp;
+      extraRules = [
+        {
+          "name" = "gamescope";
+          "nice" = -20;
+        }
+      ];
+    };
+  };
   environment.systemPackages = with pkgs; [
     ayugram-desktop
     thunderbolt
