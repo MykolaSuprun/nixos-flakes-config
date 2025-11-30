@@ -51,6 +51,8 @@ in {
     hyprutils
     bluejay
     blueberry
+    networkmanagerapplet
+    swayosd
 
     rofi
     rofi-network-manager
