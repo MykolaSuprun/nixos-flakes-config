@@ -26,6 +26,7 @@
 
   priority_floating = [
     "class ^(org\.kde\.ksecretd)$"
+    "class ^(nm-applet)$"
   ];
 
   workspace_scratch_hidden = [

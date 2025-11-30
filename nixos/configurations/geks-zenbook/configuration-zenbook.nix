@@ -16,6 +16,8 @@
 
   boot.initrd.luks.devices."luks-e567d70d-7e72-43f9-bc26-2bac6fcb3f67".device = "/dev/disk/by-uuid/e567d70d-7e72-43f9-bc26-2bac6fcb3f67";
 
+  hardware.enableAllFirmware = true;
+
   boot = {
     loader = {
       systemd-boot.enable = false;
@@ -43,7 +45,12 @@
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Enable networking
-  networking.networkmanager.enable = true;
+  networking = {
+    networkmanager = {
+      enable = true;
+      wifi.powersave = true;
+    };
+  };
 
   # Set your time zone.
   time.timeZone = "Europe/Warsaw";
@@ -64,34 +71,49 @@
   };
 
   # Enable the KDE Plasma Desktop Environment.
-  services.displayManager.sddm.enable = true;
-  services.desktopManager.plasma6.enable = true;
+  services = {
+    displayManager.sddm.enable = true;
+    desktopManager.plasma6.enable = true;
 
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
+    # Configure keymap in X11
+    xserver.xkb = {
+      layout = "us";
+      variant = "";
+    };
+
+    # Configure keyboard remaps
+    keyd = {
+      enable = true;
+      keyboards.default = {
+        ids = ["0001:0001"]; # Direct child of keyboard definition
+        settings = {
+          main = {
+            capslock = "overload(control, esc)";
+          };
+        };
+      };
+    };
+
+    # Enable CUPS to print documents.
+    printing.enable = true;
+
+    # Enable sound with pipewire.
+    pulseaudio.enable = false;
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
+      # If you want to use JACK applications, uncomment this
+      #jack.enable = true;
+
+      # use the example session manager (no others are packaged yet so this is enabled by default,
+      # no need to redefine it in your config for now)
+      #media-session.enable = true;
+    };
   };
 
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-
-  # Enable sound with pipewire.
-  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
-  };
-
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
@@ -99,7 +121,15 @@
   users.users.mykolas = {
     isNormalUser = true;
     description = "Mykola Suprun";
-    extraGroups = ["networkmanager" "wheel"];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "docker"
+      "kvm"
+      "qemu-libvirtd"
+      "plugdev"
+      "gamemode"
+    ];
     packages = with pkgs; [
       kdePackages.kate
       #  thunderbird
@@ -114,6 +144,8 @@
   environment.systemPackages = with pkgs; [
     #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     #  wget
+    keyd
+    brightnessctl
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

@@ -23,6 +23,7 @@
       enable = true;
       flake.enable = true;
     };
+    waybar.enable = true;
   };
 
   home.sessionVariables = {
