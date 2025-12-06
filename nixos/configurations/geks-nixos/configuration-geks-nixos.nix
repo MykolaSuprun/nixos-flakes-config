@@ -113,6 +113,17 @@ in {
         extraPackages = [];
       };
     };
+    keyd = {
+      enable = true;
+      keyboards.default = {
+        ids = ["046d:405b"]; # Direct child of keyboard definition
+        settings = {
+          main = {
+            capslock = "overload(control, esc)";
+          };
+        };
+      };
+    };
     # enable systemd DNS resolver daemon
     resolved.enable = true;
 
@@ -147,12 +158,6 @@ in {
       };
     };
     polkit.enable = true;
-    # wrappers.gamescope = {
-    #   source = "${pkgs.gamescope}/bin/gamescope";
-    #   capabilities = "cap_sys_nice+ep";
-    #   owner = "root";
-    #   group = "root";
-    # };
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
@@ -179,12 +184,6 @@ in {
         "gamemode"
       ];
     };
-    # geks-home = {
-    #   isNormalUser = true;
-    #   shell = pkgs.fish;
-    #   description = "Geks Home";
-    #   extraGroups = ["networkmanager" "wheel" "docker" "libvirtd" "kvm" "plugdev"];
-    # };
   };
 
   virtualisation = {
@@ -268,6 +267,7 @@ in {
 
       # basic packages
       gperftools
+      keyd
       ecryptfs
       cryptsetup
       git

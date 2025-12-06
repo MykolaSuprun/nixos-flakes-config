@@ -13,6 +13,7 @@
     "class ^(helldivers)$"
     "class ^(overwatch)$"
     "class ^(steam_app_2767030)$"
+    "class ^(steam_app_2623190)$" # oblivion remastered
   ];
 
   floating = [
@@ -41,7 +42,6 @@
   ];
 
   workspace_4 = [
-    "class ^(zen-beta)$"
     "class ^(org\.telegram\.desktop)$"
   ];
 

@@ -19,6 +19,7 @@
     libsForQt5.kservice
     kdePackages.kservice
     kdePackages.qtstyleplugin-kvantum
+    clipse
 
     # internet
     mullvad-browser
@@ -67,6 +68,7 @@
 
     # gaming
     limo
+    umu-launcher
     # steamtinkerlaunch dependencies
     xdotool
     xorg.xwininfo

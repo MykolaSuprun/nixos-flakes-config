@@ -41,6 +41,7 @@ in {
     hyprlock_script_alt
     hyprlang
     hyprlock
+    hyprlauncher
     swaylock
     hyprcursor
     hypridle

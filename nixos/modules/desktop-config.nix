@@ -52,7 +52,7 @@
     kdeconnect.enable = true;
     gamescope = {
       enable = true;
-      capSysNice = true;
+      capSysNice = false;
     };
     firefox = {
       enable = true;
@@ -88,7 +88,7 @@
     ananicy = {
       enable = true;
       package = pkgs.ananicy-cpp;
-      rulesProvider = pkgs.ananicy-cpp;
+      rulesProvider = pkgs.ananicy-rules-cachyos;
       extraRules = [
         {
           "name" = "gamescope";
@@ -110,7 +110,7 @@
     spice
     nexusmods-app-unfree
     steamtinkerlaunch
-    # winboat
+    winboat
   ];
 
   systemd.services.unblock-bluetooth = {
