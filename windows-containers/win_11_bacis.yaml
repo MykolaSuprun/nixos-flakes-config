@@ -10,6 +10,7 @@ services:
       RAM_SIZE: "16G"
       CPU_CORES: "16"
       USERNAME: "VM"
+      PASSWORD: "admin"
       ARGUMENTS: "-device ich9-intel-hda -device hda-output -audio alsa"
     devices:
       - /dev/kvm

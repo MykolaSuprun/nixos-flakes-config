@@ -14,7 +14,7 @@
     trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      # "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
     ];
   };
@@ -38,15 +38,15 @@
       # to have it up-to-date or simply don't specify the nixpkgs input
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # hyprland.url = "https://flakehub.com/f/hyprwm/Hyprland/0.51.1";
+    # hyprland.url = "https://flakehub.com/f/hyprwm/Hyprland/0.53.1";
     hyprland.url = "github:hyprwm/Hyprland";
     hyprland-plugins = {
-      # url = "github:hyprwm/hyprland-plugins?ref=v0.50.0";
+      # url = "github:hyprwm/hyprland-plugins?ref=v0.53.0";
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
     hy3 = {
-      # url = "github:outfoxxed/hy3?ref=hl0.51.0";
+      # url = "github:outfoxxed/hy3?ref=hl0.52.0";
       url = "github:outfoxxed/hy3";
       inputs.hyprland.follows = "hyprland";
     };

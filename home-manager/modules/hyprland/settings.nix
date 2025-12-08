@@ -176,13 +176,6 @@ in {
       };
     };
 
-    # xdg.configFile = {
-    #   "./.config/hypr/hyprlock.conf".source = impurity.link ./../../configurations/mykolas/hyprlock/hyprlock.conf;
-    # };
-
-    # xdg.configFile."./config/hypr/hyprlock.conf".source =
-    #   impurity.link ./../../configurations/mykolas/hyprlock/hyprlock.conf;
-
     wayland.windowManager.hyprland = {
       enable = true;
       # set the Hyprland and XDPH packages to null to use the ones from the NixOS module package = null;
@@ -192,7 +185,7 @@ in {
 
       plugins = [
         hypr_plugins_pkgs.hyprexpo
-        hy3_pkgs.hy3
+        # hy3_pkgs.hy3
       ];
 
       xwayland.enable = true;
@@ -209,8 +202,8 @@ in {
         swaync = {
           Unit = {
             Description = "Sway Notification Center";
-            BindsTo = ["wayland-session@Hyprland.target"];
-            After = ["wayland-session@Hyprland.target"];
+            BindsTo = ["wayland-session@hyprland.desktop.target"];
+            After = ["wayland-session@hyprland.desktop.target"];
           };
           Service = {
             Type = "dbus";
@@ -219,45 +212,60 @@ in {
             Restart = "on-failure";
           };
           Install = {
-            WantedBy = ["wayland-session@Hyprland.target"];
+            WantedBy = ["wayland-session@hyprland.desktop.target"];
           };
         };
 
         hypridle = {
           Unit = {
             Description = "Hyprland Idle Daemon";
-            BindsTo = ["wayland-session@Hyprland.target"];
-            After = ["wayland-session@Hyprland.target"];
+            BindsTo = ["wayland-session@hyprland.desktop.target"];
+            After = ["wayland-session@hyprland.desktop.target"];
           };
           Service = {
             ExecStart = "${pkgs.hypridle}/bin/hypridle";
             Restart = "on-failure";
           };
           Install = {
-            WantedBy = ["wayland-session@Hyprland.target"];
+            WantedBy = ["wayland-session@hyprland.desktop.target"];
+          };
+        };
+
+        clipse = {
+          Unit = {
+            Description = "Clipse clipboard manager";
+            BindsTo = ["wayland-session@hyprland.desktop.target"];
+            After = ["wayland-session@hyprland.desktop.target"];
+          };
+          Service = {
+            ExecStart = "${pkgs.clipse}/bin/clipse -listen";
+            Restart = "on-failure";
+          };
+          Install = {
+            WantedBy = ["wayland-session@hyprland.desktop.target"];
           };
         };
 
         hyprpaper = {
           Unit = {
             Description = "Hyprland Wallpaper Daemon";
-            BindsTo = ["wayland-session@Hyprland.target"];
-            After = ["wayland-session@Hyprland.target"];
+            BindsTo = ["wayland-session@hyprland.desktop.target"];
+            After = ["wayland-session@hyprland.desktop.target"];
           };
           Service = {
             ExecStart = "${pkgs.hyprpaper}/bin/hyprpaper";
             Restart = "on-failure";
           };
           Install = {
-            WantedBy = ["wayland-session@Hyprland.target"];
+            WantedBy = ["wayland-session@hyprland.desktop.target"];
           };
         };
 
         hyprpolkitagent = {
           Unit = {
             Description = "Hyprland Polkit Authentication Agent";
-            BindsTo = ["wayland-session@Hyprland.target"];
-            After = ["wayland-session@Hyprland.target"];
+            BindsTo = ["wayland-session@hyprland.desktop.target"];
+            After = ["wayland-session@hyprland.desktop.target"];
           };
           Service = {
             ExecStart = "${pkgs.hyprpolkitagent}/libexec/hyprpolkitagent";
@@ -266,21 +274,22 @@ in {
             Slice = "session.slice";
           };
           Install = {
-            WantedBy = ["wayland-session@Hyprland.target"];
+            WantedBy = ["wayland-session@hyprland.desktop.target"];
           };
         };
+
         waybar = {
           Unit = {
             Description = "Highly customizable Wayland bar";
-            BindsTo = ["wayland-session@Hyprland.target"];
-            After = ["wayland-session@Hyprland.target"];
+            BindsTo = ["wayland-session@hyprland.desktop.target"];
+            After = ["wayland-session@hyprland.desktop.target"];
           };
           Service = {
             ExecStart = "${pkgs.waybar}/bin/waybar";
             Restart = "on-failure";
           };
           Install = {
-            WantedBy = ["wayland-session@Hyprland.target"];
+            WantedBy = ["wayland-session@hyprland.desktop.target"];
           };
         };
       };

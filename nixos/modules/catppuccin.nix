@@ -9,7 +9,7 @@
     plymouth.enable = true;
     tty = {
       enable = true;
-      flavor = "mocha";
+      # flavor = "mocha";
     };
     sddm.enable = true;
   };
