@@ -67,7 +67,7 @@
     cider
 
     # gaming
-    limo
+    pkgs-stable.limo
     umu-launcher
     # steamtinkerlaunch dependencies
     xdotool

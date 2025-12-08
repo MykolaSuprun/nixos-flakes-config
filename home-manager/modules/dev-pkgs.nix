@@ -55,10 +55,11 @@
     inputs.my-nixvim.packages.${system}.lazyvim
     inputs.my-nixvim.packages.${system}.nixvim
     inputs.my-nixvim.packages.${system}.nvim
+    neovide
     browsh # tui browser
     # mynav
     sublime4
-    zed-editor
+    # zed-editor
     nvtopPackages.amd
     btop
     lazydocker

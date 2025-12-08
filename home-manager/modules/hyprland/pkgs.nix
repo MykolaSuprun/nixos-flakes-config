@@ -42,6 +42,7 @@ in {
     hyprlang
     hyprlock
     hyprlauncher
+    hyprpwcenter
     swaylock
     hyprcursor
     hypridle

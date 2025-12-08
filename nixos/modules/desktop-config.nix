@@ -104,11 +104,10 @@
     bolt
     tbtools
     kdePackages.plasma-thunderbolt
-    bazecor
+    pkgs-stable.bazecor
     steam-run
     # looking-glass-client
     spice
-    nexusmods-app-unfree
     steamtinkerlaunch
     winboat
   ];

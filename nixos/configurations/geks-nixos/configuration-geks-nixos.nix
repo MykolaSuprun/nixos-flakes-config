@@ -35,7 +35,6 @@ in {
       # kvmfr
     ];
     kernelModules = [
-      "ecryptfs"
       "btintel"
       "btusb"
       # "vfio_virqfd"
@@ -139,7 +138,7 @@ in {
 
     fprintd = {enable = true;};
     udev = {
-      packages = [pkgs.bazecor];
+      packages = [pkgs-stable.bazecor pkgs.bazecor];
       extraRules = ''
         SUBSYSTEM=="kvmfr", OWNER="mykolas", GROUP="kvm", MODE="0660"
       '';
@@ -150,7 +149,6 @@ in {
 
   security = {
     pam = {
-      enableEcryptfs = true;
       services = {
         # allow swaylock to unlock sessions
         swaylock = {};
@@ -217,7 +215,6 @@ in {
     zsh = {
       enable = true;
     };
-    ecryptfs.enable = true;
     partition-manager.enable = true;
     gnupg.agent = {
       enable = true;
@@ -268,7 +265,6 @@ in {
       # basic packages
       gperftools
       keyd
-      ecryptfs
       cryptsetup
       git
       gh
@@ -286,7 +282,7 @@ in {
       x265
       xsettingsd
       file
-      wl-clipboard-rs
+      wl-clipboard
       wl-clipboard-x11
       xclip
       ncurses

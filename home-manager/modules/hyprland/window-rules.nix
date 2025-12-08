@@ -23,6 +23,7 @@
     "class ^(xwaylandvideobridge)$"
     "class ^(kitty-dropterm)$"
     "class ^(com\.saivert\.pwvucontrol)$"
+    "class ^(clipse)$"
   ];
 
   priority_floating = [
@@ -30,11 +31,20 @@
     "class ^(nm-applet)$"
   ];
 
+  floating_size_m = [
+    "class ^(clipse)$"
+  ];
+
+  floating_position_center = [
+    "class ^(steam)$"
+    "class ^(clipse)$"
+  ];
+
   workspace_scratch_hidden = [
     "class ^(nz\.co\.mega\.)$"
     "initial_title Cryptomator"
     "class ^(xwaylandvideobridge)$"
-    "class ^(Filen)$"
+    "initial_title ^(Filen)$"
   ];
 
   workspace_1 = [
@@ -66,6 +76,8 @@ in {
     # Configure always floating windows
     ++ makeHyprlandWindowRules "float on" floating
     ++ makeHyprlandWindowRules "pseudo on" floating
+    ++ makeHyprlandWindowRules "size 40% 30%" floating_size_m
+    ++ makeHyprlandWindowRules "center on" floating_position_center
     # Configure priority floating winodws
     ++ makeHyprlandWindowRules "float on" priority_floating
     ++ makeHyprlandWindowRules "center on" priority_floating

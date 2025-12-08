@@ -31,21 +31,10 @@ in {
         withUWSM = true;
         package = hypr_pkgs.hyprland;
         portalPackage = hypr_pkgs.xdg-desktop-portal-hyprland;
-        systemd.setPath.enable = true;
         xwayland.enable = true;
-      };
-      hyprlock = {
-        enable = true;
       };
       uwsm = {
         enable = true;
-        waylandCompositors = {
-          hyprland = {
-            prettyName = "Hyprland";
-            comment = "Hyprland compositor managed by UWSM";
-            binPath = "/run/current-system/sw/bin/Hyprland";
-          };
-        };
       };
     };
 
@@ -60,7 +49,7 @@ in {
 
     services = {
       hypridle = {
-        enable = true;
+        enable = false;
         # package = inputs.hypridle.packages.${pkgs.system}.hypridle;
       };
       dbus.implementation = "broker";
