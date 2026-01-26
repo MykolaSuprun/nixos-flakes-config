@@ -50,6 +50,10 @@
       url = "github:outfoxxed/hy3";
       inputs.hyprland.follows = "hyprland";
     };
+    sysc-greet = {
+      url = "github:Nomadcxx/sysc-greet";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # pyprland = {
     #   url = "github:hyprland-community/pyprland";
     #   inputs.nixpkgs.follows = "nixpkgs";
@@ -125,6 +129,7 @@
             inputs.determinate.nixosModules.default
             # stylix.nixosModules.stylix
             inputs.catppuccin.nixosModules.catppuccin
+            inputs.sysc-greet.nixosModules.default
             ./nixos/configurations/geks-nixos/hardware-configuration-geks-nixos.nix
             ./nixos/configurations/geks-nixos/configuration-geks-nixos.nix
             ./nixos/modules/geks-nixos.nix

@@ -57,6 +57,47 @@
   win11 = pkgs.writeShellScriptBin "win11" ''
     docker compose -f $NIXOS_CONF_DIR/windows-containers/win_11_bacis.yaml up
   '';
+  py-init = pkgs.writeShellScriptBin "py-init" ''
+    git init
+
+    cat > flake.nix << 'EOF'
+    {
+      description = "Python development environment with uv";
+
+      inputs = {
+        nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+        flake-utils.url = "github:numtide/flake-utils";
+      };
+
+      outputs = {
+        self,
+        nixpkgs,
+        flake-utils,
+      }:
+        flake-utils.lib.eachDefaultSystem (
+          system: let
+            pkgs = nixpkgs.legacyPackages.''${system};
+          in {
+            devShells.default = pkgs.mkShell {
+              buildInputs = with pkgs; [
+                uv
+                python312
+              ];
+
+              shellHook = '''
+                echo "UV Python environment activated"
+                uv --version
+                python --version
+              ''';
+            };
+          }
+        );
+    }
+    EOF
+
+    git add .
+    nix develop
+  '';
 in {
   home.packages = with pkgs; [
     babelfish
@@ -64,6 +105,7 @@ in {
 
     conn-win
     win11
+    py-init
   ];
 
   programs = {
