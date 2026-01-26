@@ -23,12 +23,12 @@
     "class ^(xwaylandvideobridge)$"
     "class ^(kitty-dropterm)$"
     "class ^(com\.saivert\.pwvucontrol)$"
-    "class ^(clipse)$"
   ];
 
   priority_floating = [
     "class ^(org\.kde\.ksecretd)$"
     "class ^(nm-applet)$"
+    "class ^(clipse)$"
   ];
 
   floating_size_m = [
@@ -78,7 +78,7 @@ in {
     ++ makeHyprlandWindowRules "pseudo on" floating
     ++ makeHyprlandWindowRules "size 40% 30%" floating_size_m
     ++ makeHyprlandWindowRules "center on" floating_position_center
-    # Configure priority floating winodws
+    # Configure priority floating windows
     ++ makeHyprlandWindowRules "float on" priority_floating
     ++ makeHyprlandWindowRules "center on" priority_floating
     ++ makeHyprlandWindowRules "pin on" priority_floating

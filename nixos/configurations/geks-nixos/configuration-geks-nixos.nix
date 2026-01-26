@@ -101,17 +101,31 @@ in {
 
   # Enable the X11 windowing system.
   services = {
-    displayManager = {
-      # defaultSession = "hyprland";
-      sddm = {
-        enable = true;
-        wayland = {
-          enable = true;
-          # compositor = "kwin";
+    greetd = {
+      enable = true;
+      useTextGreeter = true;
+    };
+    sysc-greet = {
+      enable = true;
+      compositor = "hyprland";
+      settings = {
+        initial_session = {
+          command = "uwsm start hyprland.desktop";
+          user = "mykolas";
         };
-        extraPackages = [];
       };
     };
+    # displayManager = {
+    # defaultSession = "hyprland";
+    # sddm = {
+    #   enable = true;
+    #   wayland = {
+    #     enable = true;
+    #     # compositor = "kwin";
+    #   };
+    #   extraPackages = [];
+    # };
+    # };
     keyd = {
       enable = true;
       keyboards.default = {
@@ -241,6 +255,11 @@ in {
   systemd.tmpfiles.rules = ["f /dev/shm/looking-glass 0660 mykolas kvm -"];
 
   environment = {
+    # etc = {
+    #   "greetd/sysc-greet.toml".text = ''
+    #     default_session = "uwsm start hyprland"
+    #   '';
+    # };
     enableAllTerminfo = true;
     shells = with pkgs; [zsh fish nushell];
     variables = {

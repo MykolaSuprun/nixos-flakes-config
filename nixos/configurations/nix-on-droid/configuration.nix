@@ -34,7 +34,6 @@
     nvd
     eza
     fzf
-    fzf-zsh
     xclip
     tree
     ripgrep

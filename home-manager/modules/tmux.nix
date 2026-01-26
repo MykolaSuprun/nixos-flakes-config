@@ -37,6 +37,8 @@
           # allow passthrough
           set -gq allow-passthrough on
           set -g visual-activity off
+          set -ga update-environment TERM
+          set -ga update-environment TERM_PROGRAM
 
           # fix terminal colors
           # set-option -sa terminal-overrides ",xterm*:Tc"

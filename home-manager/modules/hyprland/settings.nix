@@ -231,20 +231,20 @@ in {
           };
         };
 
-        clipse = {
-          Unit = {
-            Description = "Clipse clipboard manager";
-            BindsTo = ["wayland-session@hyprland.desktop.target"];
-            After = ["wayland-session@hyprland.desktop.target"];
-          };
-          Service = {
-            ExecStart = "${pkgs.clipse}/bin/clipse -listen";
-            Restart = "on-failure";
-          };
-          Install = {
-            WantedBy = ["wayland-session@hyprland.desktop.target"];
-          };
-        };
+        # clipse = {
+        #   Unit = {
+        #     Description = "Clipse clipboard manager";
+        #     BindsTo = ["wayland-session@hyprland.desktop.target"];
+        #     After = ["wayland-session@hyprland.desktop.target"];
+        #   };
+        #   Service = {
+        #     ExecStart = "${pkgs.clipse}/bin/clipse -listen";
+        #     Restart = "on-failure";
+        #   };
+        #   Install = {
+        #     WantedBy = ["wayland-session@hyprland.desktop.target"];
+        #   };
+        # };
 
         hyprpaper = {
           Unit = {
