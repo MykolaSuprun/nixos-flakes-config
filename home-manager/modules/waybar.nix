@@ -109,6 +109,23 @@ in {
           #workspaces button.urgent {
             background: @red;
           }
+          #submap {
+              padding: 0 0.5em;
+              margin: 0.25em;
+              border-radius: 5px;
+          }
+          #submap {
+              padding: 0 0.5em;
+              margin: 0.25em;
+              border-radius: 5px;
+              background: @lavender;
+          }
+          #submap.resize {
+              padding: 0 0.5em;
+              margin: 0.25em;
+              border-radius: 5px;
+              background: @teal;
+          }
           #mpris {
               padding: 0 0.5em;
               margin: 0.25em;
@@ -131,7 +148,7 @@ in {
           margin-bottom = 3;
           margin-left = 8;
           margin-right = 8;
-          modules-left = ["hyprland/workspaces"];
+          modules-left = ["hyprland/workspaces" "hyprland/submap"];
           modules-center = ["clock"];
           modules-right = ["mpris" "wireplumber" "bluetooth"];
           "hyprland/workspaces" = {
@@ -155,6 +172,13 @@ in {
               "13" = "󰧨";
               "14" = "󰧨";
             };
+          };
+          "hyprland/submap" = {
+            format = "<span style=\"italic\">{}</span>"; # Displays the submap name
+            max-length = 8;
+            tooltip = false;
+            default-submat = "default";
+            always-on = true;
           };
           "hyprland/language" = {
             format = "Lang: {}";

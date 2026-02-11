@@ -29,15 +29,18 @@
     "class ^(org\.kde\.ksecretd)$"
     "class ^(nm-applet)$"
     "class ^(clipse)$"
+    "title clipse"
   ];
 
   floating_size_m = [
     "class ^(clipse)$"
+    "title clipse"
   ];
 
   floating_position_center = [
     "class ^(steam)$"
     "class ^(clipse)$"
+    "title clipse"
   ];
 
   workspace_scratch_hidden = [
