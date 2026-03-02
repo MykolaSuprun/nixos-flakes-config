@@ -25,6 +25,9 @@ in {
     };
   };
   config = lib.mkIf config.hyprconf.hyprland.enable {
+    environment.systemPackages = with pkgs; [
+      inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
+    ];
     programs = {
       hyprland = {
         enable = true;

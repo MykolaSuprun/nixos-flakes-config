@@ -1,4 +1,5 @@
 {
+  inputs,
   config,
   pkgs,
   ...
@@ -46,7 +47,7 @@ in {
     swaylock
     hyprcursor
     hypridle
-    hyprshot
+    grimblast
     pyprland
     hyprsysteminfo
     hyprland-qt-support
@@ -55,7 +56,9 @@ in {
     blueberry
     networkmanagerapplet
     swayosd
+    app2unit
 
+    kdePackages.qt6ct
     rofi
     rofi-network-manager
     swaynotificationcenter

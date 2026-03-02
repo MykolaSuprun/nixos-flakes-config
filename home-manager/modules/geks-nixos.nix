@@ -32,6 +32,7 @@
     NIXOS_OZONE_WL = "1";
     STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
     NIXOS_CONF_DIR = "$HOME/workspaces/src/nixconf";
+    APP2UNIT_SLICES = "a=app-graphical.slice b=background-graphical.slice s=session-graphical.slice";
     NH_FLAKE = "$HOME/workspaces/src/nixconf";
     NIXOS_TARGET = "geks-nixos";
     BEMENU_BACKEND = "wayland";

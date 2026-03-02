@@ -113,13 +113,16 @@ in {
               padding: 0 0.5em;
               margin: 0.25em;
               border-radius: 5px;
-          }
-          #submap {
-              padding: 0 0.5em;
-              margin: 0.25em;
-              border-radius: 5px;
               background: @lavender;
           }
+
+          #submap label {
+              padding: 0;
+              margin: 0;
+              min-height: 0;
+          }
+
+
           #submap.resize {
               padding: 0 0.5em;
               margin: 0.25em;

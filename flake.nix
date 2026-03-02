@@ -45,6 +45,16 @@
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.noctalia-qs.follows = "noctalia-qs";
+    };
+
+    noctalia-qs = {
+      url = "github:noctalia-dev/noctalia-qs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     hy3 = {
       # url = "github:outfoxxed/hy3?ref=hl0.52.0";
       url = "github:outfoxxed/hy3";
@@ -147,6 +157,7 @@
                       # stylix.homeModules.stylix
                       inputs.catppuccin.homeModules.catppuccin
                       inputs.zen-browser.homeModules.beta
+                      inputs.noctalia.homeModules.default
                       ./home-manager/configurations/mykolas/home-geks-nixos.nix
                       ./home-manager/modules/geks-nixos.nix
                     ]
@@ -193,6 +204,7 @@
                       # stylix.homeModules.stylix
                       inputs.catppuccin.homeModules.catppuccin
                       inputs.zen-browser.homeModules.beta
+                      inputs.noctalia.homeModules.default
                       ./home-manager/configurations/mykolas/home-zenbook.nix
                       ./home-manager/modules/geks-zenbook.nix
                     ]
