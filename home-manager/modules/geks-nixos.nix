@@ -5,19 +5,20 @@
 }: {
   imports = [
     ./hyprland
+    ./noctalia.nix
     ./shell.nix
     ./chromium.nix
-    ./tmux.nix
-    ./kitty.nix
     # ./zellij.nix
     ./dev-pkgs.nix
-    ./dektop-config.nix
+    ./desktop-config.nix
     # ./stylix.nix
     ./catppuccin.nix
     ./waybar.nix
+    ./rofi.nix
   ];
 
   hyprconf = {
+    flakePath = "/home/mykolas/workspaces/src/nixconf";
     target = "geks-nixos";
     # theme = "catppuccin-latte";
     # accent = "mauve";

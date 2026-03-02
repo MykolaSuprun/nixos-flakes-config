@@ -5,7 +5,6 @@
 }: {
   imports = [
     ./shell.nix
-    ./tmux.nix
     ./dev-pkgs.nix
     ./catppuccin.nix
   ];

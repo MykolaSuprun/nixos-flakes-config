@@ -7,8 +7,7 @@
   useHyprlandFlake ? false,
   ...
 }: let
-  # Use NIXOS_CONF_DIR environment variable defined in geks-nixos.nix
-  flakePath = "$NIXOS_CONF_DIR";
+  flakePath = config.hyprconf.flakePath;
   hyprSrcPath = "${flakePath}/home-manager/configurations/mykolas/hyprland/";
   hyprTargetPath = "~/.config/hypr";
 
@@ -62,6 +61,11 @@
     "gestures.conf"
   ];
 
+  # Hypr ecosystem configs to symlink but NOT source in hyprland.conf
+  hyprEcosystemConfigs = [
+    "hyprlauncher.conf"
+  ];
+
   filesToLink = srcPath: targetPath: files:
     builtins.map (x: ''
       rm -f ${targetPath}/${x}
@@ -71,6 +75,11 @@
 in {
   options = {
     hyprconf = {
+      flakePath = lib.mkOption {
+        type = lib.types.str;
+        description = "Absolute path to the flake repository for live-edit symlinks";
+        example = "/home/mykolas/workspaces/src/nixconf";
+      };
       target = lib.mkOption {
         type = lib.types.enum ["geks-zenbook" "geks-nixos"];
         description = "Target system determining hyprland configuration variant";
@@ -108,6 +117,12 @@ in {
       mkdir -p ~/.config/wallpapers
 
       ${lib.strings.concatLines (filesToLink hyprSrcPath hyprTargetPath hyprConfigs)}
+      ${lib.strings.concatLines (filesToLink hyprSrcPath hyprTargetPath hyprEcosystemConfigs)}
+
+      # Ensure icon_theme is set in hyprtoolkit.conf (managed by noctalia, which only writes colors)
+      if [ -f ${hyprTargetPath}/hyprtoolkit.conf ] && ! grep -q "icon_theme" ${hyprTargetPath}/hyprtoolkit.conf; then
+        echo "icon_theme = Papirus-Light" >> ${hyprTargetPath}/hyprtoolkit.conf
+      fi
     '';
 
     services = {
@@ -124,10 +139,6 @@ in {
       file = {
         "./.config/uwsm" = {
           source = ./../../configurations/mykolas/uwsm;
-          recursive = true;
-        };
-        "./.config/rofi" = {
-          source = ./../../configurations/mykolas/rofi;
           recursive = true;
         };
         # "./.config/hypr/hyprqt6engine.conf" = {
@@ -170,7 +181,7 @@ in {
           ./../../configurations/mykolas/hyprlock/hyprlock.conf.alt;
         "./.config/hypr/hypridle.conf".source =
           ./../../configurations/mykolas/hypridle/hypridle.conf;
-        "./.config/hypr/pyprland.toml".source =
+        "./.config/pypr/config.toml".source =
           ./../../configurations/mykolas/pyprland/pyprland.toml;
         "./.config/xdg-desktop-portal/hyprland-portals.conf".source =
           ./../../configurations/mykolas/hyprland-portals/hyprland-portals.conf;
@@ -185,7 +196,8 @@ in {
       systemd.variables = ["--all"];
 
       plugins = [
-        hypr_plugins_pkgs.hyprexpo
+        # hypr_plugins_pkgs.hyprexpo
+        # pkgs.hyprlandPlugins.hyprexpo
         # hy3_pkgs.hy3
       ];
 

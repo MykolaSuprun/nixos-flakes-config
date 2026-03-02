@@ -46,7 +46,7 @@
     # nix
     nix-tree
     nix-diff
-    nixfmt-classic
+    nixfmt
   ];
 
   home.sessionVariables = {

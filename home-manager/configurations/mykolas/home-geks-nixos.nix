@@ -43,7 +43,6 @@
       recursive = true;
     };
     "./.config/freerdp/sdl-freerdp.json".source = ./freerdp/sdl-freerdp.json;
-    "./.wezterm.lua".source = ./wezterm/wezterm.lua;
     "./.gitconfig".source = ./gitconfig/gitconfig;
     "./.config/superfile" = {
       source = ./superfile;

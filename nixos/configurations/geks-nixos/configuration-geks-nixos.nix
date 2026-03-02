@@ -3,6 +3,7 @@
   config,
   pkgs,
   pkgs-stable,
+  wrappedPkgs,
   lib,
   ...
 }: let
@@ -112,10 +113,13 @@ in {
       enable = true;
       compositor = "hyprland";
       settings = {
-        initial_session = {
-          command = "uwsm start hyprland.desktop";
-          user = "mykolas";
+        terminal = {
+          vt = 1;
         };
+        # initial_session = {
+        #   command = "uwsm start hyprland.desktop";
+        #   user = "mykolas";
+        # };
       };
     };
     # displayManager = {
@@ -180,13 +184,13 @@ in {
 
   users.groups.plugdev = {};
   users.extraGroups.vboxusers.members = ["mykolas"];
-  users.defaultUserShell = pkgs.zsh;
+  users.defaultUserShell = wrappedPkgs.zsh;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  # Define a user account. Don't forget to set a password with 'passwd'.
   users.users = {
     mykolas = {
       isNormalUser = true;
-      shell = pkgs.zsh;
+      shell = wrappedPkgs.zsh;
       description = "Mykola Suprun";
       extraGroups = [
         "networkmanager"

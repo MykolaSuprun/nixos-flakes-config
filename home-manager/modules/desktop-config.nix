@@ -22,6 +22,9 @@
     clipse
     pkgs.kdePackages.qttools
 
+    # icon themes
+    catppuccin-papirus-folders
+
     # internet
     mullvad-browser
     pkgs-stable.protonvpn-gui
@@ -33,7 +36,7 @@
     # social
     discord
     signal-desktop
-    telegram-desktop
+    # telegram-desktop
     tg
 
     # other

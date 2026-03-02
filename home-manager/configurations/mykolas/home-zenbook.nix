@@ -38,7 +38,6 @@
       source = ./autostart;
       recursive = true;
     };
-    "./.wezterm.lua".source = ./wezterm/wezterm.lua;
     "./.gitconfig".source = ./gitconfig/gitconfig;
     # "./.config/kitty" = {
     #   source = ./kitty;

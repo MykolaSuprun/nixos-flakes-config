@@ -23,12 +23,12 @@
           catppuccin-cursors.mochaMauve # or .lattePink, .frappeLavender, etc.
 
           # GTK themes
-          gnome.gnome-themes-extra
+          gnome-themes-extra
           catppuccin-gtk
 
           # Icon themes
           papirus-icon-theme
-          catppuccin-papirus-folders.catppuccin-latte # Available variants: latte, frappe, macchiato, mocha
+          catppuccin-papirus-folders
         ]);
       pathsToLink = ["/share/fonts" "/share/icons"];
       ignoreCollisions = true; # Add this parameter
