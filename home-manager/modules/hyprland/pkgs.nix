@@ -2,6 +2,7 @@
   inputs,
   config,
   pkgs,
+  system,
   ...
 }: let
   hyprlock_script = pkgs.writeShellScriptBin "run_hyprlock" ''
@@ -36,6 +37,7 @@
 in {
   # Packages necessary for hyprland
   home.packages = with pkgs; [
+    # inputs.caelestia-shell.packages.${system}.with-cli
     menu_script
     lock_screen
     hyprlock_script
@@ -53,13 +55,11 @@ in {
     hyprland-qt-support
     hyprutils
     bluejay
-    blueberry
     networkmanagerapplet
     swayosd
     app2unit
 
     kdePackages.qt6ct
-    rofi
     rofi-network-manager
     swaynotificationcenter
     libnotify
@@ -72,10 +72,7 @@ in {
     wayland-bongocat
     # hyper
     # terminal
-    alacritty-theme
-    alacritty
     # pipewire control
-    helvum
     # media control
     playerctl
     pwvucontrol # volume control

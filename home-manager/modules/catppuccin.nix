@@ -26,6 +26,9 @@
       enable = true;
       flavor = "mocha";
     };
+    rofi = {
+      enable = true;
+    };
   };
   qt = {
     enable = true;

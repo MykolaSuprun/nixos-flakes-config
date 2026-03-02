@@ -7,6 +7,7 @@
   config,
   lib,
   pkgs,
+  wrappedPkgs,
   ...
 }: {
   imports = [
@@ -16,13 +17,13 @@
   wsl.enable = true;
   wsl.defaultUser = "mykolas";
 
-  users.defaultUserShell = pkgs.fish;
+  users.defaultUserShell = wrappedPkgs.zsh;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  # Define a user account. Don't forget to set a password with 'passwd'.
   users.users = {
     mykolas = {
       isNormalUser = true;
-      shell = pkgs.fish;
+      shell = wrappedPkgs.zsh;
       description = "Mykola Suprun";
       extraGroups = ["wheel" "docker"];
     };
@@ -33,6 +34,7 @@
       enable = true;
       useBabelfish = true;
     };
+    zsh.enable = true;
   };
 
   environment = {

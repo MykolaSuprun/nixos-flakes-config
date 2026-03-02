@@ -12,6 +12,6 @@ gen=$(sudo nix-env -p /nix/var/nix/profiles/system --list-generations | grep cur
 git commit -am "$gen"
 if [ -n "${HYPRLAND_INSTANCE_SIGNATURE+set}" ]; then
   hyprctl reload && pypr reload
-  systemctl --user restart noctalia.service
+  # systemctl --user restart noctalia.service
 fi
 cd -

@@ -8,7 +8,6 @@
     trusted-substituters = [
       "https://cache.nixos.org"
       "https://nix-community.cachix.org"
-      # "https://hyprland.cachix.org"
       "https://install.determinate.systems"
     ];
     trusted-public-keys = [
@@ -20,6 +19,7 @@
   };
 
   inputs = {
+    # Core
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
     nixpkgs-stable.url = "https://flakehub.com/f/NixOS/nixpkgs/*";
@@ -27,21 +27,25 @@
       url = "https://flakehub.com/f/nix-community/home-manager/0.1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Dendritic infrastructure
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    import-tree.url = "github:vic/import-tree";
+
+    # Platform-specific
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
       flake = true;
     };
+
+    # Desktop
     impurity.url = "github:outfoxxed/impurity.nix";
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
-      # IMPORTANT: we're using "libgbm" and is only available in unstable so ensure
-      # to have it up-to-date or simply don't specify the nixpkgs input
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # hyprland.url = "https://flakehub.com/f/hyprwm/Hyprland/0.53.1";
     hyprland.url = "github:hyprwm/Hyprland";
     hyprland-plugins = {
-      # url = "github:hyprwm/hyprland-plugins?ref=v0.53.0";
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
@@ -50,13 +54,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.noctalia-qs.follows = "noctalia-qs";
     };
-
     noctalia-qs = {
       url = "github:noctalia-dev/noctalia-qs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hy3 = {
-      # url = "github:outfoxxed/hy3?ref=hl0.52.0";
       url = "github:outfoxxed/hy3";
       inputs.hyprland.follows = "hyprland";
     };
@@ -64,202 +66,21 @@
       url = "github:Nomadcxx/sysc-greet";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # pyprland = {
-    #   url = "github:hyprland-community/pyprland";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
-    # stylix = {
-    #   url = "github:danth/stylix";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+
+    # Theming
     catppuccin.url = "github:catppuccin/nix";
+
+    # Tools
     my-nixvim = {
       url = "github:MykolaSuprun/nixvim-config";
       flake = true;
     };
+
+    # Wrappers (homeless dotfile packages)
+    wrappers.url = "github:lassulus/wrappers";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    nixpkgs-stable,
-    home-manager,
-    nixos-wsl,
-    # stylix,
-    ...
-  } @ inputs: let
-    inherit (self) outputs;
-    system = "x86_64-linux";
-
-    pkgs = import nixpkgs {
-      inherit system;
-      config.allowUnfree = true;
-      config.permittedInsecurePackages = ["openssl-1.1.1w"];
-      overlays =
-        [
-          # (final: prev: {
-          #   pyprland = inputs.pyprland.packages.${system}.pyprland;
-          # })
-        ]
-        ++ import ./overlays;
-    };
-
-    pkgs-stable = import nixpkgs-stable {
-      inherit system;
-      config.allowUnfree = true;
-      config.permittedInsecurePackages = [];
-    };
-
-    lib = nixpkgs.lib;
-
-    hostConfigs = {
-      geks-nixos = {
-        useHyprlandFlake = true;
-      };
-      geks-zenbook = {
-        useHyprlandFlake = true;
-      };
-      geks-wsl = {
-        useHyprlandFlake = false;
-      };
-    };
-  in {
-    homeModules = {
-      tmux = import ./home-manager/modules/tmux.nix;
-      zellij = import ./home-manager/modules/zellij.nix;
-      shell = import ./home-manager/modules/shell.nix;
-    };
-
-    nixosConfigurations = {
-      geks-nixos = lib.nixosSystem {
-        inherit system;
-        inherit pkgs;
-        modules =
-          [
-            inputs.determinate.nixosModules.default
-            # stylix.nixosModules.stylix
-            inputs.catppuccin.nixosModules.catppuccin
-            inputs.sysc-greet.nixosModules.default
-            ./nixos/configurations/geks-nixos/hardware-configuration-geks-nixos.nix
-            ./nixos/configurations/geks-nixos/configuration-geks-nixos.nix
-            ./nixos/modules/geks-nixos.nix
-            # home-manager setup
-            home-manager.nixosModules.home-manager
-            {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                backupFileExtension = "hm-back";
-                users.mykolas = {
-                  imports =
-                    [
-                      # inputs.hyprland.homeManagerModules.default
-                      # stylix.homeModules.stylix
-                      inputs.catppuccin.homeModules.catppuccin
-                      inputs.zen-browser.homeModules.beta
-                      inputs.noctalia.homeModules.default
-                      ./home-manager/configurations/mykolas/home-geks-nixos.nix
-                      ./home-manager/modules/geks-nixos.nix
-                    ]
-                    ++ lib.optionals hostConfigs.geks-nixos.useHyprlandFlake [
-                      inputs.hyprland.homeManagerModules.default
-                    ];
-                };
-                extraSpecialArgs = {
-                  inherit inputs outputs system pkgs-stable;
-                  inherit (hostConfigs.geks-nixos) useHyprlandFlake;
-                };
-              };
-            }
-          ]
-          ++ lib.optionals hostConfigs.geks-nixos.useHyprlandFlake [
-            inputs.hyprland.nixosModules.default
-          ];
-        specialArgs = {
-          inherit inputs outputs pkgs-stable;
-          inherit (hostConfigs.geks-nixos) useHyprlandFlake;
-        };
-      };
-      geks-zenbook = lib.nixosSystem {
-        inherit system;
-        inherit pkgs;
-        modules =
-          [
-            inputs.determinate.nixosModules.default
-            inputs.catppuccin.nixosModules.catppuccin
-            ./nixos/configurations/geks-zenbook/hardware-configuration-zenbook.nix
-            ./nixos/configurations/geks-zenbook/configuration-zenbook.nix
-            ./nixos/modules/geks-zenbook.nix
-            # home-manager setup
-            home-manager.nixosModules.home-manager
-            {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                backupFileExtension = "hm-back";
-                users.mykolas = {
-                  imports =
-                    [
-                      # inputs.hyprland.homeManagerModules.default
-                      # stylix.homeModules.stylix
-                      inputs.catppuccin.homeModules.catppuccin
-                      inputs.zen-browser.homeModules.beta
-                      inputs.noctalia.homeModules.default
-                      ./home-manager/configurations/mykolas/home-zenbook.nix
-                      ./home-manager/modules/geks-zenbook.nix
-                    ]
-                    ++ lib.optionals hostConfigs.geks-zenbook.useHyprlandFlake [
-                      inputs.hyprland.homeManagerModules.default
-                    ];
-                };
-                extraSpecialArgs = {
-                  inherit inputs outputs system pkgs-stable;
-                  inherit (hostConfigs.geks-zenbook) useHyprlandFlake;
-                };
-              };
-            }
-          ]
-          ++ lib.optionals hostConfigs.geks-zenbook.useHyprlandFlake [
-            inputs.hyprland.nixosModules.default
-          ];
-        specialArgs = {
-          inherit inputs outputs pkgs-stable;
-          inherit (hostConfigs.geks-zenbook) useHyprlandFlake;
-        };
-      };
-      geks-wsl = lib.nixosSystem {
-        inherit system;
-        inherit pkgs;
-        modules = [
-          inputs.determinate.nixosModules.default
-          # stylix.nixosModules.stylix
-          ./nixos/configurations/geks-wsl/configuration.nix
-          ./nixos/modules/nix-conf.nix
-          ./nixos/modules/sys-pkgs.nix
-          inputs.catppuccin.nixosModules.catppuccin
-          nixos-wsl.nixosModules.wsl
-          home-manager.nixosModules.home-manager
-          ./nixos/modules/catppuccin.nix
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              backupFileExtension = "hm-back";
-              users.mykolas = {
-                imports = [
-                  inputs.catppuccin.homeModules.catppuccin
-                  ./home-manager/configurations/mykolas/home-configuration.nix
-                  ./home-manager/modules/geks-wsl.nix
-                ];
-              };
-              extraSpecialArgs = {
-                inherit inputs outputs system pkgs pkgs-stable;
-              };
-            };
-          }
-        ];
-        specialArgs = {inherit inputs outputs pkgs-stable;};
-      };
-    };
-  };
+  outputs = inputs:
+    inputs.flake-parts.lib.mkFlake {inherit inputs;}
+    (inputs.import-tree ./modules);
 }

@@ -3,55 +3,23 @@
   pkgs,
   ...
 }: let
-  shell_init = pkgs.writeShellScriptBin "init_shell" ''
-    export GPG_TTY=$(tty)
-    gpgconf --launch gpg-agent
-    export VI_MODE_SET_CURSOR=true
-    export NIXPKGS_ALLOW_UNFREE=1
-    export EDITOR=nvim
-    export VISUAL=nvim
+  zshConfig = import ../../lib/zsh-config.nix;
 
-    # Aliases
-    alias editconf="cd $NIXOS_CONF_DIR; nixvim ."
-    alias nxcnf="$NIXOS_CONF_DIR/nxcnf.sh"
-    alias nixos-build="$NIXOS_CONF_DIR/scripts/nixos-build.sh"
-    alias nix-update="cd $NIXOS_CONF_DIR; nix flake update --accept-flake-config; cd -"
-    alias confdir="cd $NIXOS_CONF_DIR"
-    alias nixgc="nix-collect-garbage"
-    # alias arch-build="$NIXOS_CONF_DIR/home/mykolas/distrobox/build-arch.sh"
-    # alias arch="distrobox-enter arch"
-    alias vi="nvim"
-    alias ls="eza"
-    alias cat="bat --theme base16-256"
-    # alias conn-win="sdl-freerdp /v:localhost:3389 /u:VM /size:1920x1080 /dynamic-resolution +clipboard"
-  '';
-  tmux_init = pkgs.writeShellScriptBin "start_tmux" ''
-    if tmux run 2>/dev/null; then
-      echo "Tmux server is running:"
-      exec tmux list-sessions -F '#S' | fzf --reverse | xargs tmux switch-client -t
-    else
-        echo "Tmux server is not running:"
-        exec tmux new-session -s home
-    fi
-  '';
+  shell_init = pkgs.writeShellScriptBin "init_shell" (
+    builtins.concatStringsSep "\n" (
+      builtins.attrValues (builtins.mapAttrs (k: v: "export ${k}=${v}") zshConfig.settings.env)
+    )
+    + "\n"
+    + builtins.concatStringsSep "\n" (
+      builtins.attrValues (builtins.mapAttrs (k: v: "alias ${k}=${builtins.toJSON v}") zshConfig.settings.shellAliases)
+    )
+  );
+
   conn-win = pkgs.writeShellScriptBin "conn-win" ''
         sdl-freerdp /v:localhost:3389 /u:VM /size:1920x1080 /sound \
       /gfx:AVC444,mask:0xFFFFFFFF /bpp:32 /gdi:hw /network:lan -compression \
       +aero +menu-anims +window-drag +clipboard -grab-keyboard -grab-mouse \
       /cert:ignore /sec:nla:off
-
-    # sdl-freerdp \
-    #   /v:localhost:3389 \
-    #   /u:VM \
-    #   /cert:ignore \
-    #   /sec:nla:off \
-    #   /dynamic-resolution \
-    #   +clipboard \
-    #   /sound:sys:pulse \
-    #   /gdi:hw \
-    #   +rfx \
-    #   +fonts \
-    #   /bpp:32
   '';
 
   win11 = pkgs.writeShellScriptBin "win11" ''
@@ -158,11 +126,7 @@ in {
       defaultKeymap = "viins";
       initContent = ''
         source ${shell_init}/bin/init_shell
-        ${builtins.readFile ./../configurations/mykolas/zsh/zshrc}
-        # Auto-start tmux if no serve is found. Otherwise choose session with fzf
-        # if [[ -z "$TMUX" ]]; then
-        #   ${tmux_init}/bin/start_tmux
-        # fi
+        ${zshConfig.extraRC}
       '';
       antidote = {
         enable = true;
@@ -170,18 +134,6 @@ in {
           "jeffreytse/zsh-vi-mode"
         ];
       };
-    };
-
-    bash = {
-      enable = true;
-      enableCompletion = true;
-      initExtra = ''
-        source ${shell_init}/bin/init_shell
-        # Auto-start tmux if no serve is found. Otherwise choose session with fzf
-        # if [[ -z "$TMUX" ]]; then
-        #   ${tmux_init}/bin/start_tmux
-        # fi
-      '';
     };
   };
 }

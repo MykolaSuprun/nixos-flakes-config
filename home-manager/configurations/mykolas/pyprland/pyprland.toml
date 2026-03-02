@@ -39,6 +39,23 @@ unfocus = "hide"
 lazy = true
 allow_special_workspaces = true
 
+[shortcuts_menu.entries.Screenshots]
+"Area to clipboard" = "grimblast -t png copysave area"
+"Full screen" = "grimblast -t png copysave screen"
+"Active window" = "grimblast -t png copysave active"
+"Area (3s delay)" = "grimblast -w 3 -t png copysave area"
+"Edit area" = "grimblast -t png edit area"
+
+[shortcuts_menu.entries.Session]
+"Lock screen" = "loginctl lock-session"
+"Logout" = "uwsm stop"
+
+[shortcuts_menu.entries.Utilities]
+"Clipboard history" = "kitty --class clipse -e clipse"
+"Volume control" = "pypr toggle volume"
+"File manager" = "uwsm app -- kitty -e yazi"
+"Wallpaper cycle" = "pypr wall next"
+
 
 # [scratchpads.telegram]
 # animation = "fromBottom"
