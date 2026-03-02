@@ -3,5 +3,6 @@
     ./pkgs.nix
     ./settings.nix
     ./window-rules.nix
+    ./noctalia.nix
   ];
 }

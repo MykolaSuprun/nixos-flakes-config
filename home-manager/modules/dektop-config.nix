@@ -20,6 +20,7 @@
     kdePackages.kservice
     kdePackages.qtstyleplugin-kvantum
     clipse
+    pkgs.kdePackages.qttools
 
     # internet
     mullvad-browser
@@ -63,6 +64,7 @@
 
     # media
     spotify
+    gimp
     vlc
     cider
 

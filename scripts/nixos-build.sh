@@ -2,6 +2,8 @@
 set -e
 cd "$NIXOS_CONF_DIR"
 git diff -U0 *.nix
+rm -f ~/.config/hypr/hyprland.conf.hm-back
+rm -f ~/.config/ghostty/config.hm-back
 nh os switch -- \
   --accept-flake-config --show-trace \
   --option extra-substituters https://install.determinate.systems \
@@ -10,5 +12,6 @@ gen=$(sudo nix-env -p /nix/var/nix/profiles/system --list-generations | grep cur
 git commit -am "$gen"
 if [ -n "${HYPRLAND_INSTANCE_SIGNATURE+set}" ]; then
   hyprctl reload && pypr reload
+  systemctl --user restart noctalia.service
 fi
 cd -

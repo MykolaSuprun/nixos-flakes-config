@@ -54,9 +54,9 @@
   ];
 
   hyprConfigs = [
+    "settings.conf"
     "startup.conf"
     "binds.conf"
-    "settings.conf"
     monitorsConf
     "workspaces.conf"
     "gestures.conf"
@@ -130,29 +130,30 @@ in {
           source = ./../../configurations/mykolas/rofi;
           recursive = true;
         };
-        "./.config/hypr/hyprqt6engine.conf" = {
-          text = let
-            themePath = "${config.hyprconf.theme}-${config.hyprconf.accent}";
-          in
-            #hyprlang
-            ''
-              theme {
-                color_scheme = ${pkgs.catppuccin-qt5ct}/share/qt6ct/colors/${themePath}
-                style = "kvantum"
-              }
-            '';
-        };
-        "./.config/hypr/hyprtoolkit.conf" = {
-          text = let
-            themePath = "${config.hyprconf.theme}/${config.hyprconf.accent}.conf";
-            themeFile = ./../../configurations/mykolas/hyprtoolkit/themes + "/${themePath}";
-            themeConfig = builtins.readFile themeFile;
-          in ''
-            ${themeConfig}
-            # Additional hyprtoolkit configuration
-            # see https://wiki.hypr.land/Hypr-Ecosystem/hyprtoolkit/ for more details
-          '';
-        };
+        # "./.config/hypr/hyprqt6engine.conf" = {
+        #   text = let
+        #     themePath = "${config.hyprconf.theme}-${config.hyprconf.accent}";
+        #   in
+        #     #hyprlang
+        #     ''
+        #       theme {
+        #         color_scheme = ${pkgs.catppuccin-qt5ct}/share/qt6ct/colors/${themePath}
+        #         style = "kvantum"
+        #       }
+        #     '';
+        # };
+        # disable to manage with noctalia
+        # "./.config/hypr/hyprtoolkit.conf" = {
+        #   text = let
+        #     themePath = "${config.hyprconf.theme}/${config.hyprconf.accent}.conf";
+        #     themeFile = ./../../configurations/mykolas/hyprtoolkit/themes + "/${themePath}";
+        #     themeConfig = builtins.readFile themeFile;
+        #   in ''
+        #     ${themeConfig}
+        #     # Additional hyprtoolkit configuration
+        #     # see https://wiki.hypr.land/Hypr-Ecosystem/hyprtoolkit/ for more details
+        #   '';
+        # };
         "./.config/hypr/hyprlock-assets" = {
           source = ./../../configurations/mykolas/hyprlock/hyprlock-assets;
           recursive = true;
@@ -198,6 +199,10 @@ in {
 
     systemd.user = {
       enable = true;
+      tmpfiles.rules = [
+        # ensure noctalia directory exists in hyprland config dir
+        "d %h/.config/hypr/noctalia 0755 - - -"
+      ];
       services = {
         swaync = {
           Unit = {
@@ -246,20 +251,20 @@ in {
         #   };
         # };
 
-        hyprpaper = {
-          Unit = {
-            Description = "Hyprland Wallpaper Daemon";
-            BindsTo = ["wayland-session@hyprland.desktop.target"];
-            After = ["wayland-session@hyprland.desktop.target"];
-          };
-          Service = {
-            ExecStart = "${pkgs.hyprpaper}/bin/hyprpaper";
-            Restart = "on-failure";
-          };
-          Install = {
-            WantedBy = ["wayland-session@hyprland.desktop.target"];
-          };
-        };
+        # hyprpaper = {
+        #   Unit = {
+        #     Description = "Hyprland Wallpaper Daemon";
+        #     BindsTo = ["wayland-session@hyprland.desktop.target"];
+        #     After = ["wayland-session@hyprland.desktop.target"];
+        #   };
+        #   Service = {
+        #     ExecStart = "${pkgs.hyprpaper}/bin/hyprpaper";
+        #     Restart = "on-failure";
+        #   };
+        #   Install = {
+        #     WantedBy = ["wayland-session@hyprland.desktop.target"];
+        #   };
+        # };
 
         hyprpolkitagent = {
           Unit = {
@@ -278,20 +283,40 @@ in {
           };
         };
 
-        waybar = {
+        noctalia = let
+          noctaliaPkg = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
+        in {
           Unit = {
-            Description = "Highly customizable Wayland bar";
+            Description = "Noctalia shell";
             BindsTo = ["wayland-session@hyprland.desktop.target"];
+            Requisite = ["wayland-session@hyprland.desktop.target"];
             After = ["wayland-session@hyprland.desktop.target"];
           };
           Service = {
-            ExecStart = "${pkgs.waybar}/bin/waybar";
+            Slice = "app-graphical.slice";
+            ExecStart = "${noctaliaPkg}/bin/noctalia-shell --no-duplicate";
             Restart = "on-failure";
+            RestartSec = 1;
           };
           Install = {
             WantedBy = ["wayland-session@hyprland.desktop.target"];
           };
         };
+        # waybar = {
+        #   Unit = {
+        #     Description = "Highly customizable Wayland bar";
+        #     BindsTo = ["wayland-session@hyprland.desktop.target"];
+        #     After = ["wayland-session@hyprland.desktop.target"];
+        #   };
+        #   Service = {
+        #     Slice = "app-graphical.slice";
+        #     ExecStart = "${pkgs.waybar}/bin/waybar";
+        #     Restart = "on-failure";
+        #   };
+        #   Install = {
+        #     WantedBy = ["wayland-session@hyprland.desktop.target"];
+        #   };
+        # };
       };
     };
   };

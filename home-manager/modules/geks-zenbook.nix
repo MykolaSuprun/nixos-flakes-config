@@ -31,6 +31,7 @@
     STEAM_EXTRA_COMPAT_TOOLS_PATHS = "$HOME/.steam/root/compatibilitytools.d";
     NIXOS_CONF_DIR = "$HOME/workspaces/src/nixconf";
     NH_FLAKE = "$HOME/workspaces/src/nixconf";
+    APP2UNIT_SLICES = "a=app-graphical.slice b=background-graphical.slice s=session-graphical.slice";
     NIXOS_TARGET = "geks-zenbook";
     BEMENU_BACKEND = "wayland";
     BROWSER = "${inputs.zen-browser.packages.${pkgs.system}.beta}/bin/zen";

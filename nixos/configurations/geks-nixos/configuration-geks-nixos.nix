@@ -101,6 +101,9 @@ in {
 
   # Enable the X11 windowing system.
   services = {
+    tuned.enable = true;
+    upower.enable = true;
+
     greetd = {
       enable = true;
       useTextGreeter = true;
