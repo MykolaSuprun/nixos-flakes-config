@@ -118,6 +118,8 @@
     nurl
     nix-init
     nix-direnv
+    codecrafters-cli
+    netcat
 
     # python
     uv

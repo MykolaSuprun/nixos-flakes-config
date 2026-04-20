@@ -281,7 +281,6 @@ in {
     systemPackages = with pkgs; [
       # dev tools
       vscode
-      lazygit
       bottom
 
       # sensors, fan control, etc

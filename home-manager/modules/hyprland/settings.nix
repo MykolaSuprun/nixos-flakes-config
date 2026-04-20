@@ -196,7 +196,7 @@ in {
       systemd.variables = ["--all"];
 
       plugins = [
-        # hypr_plugins_pkgs.hyprexpo
+        hypr_plugins_pkgs.hyprexpo
         # pkgs.hyprlandPlugins.hyprexpo
         # hy3_pkgs.hy3
       ];
