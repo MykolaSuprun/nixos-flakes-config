@@ -98,7 +98,7 @@
     };
   };
   environment.systemPackages = with pkgs; [
-    lutris
+    pkgs-stable.lutris
     ayugram-desktop
     thunderbolt
     bolt

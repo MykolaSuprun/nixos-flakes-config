@@ -21,6 +21,7 @@
     kdePackages.qtstyleplugin-kvantum
     clipse
     pkgs.kdePackages.qttools
+    krita-unwrapped
 
     # icon themes
     catppuccin-papirus-folders
@@ -69,7 +70,7 @@
     spotify
     gimp
     vlc
-    cider
+    cider-2
 
     # gaming
     pkgs-stable.limo
