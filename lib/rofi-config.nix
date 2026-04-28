@@ -1,7 +1,5 @@
 {
-  mkConfigRasi = {
-    theme ? "catppuccin-latte",
-  }: ''
+  mkConfigRasi = {theme ? "catppuccin-latte"}: ''
     configuration{
         modi: "run,drun,window";
         icon-theme: "catppuccin-pairus-folders";

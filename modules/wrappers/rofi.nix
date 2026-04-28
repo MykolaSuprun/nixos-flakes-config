@@ -6,12 +6,13 @@ in {
     system,
     ...
   }: {
-    packages.rofi = (inputs.wrappers.wrapperModules.rofi.apply {
-      inherit pkgs;
-      "config.rasi".content = rofiConfig.mkConfigRasi {
-        theme = "catppuccin-latte";
-      };
-    })
+    packages.rofi =
+      (inputs.wrappers.wrapperModules.rofi.apply {
+        inherit pkgs;
+        "config.rasi".content = rofiConfig.mkConfigRasi {
+          theme = "catppuccin-latte";
+        };
+      })
     .wrapper;
   };
 }

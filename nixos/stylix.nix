@@ -8,50 +8,50 @@
 in {
   options.myconf.nixos.stylix.enable = lib.mkEnableOption "Stylix theming";
   config = lib.mkIf config.myconf.nixos.stylix.enable {
-  stylix = {
-    enable = true;
-    autoEnable = true;
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/${base16_scheme}.yaml";
-    image = ../../wallpapers/catppuccin-latte/the_valley.png;
-    fonts = {
-      serif = {
-        package = pkgs.noto-fonts;
-        name = "Noto Serif";
-      };
+    stylix = {
+      enable = true;
+      autoEnable = true;
+      base16Scheme = "${pkgs.base16-schemes}/share/themes/${base16_scheme}.yaml";
+      image = ../../wallpapers/catppuccin-latte/the_valley.png;
+      fonts = {
+        serif = {
+          package = pkgs.noto-fonts;
+          name = "Noto Serif";
+        };
 
-      sansSerif = {
-        package = pkgs.noto-fonts;
-        name = "Noto Sans";
-      };
+        sansSerif = {
+          package = pkgs.noto-fonts;
+          name = "Noto Sans";
+        };
 
-      monospace = {
-        package = pkgs.nerd-fonts.jetbrains-mono;
-        name = "JetBrainsMono Nerd Font";
-      };
+        monospace = {
+          package = pkgs.nerd-fonts.jetbrains-mono;
+          name = "JetBrainsMono Nerd Font";
+        };
 
-      emoji = {
-        package = pkgs.noto-fonts-emoji;
-        name = "Noto Color Emoji";
+        emoji = {
+          package = pkgs.noto-fonts-emoji;
+          name = "Noto Color Emoji";
+        };
+        sizes = {
+          applications = 10;
+          desktop = 10;
+          terminal = 10;
+        };
       };
-      sizes = {
-        applications = 10;
-        desktop = 10;
-        terminal = 10;
+      targets = {
+        qt = {
+          enable = true;
+        };
+        nixos-icons.enable = true;
       };
     };
-    targets = {
-      qt = {
-        enable = true;
-      };
-      nixos-icons.enable = true;
+    qt = {
+      enable = true;
     };
-  };
-  qt = {
-    enable = true;
-  };
 
-  environment.sessionVariables = {
-    STYLIX_COLORSCHEME = "${base16_scheme}";
-  };
+    environment.sessionVariables = {
+      STYLIX_COLORSCHEME = "${base16_scheme}";
+    };
   };
 }

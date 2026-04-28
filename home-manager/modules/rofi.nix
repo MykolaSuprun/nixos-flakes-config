@@ -1,31 +1,36 @@
-{pkgs, lib, config, ...}: {
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: {
   options.myconf.rofi.enable = lib.mkEnableOption "Rofi launcher";
   config = lib.mkIf config.myconf.rofi.enable {
-  programs.rofi = {
-    enable = true;
-    package = pkgs.rofi;
-    extraConfig = {
-      modi = "run,drun,window";
-      icon-theme = "catppuccin-pairus-folders";
-      show-icons = true;
-      terminal = "kitty";
-      drun-display-format = "{icon} {name}";
-      location = 0;
-      disable-history = false;
-      hide-scrollbar = true;
-      display-drun = "   Apps ";
-      display-run = "   Run ";
-      display-window = " 﩯  Window";
-      display-Network = " 󰤨  Network";
-      sidebar-mode = true;
+    programs.rofi = {
+      enable = true;
+      package = pkgs.rofi;
+      extraConfig = {
+        modi = "run,drun,window";
+        icon-theme = "catppuccin-pairus-folders";
+        show-icons = true;
+        terminal = "kitty";
+        drun-display-format = "{icon} {name}";
+        location = 0;
+        disable-history = false;
+        hide-scrollbar = true;
+        display-drun = "   Apps ";
+        display-run = "   Run ";
+        display-window = " 﩯  Window";
+        display-Network = " 󰤨  Network";
+        sidebar-mode = true;
 
-      kb-row-up = "Up,Control+k,Shift+Tab,Shift+ISO_Left_Tab";
-      kb-row-down = "Down,Control+j";
-      kb-accept-entry = "Control+m,Return,KP_Enter";
-      kb-remove-to-eol = "Control+Shift+e";
-      kb-mode-previous = "Shift+Left,Control+Shift+Tab,Control+h";
-      kb-remove-char-back = "BackSpace";
+        kb-row-up = "Up,Control+k,Shift+Tab,Shift+ISO_Left_Tab";
+        kb-row-down = "Down,Control+j";
+        kb-accept-entry = "Control+m,Return,KP_Enter";
+        kb-remove-to-eol = "Control+Shift+e";
+        kb-mode-previous = "Shift+Left,Control+Shift+Tab,Control+h";
+        kb-remove-char-back = "BackSpace";
+      };
     };
-  };
   };
 }

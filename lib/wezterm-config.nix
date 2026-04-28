@@ -1,7 +1,5 @@
 {
-  mkWeztermConfig = {
-    colorScheme ? "Catppuccin Latte",
-  }: ''
+  mkWeztermConfig = {colorScheme ? "Catppuccin Latte"}: ''
     local wezterm = require("wezterm")
     local config = wezterm.config_builder()
 

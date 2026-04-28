@@ -6,12 +6,13 @@ in {
     system,
     ...
   }: {
-    packages.helix = (inputs.wrappers.wrapperModules.helix.apply {
-      inherit pkgs;
-      "config.toml".content = helixConfig.mkConfigToml {
-        theme = helixConfig.themes.latte;
-      };
-    })
+    packages.helix =
+      (inputs.wrappers.wrapperModules.helix.apply {
+        inherit pkgs;
+        "config.toml".content = helixConfig.mkConfigToml {
+          theme = helixConfig.themes.latte;
+        };
+      })
     .wrapper;
   };
 }

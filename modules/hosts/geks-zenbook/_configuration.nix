@@ -59,8 +59,7 @@
     plymouth.enable = true;
   };
 
-  boot.initrd.luks.devices."luks-585372bc-c88f-4e15-ada1-9bca0c43bd29".device =
-    "/dev/disk/by-uuid/585372bc-c88f-4e15-ada1-9bca0c43bd29";
+  boot.initrd.luks.devices."luks-585372bc-c88f-4e15-ada1-9bca0c43bd29".device = "/dev/disk/by-uuid/585372bc-c88f-4e15-ada1-9bca0c43bd29";
 
   hardware.enableAllFirmware = true;
 

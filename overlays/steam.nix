@@ -17,6 +17,6 @@
         libkrb5
         keyutils
       ];
-    extraLibraries = pkgs: [ pkgs.gperftools ];
+    extraLibraries = pkgs: [pkgs.gperftools];
   };
 })
