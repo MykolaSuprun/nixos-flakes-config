@@ -1,3 +1,7 @@
+# NixOS system configuration for geks-nixos (AMD desktop + Hyprland + gaming).
+# Hardware is imported separately via hardware.nix.
+# Feature modules (nixos/*.nix) are auto-imported by import-tree in default.nix;
+# enable flags below activate them.
 {
   inputs,
   config,
@@ -10,18 +14,45 @@
   # pkgs-hyprland =
   #   inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
 in {
-  # Bootloader.
+  # ── Feature-module enable flags ──────────────────────────────────────────────
+  myconf.nixos = {
+    nixConf.enable = true;
+    fonts.enable = true;
+    pipewire.enable = true;
+    inputMethod.enable = true;
+    syspkgs.enable = true;
+    xdg.enable = true;
+    catppuccin.enable = true;
+    desktop.enable = true;
+    # flatpak.enable = false;  # bindfs/theme Flatpak setup – zenbook only
+  };
+
+  hyprconf = {
+    target = "geks-nixos";
+    monitorsConf = "geks-nixos-monitors.conf";
+    hyprland = {
+      enable = true;
+      flake.enable = true;
+    };
+  };
+
+  # ── Theming ───────────────────────────────────────────────────────────────────
+  catppuccin = {
+    flavor = "latte";
+    accent = "mauve";
+  };
+
+  # ── Boot ──────────────────────────────────────────────────────────────────────
   boot = {
     loader = {
       systemd-boot.enable = false;
       efi = {
         canTouchEfiVariables = true;
-        efiSysMountPoint = "/boot"; # ← use the same mount point here.
+        efiSysMountPoint = "/boot";
       };
       grub = {
         enable = true;
         efiSupport = true;
-        #efiInstallAsRemovable = true; # in case canTouchEfiVariables doesn't work for your system
         devices = ["nodev"];
         useOSProber = true;
         memtest86.enable = true;
@@ -49,7 +80,6 @@ in {
     # extraModprobeConfig = "options vfio-pci ids=1002:164e";
     # postBootCommands = ''
     #   DEVS="0000:59:00.0"
-    #
     #   for DEV in $DEVS; do
     #     echo "vfio-pci" > /sys/bus/pci/devices/$DEV/driver_override
     #   done
@@ -57,6 +87,7 @@ in {
     # '';
   };
 
+  # ── Hardware ──────────────────────────────────────────────────────────────────
   hardware = {
     enableAllFirmware = true;
     cpu.amd.updateMicrocode =
@@ -65,29 +96,27 @@ in {
     graphics = {
       # package = pkgs-hyprland.mesa.drivers;
       # package32 = pkgs-hyprland.pkgsi686Linux.mesa.drivers;
-      enable32Bit = true; # For 32 bit applications
+      enable32Bit = true;
       extraPackages = with pkgs; [rocmPackages.clr.icd];
       extraPackages32 = with pkgs; [];
     };
 
-    ledger.enable = true; # udev rules for ledger
+    ledger.enable = true;
   };
 
-  # networking
+  # ── Networking ────────────────────────────────────────────────────────────────
   networking = {
-    hostName = "geks-nixos"; # Define your hostname.
+    hostName = "geks-nixos";
     wireless.iwd.enable = true;
     enableB43Firmware = true;
     networkmanager.enable = true;
     networkmanager.wifi.backend = "iwd";
   };
 
-  # Set your time zone.
+  # ── Locale ────────────────────────────────────────────────────────────────────
   time.timeZone = "Europe/Warsaw";
 
-  # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
-
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "en_IE.UTF-8";
     LC_IDENTIFICATION = "en_IE.UTF-8";
@@ -100,7 +129,7 @@ in {
     LC_TIME = "en_IE.UTF-8";
   };
 
-  # Enable the X11 windowing system.
+  # ── Services ──────────────────────────────────────────────────────────────────
   services = {
     tuned.enable = true;
     upower.enable = true;
@@ -116,27 +145,13 @@ in {
         terminal = {
           vt = 1;
         };
-        # initial_session = {
-        #   command = "uwsm start hyprland.desktop";
-        #   user = "mykolas";
-        # };
       };
     };
-    # displayManager = {
-    # defaultSession = "hyprland";
-    # sddm = {
-    #   enable = true;
-    #   wayland = {
-    #     enable = true;
-    #     # compositor = "kwin";
-    #   };
-    #   extraPackages = [];
-    # };
-    # };
+
     keyd = {
       enable = true;
       keyboards.default = {
-        ids = ["046d:405b"]; # Direct child of keyboard definition
+        ids = ["046d:405b"];
         settings = {
           main = {
             capslock = "overload(control, esc)";
@@ -144,7 +159,7 @@ in {
         };
       };
     };
-    # enable systemd DNS resolver daemon
+
     resolved.enable = true;
 
     xserver = {
@@ -152,7 +167,6 @@ in {
       videoDrivers = ["amdgpu"];
     };
 
-    # Enable the KDE Plasma Desktop Environment.
     desktopManager.plasma6 = {enable = true;};
 
     flatpak.enable = true;
@@ -168,10 +182,10 @@ in {
     spice-autorandr.enable = true;
   };
 
+  # ── Security ──────────────────────────────────────────────────────────────────
   security = {
     pam = {
       services = {
-        # allow swaylock to unlock sessions
         swaylock = {};
         hyprlock = {};
       };
@@ -179,14 +193,11 @@ in {
     polkit.enable = true;
   };
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
-
+  # ── Users ─────────────────────────────────────────────────────────────────────
   users.groups.plugdev = {};
   users.extraGroups.vboxusers.members = ["mykolas"];
   users.defaultUserShell = wrappedPkgs.zsh;
 
-  # Define a user account. Don't forget to set a password with 'passwd'.
   users.users = {
     mykolas = {
       isNormalUser = true;
@@ -205,19 +216,14 @@ in {
     };
   };
 
+  # ── Virtualisation ────────────────────────────────────────────────────────────
   virtualisation = {
     docker = {
       enable = true;
       rootless.enable = true;
       enableOnBoot = true;
     };
-    # podman = {
-    #   enable = true;
-    #   dockerCompat = true;
-    #   dockerSocket.enable = true;
-    #   defaultNetwork.settings.dns_enabled = true;
-    #   extraOptions = "--iptables=False";
-    # };
+    # podman = { ... };
     libvirtd = {
       enable = true;
       extraConfig = "";
@@ -228,14 +234,13 @@ in {
     };
   };
 
+  # ── Programs ──────────────────────────────────────────────────────────────────
   programs = {
     fish = {
       enable = true;
       useBabelfish = true;
     };
-    zsh = {
-      enable = true;
-    };
+    zsh.enable = true;
     partition-manager.enable = true;
     gnupg.agent = {
       enable = true;
@@ -257,16 +262,16 @@ in {
       enable = true;
       binfmt = true;
     };
+    ssh = {
+      startAgent = true;
+      enableAskPassword = true;
+    };
   };
 
+  # ── System ────────────────────────────────────────────────────────────────────
   systemd.tmpfiles.rules = ["f /dev/shm/looking-glass 0660 mykolas kvm -"];
 
   environment = {
-    # etc = {
-    #   "greetd/sysc-greet.toml".text = ''
-    #     default_session = "uwsm start hyprland"
-    #   '';
-    # };
     enableAllTerminfo = true;
     shells = with pkgs; [zsh fish nushell];
     variables = {
@@ -274,20 +279,22 @@ in {
       __GL_SHADER_DISK_CACHE_SIZE = "16G";
     };
     sessionVariables = {
+      SSH_ASKPASS_REQUIRE = "prefer";
+      IGPU_ADDR = "pci-0000_59_00_0";
+      DGPU_ADDR = "pci-0000_03_00_0";
+      SYS_THEME =
+        if config.catppuccin.enable
+        then "catppuccin-${config.catppuccin.flavor}"
+        else "";
       LIBVIRT_DEFAULT_URI = ["qemu:///system"];
       NIXOS_OZONE_WL = "1";
     };
 
     systemPackages = with pkgs; [
-      # dev tools
       vscode
       bottom
-
-      # sensors, fan control, etc
       lm_sensors
       fanctl
-
-      # basic packages
       gperftools
       keyd
       cryptsetup
@@ -316,7 +323,6 @@ in {
       util-linux
       kdePackages.polkit-qt-1
       kdePackages.polkit-kde-agent-1
-
       tpm2-tools
       distrobox
       docker-compose
@@ -324,5 +330,5 @@ in {
     ];
   };
 
-  system.stateVersion = "24.05"; # Did you read the comment?
+  system.stateVersion = "24.05";
 }

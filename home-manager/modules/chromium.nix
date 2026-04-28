@@ -1,8 +1,12 @@
 {
   inputs,
   pkgs,
+  lib,
+  config,
   ...
 }: {
+  options.myconf.chromium.enable = lib.mkEnableOption "Chromium browser";
+  config = lib.mkIf config.myconf.chromium.enable {
   programs.chromium = {
     enable = true;
     package = pkgs.chromium;
@@ -26,5 +30,6 @@
       {id = "ecabifbgmdmgdllomnfinbmaellmclnh";} # Reader view
       {id = "cimiefiiaegbelhefglklhhakcgmhkai";} # Plasma integration
     ];
+  };
   };
 }

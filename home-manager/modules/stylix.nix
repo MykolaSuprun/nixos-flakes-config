@@ -1,4 +1,6 @@
-{pkgs, ...}: {
+{pkgs, lib, config, ...}: {
+  options.myconf.stylix.enable = lib.mkEnableOption "Stylix home theming";
+  config = lib.mkIf config.myconf.stylix.enable {
   stylix = {
     enable = true;
     targets = {
@@ -22,5 +24,6 @@
         enable = true;
       };
     };
+  };
   };
 }

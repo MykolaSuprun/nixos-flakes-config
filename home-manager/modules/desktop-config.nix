@@ -2,8 +2,12 @@
   inputs,
   pkgs,
   pkgs-stable,
+  lib,
+  config,
   ...
 }: {
+  options.myconf.desktop.enable = lib.mkEnableOption "desktop apps";
+  config = lib.mkIf config.myconf.desktop.enable {
   xdg = {
     enable = true;
   };
@@ -85,4 +89,5 @@
     pkgs.freerdp
     pkgs-stable.gtk-frdp
   ];
+  };
 }

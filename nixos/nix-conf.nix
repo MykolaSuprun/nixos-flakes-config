@@ -5,6 +5,9 @@
   pkgs,
   ...
 }: {
+  options.myconf.nixos.nixConf.enable = lib.mkEnableOption "nix daemon configuration";
+
+  config = lib.mkIf config.myconf.nixos.nixConf.enable {
   nix = {
     gc = {
       # automatic = true;
@@ -28,5 +31,6 @@
         "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
       ];
     };
+  };
   };
 }

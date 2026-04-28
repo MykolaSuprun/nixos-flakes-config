@@ -1,4 +1,6 @@
-{pkgs, ...}: {
+{pkgs, lib, config, ...}: {
+  options.myconf.catppuccin.enable = lib.mkEnableOption "catppuccin theming";
+  config = lib.mkIf config.myconf.catppuccin.enable {
   catppuccin = {
     enable = true;
     cache.enable = true;
@@ -43,4 +45,5 @@
   home.packages = with pkgs; [
     pkgs.catppuccin-kvantum
   ];
+  };
 }

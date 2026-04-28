@@ -1,4 +1,7 @@
-{pkgs, ...}: {
+{pkgs, config, lib, ...}: {
+  options.myconf.nixos.pipewire.enable = lib.mkEnableOption "PipeWire audio + Bluetooth";
+
+  config = lib.mkIf config.myconf.nixos.pipewire.enable {
   # Enable sound with pipewire.
   security.rtkit.enable = true;
   services = {
@@ -23,5 +26,6 @@
         };
       };
     };
+  };
   };
 }

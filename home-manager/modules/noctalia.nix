@@ -1,8 +1,12 @@
 {
   inputs,
   pkgs,
+  lib,
+  config,
   ...
 }: {
+  options.myconf.noctalia.enable = lib.mkEnableOption "Noctalia browser";
+  config = lib.mkIf config.myconf.noctalia.enable {
   home.packages = with pkgs; [
     inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
@@ -547,5 +551,6 @@
         monitorWidgets = [];
       };
     };
+  };
   };
 }

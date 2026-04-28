@@ -1,4 +1,7 @@
-{pkgs, ...}: {
+{pkgs, config, lib, ...}: {
+  options.myconf.nixos.inputMethod.enable = lib.mkEnableOption "fcitx5 input method";
+
+  config = lib.mkIf config.myconf.nixos.inputMethod.enable {
   i18n.inputMethod = {
     enable = true;
     type = "fcitx5";
@@ -20,5 +23,6 @@
         fcitx5-lua
       ];
     };
+  };
   };
 }

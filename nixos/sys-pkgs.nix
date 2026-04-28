@@ -1,4 +1,7 @@
-{pkgs, ...}: {
+{pkgs, config, lib, ...}: {
+  options.myconf.nixos.syspkgs.enable = lib.mkEnableOption "system utility packages (nh, eza, fzf, etc.)";
+
+  config = lib.mkIf config.myconf.nixos.syspkgs.enable {
   programs = {
     nh = {
       enable = true;
@@ -26,4 +29,5 @@
     killall
     bottom
   ];
+  };
 }

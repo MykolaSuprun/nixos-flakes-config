@@ -1,6 +1,8 @@
 {
   inputs,
   pkgs,
+  lib,
+  config,
   ...
 }: let
   zshConfig = import ../../lib/zsh-config.nix;
@@ -67,6 +69,8 @@
     nix develop
   '';
 in {
+  options.myconf.shell.enable = lib.mkEnableOption "shell configuration";
+  config = lib.mkIf config.myconf.shell.enable {
   home.packages = with pkgs; [
     babelfish
     grc
@@ -79,8 +83,8 @@ in {
   programs = {
     nushell = {
       enable = true;
-      envFile.source = ./../configurations/mykolas/nushell/env.nu;
-      configFile.source = ./../configurations/mykolas/nushell/config.nu;
+      envFile.source = ./../users/mykolas/config/nushell/env.nu;
+      configFile.source = ./../users/mykolas/config/nushell/config.nu;
     };
     carapace = {
       enable = true;
@@ -135,5 +139,6 @@ in {
         ];
       };
     };
+  };
   };
 }

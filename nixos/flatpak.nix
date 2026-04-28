@@ -1,8 +1,11 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }: {
+  options.myconf.nixos.flatpak.enable = lib.mkEnableOption "Flatpak theme/font bindfs mounts";
+  config = lib.mkIf config.myconf.nixos.flatpak.enable {
   # fix for flatpak fonts and cursor/icon themes
   system.fsPackages = [pkgs.bindfs];
 
@@ -36,5 +39,6 @@
   in {
     "/usr/share/fonts" = mkRoSymBind "${aggregated}/share/fonts";
     "/usr/share/icons" = mkRoSymBind "${aggregated}/share/icons";
+  };
   };
 }

@@ -1,4 +1,4 @@
-{pkgs, ...}: let
+{pkgs, lib, config, ...}: let
   zellij-config =
     #kdl
     ''
@@ -53,6 +53,8 @@
       }
     '';
 in {
+  options.myconf.zellij.enable = lib.mkEnableOption "Zellij terminal multiplexer";
+  config = lib.mkIf config.myconf.zellij.enable {
   programs.zellij = {
     enable = true;
     enableFishIntegration = true;
@@ -64,4 +66,5 @@ in {
   # home.file.".config/zellij/config.kdl" = {
   #   text = zellij-config;
   # };
+  };
 }

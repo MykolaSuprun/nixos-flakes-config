@@ -1,4 +1,6 @@
-{ inputs, ... }: {
+{ inputs, lib, config, ... }: {
+  options.myconf.flatpakOverrides.enable = lib.mkEnableOption "Flatpak environment overrides";
+  config = lib.mkIf config.myconf.flatpakOverrides.enable {
   home.file.".local/share/flatpak/overrides/global".text = ''
 
     [Context]
@@ -10,4 +12,5 @@
     GTK_THEME=WhiteSur-Light-solid
     ICON_THEME=WhiteSur
   '';
+  };
 }
