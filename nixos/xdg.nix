@@ -1,4 +1,7 @@
-{ pkgs, ... }: {
+{ pkgs, config, lib, ... }: {
+  options.myconf.nixos.xdg.enable = lib.mkEnableOption "XDG portals and MIME";
+
+  config = lib.mkIf config.myconf.nixos.xdg.enable {
   # XDG portal
   xdg = {
     portal = {
@@ -12,5 +15,6 @@
     icons.enable = true;
     autostart.enable = true;
     terminal-exec.enable = true;
+  };
   };
 }

@@ -15,8 +15,14 @@ in {
     hyprconf = {
       target = lib.mkOption {
         type = lib.types.enum ["geks-zenbook" "geks-nixos"];
-        description = "Target system determining hyprland configuration variant";
+        default = "geks-nixos";
+        description = "Target system determining hyprland configuration variant (deprecated, use monitorsConf)";
         example = "geks-zenbook";
+      };
+      monitorsConf = lib.mkOption {
+        type = lib.types.str;
+        default = "monitors-default.conf";
+        description = "Hyprland monitors config filename (e.g. geks-nixos-monitors.conf)";
       };
       hyprland = {
         enable = lib.mkEnableOption "enables hyprland config";

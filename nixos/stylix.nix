@@ -1,6 +1,13 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: let
   base16_scheme = "catppuccin-latte";
 in {
+  options.myconf.nixos.stylix.enable = lib.mkEnableOption "Stylix theming";
+  config = lib.mkIf config.myconf.nixos.stylix.enable {
   stylix = {
     enable = true;
     autoEnable = true;
@@ -45,5 +52,6 @@ in {
 
   environment.sessionVariables = {
     STYLIX_COLORSCHEME = "${base16_scheme}";
+  };
   };
 }

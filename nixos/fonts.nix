@@ -2,8 +2,12 @@
   inputs,
   pkgs,
   pkgs-stable,
+  lib,
+  config,
   ...
 }: {
+  options.myconf.nixos.fonts.enable = lib.mkEnableOption "system fonts";
+  config = lib.mkIf config.myconf.nixos.fonts.enable {
   console.font = "JetBrainsMono Nerd Font";
   fonts = {
     fontDir.enable = true;
@@ -62,4 +66,5 @@
     libertine
     libertinus
   ];
+  };
 }

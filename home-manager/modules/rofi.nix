@@ -1,4 +1,6 @@
-{pkgs, ...}: {
+{pkgs, lib, config, ...}: {
+  options.myconf.rofi.enable = lib.mkEnableOption "Rofi launcher";
+  config = lib.mkIf config.myconf.rofi.enable {
   programs.rofi = {
     enable = true;
     package = pkgs.rofi;
@@ -24,5 +26,6 @@
       kb-mode-previous = "Shift+Left,Control+Shift+Tab,Control+h";
       kb-remove-char-back = "BackSpace";
     };
+  };
   };
 }

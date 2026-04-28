@@ -1,9 +1,12 @@
 {
   inputs,
   pkgs,
-  system,
+  lib,
+  config,
   ...
 }: {
+  options.myconf.dev.enable = lib.mkEnableOption "development packages";
+  config = lib.mkIf config.myconf.dev.enable {
   programs = {
     delta = {
       enable = true;
@@ -71,10 +74,10 @@
   home.packages = with pkgs; [
     # dev tools
     cachix
-    inputs.my-nixvim.packages.${system}.lazyvim
-    inputs.my-nixvim.packages.${system}.nixvim
-    inputs.my-nixvim.packages.${system}.codevim
-    inputs.my-nixvim.packages.${system}.nvim
+    inputs.my-nixvim.packages.${pkgs.stdenv.hostPlatform.system}.lazyvim
+    inputs.my-nixvim.packages.${pkgs.stdenv.hostPlatform.system}.nixvim
+    inputs.my-nixvim.packages.${pkgs.stdenv.hostPlatform.system}.codevim
+    inputs.my-nixvim.packages.${pkgs.stdenv.hostPlatform.system}.nvim
     neovide
     # mynav
     # sublime4
@@ -137,4 +140,5 @@
     lazydocker
     lazysql
   ];
+  };
 }

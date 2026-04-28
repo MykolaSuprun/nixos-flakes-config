@@ -7,8 +7,7 @@
   useHyprlandFlake ? false,
   ...
 }: let
-  flakePath = config.hyprconf.flakePath;
-  hyprSrcPath = "${flakePath}/home-manager/configurations/mykolas/hyprland/";
+  hyprSrcPath = "${config.home.sessionVariables.NIXOS_CONF_DIR}/home-manager/users/mykolas/config/hyprland";
   hyprTargetPath = "~/.config/hypr";
 
   hypr_plugins_pkgs =
@@ -21,12 +20,7 @@
     then inputs.hy3.packages.${pkgs.stdenv.hostPlatform.system}
     else pkgs.hyprlandPlugins;
 
-  monitorsConf =
-    if config.hyprconf.target == "geks-zenbook"
-    then "geks-zenbook-monitors.conf"
-    else if config.hyprconf.target == "geks-nixos"
-    then "geks-nixos-monitors.conf"
-    else "monitors-default.conf";
+  monitorsConf = config.hyprconf.monitorsConf;
 
   themes = [
     "catppuccin-latte"
@@ -75,14 +69,15 @@
 in {
   options = {
     hyprconf = {
-      flakePath = lib.mkOption {
+      monitorsConf = lib.mkOption {
         type = lib.types.str;
-        description = "Absolute path to the flake repository for live-edit symlinks";
-        example = "/home/mykolas/workspaces/src/nixconf";
+        default = "monitors-default.conf";
+        description = "Hyprland monitors config filename (e.g. geks-nixos-monitors.conf)";
       };
       target = lib.mkOption {
         type = lib.types.enum ["geks-zenbook" "geks-nixos"];
-        description = "Target system determining hyprland configuration variant";
+        default = "geks-nixos";
+        description = "Target system determining hyprland configuration variant (deprecated, use monitorsConf)";
         example = "geks-zenbook";
       };
       theme = lib.mkOption {
@@ -138,7 +133,7 @@ in {
 
       file = {
         "./.config/uwsm" = {
-          source = ./../../configurations/mykolas/uwsm;
+          source = ./../../users/mykolas/config/uwsm;
           recursive = true;
         };
         # "./.config/hypr/hyprqt6engine.conf" = {
@@ -157,7 +152,7 @@ in {
         # "./.config/hypr/hyprtoolkit.conf" = {
         #   text = let
         #     themePath = "${config.hyprconf.theme}/${config.hyprconf.accent}.conf";
-        #     themeFile = ./../../configurations/mykolas/hyprtoolkit/themes + "/${themePath}";
+        #     themeFile = ./../../users/mykolas/config/hyprtoolkit/themes + "/${themePath}";
         #     themeConfig = builtins.readFile themeFile;
         #   in ''
         #     ${themeConfig}
@@ -166,25 +161,25 @@ in {
         #   '';
         # };
         "./.config/hypr/hyprlock-assets" = {
-          source = ./../../configurations/mykolas/hyprlock/hyprlock-assets;
+          source = ./../../users/mykolas/config/hyprlock/hyprlock-assets;
           recursive = true;
         };
         "./.config/hypr/hyprlock.conf".source =
-          ./../../configurations/mykolas/hyprlock/hyprlock.conf;
+          ./../../users/mykolas/config/hyprlock/hyprlock.conf;
         "./.config/swaync/style.css".source =
-          ./../../configurations/mykolas/swaync/latte.css;
+          ./../../users/mykolas/config/swaync/latte.css;
         "./.config/swaylock/config".source =
-          ./../../configurations/mykolas/swaylock/latte.conf;
+          ./../../users/mykolas/config/swaylock/latte.conf;
         "./.config/hypr/hyprpaper.conf".source =
-          ./../../configurations/mykolas/hyprpaper/hyprpaper.conf;
+          ./../../users/mykolas/config/hyprpaper/hyprpaper.conf;
         "./.config/hypr/hyprlock.conf.alt".source =
-          ./../../configurations/mykolas/hyprlock/hyprlock.conf.alt;
+          ./../../users/mykolas/config/hyprlock/hyprlock.conf.alt;
         "./.config/hypr/hypridle.conf".source =
-          ./../../configurations/mykolas/hypridle/hypridle.conf;
+          ./../../users/mykolas/config/hypridle/hypridle.conf;
         "./.config/pypr/config.toml".source =
-          ./../../configurations/mykolas/pyprland/pyprland.toml;
+          ./../../users/mykolas/config/pyprland/pyprland.toml;
         "./.config/xdg-desktop-portal/hyprland-portals.conf".source =
-          ./../../configurations/mykolas/hyprland-portals/hyprland-portals.conf;
+          ./../../users/mykolas/config/hyprland-portals/hyprland-portals.conf;
       };
     };
 
@@ -196,7 +191,7 @@ in {
       systemd.variables = ["--all"];
 
       plugins = [
-        hypr_plugins_pkgs.hyprexpo
+        # hypr_plugins_pkgs.hyprexpo
         # pkgs.hyprlandPlugins.hyprexpo
         # hy3_pkgs.hy3
       ];

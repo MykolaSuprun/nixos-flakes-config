@@ -15,6 +15,11 @@ in {
     hyprconf = {
       waybar = {
         enable = lib.mkEnableOption "enables waybar config";
+        output = lib.mkOption {
+          type = lib.types.nullOr (lib.types.listOf lib.types.str);
+          default = null;
+          description = "Waybar output monitor(s), null means all monitors";
+        };
       };
     };
   };
@@ -140,10 +145,7 @@ in {
       settings = {
         mainBar = {
           # output = ["DP-2"];
-          output =
-            if config.hyprconf.target == "geks-zenbook"
-            then ["DP-1"]
-            else null;
+          output = config.hyprconf.waybar.output;
           layer = "top";
           position = "top";
           height = 40;

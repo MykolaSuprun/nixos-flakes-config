@@ -1,9 +1,14 @@
-{inputs, withSystem, ...}: let
+# Flake-parts host module for geks-wsl (WSL2, minimal environment).
+{
+  inputs,
+  withSystem,
+  ...
+}: let
   system = "x86_64-linux";
   pkgs = import inputs.nixpkgs {
     inherit system;
     config.allowUnfree = true;
-    overlays = import ../../overlays;
+    overlays = import ../../../overlays;
   };
   pkgs-stable = import inputs.nixpkgs-stable {
     inherit system;
@@ -18,10 +23,11 @@ in {
       inputs.determinate.nixosModules.default
       inputs.catppuccin.nixosModules.catppuccin
       inputs.nixos-wsl.nixosModules.wsl
-      ../../nixos/configurations/geks-wsl/configuration.nix
-      ../../nixos/modules/nix-conf.nix
-      ../../nixos/modules/sys-pkgs.nix
-      ../../nixos/modules/catppuccin.nix
+      ./_configuration.nix
+      # NixOS feature modules used by WSL
+      ../../../nixos/catppuccin.nix
+      ../../../nixos/nix-conf.nix
+      ../../../nixos/sys-pkgs.nix
       inputs.home-manager.nixosModules.home-manager
       {
         home-manager = {
@@ -31,8 +37,11 @@ in {
           users.mykolas = {
             imports = [
               inputs.catppuccin.homeModules.catppuccin
-              ../../home-manager/configurations/mykolas/home-geks-wsl.nix
-              ../../home-manager/modules/geks-wsl.nix
+              ../../../home-manager/users/mykolas/home-wsl.nix
+              # HM feature modules used by WSL
+              ../../../home-manager/modules/catppuccin.nix
+              ../../../home-manager/modules/dev-pkgs.nix
+              ../../../home-manager/modules/shell.nix
             ];
             home.packages = [
               wrappedPkgs.helix

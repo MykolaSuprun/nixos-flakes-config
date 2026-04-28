@@ -1,8 +1,12 @@
 {
   pkgs,
   pkgs-stable,
+  lib,
+  config,
   ...
 }: {
+  options.myconf.nixos.desktop.enable = lib.mkEnableOption "gaming and desktop apps";
+  config = lib.mkIf config.myconf.nixos.desktop.enable {
   services.hardware = {
     bolt.enable = true;
   };
@@ -120,5 +124,6 @@
       User = "root"; # Ensure it runs with necessary permissions
     };
     wantedBy = ["sysinit.target"]; # Run early in the boot process
+  };
   };
 }
