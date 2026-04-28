@@ -54,9 +54,11 @@ in {
                   inputs.catppuccin.homeModules.catppuccin
                   inputs.zen-browser.homeModules.beta
                   inputs.noctalia.homeModules.default
+                  inputs.dms.homeModules.dank-material-shell
                   ../../../home-manager/users/mykolas/home-geks-nixos.nix
                   # HM feature modules (all gated by myconf.*.enable flags)
                   ../../../home-manager/modules/catppuccin.nix
+                  ../../../home-manager/modules/dms.nix
                   ../../../home-manager/modules/chromium.nix
                   ../../../home-manager/modules/desktop-config.nix
                   ../../../home-manager/modules/dev-pkgs.nix

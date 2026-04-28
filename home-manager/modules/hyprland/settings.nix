@@ -20,7 +20,13 @@
     then inputs.hy3.packages.${pkgs.stdenv.hostPlatform.system}
     else pkgs.hyprlandPlugins;
 
-  monitorsConf = config.hyprconf.monitorsConf;
+  luaSrcPath    = "${hyprSrcPath}/lua";
+  luaTargetPath = "~/.config/hypr/lua";
+
+  luaModules = builtins.attrNames (lib.filterAttrs
+    (name: type: type == "regular" && lib.hasSuffix ".lua" name)
+    (builtins.readDir ./../../users/mykolas/config/hyprland/lua)
+  );
 
   themes = [
     "catppuccin-latte"
@@ -46,20 +52,6 @@
     "yellow"
   ];
 
-  hyprConfigs = [
-    "settings.conf"
-    "startup.conf"
-    "binds.conf"
-    monitorsConf
-    "workspaces.conf"
-    "gestures.conf"
-  ];
-
-  # Hypr ecosystem configs to symlink but NOT source in hyprland.conf
-  hyprEcosystemConfigs = [
-    "hyprlauncher.conf"
-  ];
-
   filesToLink = srcPath: targetPath: files:
     builtins.map (x: ''
       rm -f ${targetPath}/${x}
@@ -69,17 +61,6 @@
 in {
   options = {
     hyprconf = {
-      monitorsConf = lib.mkOption {
-        type = lib.types.str;
-        default = "monitors-default.conf";
-        description = "Hyprland monitors config filename (e.g. geks-nixos-monitors.conf)";
-      };
-      target = lib.mkOption {
-        type = lib.types.enum ["geks-zenbook" "geks-nixos"];
-        default = "geks-nixos";
-        description = "Target system determining hyprland configuration variant (deprecated, use monitorsConf)";
-        example = "geks-zenbook";
-      };
       theme = lib.mkOption {
         type = lib.types.enum themes;
         default =
@@ -103,16 +84,25 @@ in {
         enable = lib.mkEnableOption "enables hyprland config";
         flake.enable = lib.mkEnableOption "enables upstream Hyprland flake";
       };
+
+      noctalia = {
+        enable = lib.mkEnableOption "enables noctalia shell service";
+      };
     };
   };
   config = lib.mkIf config.hyprconf.hyprland.enable {
-    # Create direct symlink to startup.conf in flake repo for live editing
-    home.activation.linkHyprlandStartup = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    # Symlink Lua config files from flake repo into ~/.config/hypr for live editing.
+    home.activation.linkHyprlandLua = lib.hm.dag.entryAfter ["writeBoundary"] ''
       mkdir -p ${hyprTargetPath}
       mkdir -p ~/.config/wallpapers
 
-      ${lib.strings.concatLines (filesToLink hyprSrcPath hyprTargetPath hyprConfigs)}
-      ${lib.strings.concatLines (filesToLink hyprSrcPath hyprTargetPath hyprEcosystemConfigs)}
+      # Symlink Lua modules for live editing
+      mkdir -p ${luaTargetPath}
+      ${lib.strings.concatLines (filesToLink luaSrcPath luaTargetPath luaModules)}
+
+      # Symlink Lua entry point
+      rm -f ${hyprTargetPath}/hyprland.lua
+      ln -s ${luaSrcPath}/hyprland.lua ${hyprTargetPath}/hyprland.lua
 
       # Ensure icon_theme is set in hyprtoolkit.conf (managed by noctalia, which only writes colors)
       if [ -f ${hyprTargetPath}/hyprtoolkit.conf ] && ! grep -q "icon_theme" ${hyprTargetPath}/hyprtoolkit.conf; then
@@ -198,10 +188,7 @@ in {
 
       xwayland.enable = true;
 
-      extraConfig = ''
-        # Source the live-editable startup configuration
-        ${lib.strings.concatLines (builtins.map (x: "source = ${hyprTargetPath}/${x}") hyprConfigs)}
-      '';
+      extraConfig = "";
     };
 
     systemd.user = {
@@ -210,121 +197,123 @@ in {
         # ensure noctalia directory exists in hyprland config dir
         "d %h/.config/hypr/noctalia 0755 - - -"
       ];
-      services = {
-        swaync = {
-          Unit = {
-            Description = "Sway Notification Center";
-            BindsTo = ["wayland-session@hyprland.desktop.target"];
-            After = ["wayland-session@hyprland.desktop.target"];
+      services =
+        {
+          swaync = {
+            Unit = {
+              Description = "Sway Notification Center";
+              BindsTo = ["wayland-session@hyprland.desktop.target"];
+              After = ["wayland-session@hyprland.desktop.target"];
+            };
+            Service = {
+              Type = "dbus";
+              BusName = "org.freedesktop.Notifications";
+              ExecStart = "${pkgs.swaynotificationcenter}/bin/swaync";
+              Restart = "on-failure";
+            };
+            Install = {
+              WantedBy = ["wayland-session@hyprland.desktop.target"];
+            };
           };
-          Service = {
-            Type = "dbus";
-            BusName = "org.freedesktop.Notifications";
-            ExecStart = "${pkgs.swaynotificationcenter}/bin/swaync";
-            Restart = "on-failure";
+
+          hypridle = {
+            Unit = {
+              Description = "Hyprland Idle Daemon";
+              BindsTo = ["wayland-session@hyprland.desktop.target"];
+              After = ["wayland-session@hyprland.desktop.target"];
+            };
+            Service = {
+              ExecStart = "${pkgs.hypridle}/bin/hypridle";
+              Restart = "on-failure";
+            };
+            Install = {
+              WantedBy = ["wayland-session@hyprland.desktop.target"];
+            };
           };
-          Install = {
-            WantedBy = ["wayland-session@hyprland.desktop.target"];
+
+          # clipse = {
+          #   Unit = {
+          #     Description = "Clipse clipboard manager";
+          #     BindsTo = ["wayland-session@hyprland.desktop.target"];
+          #     After = ["wayland-session@hyprland.desktop.target"];
+          #   };
+          #   Service = {
+          #     ExecStart = "${pkgs.clipse}/bin/clipse -listen";
+          #     Restart = "on-failure";
+          #   };
+          #   Install = {
+          #     WantedBy = ["wayland-session@hyprland.desktop.target"];
+          #   };
+          # };
+
+          # hyprpaper = {
+          #   Unit = {
+          #     Description = "Hyprland Wallpaper Daemon";
+          #     BindsTo = ["wayland-session@hyprland.desktop.target"];
+          #     After = ["wayland-session@hyprland.desktop.target"];
+          #   };
+          #   Service = {
+          #     ExecStart = "${pkgs.hyprpaper}/bin/hyprpaper";
+          #     Restart = "on-failure";
+          #   };
+          #   Install = {
+          #     WantedBy = ["wayland-session@hyprland.desktop.target"];
+          #   };
+          # };
+
+          hyprpolkitagent = {
+            Unit = {
+              Description = "Hyprland Polkit Authentication Agent";
+              BindsTo = ["wayland-session@hyprland.desktop.target"];
+              After = ["wayland-session@hyprland.desktop.target"];
+            };
+            Service = {
+              ExecStart = "${pkgs.hyprpolkitagent}/libexec/hyprpolkitagent";
+              Restart = "on-failure";
+              TimeoutStopSec = "5sec";
+              Slice = "session.slice";
+            };
+            Install = {
+              WantedBy = ["wayland-session@hyprland.desktop.target"];
+            };
           };
+        }
+        // lib.optionalAttrs config.hyprconf.noctalia.enable {
+          noctalia = let
+            noctaliaPkg = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
+          in {
+            Unit = {
+              Description = "Noctalia shell";
+              BindsTo = ["wayland-session@hyprland.desktop.target"];
+              Requisite = ["wayland-session@hyprland.desktop.target"];
+              After = ["wayland-session@hyprland.desktop.target"];
+            };
+            Service = {
+              Slice = "app-graphical.slice";
+              ExecStart = "${noctaliaPkg}/bin/noctalia-shell --no-duplicate";
+              Restart = "on-failure";
+              RestartSec = 1;
+            };
+            Install = {
+              WantedBy = ["wayland-session@hyprland.desktop.target"];
+            };
+          };
+          # waybar = {
+          #   Unit = {
+          #     Description = "Highly customizable Wayland bar";
+          #     BindsTo = ["wayland-session@hyprland.desktop.target"];
+          #     After = ["wayland-session@hyprland.desktop.target"];
+          #   };
+          #   Service = {
+          #     Slice = "app-graphical.slice";
+          #     ExecStart = "${pkgs.waybar}/bin/waybar";
+          #     Restart = "on-failure";
+          #   };
+          #   Install = {
+          #     WantedBy = ["wayland-session@hyprland.desktop.target"];
+          #   };
+          # };
         };
-
-        hypridle = {
-          Unit = {
-            Description = "Hyprland Idle Daemon";
-            BindsTo = ["wayland-session@hyprland.desktop.target"];
-            After = ["wayland-session@hyprland.desktop.target"];
-          };
-          Service = {
-            ExecStart = "${pkgs.hypridle}/bin/hypridle";
-            Restart = "on-failure";
-          };
-          Install = {
-            WantedBy = ["wayland-session@hyprland.desktop.target"];
-          };
-        };
-
-        # clipse = {
-        #   Unit = {
-        #     Description = "Clipse clipboard manager";
-        #     BindsTo = ["wayland-session@hyprland.desktop.target"];
-        #     After = ["wayland-session@hyprland.desktop.target"];
-        #   };
-        #   Service = {
-        #     ExecStart = "${pkgs.clipse}/bin/clipse -listen";
-        #     Restart = "on-failure";
-        #   };
-        #   Install = {
-        #     WantedBy = ["wayland-session@hyprland.desktop.target"];
-        #   };
-        # };
-
-        # hyprpaper = {
-        #   Unit = {
-        #     Description = "Hyprland Wallpaper Daemon";
-        #     BindsTo = ["wayland-session@hyprland.desktop.target"];
-        #     After = ["wayland-session@hyprland.desktop.target"];
-        #   };
-        #   Service = {
-        #     ExecStart = "${pkgs.hyprpaper}/bin/hyprpaper";
-        #     Restart = "on-failure";
-        #   };
-        #   Install = {
-        #     WantedBy = ["wayland-session@hyprland.desktop.target"];
-        #   };
-        # };
-
-        hyprpolkitagent = {
-          Unit = {
-            Description = "Hyprland Polkit Authentication Agent";
-            BindsTo = ["wayland-session@hyprland.desktop.target"];
-            After = ["wayland-session@hyprland.desktop.target"];
-          };
-          Service = {
-            ExecStart = "${pkgs.hyprpolkitagent}/libexec/hyprpolkitagent";
-            Restart = "on-failure";
-            TimeoutStopSec = "5sec";
-            Slice = "session.slice";
-          };
-          Install = {
-            WantedBy = ["wayland-session@hyprland.desktop.target"];
-          };
-        };
-
-        noctalia = let
-          noctaliaPkg = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
-        in {
-          Unit = {
-            Description = "Noctalia shell";
-            BindsTo = ["wayland-session@hyprland.desktop.target"];
-            Requisite = ["wayland-session@hyprland.desktop.target"];
-            After = ["wayland-session@hyprland.desktop.target"];
-          };
-          Service = {
-            Slice = "app-graphical.slice";
-            ExecStart = "${noctaliaPkg}/bin/noctalia-shell --no-duplicate";
-            Restart = "on-failure";
-            RestartSec = 1;
-          };
-          Install = {
-            WantedBy = ["wayland-session@hyprland.desktop.target"];
-          };
-        };
-        # waybar = {
-        #   Unit = {
-        #     Description = "Highly customizable Wayland bar";
-        #     BindsTo = ["wayland-session@hyprland.desktop.target"];
-        #     After = ["wayland-session@hyprland.desktop.target"];
-        #   };
-        #   Service = {
-        #     Slice = "app-graphical.slice";
-        #     ExecStart = "${pkgs.waybar}/bin/waybar";
-        #     Restart = "on-failure";
-        #   };
-        #   Install = {
-        #     WantedBy = ["wayland-session@hyprland.desktop.target"];
-        #   };
-        # };
-      };
     };
   };
 }
