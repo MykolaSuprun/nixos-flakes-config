@@ -22,8 +22,6 @@
   };
 
   hyprconf = {
-    target = "geks-zenbook";
-    monitorsConf = "geks-zenbook-monitors.conf";
     waybar = {
       enable = true;
       output = ["DP-1"];

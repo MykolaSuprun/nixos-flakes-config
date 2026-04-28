@@ -13,7 +13,8 @@
     dev.enable = true;
     desktop.enable = true;
     chromium.enable = true;
-    noctalia.enable = true;
+    dms.enable = true;
+    # noctalia.enable = true;
     catppuccin.enable = true;
     rofi.enable = true;
     fcitx5.enable = true;
@@ -22,8 +23,6 @@
   };
 
   hyprconf = {
-    target = "geks-nixos";
-    monitorsConf = "geks-nixos-monitors.conf";
     waybar = {
       enable = true;
       output = null;
