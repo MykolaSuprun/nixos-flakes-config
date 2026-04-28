@@ -1,49 +1,54 @@
-{pkgs, lib, config, ...}: {
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: {
   options.myconf.catppuccin.enable = lib.mkEnableOption "catppuccin theming";
   config = lib.mkIf config.myconf.catppuccin.enable {
-  catppuccin = {
-    enable = true;
-    cache.enable = true;
-    flavor = "latte";
-    accent = "mauve";
-
-    hyprland = {
+    catppuccin = {
       enable = true;
+      cache.enable = true;
       flavor = "latte";
-    };
-    cursors = {
-      enable = true;
       accent = "mauve";
-    };
-    fcitx5 = {
-      enable = true;
-      enableRounded = true;
-    };
-    kvantum = {
-      enable = true;
-      apply = true;
-      flavor = "latte";
-    };
-    btop = {
-      enable = true;
-      flavor = "mocha";
-    };
-    rofi = {
-      enable = true;
-    };
-  };
-  qt = {
-    enable = true;
-    platformTheme.name = "kvantum";
-    style.name = "kvantum";
-  };
 
-  gtk = {
-    enable = false;
-  };
+      hyprland = {
+        enable = true;
+        flavor = "latte";
+      };
+      cursors = {
+        enable = true;
+        accent = "mauve";
+      };
+      fcitx5 = {
+        enable = true;
+        enableRounded = true;
+      };
+      kvantum = {
+        enable = true;
+        apply = true;
+        flavor = "latte";
+      };
+      btop = {
+        enable = true;
+        flavor = "mocha";
+      };
+      rofi = {
+        enable = true;
+      };
+    };
+    qt = {
+      enable = true;
+      platformTheme.name = "kvantum";
+      style.name = "kvantum";
+    };
 
-  home.packages = with pkgs; [
-    pkgs.catppuccin-kvantum
-  ];
+    gtk = {
+      enable = false;
+    };
+
+    home.packages = with pkgs; [
+      pkgs.catppuccin-kvantum
+    ];
   };
 }

@@ -4,9 +4,7 @@
     mocha = "catppuccin_mocha";
   };
 
-  mkConfigToml = {
-    theme ? "rose_pine_dawn",
-  }: ''
+  mkConfigToml = {theme ? "rose_pine_dawn"}: ''
     theme = "${theme}"
     [editor]
     line-number = "relative"

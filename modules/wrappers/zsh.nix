@@ -6,11 +6,12 @@ in {
     system,
     ...
   }: {
-    packages.zsh = (inputs.wrappers.wrapperModules.zsh.apply {
-      inherit pkgs;
-      inherit (zshConfig) settings extraRC;
-      extraPackages = zshConfig.extraPackages pkgs;
-    })
+    packages.zsh =
+      (inputs.wrappers.wrapperModules.zsh.apply {
+        inherit pkgs;
+        inherit (zshConfig) settings extraRC;
+        extraPackages = zshConfig.extraPackages pkgs;
+      })
     .wrapper;
   };
 }

@@ -6,10 +6,11 @@ in {
     system,
     ...
   }: {
-    packages.ghostty = (inputs.wrappers.wrapperModules.ghostty.apply {
-      inherit pkgs;
-      settings = ghosttyConfig.settings // ghosttyConfig.themes.latte;
-    })
+    packages.ghostty =
+      (inputs.wrappers.wrapperModules.ghostty.apply {
+        inherit pkgs;
+        settings = ghosttyConfig.settings // ghosttyConfig.themes.latte;
+      })
     .wrapper;
   };
 }

@@ -6,10 +6,11 @@ in {
     system,
     ...
   }: {
-    packages.kitty = (inputs.wrappers.wrapperModules.kitty.apply {
-      inherit pkgs;
-      settings = kittyConfig.settings // kittyConfig.themes.latte;
-    })
+    packages.kitty =
+      (inputs.wrappers.wrapperModules.kitty.apply {
+        inherit pkgs;
+        settings = kittyConfig.settings // kittyConfig.themes.latte;
+      })
     .wrapper;
   };
 }

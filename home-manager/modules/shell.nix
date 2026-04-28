@@ -18,10 +18,10 @@
   );
 
   conn-win = pkgs.writeShellScriptBin "conn-win" ''
-        sdl-freerdp /v:localhost:3389 /u:VM /size:1920x1080 /sound \
-      /gfx:AVC444,mask:0xFFFFFFFF /bpp:32 /gdi:hw /network:lan -compression \
-      +aero +menu-anims +window-drag +clipboard -grab-keyboard -grab-mouse \
-      /cert:ignore /sec:nla:off
+      sdl-freerdp /v:localhost:3389 /u:VM /size:1920x1080 /sound \
+    /gfx:AVC444,mask:0xFFFFFFFF /bpp:32 /gdi:hw /network:lan -compression \
+    +aero +menu-anims +window-drag +clipboard -grab-keyboard -grab-mouse \
+    /cert:ignore /sec:nla:off
   '';
 
   win11 = pkgs.writeShellScriptBin "win11" ''
@@ -71,74 +71,74 @@
 in {
   options.myconf.shell.enable = lib.mkEnableOption "shell configuration";
   config = lib.mkIf config.myconf.shell.enable {
-  home.packages = with pkgs; [
-    babelfish
-    grc
+    home.packages = with pkgs; [
+      babelfish
+      grc
 
-    conn-win
-    win11
-    py-init
-  ];
+      conn-win
+      win11
+      py-init
+    ];
 
-  programs = {
-    nushell = {
-      enable = true;
-      envFile.source = ./../users/mykolas/config/nushell/env.nu;
-      configFile.source = ./../users/mykolas/config/nushell/config.nu;
-    };
-    carapace = {
-      enable = true;
-      enableNushellIntegration = true;
-      enableZshIntegration = true;
-      enableFishIntegration = true;
-      enableBashIntegration = true;
-    };
-    fzf = {
-      enable = true;
-      tmux.enableShellIntegration = true;
-      enableZshIntegration = true;
-      enableFishIntegration = true;
-      enableBashIntegration = true;
-    };
-    starship = {
-      enable = true;
-      enableBashIntegration = true;
-      enableZshIntegration = true;
-      enableFishIntegration = true;
-      enableNushellIntegration = true;
-      enableTransience = true;
-    };
-    zoxide = {
-      enable = true;
-      enableBashIntegration = true;
-      enableZshIntegration = true;
-      enableFishIntegration = true;
-      enableNushellIntegration = true;
-      options = [
-        "--cmd cd"
-      ];
-    };
-    direnv = {
-      enableZshIntegration = true;
-      enableBashIntegration = true;
-      enableFishIntegration = true;
-    };
-    zsh = {
-      enable = true;
-      enableCompletion = true;
-      autosuggestion.enable = true;
-      defaultKeymap = "viins";
-      initContent = ''
-        source ${shell_init}/bin/init_shell
-        ${zshConfig.extraRC}
-      '';
-      antidote = {
+    programs = {
+      nushell = {
         enable = true;
-        plugins = [
-          "jeffreytse/zsh-vi-mode"
+        envFile.source = ./../users/mykolas/config/nushell/env.nu;
+        configFile.source = ./../users/mykolas/config/nushell/config.nu;
+      };
+      carapace = {
+        enable = true;
+        enableNushellIntegration = true;
+        enableZshIntegration = true;
+        enableFishIntegration = true;
+        enableBashIntegration = true;
+      };
+      fzf = {
+        enable = true;
+        tmux.enableShellIntegration = true;
+        enableZshIntegration = true;
+        enableFishIntegration = true;
+        enableBashIntegration = true;
+      };
+      starship = {
+        enable = true;
+        enableBashIntegration = true;
+        enableZshIntegration = true;
+        enableFishIntegration = true;
+        enableNushellIntegration = true;
+        enableTransience = true;
+      };
+      zoxide = {
+        enable = true;
+        enableBashIntegration = true;
+        enableZshIntegration = true;
+        enableFishIntegration = true;
+        enableNushellIntegration = true;
+        options = [
+          "--cmd cd"
         ];
       };
+      direnv = {
+        enableZshIntegration = true;
+        enableBashIntegration = true;
+        enableFishIntegration = true;
+      };
+      zsh = {
+        enable = true;
+        enableCompletion = true;
+        autosuggestion.enable = true;
+        defaultKeymap = "viins";
+        initContent = ''
+          source ${shell_init}/bin/init_shell
+          ${zshConfig.extraRC}
+        '';
+        antidote = {
+          enable = true;
+          plugins = [
+            "jeffreytse/zsh-vi-mode"
+          ];
+        };
+      };
     };
-  };
   };
 }

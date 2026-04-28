@@ -1,29 +1,34 @@
-{pkgs, lib, config, ...}: {
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: {
   options.myconf.stylix.enable = lib.mkEnableOption "Stylix home theming";
   config = lib.mkIf config.myconf.stylix.enable {
-  stylix = {
-    enable = true;
-    targets = {
-      zen-browser.enable = true;
-      ghostty.enable = true;
-      fcitx5.enable = true;
-      btop.enable = true;
-      lazygit.enable = true;
-      hyprpaper.enable = true;
-      waybar = {
-        enable = true;
-        enableCenterBackColors = true;
-        enableLeftBackColors = true;
-        enableRightBackColors = true;
-      };
-      kitty = {
-        enable = true;
-        variant256Colors = true;
-      };
-      zellij = {
-        enable = true;
+    stylix = {
+      enable = true;
+      targets = {
+        zen-browser.enable = true;
+        ghostty.enable = true;
+        fcitx5.enable = true;
+        btop.enable = true;
+        lazygit.enable = true;
+        hyprpaper.enable = true;
+        waybar = {
+          enable = true;
+          enableCenterBackColors = true;
+          enableLeftBackColors = true;
+          enableRightBackColors = true;
+        };
+        kitty = {
+          enable = true;
+          variant256Colors = true;
+        };
+        zellij = {
+          enable = true;
+        };
       };
     };
-  };
   };
 }
