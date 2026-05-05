@@ -7,6 +7,8 @@
   useHyprlandFlake ? false,
   ...
 }: let
+  liveLinks = import ../../../lib/live-links.nix {inherit lib;};
+
   hyprSrcPath = "${config.home.sessionVariables.NIXOS_CONF_DIR}/home-manager/users/mykolas/config/hyprland";
   hyprTargetPath = "~/.config/hypr";
 
@@ -19,14 +21,6 @@
     if useHyprlandFlake
     then inputs.hy3.packages.${pkgs.stdenv.hostPlatform.system}
     else pkgs.hyprlandPlugins;
-
-  luaSrcPath    = "${hyprSrcPath}/lua";
-  luaTargetPath = "~/.config/hypr/lua";
-
-  luaModules = builtins.attrNames (lib.filterAttrs
-    (name: type: type == "regular" && lib.hasSuffix ".lua" name)
-    (builtins.readDir ./../../users/mykolas/config/hyprland/lua)
-  );
 
   themes = [
     "catppuccin-latte"
@@ -51,13 +45,6 @@
     "teal"
     "yellow"
   ];
-
-  filesToLink = srcPath: targetPath: files:
-    builtins.map (x: ''
-      rm -f ${targetPath}/${x}
-      ln -s ${srcPath}/${x} ${targetPath}/${x}
-    '')
-    files;
 in {
   options = {
     hyprconf = {
@@ -92,23 +79,31 @@ in {
   };
   config = lib.mkIf config.hyprconf.hyprland.enable {
     # Symlink Lua config files from flake repo into ~/.config/hypr for live editing.
-    home.activation.linkHyprlandLua = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      mkdir -p ${hyprTargetPath}
-      mkdir -p ~/.config/wallpapers
+    home.activation = lib.mkMerge [
+      (liveLinks.mkLiveLinks {
+        activationName = "linkHyprlandLua";
+        nixPath        = ./../../users/mykolas/config/hyprland/lua;
+        runtimePath    = "${hyprSrcPath}/lua";
+        targetPath     = "~/.config/hypr/lua";
+        filter         = name: lib.hasSuffix ".lua" name;
+      }).home.activation
 
-      # Symlink Lua modules for live editing
-      mkdir -p ${luaTargetPath}
-      ${lib.strings.concatLines (filesToLink luaSrcPath luaTargetPath luaModules)}
+      {
+        linkHyprlandExtra = lib.hm.dag.entryAfter ["writeBoundary"] ''
+          mkdir -p ${hyprTargetPath}
+          mkdir -p ~/.config/wallpapers
 
-      # Symlink Lua entry point
-      rm -f ${hyprTargetPath}/hyprland.lua
-      ln -s ${luaSrcPath}/hyprland.lua ${hyprTargetPath}/hyprland.lua
+          # Symlink Lua entry point
+          rm -f ${hyprTargetPath}/hyprland.lua
+          ln -s ${hyprSrcPath}/lua/hyprland.lua ${hyprTargetPath}/hyprland.lua
 
-      # Ensure icon_theme is set in hyprtoolkit.conf (managed by noctalia, which only writes colors)
-      if [ -f ${hyprTargetPath}/hyprtoolkit.conf ] && ! grep -q "icon_theme" ${hyprTargetPath}/hyprtoolkit.conf; then
-        echo "icon_theme = Papirus-Light" >> ${hyprTargetPath}/hyprtoolkit.conf
-      fi
-    '';
+          # Ensure icon_theme is set in hyprtoolkit.conf (managed by noctalia, which only writes colors)
+          if [ -f ${hyprTargetPath}/hyprtoolkit.conf ] && ! grep -q "icon_theme" ${hyprTargetPath}/hyprtoolkit.conf; then
+            echo "icon_theme = Papirus-Light" >> ${hyprTargetPath}/hyprtoolkit.conf
+          fi
+        '';
+      }
+    ];
 
     services = {
       # hyprpolkitagent.enable = true;
