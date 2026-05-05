@@ -141,7 +141,6 @@ in {
 
     greetd = {
       enable = true;
-      useTextGreeter = true;
     };
     sysc-greet = {
       enable = true;
@@ -203,9 +202,13 @@ in {
   users.extraGroups.vboxusers.members = ["mykolas"];
   users.defaultUserShell = wrappedPkgs.zsh;
 
+  users.mutableUsers = true; # passwords set via passwd; initialPassword is only used on first user creation
+  users.users.root.initialPassword = "nixos";
+
   users.users = {
     mykolas = {
       isNormalUser = true;
+      initialPassword = "nixos";
       shell = wrappedPkgs.zsh;
       description = "Mykola Suprun";
       extraGroups = [
