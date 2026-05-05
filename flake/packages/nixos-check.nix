@@ -53,6 +53,7 @@
 
         passed=()
         failed=()
+        flake_check_ok=true
 
         # Dry-run evaluation of a single host's system toplevel.
         do_eval() {
@@ -73,7 +74,12 @@
         if [[ "$mode" == "flake-check" || "$mode" == "both" ]]; then
           echo ""
           echo ">>> Running: nix flake check  (evaluates all flake outputs — may be slow)"
-          nix flake check "''${FLAKE_REF}" "''${DETERMINATE_OPTS[@]}" || echo "    flake check FAILED"
+          nix flake check "''${FLAKE_REF}" "''${DETERMINATE_OPTS[@]}" && true || flake_check_ok=false
+          if $flake_check_ok; then
+            echo "    flake check PASSED"
+          else
+            echo "    flake check FAILED"
+          fi
         fi
 
         if [[ "$mode" == "eval" || "$mode" == "both" ]]; then
@@ -85,6 +91,9 @@
         # --- Summary --------------------------------------------------------------
         echo ""
         echo "=== Summary ==="
+        if [[ "$mode" == "flake-check" || "$mode" == "both" ]]; then
+          $flake_check_ok && echo "flake check:  PASSED" || echo "flake check:  FAILED"
+        fi
         if [ "''${#passed[@]}" -gt 0 ]; then
           echo "PASSED: ''${passed[*]}"
         fi
@@ -92,7 +101,10 @@
           echo "FAILED: ''${failed[*]}"
           exit 1
         fi
-        [ "''${#passed[@]}" -gt 0 ] && echo "All selected checks passed."
+        if ! $flake_check_ok; then
+          exit 1
+        fi
+        echo "All selected checks passed."
       '';
     };
   in {

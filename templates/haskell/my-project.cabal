@@ -1,0 +1,12 @@
+cabal-version:   3.0
+name:            my-project
+version:         0.1.0.0
+synopsis:        A new Haskell project
+license:         MIT
+build-type:      Simple
+
+executable my-project
+  main-is:          Main.hs
+  hs-source-dirs:   app
+  default-language: Haskell2010
+  build-depends:    base ^>=4.17
