@@ -2,6 +2,7 @@
   pkgs,
   config,
   lib,
+  wrappedPkgs,
   ...
 }: {
   options.myconf.nixos.syspkgs.enable = lib.mkEnableOption "system utility packages (nh, eza, fzf, etc.)";
@@ -33,6 +34,10 @@
       lf
       killall
       bottom
+      # Flake-managed NixOS tooling (available system-wide on all hosts)
+      wrappedPkgs.nixos-build
+      wrappedPkgs.nixos-check
+      wrappedPkgs.nixos-iso
     ];
   };
 }

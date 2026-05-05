@@ -62,6 +62,11 @@ in {
 
     plymouth.enable = true;
 
+    # ZFS is not used on this host (ext4 + LUKS). Explicitly disabled so that
+    # zfs-kernel (currently broken for linux-zen) is never pulled in — including
+    # when building installer ISOs via nixos-rebuild build-image.
+    supportedFilesystems.zfs = false;
+
     kernelPackages = pkgs.linuxPackages_zen;
     extraModulePackages = with config.boot.kernelPackages; [
       # kvmfr
