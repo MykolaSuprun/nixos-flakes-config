@@ -57,6 +57,9 @@
       };
     };
     plymouth.enable = true;
+
+    # ZFS is not used on this host (ext4 + LUKS).
+    supportedFilesystems.zfs = false;
   };
 
   boot.initrd.luks.devices."luks-585372bc-c88f-4e15-ada1-9bca0c43bd29".device = "/dev/disk/by-uuid/585372bc-c88f-4e15-ada1-9bca0c43bd29";

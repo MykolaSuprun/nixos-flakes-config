@@ -81,7 +81,6 @@ in {
                 wrappedPkgs.tmux
                 wrappedPkgs.wezterm
                 wrappedPkgs.nix-update
-                wrappedPkgs.nixos-build
               ];
             };
             extraSpecialArgs = {

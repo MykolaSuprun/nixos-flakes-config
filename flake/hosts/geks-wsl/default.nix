@@ -47,7 +47,6 @@ in {
               wrappedPkgs.helix
               wrappedPkgs.tmux
               wrappedPkgs.nix-update
-              wrappedPkgs.nixos-build
             ];
           };
           extraSpecialArgs = {
