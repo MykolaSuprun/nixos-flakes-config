@@ -4,13 +4,9 @@
   config,
   ...
 }: let
-  flakePath = "$NIXOS_CONF_DIR";
+  liveLinks = import ../../lib/live-links.nix {inherit lib;};
+  waybarConfSrc = "${config.home.sessionVariables.NIXOS_CONF_DIR}/home-manager/users/mykolas/config/waybar";
 in {
-  # home.activation.linkHyprlandStartup = lib.hm.dag.entryAfter ["writeBoundary"] ''
-  #   mkdir -p ~/.config/waybar
-  #   rm -f ~/.config/waybar
-  #
-  # ''
   options = {
     hyprconf = {
       waybar = {
@@ -24,6 +20,15 @@ in {
     };
   };
   config = lib.mkIf config.hyprconf.waybar.enable {
+    # Symlink waybar theme CSS files for live editing (no rebuild needed for theme changes).
+    home.activation = (liveLinks.mkLiveLinks {
+      activationName = "linkWaybarThemes";
+      nixPath        = ./../users/mykolas/config/waybar/themes;
+      runtimePath    = "${waybarConfSrc}/themes";
+      targetPath     = "~/.config/waybar/themes";
+      filter         = name: lib.hasSuffix ".css" name;
+    }).home.activation;
+
     programs.waybar = {
       enable = true;
       # window#waybar, tooltip {

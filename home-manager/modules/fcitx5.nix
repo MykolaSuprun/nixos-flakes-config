@@ -63,10 +63,8 @@
 
           # Selector addon config — Super+Space opens IM selector popup
           addons.selector = {
-            sections = {
-              Selector = {
-                TriggerKey = "Super+space";
-              };
+            globalSection = {
+              TriggerKey = "Super+space";
             };
           };
         };
