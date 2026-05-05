@@ -28,12 +28,12 @@
         echo "No selection — updating all inputs..."
         nix flake update --accept-flake-config
       else
-        args=""
-        for input in $selected; do
-          args="$args $input"
-        done
-        echo "Updating:$args"
-        nix flake update $args --accept-flake-config
+        args=()
+        while IFS= read -r input; do
+          args+=("$input")
+        done <<< "$selected"
+        echo "Updating: ''${args[*]}"
+        nix flake update "''${args[@]}" --accept-flake-config
       fi
     '';
   in {

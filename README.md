@@ -40,6 +40,13 @@ nix run github:MykolaSuprun/nixos-flakes-config#nixos-check
 nix run github:MykolaSuprun/nixos-flakes-config#nixos-build
 ```
 
+### Flash an ISO to a USB drive
+
+```sh
+nix run github:MykolaSuprun/nixos-flakes-config#nixos-flash
+```
+
+
 ### Using a local checkout
 
 Set `FLAKE_REF=.` to point any of the above scripts at the local tree instead of GitHub:
@@ -48,6 +55,7 @@ Set `FLAKE_REF=.` to point any of the above scripts at the local tree instead of
 FLAKE_REF=. nix run .#nixos-iso
 FLAKE_REF=. nix run .#nixos-check
 FLAKE_REF=. nix run .#nixos-build
+nix run .#nixos-flash
 ```
 
 ## Structure

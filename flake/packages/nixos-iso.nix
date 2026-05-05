@@ -11,7 +11,7 @@
   }: let
     nixos-iso = pkgs.writeShellApplication {
       name = "nixos-iso";
-      runtimeInputs = [pkgs.jq pkgs.fzf pkgs.gnugrep];
+      runtimeInputs = [pkgs.jq pkgs.fzf pkgs.gnugrep pkgs.nixos-rebuild];
       text = ''
         # Set FLAKE_REF to override the source flake (e.g. FLAKE_REF=. for local).
         FLAKE_REF="''${FLAKE_REF:-github:MykolaSuprun/nixos-flakes-config}"
@@ -80,10 +80,14 @@
 
         iso_path=$(nix eval \
           "''${FLAKE_REF}#nixosConfigurations.''${host}.config.system.build.images.''${variant}.passthru.filePath" \
-          --raw --accept-flake-config 2>/dev/null)
+          --raw --accept-flake-config 2>/dev/null || true)
         echo ""
         echo "=== ISO build complete ==="
-        echo "Output: $iso_path"
+        if [ -n "$iso_path" ]; then
+          echo "Output: $iso_path"
+        else
+          echo "Output: (run 'find result -name \"*.iso\"' to locate the image)"
+        fi
       '';
     };
   in {

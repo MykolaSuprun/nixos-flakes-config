@@ -29,12 +29,13 @@
       lock_after=$(cat flake.lock)
       updated_inputs=""
       if [ "$lock_before" != "$lock_after" ]; then
-        updated_inputs=$(diff <(echo "$lock_before") <(echo "$lock_after") \
-          | ${pkgs.gnugrep}/bin/grep -oP '"[a-zA-Z0-9_-]+":' \
-          | sort -u \
-          | ${pkgs.gnused}/bin/sed 's/"//g; s/://g' \
-          | tr '\n' ', ' \
-          | ${pkgs.gnused}/bin/sed 's/,$//')
+        # Compare only the per-node locked rev/url — avoids matching internal JSON
+        # keys like "narHash", "lastModified", etc. that also change on updates.
+        updated_inputs=$(diff \
+          <(echo "$lock_before" | ${pkgs.jq}/bin/jq -r '.nodes | to_entries[] | select(.key != "root") | [.key, (.value.locked.rev // .value.locked.url // "")] | join("=")' | sort) \
+          <(echo "$lock_after"  | ${pkgs.jq}/bin/jq -r '.nodes | to_entries[] | select(.key != "root") | [.key, (.value.locked.rev // .value.locked.url // "")] | join("=")' | sort) \
+          | ${pkgs.gnugrep}/bin/grep '^> ' | ${pkgs.gnused}/bin/sed 's/^> //' | cut -d= -f1 \
+          | sort -u | tr '\n' ', ' | ${pkgs.gnused}/bin/sed 's/,$//')
       fi
 
       # Detect changed nix files

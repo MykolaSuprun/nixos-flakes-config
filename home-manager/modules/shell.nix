@@ -27,47 +27,21 @@
   win11 = pkgs.writeShellScriptBin "win11" ''
     docker compose -f $NIXOS_CONF_DIR/windows-containers/win_11_bacis.yaml up
   '';
-  py-init = pkgs.writeShellScriptBin "py-init" ''
+  flake-init = pkgs.writeShellScriptBin "flake-init" ''
+    FLAKE_DIR="''${NIXOS_CONF_DIR:-$HOME/workspaces/src/nixconf}"
+    FZF_BIND=(--bind "j:down,k:up,g:first,G:last,ctrl-d:half-page-down,ctrl-u:half-page-up")
+
+    TEMPLATE=$(printf 'python-uv\ngo\nhaskell\njava\nscala' \
+      | fzf \
+          --header "Select project template:" \
+          --prompt "template> " \
+          "''${FZF_BIND[@]}") || { echo "Aborted." >&2; exit 1; }
+
     git init
-
-    cat > flake.nix << 'EOF'
-    {
-      description = "Python development environment with uv";
-
-      inputs = {
-        nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-        flake-utils.url = "github:numtide/flake-utils";
-      };
-
-      outputs = {
-        self,
-        nixpkgs,
-        flake-utils,
-      }:
-        flake-utils.lib.eachDefaultSystem (
-          system: let
-            pkgs = nixpkgs.legacyPackages.''${system};
-          in {
-            devShells.default = pkgs.mkShell {
-              buildInputs = with pkgs; [
-                uv
-                python312
-              ];
-
-              shellHook = '''
-                echo "UV Python environment activated"
-                uv --version
-                python --version
-              ''';
-            };
-          }
-        );
-    }
-    EOF
-
+    nix flake init -t "$FLAKE_DIR#$TEMPLATE"
     git add .
     nix develop
-  '';
+  ''
 in {
   options.myconf.shell.enable = lib.mkEnableOption "shell configuration";
   config = lib.mkIf config.myconf.shell.enable {
@@ -77,7 +51,7 @@ in {
 
       conn-win
       win11
-      py-init
+      flake-init
     ];
 
     programs = {
