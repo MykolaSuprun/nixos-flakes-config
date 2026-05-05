@@ -41,7 +41,7 @@
     nix flake init -t "$FLAKE_DIR#$TEMPLATE"
     git add .
     nix develop
-  ''
+  '';
 in {
   options.myconf.shell.enable = lib.mkEnableOption "shell configuration";
   config = lib.mkIf config.myconf.shell.enable {

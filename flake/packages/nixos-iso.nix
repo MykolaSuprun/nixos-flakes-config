@@ -47,13 +47,14 @@
               "''${FZF_BIND[@]}") || { echo "Aborted." >&2; exit 1; }
 
         # --- Variant selection ----------------------------------------------------
-        # iso-installer = graphical Calamares installer (nixos-rebuild build-image)
-        # iso           = minimal live environment
-        variant=$(printf "iso-installer\niso" \
+        variant=$(printf \
+"iso-installer  graphical Calamares installer — recommended for end-user installs\niso            minimal live environment — useful for rescue / manual partitioning" \
           | fzf \
               --header "Select image variant:" \
               --prompt "variant> " \
-              "''${FZF_BIND[@]}") || { echo "Aborted." >&2; exit 1; }
+              --with-nth=1 \
+              "''${FZF_BIND[@]}" \
+          | awk '{print $1}') || { echo "Aborted." >&2; exit 1; }
 
         echo ""
         echo "Host:    $host"
@@ -72,22 +73,17 @@
         echo ""
 
         # --- ISO build -----------------------------------------------------------
+        # nixos-rebuild build-image prints the output path itself when done.
+        # We just add a flash hint afterwards.
         echo ">>> Building $variant image for '$host'..."
         nixos-rebuild build-image \
           --image-variant "$variant" \
           --flake "''${FLAKE_REF}#''${host}" \
           "''${DETERMINATE_OPTS[@]}"
 
-        iso_path=$(nix eval \
-          "''${FLAKE_REF}#nixosConfigurations.''${host}.config.system.build.images.''${variant}.passthru.filePath" \
-          --raw --accept-flake-config 2>/dev/null || true)
         echo ""
-        echo "=== ISO build complete ==="
-        if [ -n "$iso_path" ]; then
-          echo "Output: $iso_path"
-        else
-          echo "Output: (run 'find result -name \"*.iso\"' to locate the image)"
-        fi
+        echo "=== ISO ready. To flash it to a USB drive, run: ==="
+        echo "    nix run ''${FLAKE_REF}#nixos-flash"
       '';
     };
   in {

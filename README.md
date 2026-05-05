@@ -23,8 +23,22 @@ nix run github:MykolaSuprun/nixos-flakes-config#nixos-iso
 ```
 
 Variants:
-- `iso-installer` — graphical Calamares installer *(default choice)*
-- `iso` — minimal live environment
+- `iso-installer` — graphical Calamares installer — recommended for end-user installs
+- `iso` — minimal live environment — useful for rescue / manual partitioning
+
+#### Logging in to the live USB
+
+Both `mykolas` and `root` have the initial password **`nixos`** set via `initialPassword`. Both hosts explicitly set `users.mutableUsers = true`, which means:
+- `initialPassword` only applies the **first time** the user is created (live ISO or fresh install first boot)
+- After that, use `passwd` to set a real password — `nixos-rebuild switch` will never reset it
+- The plain-text password is world-readable in the Nix store, so **change it with `passwd` on first login**
+
+| Account | Password |
+|---------|----------|
+| `mykolas` | `nixos` |
+| `root` | `nixos` |
+
+> **Note:** `useTextGreeter` must be **off** when sysc-greet is enabled — enabling it causes a PAM `AUTH_ERR` because tuigreet and sysc-greet both try to own the greetd session. Both hosts have this set correctly.
 
 ### Validate configs
 

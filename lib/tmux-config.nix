@@ -79,6 +79,9 @@
     set -g @catppuccin_flavor "${catppuccinFlavor}"
     run-shell ${pkgs.tmuxPlugins.catppuccin}/share/tmux-plugins/catppuccin/catppuccin.tmux
 
+    # Pane borders — frame the active pane
+    set -g pane-border-lines heavy
+
     # Plugins
     run-shell ${pkgs.tmuxPlugins.copy-toolkit}/share/tmux-plugins/copy-toolkit/copytk.tmux
     run-shell ${pkgs.tmuxPlugins.better-mouse-mode}/share/tmux-plugins/better-mouse-mode/scroll_copy_mode.tmux

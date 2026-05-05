@@ -95,7 +95,6 @@
   services = {
     greetd = {
       enable = true;
-      useTextGreeter = true;
     };
     sysc-greet = {
       enable = true;
@@ -148,8 +147,12 @@
   # ── Users ─────────────────────────────────────────────────────────────────────
   users.defaultUserShell = wrappedPkgs.zsh;
 
+  users.mutableUsers = true; # passwords set via passwd; initialPassword is only used on first user creation
+  users.users.root.initialPassword = "nixos";
+
   users.users.mykolas = {
     isNormalUser = true;
+    initialPassword = "nixos";
     description = "Mykola Suprun";
     shell = wrappedPkgs.zsh;
     extraGroups = [
