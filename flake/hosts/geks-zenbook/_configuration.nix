@@ -93,6 +93,8 @@
 
   # ── Services ──────────────────────────────────────────────────────────────────
   services = {
+    desktopManager.plasma6.enable = true;
+
     greetd = {
       enable = true;
     };
