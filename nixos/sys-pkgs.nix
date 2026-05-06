@@ -38,6 +38,7 @@
       wrappedPkgs.nixos-build
       wrappedPkgs.nixos-check
       wrappedPkgs.nixos-iso
+      wrappedPkgs.nixos-flash
     ];
   };
 }
