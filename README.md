@@ -9,7 +9,7 @@ Uses [Determinate Nix](https://determinate.systems/) on all hosts.
 | Host | Description |
 |------|-------------|
 | `geks-nixos` | Main desktop (NixOS, Hyprland) |
-| `geks-zenbook` | Laptop (NixOS, Hyprland) |
+| `geks-zenbook` | Laptop (NixOS, Hyprland + Plasma 6) |
 | `geks-wsl` | WSL2 minimal environment |
 
 ## Quick commands
@@ -54,6 +54,20 @@ nix run github:MykolaSuprun/nixos-flakes-config#nixos-check
 nix run github:MykolaSuprun/nixos-flakes-config#nixos-build
 ```
 
+### Rebuild from GitHub flake (no local checkout required)
+
+Pick a host and action (`switch` / `boot` / `test` / `dry-activate`) via fzf, then runs `nixos-rebuild` against the published GitHub flake:
+
+```sh
+nix run github:MykolaSuprun/nixos-flakes-config#nixos-remote-build
+```
+
+Set `FLAKE_REF=.` to use a local tree instead:
+
+```sh
+FLAKE_REF=. nix run .#nixos-remote-build
+```
+
 ### Flash an ISO to a USB drive
 
 ```sh
@@ -69,6 +83,7 @@ Set `FLAKE_REF=.` to point any of the above scripts at the local tree instead of
 FLAKE_REF=. nix run .#nixos-iso
 FLAKE_REF=. nix run .#nixos-check
 FLAKE_REF=. nix run .#nixos-build
+FLAKE_REF=. nix run .#nixos-remote-build
 nix run .#nixos-flash
 ```
 
