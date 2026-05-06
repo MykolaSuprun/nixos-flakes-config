@@ -66,6 +66,13 @@
 
   hardware.enableAllFirmware = true;
 
+  # Intel iGPU VA-API — required for Hyprland rendering on the Zenbook's
+  # Intel Iris/Xe graphics, including when booting from the live USB.
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [intel-media-driver];
+  };
+
   # ── Networking ────────────────────────────────────────────────────────────────
   networking = {
     hostName = "geks-zenbook";
@@ -95,17 +102,12 @@
   services = {
     desktopManager.plasma6.enable = true;
 
-    greetd = {
+    # SDDM: shows both Plasma and Hyprland session entries in the greeter,
+    # and avoids the sysc-greet/Hyprland compositor hang on Intel iGPU
+    # (the greeter itself now runs under KWin Wayland, not Hyprland).
+    displayManager.sddm = {
       enable = true;
-    };
-    sysc-greet = {
-      enable = true;
-      compositor = "hyprland";
-      settings = {
-        terminal = {
-          vt = 1;
-        };
-      };
+      wayland.enable = true;
     };
 
     xserver.xkb = {

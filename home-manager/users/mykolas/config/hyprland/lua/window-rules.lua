@@ -65,7 +65,6 @@ local priority_floating = {
 	{ match = { class = "^(nm-applet)$" } },
 	{ match = { class = "^(clipse)$" },  size = { "40%", "30%" } },
 	{ match = { title = "clipse" },       size = { "40%", "30%" } },
-	{ match = { class = "^(org\\.freedesktop\\.impl\\.portal\\.desktop\\.kde)$" }, size = { "50%", "40%" } },
 }
 
 for _, entry in ipairs(priority_floating) do
@@ -78,6 +77,28 @@ for _, entry in ipairs(priority_floating) do
 		size         = entry.size,
 	})
 end
+
+-- KDE portal file picker — force float+center on creation, then override
+-- the portal's self-resize to fullscreen via an openwindow callback.
+-- The 0.15s delay lets the portal finish its own layout first.
+hl.window_rule({
+	match        = { class = "^(org\\.freedesktop\\.impl\\.portal\\.desktop\\.kde)$" },
+	float        = true,
+	center       = true,
+	pin          = true,
+	stay_focused = true,
+	size         = { "60%", "60%" },
+})
+
+hl.on("window.open", function(win)
+	if win and win.class == "org.freedesktop.impl.portal.desktop.kde" then
+		hl.exec_cmd(
+			"sh -c 'sleep 0.15 && " ..
+			"hyprctl dispatch resizewindowpixel exact 60% 60%,class:org.freedesktop.impl.portal.desktop.kde && " ..
+			"hyprctl dispatch centerwindow class:org.freedesktop.impl.portal.desktop.kde'"
+		)
+	end
+end)
 
 -- ── System tray / hidden scratch workspace ────────────────────────────────────
 -- These apps run silently in special:scratch_hidden; toggle with mod+B.
