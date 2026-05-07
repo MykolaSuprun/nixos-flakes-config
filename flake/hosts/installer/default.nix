@@ -1,5 +1,5 @@
 # Minimal NixOS installer ISO.
-# Contains the nixos-install script; boot from the USB and run:
+# Contains the nixos-install script, nixvim, and tmux; boot from the USB and run:
 #   nixos-install
 # to interactively partition, format, and install the system.
 #
@@ -19,7 +19,12 @@ in {
     modules = [
       "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
       {
-        environment.systemPackages = [wrappedPkgs.nixos-install];
+        environment.systemPackages = [
+          wrappedPkgs.nixos-install
+          wrappedPkgs.tmux
+          inputs.my-nixvim.packages.${system}.nvim
+        ];
+        environment.etc."nixos/README.md".source = inputs.self + "/README.md";
         # Faster squashfs compression (saves build time, larger image)
         isoImage.squashfsCompression = "zstd -Xcompression-level 6";
         isoImage.isoBaseName = lib.mkForce "nixos-installer";

@@ -42,20 +42,11 @@
         FZF_BIND=(--bind "j:down,k:up,g:first,G:last,ctrl-d:half-page-down,ctrl-u:half-page-up")
 
         # --- Configure binary caches -----------------------------------------------
-        echo ""
-        echo ">>> Configuring Nix binary caches..."
-        mkdir -p /etc/nix
-        {
-          echo "extra-substituters = https://cache.nixos.org https://nix-community.cachix.org https://install.determinate.systems"
-          echo "extra-trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkN8ET+NDs5/KznmBBmRQ= cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
-        } >> /etc/nix/nix.conf
-
-        echo ">>> Restarting nix-daemon to pick up cache config..."
-        systemctl restart nix-daemon
-        for _i in $(seq 1 10); do
-          nix --version && break
-          sleep 1
-        done
+        # NIX_CONFIG is read directly by nix — no /etc/nix/nix.conf write needed,
+        # which would fail on the read-only NixOS live ISO.
+        export NIX_CONFIG="extra-substituters = https://cache.nixos.org https://nix-community.cachix.org https://install.determinate.systems
+extra-trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkN8ET+NDs5/KznmBBmRQ= cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
+        echo ">>> Configured Nix binary caches via NIX_CONFIG."
 
         # --- Host discovery --------------------------------------------------------
         # Exclude WSL, -iso, and the installer host itself — not for hardware install
