@@ -1,7 +1,12 @@
 # Interactive ISO-to-USB flash tool.
 # Uses fzf to pick an ISO file and a target block device, then writes
-# it with dd.  Follows the same perSystem / writeShellApplication pattern
-# as nixos-iso.nix so it is auto-discovered by import-tree ./flake.
+# it with dd.  Intended for flashing a downloaded NixOS minimal ISO before
+# running nixos-install on the target machine.
+#
+# Usage:
+#   nixos-flash                 # interactive ISO + device selection
+#   nixos-flash /path/to.iso    # skip ISO picker, select device interactively
+#
 # vim-style keybindings: j/k=navigate, g/G=top/bottom, ctrl-d/u=half-page.
 {...}: {
   perSystem = {pkgs, ...}: let
@@ -12,27 +17,31 @@
         FZF_BIND=(--bind "j:down,k:up,g:first,G:last,ctrl-d:half-page-down,ctrl-u:half-page-up")
 
         # --- ISO selection -------------------------------------------------------
-        # Gather candidates: result/iso/, result/, and current dir.
-        iso_candidates=""
-        for search_dir in "./result/iso" "./result" "."; do
-          if [ -d "$search_dir" ]; then
-            found=$(find "$search_dir" -maxdepth 1 -name "*.iso" 2>/dev/null | sort)
-            [ -n "$found" ] && iso_candidates="$iso_candidates"$'\n'"$found"
+        # Accept an explicit path as $1, otherwise search ~/Downloads and CWD.
+        if [ $# -ge 1 ]; then
+          ISO="$1"
+        else
+          iso_candidates=""
+          for search_dir in "$HOME/Downloads" "."; do
+            if [ -d "$search_dir" ]; then
+              found=$(find "$search_dir" -maxdepth 1 -name "*.iso" 2>/dev/null | sort)
+              [ -n "$found" ] && iso_candidates="$iso_candidates"$'\n'"$found"
+            fi
+          done
+          # Strip leading blank line and deduplicate.
+          iso_candidates=$(echo "$iso_candidates" | grep -v '^$' | sort -u)
+
+          if [ -n "$iso_candidates" ]; then
+            ISO=$(echo "$iso_candidates" \
+              | fzf \
+                  --header "Select ISO file (or press Esc to enter path manually):" \
+                  --prompt "iso> " \
+                  "''${FZF_BIND[@]}") || ISO=""
           fi
-        done
-        # Strip leading blank line and deduplicate.
-        iso_candidates=$(echo "$iso_candidates" | grep -v '^$' | sort -u)
 
-        if [ -n "$iso_candidates" ]; then
-          ISO=$(echo "$iso_candidates" \
-            | fzf \
-                --header "Select ISO file (or press Esc to enter path manually):" \
-                --prompt "iso> " \
-                "''${FZF_BIND[@]}") || ISO=""
-        fi
-
-        if [ -z "''${ISO:-}" ]; then
-          read -r -p "Enter path to ISO file: " ISO
+          if [ -z "''${ISO:-}" ]; then
+            read -r -p "Enter path to ISO file: " ISO
+          fi
         fi
 
         if [ ! -f "$ISO" ]; then
