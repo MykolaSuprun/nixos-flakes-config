@@ -29,6 +29,8 @@ in {
         inputs.determinate.nixosModules.default
         inputs.catppuccin.nixosModules.catppuccin
         inputs.sysc-greet.nixosModules.default
+        inputs.disko.nixosModules.disko
+        ./_disk-config.nix
         ./_hardware.nix
         ./_configuration.nix
         # NixOS feature modules (all gated by myconf.nixos.*.enable flags)

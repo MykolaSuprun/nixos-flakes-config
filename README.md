@@ -32,7 +32,6 @@ GPT
 
 ## Installing NixOS from scratch
 
-Installation runs from a **standard NixOS minimal ISO** — no custom ISO is needed.
 The `nixos-install` script handles everything: disk partitioning, LUKS2 encryption,
 btrfs formatting, and installation of the exact configuration defined in this flake.
 
@@ -40,29 +39,19 @@ btrfs formatting, and installation of the exact configuration defined in this fl
 
 There are two options. Both produce a USB you boot to get a shell, then continue with Step 2.
 
-#### Option A — Standard NixOS minimal ISO
+#### Option A (recommended) — nixos-installer ISO (offline, no internet required)
 
-Download the latest **NixOS minimal ISO** from <https://nixos.org/download>
-(x86\_64-linux, "Minimal ISO image").
+Build a custom ISO that bundles `nixos-install`, `nvim`, `tmux`, **the pre-built system
+closures for `geks-nixos` and `geks-zenbook`, and the pre-built disko format scripts**.
+Installation is fully offline — no nix evaluation or network access at install time.
 
-Flash it to USB:
-
-```sh
-nix run github:MykolaSuprun/nixos-flakes-config#nixos-flash -- ~/Downloads/nixos-minimal-*.iso
-```
-
-`nixos-install` is fetched from GitHub at the start of Step 2 (internet required from the USB).
-
-#### Option B — nixos-installer ISO (nixos-install pre-installed)
-
-Build a custom ISO that ships `nixos-install` baked in (no extra download needed on the USB):
+> **Requires a 32 GB+ USB drive** (two full NixOS system closures are bundled).
 
 ```sh
 nix run github:MykolaSuprun/nixos-flakes-config#nixos-iso
 ```
 
-This builds `flake/hosts/installer/default.nix` — a minimal live image with `nixos-install`
-and its dependencies in the closure. The ISO lands in `./result/iso/`. Flash it:
+This builds `flake/hosts/installer/default.nix`. The ISO lands in `./result/iso/`. Flash it:
 
 ```sh
 nix run github:MykolaSuprun/nixos-flakes-config#nixos-flash -- ./result/iso/nixos-installer-*.iso
@@ -74,42 +63,61 @@ Or let the flash picker find it automatically:
 nix run github:MykolaSuprun/nixos-flakes-config#nixos-flash
 ```
 
+#### Option B — Standard NixOS minimal ISO (internet required during install)
+
+Download the latest **NixOS minimal ISO** from <https://nixos.org/download>
+(x86\_64-linux, "Minimal ISO image").
+
+Flash it to USB:
+
+```sh
+nix run github:MykolaSuprun/nixos-flakes-config#nixos-flash -- ~/Downloads/nixos-minimal-*.iso
+```
+
+`nixos-install` and all system packages are fetched from binary caches during Step 2.
+
 ### Step 2 — Boot the USB and run the installer
 
 Boot the target machine from the USB. Once at the shell:
 
-- **Option A** (standard ISO): fetch and run the installer:
-
-  ```sh
-  nix run github:MykolaSuprun/nixos-flakes-config#nixos-install
-  ```
-
-- **Option B** (nixos-installer ISO): `nixos-install` is already in `$PATH`:
+- **Option A** (nixos-installer ISO): `nixos-install` is already in `$PATH`:
 
   ```sh
   nixos-install
   ```
 
+  Installs entirely offline — no network access needed.
+
+- **Option B** (standard NixOS ISO): fetch and run the installer:
+
+  ```sh
+  nix run --extra-experimental-features "nix-command flakes" github:MykolaSuprun/nixos-flakes-config#nixos-install
+  ```
+
+  Binary caches (nixos.org, nix-community, Determinate) are configured automatically
+  so nothing needs to be compiled from source. Internet access is required.
+
 The script will interactively:
 
-1. Configure Nix binary caches (nixos.org, nix-community, Determinate) so nothing
-   needs to be compiled from source during install
-2. Discover all installable hosts from the flake — pick `geks-nixos` or `geks-zenbook`
-   via fzf
+1. Configure Nix settings (offline: ISO has settings pre-configured — nothing written;
+   online: writes binary caches to `~/.config/nix/nix.conf`)
+2. Discover installable hosts (offline: reads `/etc/nixos-installer-systems.json` from the
+   ISO — no nix invocation; online: evaluates the flake) — pick via fzf
 3. List all attached disks — pick the installation target
    (**⚠ ALL DATA ON THE SELECTED DISK WILL BE PERMANENTLY AND IRREVERSIBLY ERASED**)
 4. Ask for explicit confirmation (`yes` to proceed)
-5. Run `disko-install`, which:
-   - Partitions the disk (GPT: 512 MiB ESP + encrypted remainder)
-   - Opens LUKS2 and formats the container as btrfs with all subvolumes
-   - Installs NixOS from this flake's exact configuration into the new filesystem
-   - Writes EFI boot entries
+5. **Offline path**: runs the pre-built disko format script (device patched at runtime
+   via `sed`) to partition/format/mount the disk, then calls `nixos-install
+   --no-channel-copy --system` to copy the pre-built closure and install the bootloader
+   — zero nix evaluations, no network.
+   **Online path**: runs `disko-install --flake` which partitions, formats, and installs
+   in one step using binary caches.
 
-Internet access is required during installation.
-
-To use a local checkout of this repo instead of fetching from GitHub:
+To force a specific flake source (online path only):
 
 ```sh
+FLAKE_REF=/path/to/nixconf nixos-install
+# or from any machine with Nix:
 FLAKE_REF=/path/to/nixconf nix run github:MykolaSuprun/nixos-flakes-config#nixos-install
 ```
 
@@ -165,10 +173,20 @@ nixos-build
 
 ### Build the nixos-installer ISO
 
+Builds a custom ISO with `nixos-install`, `nvim`, `tmux`, and the **pre-built system
+closures + disko format scripts for all installable hosts** bundled in. The resulting
+ISO supports fully offline installation — no internet access or nix evaluation needed
+during `nixos-install`.
+
+> **Requires a 32 GB+ USB drive.**  Build time is long (two full system closures).
+
 ```sh
-nixos-iso
-# or:
-nix run github:MykolaSuprun/nixos-flakes-config#nixos-iso
+nixos-iso               # auto-detect: local git repo if available, else GitHub
+nixos-iso --local       # force local checkout (repo root or $NIXOS_CONF_DIR)
+nixos-iso --github      # force GitHub
+# or without a local install:
+nix run github:MykolaSuprun/nixos-flakes-config#nixos-iso -- --github
+FLAKE_REF=. nix run .#nixos-iso
 ```
 
 ### Build and switch the running system
