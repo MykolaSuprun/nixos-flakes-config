@@ -22,7 +22,7 @@
           ISO="$1"
         else
           iso_candidates=""
-          for search_dir in "$HOME/Downloads" "."; do
+          for search_dir in "$HOME/Downloads" "." "./result/iso"; do
             if [ -d "$search_dir" ]; then
               found=$(find "$search_dir" -maxdepth 1 -name "*.iso" 2>/dev/null | sort)
               [ -n "$found" ] && iso_candidates="$iso_candidates"$'\n'"$found"
