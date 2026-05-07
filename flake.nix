@@ -83,6 +83,12 @@
 
     # Wrappers (homeless dotfile packages)
     wrappers.url = "github:lassulus/wrappers";
+
+    # Disk partitioning
+    disko = {
+      url = "github:nix-community/disko/latest";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs:

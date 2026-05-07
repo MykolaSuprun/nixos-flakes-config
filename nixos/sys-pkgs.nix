@@ -37,6 +37,7 @@
       # Flake-managed NixOS tooling (available system-wide on all hosts)
       wrappedPkgs.nixos-build
       wrappedPkgs.nixos-check
+      wrappedPkgs.nixos-install
       wrappedPkgs.nixos-iso
       wrappedPkgs.nixos-flash
     ];
