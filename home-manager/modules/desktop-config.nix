@@ -20,9 +20,18 @@
       kdePackages.ark
       kdePackages.yakuake
       kdePackages.dolphin
-      libsForQt5.kservice
       kdePackages.kservice
       kdePackages.qtstyleplugin-kvantum
+      krusader
+      #krusader dependencies
+      xxdiff
+      kdiff3
+      krename
+      kdePackages.okular
+      kdePackages.gwenview
+
+      nemo-with-extensions
+
       clipse
       pkgs.kdePackages.qttools
       krita-unwrapped
@@ -81,7 +90,7 @@
       umu-launcher
       # steamtinkerlaunch dependencies
       xdotool
-      xorg.xwininfo
+      xwininfo
       yad
       unzip
       unixtools.xxd

@@ -22,5 +22,4 @@ if monitor_secondary then
 end
 
 -- on-created-empty launchers
-hl.workspace_rule({ workspace = "4",  on_created_empty = "pidof AyuGram || uwsm app AyuGram" })
 hl.workspace_rule({ workspace = "11", on_created_empty = "pidof obsidian || uwsm app obsidian" })

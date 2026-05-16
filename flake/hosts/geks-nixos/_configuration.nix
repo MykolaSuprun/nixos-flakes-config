@@ -19,7 +19,7 @@ in {
     nixConf.enable = true;
     fonts.enable = true;
     pipewire.enable = true;
-    inputMethod.enable = true;
+    inputMethod.enable = false;
     syspkgs.enable = true;
     xdg.enable = true;
     catppuccin.enable = true;
@@ -311,7 +311,7 @@ in {
       wget
       p7zip
       rar
-      xorg.xhost
+      xhost
       ntfs3g
       spice
       spice-gtk

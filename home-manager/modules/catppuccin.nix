@@ -8,17 +8,16 @@
   config = lib.mkIf config.myconf.catppuccin.enable {
     catppuccin = {
       enable = true;
-      cache.enable = true;
       flavor = "latte";
       accent = "mauve";
+      cache.enable = true;
 
       hyprland = {
-        enable = true;
-        flavor = "latte";
+        enable = false;
       };
+      hyprtoolkit.enable = true;
       cursors = {
         enable = true;
-        accent = "mauve";
       };
       fcitx5 = {
         enable = true;
@@ -27,15 +26,15 @@
       kvantum = {
         enable = true;
         apply = true;
-        flavor = "latte";
       };
       btop = {
         enable = true;
-        flavor = "mocha";
       };
       rofi = {
         enable = true;
       };
+      # Disabled: stylix.targets.gtk owns icon theming to avoid duplicate catppuccin-papirus-folders
+      gtk.icon.enable = false;
     };
     qt = {
       enable = true;
@@ -44,7 +43,7 @@
     };
 
     gtk = {
-      enable = false;
+      enable = true;
     };
 
     home.packages = with pkgs; [

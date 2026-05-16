@@ -19,7 +19,7 @@ theme = "catppuccin-latte"
 
 #-- Basic Actions
 confirm = ['enter', '']
-quit = ['ctrl+c', ''] # a.k.a. "theprimeagen troller"
+quit = ['ctrl+c', '']
 cd_quit = ['Q', '']
 
 #-- Navigation

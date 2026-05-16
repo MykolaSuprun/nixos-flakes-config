@@ -1,23 +1,19 @@
 export ENABLE_HDR_WSI="1"
 export WLR_NO_HARDWARE_CURSORS="1"
-export WLR_DRM_eNO_ATOMIC="1"
+export WLR_DRM_NO_ATOMIC="1"
+# GTK — "wayland,x11,*" lets GTK4 apps fall back gracefully to X11/any
 export GDK_BACKEND="wayland,x11,*"
 # XDG
 export XDG_CURRENT_DESKTOP="Hyprland"
 export XDG_SESSION_TYPE="wayland"
 export XDG_SESSION_DESKTOP="Hyprland"
-export XDG_CURRENT_DESKTOP="Hyprland"
-export XDG_SESSION_TYPE="wayland"
-export XDG_SESSION_DESKTOP="Hyprland"
-# QT
+# QT — platform theme and style are set by catppuccin-nix kvantum module (home.sessionVariables)
 export QT_QPA_PLATFORM="wayland;xcb"
 export QT_AUTO_SCREEN_SCALE_FACTOR="1"
 export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
-export QT_STYLE_OVERRIDE = ""
-export QT_QPA_PLATFORMTHEME="qt6ct"
-# export QT_QPA_PLATFORMTHEME="hyprqt6engine"
+# QML style for hypr* apps (hyprland-qt-support)
+export QT_QUICK_CONTROLS_STYLE="org.hyprland.style"
 # Toolkit
 export SDL_VIDEODRIVER="wayland"
 export _JAVA_AWT_WM_NONEREPARENTING="1"
 export CLUTTER_BACKEND="wayland"
-export GDK_BACKEND="wayland,x11"

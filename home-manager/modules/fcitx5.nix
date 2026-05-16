@@ -9,6 +9,7 @@
     i18n.inputMethod = {
       enabled = "fcitx5";
       fcitx5 = {
+        waylandFrontend = true;
         addons = with pkgs; [
           fcitx5-rime
           fcitx5-gtk
@@ -24,7 +25,6 @@
           fcitx5-mozc
           fcitx5-lua
         ];
-
         settings = {
           # Global hotkeys → ~/.config/fcitx5/config
           globalOptions = {
@@ -50,21 +50,52 @@
               "Default Layout" = "us";
               DefaultIM = "keyboard-us";
             };
-            "Groups/0/Items/0" = {Name = "keyboard-us"; Layout = "";};
-            "Groups/0/Items/1" = {Name = "keyboard-ru"; Layout = "";};
-            "Groups/0/Items/2" = {Name = "keyboard-pl"; Layout = "";};
-            "Groups/0/Items/3" = {Name = "keyboard-ua"; Layout = "";};
-            "Groups/0/Items/4" = {Name = "rime";        Layout = "";};
-            "Groups/0/Items/5" = {Name = "mozc";        Layout = "";};
-            "Groups/0/Items/6" = {Name = "hangul";      Layout = "";};
-            "Groups/0/Items/7" = {Name = "keyboard-fr"; Layout = "";};
+            "Groups/0/Items/0" = {
+              Name = "keyboard-us";
+              Layout = "";
+            };
+            "Groups/0/Items/1" = {
+              Name = "keyboard-ru";
+              Layout = "";
+            };
+            "Groups/0/Items/2" = {
+              Name = "keyboard-pl";
+              Layout = "";
+            };
+            "Groups/0/Items/3" = {
+              Name = "keyboard-ua";
+              Layout = "";
+            };
+            "Groups/0/Items/4" = {
+              Name = "rime";
+              Layout = "";
+            };
+            "Groups/0/Items/5" = {
+              Name = "mozc";
+              Layout = "";
+            };
+            "Groups/0/Items/6" = {
+              Name = "hangul";
+              Layout = "";
+            };
+            "Groups/0/Items/7" = {
+              Name = "keyboard-fr";
+              Layout = "";
+            };
             GroupOrder = {"0" = "0";};
           };
 
           # Selector addon config — Super+Space opens IM selector popup
-          addons.selector = {
+          addons.imselector = {
             globalSection = {
-              TriggerKey = "Super+space";
+              TriggerKeyLocal = "";
+              SwitchKey = "";
+              SwitchKeyLocal = "";
+            };
+            sections = {
+              TriggerKey = {
+                "0" = "Super+space";
+              };
             };
           };
         };

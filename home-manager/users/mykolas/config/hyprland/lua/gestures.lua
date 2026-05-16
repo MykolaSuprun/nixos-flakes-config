@@ -1,9 +1,11 @@
 -- 3-finger gestures
 hl.gesture({ fingers = 3, direction = "pinch", action = "float" })
-hl.gesture({ fingers = 3, direction = "right", action = function() hl.dispatch(hl.dsp.window.move({ direction = "r" })) end })
-hl.gesture({ fingers = 3, direction = "left",  action = function() hl.dispatch(hl.dsp.window.move({ direction = "l" })) end })
-hl.gesture({ fingers = 3, direction = "up",    action = function() hl.dispatch(hl.dsp.window.move({ direction = "u" })) end })
-hl.gesture({ fingers = 3, direction = "down",  action = function() hl.dispatch(hl.dsp.window.move({ direction = "d" })) end })
+local dirs_3f = { right = "r", left = "l", up = "u", down = "d" }
+for gesture_dir, hypr_dir in pairs(dirs_3f) do
+	hl.gesture({ fingers = 3, direction = gesture_dir, action = function()
+		hl.dispatch(hl.dsp.window.move({ direction = hypr_dir }))
+	end })
+end
 
 -- 4-finger gestures
 hl.gesture({ fingers = 4, direction = "horizontal", action = "workspace" })

@@ -19,6 +19,24 @@
     #       --hb "#eff1f5" --tf "#d20f39" --hf "#df8e1d" --af "#4c4f69" --ab "#eff1f5" --bdr "#898992"
     rofi -show drun -run-command "uwsm app -- {cmd}"
   '';
+  hypr_binds_script = pkgs.writeShellScriptBin "hypr-binds-list" ''
+    # Rofi script-mode adapter for Hyprland keybind cheat sheet.
+    # Called with no arguments: print all described binds, one per line.
+    # Called with a selection argument: no-op (cheat sheet is read-only).
+    if [ $# -eq 0 ]; then
+      hyprctl binds -j | \
+        ${pkgs.jq}/bin/jq -r '
+          def getbit($p; $n): fmod($n / ($p | exp2) | floor; 2) | fabs;
+          .[] | select(.description != "") |
+          .a = "" |
+          ( if getbit(6; .modmask) == 1 then .a = .a + "SUPER + " end |
+            if getbit(0; .modmask) == 1 then .a = .a + "Shift + " end |
+            if getbit(2; .modmask) == 1 then .a = .a + "Ctrl + " end |
+            if getbit(3; .modmask) == 1 then .a = .a + "Alt + " end ) |
+          .description + "|" + .a + .key
+        ' | ${pkgs.util-linux}/bin/column -t -s "|"
+    fi
+  '';
   lock_screen = pkgs.writeShellScriptBin "lock_dp1" ''
         state="''${XDG_STATE_HOME}/togglemonitorlock"
         booleanvalue="false"
@@ -39,6 +57,7 @@ in {
   home.packages = with pkgs; [
     # inputs.caelestia-shell.packages.${system}.with-cli
     menu_script
+    hypr_binds_script
     lock_screen
     hyprlock_script
     hyprlock_script_alt
@@ -66,7 +85,7 @@ in {
     # kdePackages.polkit-kde-agent-1
     hyprpolkitagent
     kdePackages.qtwayland
-    xorg.xrdb
+    xrdb
     dbus-broker
     wlr-randr
     wayland-bongocat
@@ -77,6 +96,6 @@ in {
     playerctl
     pwvucontrol # volume control
     # wallpaper engine
-    swww
+    awww
   ];
 }
