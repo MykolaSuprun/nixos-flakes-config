@@ -50,13 +50,11 @@ in {
         canTouchEfiVariables = true;
         efiSysMountPoint = "/boot";
       };
-      grub = {
+      limine = {
         enable = true;
         efiSupport = true;
-        devices = ["nodev"];
-        useOSProber = true;
-        memtest86.enable = true;
-        configurationLimit = 50;
+        efiInstallAsRemovable = true;
+        maxGenerations = 50;
       };
     };
 

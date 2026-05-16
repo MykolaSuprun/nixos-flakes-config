@@ -105,10 +105,24 @@
     # SDDM: shows both Plasma and Hyprland session entries in the greeter,
     # and avoids the sysc-greet/Hyprland compositor hang on Intel iGPU
     # (the greeter itself now runs under KWin Wayland, not Hyprland).
+    greetd = {
+      enable = false;
+    };
+    sysc-greet = {
+      enable = false;
+      compositor = "hyprland";
+      settings = {
+        terminal = {
+          vt = 1;
+        };
+      };
+    };
+
     displayManager.sddm = {
       enable = true;
       wayland.enable = true;
     };
+    displayManager.defaultSession = "hyprland-uwsm";
 
     xserver.xkb = {
       layout = "us";
