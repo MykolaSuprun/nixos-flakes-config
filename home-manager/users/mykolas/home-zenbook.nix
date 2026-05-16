@@ -15,6 +15,7 @@
     chromium.enable = true;
     noctalia.enable = true;
     catppuccin.enable = true;
+    ghostty.enable = true;
     rofi.enable = true;
     fcitx5.enable = true;
     # zellij.enable = false;

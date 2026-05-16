@@ -16,6 +16,7 @@
     dms.enable = true;
     # noctalia.enable = true;
     catppuccin.enable = true;
+    ghostty.enable = true;
     rofi.enable = true;
     fcitx5.enable = true;
     # zellij.enable = false;
@@ -51,7 +52,19 @@
   home.homeDirectory = "/home/mykolas";
   home.stateVersion = "24.11";
 
-  xdg = {enable = true;};
+  xdg = {
+    enable = true;
+    mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "text/html" = ["zen-beta.desktop"];
+        "x-scheme-handler/http" = ["zen-beta.desktop"];
+        "x-scheme-handler/https" = ["zen-beta.desktop"];
+        "x-scheme-handler/about" = ["zen-beta.desktop"];
+        "x-scheme-handler/unknown" = ["zen-beta.desktop"];
+      };
+    };
+  };
 
   services.gpg-agent = {
     enable = true;
@@ -80,10 +93,6 @@
     };
     "./.config/freerdp/sdl-freerdp.json".source = ./config/freerdp/sdl-freerdp.json;
     "./.gitconfig".source = ./config/gitconfig/gitconfig;
-    "./.config/superfile" = {
-      source = ./config/superfile;
-      recursive = true;
-    };
     "./.gnupg/" = {
       source = ./config/gnupg;
       recursive = true;

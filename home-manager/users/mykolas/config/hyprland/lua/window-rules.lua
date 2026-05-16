@@ -34,10 +34,12 @@ end
 -- ── App workspace assignments ─────────────────────────────────────────────────
 -- Each entry: { match = {...}, workspace = "<id>" }
 local workspace_assignments = {
-	{ match = { class         = "^(zen-beta)$" },                workspace = "1"  },
-	{ match = { class         = "^(org\\.telegram\\.desktop)$" },  workspace = "4"  },
-	{ match = { class         = "^(chromium-browser)$" },         workspace = "7"  },
-	{ match = { initial_title = "^((s|S)team)$" },                workspace = "13" },
+	{ match = { class         = "^(zen-beta)$" },                           workspace = "1"  },
+	{ match = { class         = "^(org\\.telegram\\.desktop)$" },          workspace = "special:scratch_messaging" },
+	{ match = { class         = "^(AyuGram)$" },                            workspace = "special:scratch_messaging" },
+	{ match = { class         = "^(discord|vesktop|webcord)$" },            workspace = "special:scratch_messaging" },
+	{ match = { class         = "^(chromium-browser)$" },                   workspace = "7"  },
+	{ match = { initial_title = "^((s|S)team)$" },                          workspace = "13" },
 }
 
 for _, entry in ipairs(workspace_assignments) do
@@ -81,15 +83,13 @@ end
 -- KDE portal file picker — force float+center on creation, then override
 -- the portal's self-resize to fullscreen via an openwindow callback.
 -- The 0.15s delay lets the portal finish its own layout first.
+-- pin and stay_focused are intentionally omitted: the picker should only
+-- steal focus on first launch and then behave like a normal float.
 hl.window_rule({
-	match        = { class = "^(org\\.freedesktop\\.impl\\.portal\\.desktop\\.kde)$" },
-	float        = true,
-	center       = true,
-	pin          = true,
-	stay_focused = true,
-	size         = { "60%", "60%" },
+    match        = { class = "^(org\\.freedesktop\\.impl\\.portal\\.desktop\\.kde)$" },
+    float        = true,
+    center       = true,
 })
-
 hl.on("window.open", function(win)
 	if win and win.class == "org.freedesktop.impl.portal.desktop.kde" then
 		hl.exec_cmd(

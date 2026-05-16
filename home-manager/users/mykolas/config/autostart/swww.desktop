@@ -1,14 +1,17 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Hyprland-Swww
-GenericName=Hyprland-Swww
-Comment="Hyprland swww start"
+Name=Hyprland-Awww
+GenericName=Hyprland-Awww
+Comment="Hyprland awww start"
 Categories=Utility;
 Keywords=wallpaper;
-TryExec=swww-daemon
-Exec=swww-daemon
+TryExec=awww-daemon
+Exec=awww-daemon
 StartupNotify=false
 Terminal=false
 #Icon=
 OnlyShowIn=wlroots;Hyprland
+NotShowIn=KDE;GNOME
+# Disabled: awww-daemon is now managed by awww.service (systemd user service)
+Hidden=true

@@ -18,6 +18,10 @@
     set -g default-terminal "tmux-256color"
     set -ag terminal-overrides ",xterm-256color:RGB"
     set-option -a terminal-overrides ",alacritty:RGB"
+    set -ag terminal-overrides ",xterm-ghostty:RGB"
+
+    # propagate kitty identity so graphics protocol detection works inside tmux
+    set -ga update-environment KITTY_WINDOW_ID
 
     # set escape key delay to 0
     set -s escape-time 0

@@ -10,6 +10,7 @@
       confdir = "cd $NIXOS_CONF_DIR";
       editconf = "cd $NIXOS_CONF_DIR; nixvim .";
       nxcnf = "$NIXOS_CONF_DIR/nxcnf.sh";
+      spf = "superfile";
     };
     integrations = {
       fzf.enable = true;

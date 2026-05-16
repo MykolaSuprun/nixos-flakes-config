@@ -3,8 +3,6 @@
 
   nixConfig = {
     experimental-features = ["nix-command" "flakes"];
-    allowUnfree = true;
-    trusted-users = ["mykolas"];
     trusted-substituters = [
       "https://cache.nixos.org"
       "https://nix-community.cachix.org"
@@ -42,6 +40,12 @@
     impurity.url = "github:outfoxxed/impurity.nix";
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Theming framework — fills in GTK and app targets not covered by catppuccin-nix
+    stylix = {
+      url = "github:nix-community/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprland.url = "github:hyprwm/Hyprland";

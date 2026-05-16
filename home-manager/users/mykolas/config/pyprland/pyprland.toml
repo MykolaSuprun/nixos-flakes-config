@@ -15,8 +15,8 @@ path = "~/.config/wallpapers/" # path to the folder with background images
 extentions = ["png", "jpg", "jpeg", "webp"]
 unique = true # set a different wallpaper for each screen
 interval = 15
-command = 'swww img --transition-type any "[file]"'
-clear_command = "swww clear"
+command = 'awww img --transition-type any "[file]"'
+clear_command = "awww clear"
 
 [scratchpads.term]
 animation = "fromTop"

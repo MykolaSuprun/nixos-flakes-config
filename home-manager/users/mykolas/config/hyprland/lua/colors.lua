@@ -1,20 +1,20 @@
--- NOTE: These are catppuccin macchiato defaults as a fallback.
--- Ideally noctalia would generate a colors.lua file alongside its noctalia/*.conf.
--- Until then, update these manually when the theme changes.
+-- Catppuccin color palette for Hyprland borders and accents.
+-- Source of truth: ~/.config/hypr/lua/catppuccin-palette.lua (Nix-generated, flavor/accent aware).
+local p = require("lua/catppuccin-palette")
 local c = {
-  accent    = "rgb(8aadf4)", -- blue
-  primary   = "rgb(8aadf4)",
-  peach     = "rgb(f5a97f)",
-  teal      = "rgb(8bd5ca)",
-  flamingo  = "rgb(f0c6c6)",
-  red       = "rgb(ed8796)",
-  lavender  = "rgb(b7bdf8)",
-  surface1  = "rgb(363a4f)",
-  crust     = "rgb(181926)",
-  subtext1  = "rgb(b8c0e0)",
-  overlay1  = "rgb(6e738d)",
-  overlay2  = "rgb(939ab7)",
-  rosewater = "rgb(f4dbd6)",
+  accent    = p.accent,
+  primary   = p.primary,
+  peach     = p.peach,
+  teal      = p.teal,
+  flamingo  = p.flamingo,
+  red       = p.red,
+  lavender  = p.lavender,
+  surface1  = p.surface1,
+  crust     = p.crust,
+  subtext1  = p.subtext1,
+  overlay1  = p.overlay1,
+  overlay2  = p.overlay2,
+  rosewater = p.rosewater,
 }
 
 c.normal_active_border          = c.primary

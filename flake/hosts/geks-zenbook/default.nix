@@ -28,6 +28,7 @@ in {
       [
         inputs.determinate.nixosModules.default
         inputs.catppuccin.nixosModules.catppuccin
+        inputs.stylix.nixosModules.stylix
         inputs.sysc-greet.nixosModules.default
         inputs.disko.nixosModules.disko
         ./_disk-config.nix
@@ -43,6 +44,7 @@ in {
         ../../../nixos/nix-conf.nix
         ../../../nixos/pipewire.nix
         ../../../nixos/sys-pkgs.nix
+        ../../../nixos/stylix.nix
         ../../../nixos/xdg.nix
         inputs.home-manager.nixosModules.home-manager
         {
@@ -64,9 +66,11 @@ in {
                   ../../../home-manager/modules/dev-pkgs.nix
                   ../../../home-manager/modules/fcitx5.nix
                   ../../../home-manager/modules/flatpak-overrides.nix
+                  ../../../home-manager/modules/ghostty.nix
                   ../../../home-manager/modules/noctalia.nix
                   ../../../home-manager/modules/rofi.nix
                   ../../../home-manager/modules/shell.nix
+                  ../../../home-manager/modules/stylix.nix
                   ../../../home-manager/modules/waybar.nix
                   ../../../home-manager/modules/zellij.nix
                   ../../../home-manager/modules/hyprland
@@ -76,7 +80,6 @@ in {
                 ];
               home.packages = [
                 wrappedPkgs.kitty
-                wrappedPkgs.ghostty
                 wrappedPkgs.helix
                 wrappedPkgs.tmux
                 wrappedPkgs.wezterm
