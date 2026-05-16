@@ -22,6 +22,7 @@
   };
 
   hyprconf = {
+    noctalia.enable = true;
     waybar = {
       enable = true;
       output = ["DP-1"];

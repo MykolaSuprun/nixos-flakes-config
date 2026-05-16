@@ -78,6 +78,7 @@
       inputs.my-nixvim.packages.${pkgs.stdenv.hostPlatform.system}.nixvim
       inputs.my-nixvim.packages.${pkgs.stdenv.hostPlatform.system}.codevim
       inputs.my-nixvim.packages.${pkgs.stdenv.hostPlatform.system}.nvim
+      vscode
       neovide
       # mynav
       # sublime4

@@ -69,8 +69,7 @@ end)
 
 -- Resize submap
 hl.bind(mod .. " + R", function()
-	hl.config({ general = { ["col.active_border"] = colors.resize_active_border } })
-
+	hl.exec_cmd("hyprctl keyword general:col.active_border 'rgba(8bd5caff) rgba(f0c6c6ff) 45deg'")
 	hl.dispatch(hl.dsp.submap("resize"))
 end)
 
@@ -93,14 +92,14 @@ hl.define_submap("resize", function()
 	hl.bind("I", hl.dsp.layout("colresize +conf"), { repeating = true })
 
 	hl.bind("escape", function()
-		hl.config({ general = { ["col.active_border"] = colors.normal_active_border } })
+		hl.exec_cmd("hyprctl keyword general:col.active_border 'rgba(8aadf4ff)'")
 		hl.dispatch(hl.dsp.submap("reset"))
 	end)
 end)
 
 -- Scrolling fit submap
 hl.bind(mod .. " + CTRL + F", function()
-	hl.config({ general = { ["col.active_border"] = colors.fit_active_border } })
+	hl.exec_cmd("hyprctl keyword general:col.active_border 'rgba(ed8796ff) rgba(b7bdf8ff) 45deg'")
 	hl.dispatch(hl.dsp.submap("fit"))
 end)
 
@@ -112,7 +111,7 @@ hl.define_submap("fit", function()
 	hl.bind("E", hl.dsp.layout("fit toend"))
 
 	hl.bind("escape", function()
-		hl.config({ general = { ["col.active_border"] = colors.normal_active_border } })
+		hl.exec_cmd("hyprctl keyword general:col.active_border 'rgba(8aadf4ff)'")
 		hl.dispatch(hl.dsp.submap("reset"))
 	end)
 end)
@@ -176,3 +175,7 @@ hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"))
 hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"))
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"))
 hl.bind("XF86audiostop", hl.dsp.exec_cmd("playerctl stop"))
+
+-- Brightness (zenbook)
+hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("brightnessctl set 5%+"))
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"))
