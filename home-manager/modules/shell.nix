@@ -5,6 +5,7 @@
   config,
   ...
 }: let
+  liveLinks = import ../../lib/live-links.nix {inherit lib;};
   zshConfig = import ../../lib/zsh-config.nix;
 
   shell_init = pkgs.writeShellScriptBin "init_shell" (
@@ -44,7 +45,22 @@
   '';
 in {
   options.myconf.shell.enable = lib.mkEnableOption "shell configuration";
-  config = lib.mkIf config.myconf.shell.enable {
+  config = lib.mkIf config.myconf.shell.enable (lib.mkMerge [
+    (liveLinks.mkLiveLinks {
+      activationName = "linkSmugPresets";
+      nixPath = ../users/mykolas/config/smug;
+      runtimePath = "${config.home.sessionVariables.NIXOS_CONF_DIR}/home-manager/users/mykolas/config/smug";
+      targetPath = "~/.config/smug";
+      filter = name: lib.hasSuffix ".yml" name;
+    })
+    (liveLinks.mkLiveLinks {
+      activationName = "linkSeshConfig";
+      nixPath = ../users/mykolas/config/sesh;
+      runtimePath = "${config.home.sessionVariables.NIXOS_CONF_DIR}/home-manager/users/mykolas/config/sesh";
+      targetPath = "~/.config/sesh";
+      filter = name: lib.hasSuffix ".toml" name;
+    })
+    {
     home.packages = with pkgs; [
       babelfish
       grc
@@ -114,5 +130,6 @@ in {
         };
       };
     };
-  };
+  }
+  ]);
 }
