@@ -1,0 +1,17 @@
+session: coding
+root: ~/
+attach: true
+
+windows:
+  - name: editor
+    layout: main-vertical
+    selected: true
+    commands:
+      - nvim
+    panes:
+      - type: horizontal
+        commands:
+          - lazygit
+
+  - name: shell
+    root: ~/
