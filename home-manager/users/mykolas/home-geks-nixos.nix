@@ -62,6 +62,15 @@
         "x-scheme-handler/https" = ["zen-beta.desktop"];
         "x-scheme-handler/about" = ["zen-beta.desktop"];
         "x-scheme-handler/unknown" = ["zen-beta.desktop"];
+        "image/png" = ["org.kde.gwenview.desktop"];
+        "image/jpeg" = ["org.kde.gwenview.desktop"];
+        "image/jpg" = ["org.kde.gwenview.desktop"];
+        "image/gif" = ["org.kde.gwenview.desktop"];
+        "image/bmp" = ["org.kde.gwenview.desktop"];
+        "image/webp" = ["org.kde.gwenview.desktop"];
+        "image/avif" = ["org.kde.gwenview.desktop"];
+        "image/svg+xml" = ["org.kde.gwenview.desktop"];
+        "image/tiff" = ["org.kde.gwenview.desktop"];
       };
     };
   };
@@ -93,6 +102,8 @@
     };
     "./.config/freerdp/sdl-freerdp.json".source = ./config/freerdp/sdl-freerdp.json;
     "./.gitconfig".source = ./config/gitconfig/gitconfig;
+    # Default terminal for xdg-terminal-exec (read by DMS Default Apps settings)
+    ".config/xdg-terminals.list".text = "com.mitchellh.ghostty.desktop\n";
     "./.gnupg/" = {
       source = ./config/gnupg;
       recursive = true;

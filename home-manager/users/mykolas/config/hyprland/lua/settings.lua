@@ -80,7 +80,7 @@ hl.animation({ leaf = "windowsIn", enabled = true, speed = 3, bezier = "windowIn
 hl.animation({ leaf = "windowsOut", enabled = true, speed = 3, bezier = "windowIn", style = "slide" })
 hl.animation({ leaf = "windowsMove", enabled = true, speed = 2.5, bezier = "windowResize" })
 hl.animation({ leaf = "fade", enabled = true, speed = 3, bezier = "default" })
-hl.animation({ leaf = "workspaces", enabled = true, speed = 4, bezier = "workspacesMove", style = "slide" })
+hl.animation({ leaf = "workspaces", enabled = true, speed = 4, bezier = "workspacesMove", style = "slidevert" })
 hl.animation({ leaf = "layers", enabled = true, speed = 4, bezier = "windowIn", style = "slide" })
 
 -- Devices

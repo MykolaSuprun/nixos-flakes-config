@@ -366,7 +366,7 @@ in {
           "Edit area" = "grimblast -t png edit area"
 
           [shortcuts_menu.entries.Session]
-          "Lock screen" = "loginctl lock-session"
+          "Lock screen" = "session_lock"
           "Logout" = "uwsm stop"
 
           [shortcuts_menu.entries.Utilities]
@@ -422,8 +422,8 @@ in {
         # ensure noctalia directory exists in hyprland config dir
         "d %h/.config/hypr/noctalia 0755 - - -"
       ];
-      services =
-        {
+      services = lib.mkMerge [
+        (lib.mkIf (!config.myconf.dms.enable) {
           swaync = {
             Unit = {
               Description = "Sway Notification Center";
@@ -441,20 +441,24 @@ in {
               WantedBy = ["wayland-session@hyprland.desktop.target"];
             };
           };
-
+        })
+        {
           hypridle = {
             Unit = {
               Description = "Hyprland Idle Daemon";
+              # This keeps it strictly gated to your Hyprland session!
               ConditionEnvironment = "XDG_CURRENT_DESKTOP=Hyprland";
-              BindsTo = ["wayland-session@hyprland.desktop.target"];
-              After = ["wayland-session@hyprland.desktop.target"];
+
+              # UWSM activates graphical-session.target once the environment is ready
+              BindsTo = ["graphical-session.target"];
+              After = ["graphical-session.target"];
             };
             Service = {
               ExecStart = "${pkgs.hypridle}/bin/hypridle";
               Restart = "on-failure";
             };
             Install = {
-              WantedBy = ["wayland-session@hyprland.desktop.target"];
+              WantedBy = ["graphical-session.target"];
             };
           };
 
@@ -507,24 +511,24 @@ in {
           };
 
           # Build the KDE service cache (ksycoca6) at session start so that
-          # xdg-desktop-portal-kde's AppChooser can discover installed applications.
+          # KDE apps (Dolphin, Gwenview, Okular) can discover app associations via KService.
           # Without this, the cache is never populated in a non-Plasma session.
-          # kbuildsycoca6 = {
-          #   Unit = {
-          #     Description = "Rebuild KDE service cache for xdg-desktop-portal-kde";
-          #     ConditionEnvironment = "XDG_CURRENT_DESKTOP=Hyprland";
-          #     After = ["wayland-session@hyprland.desktop.target"];
-          #     PartOf = ["wayland-session@hyprland.desktop.target"];
-          #   };
-          #   Service = {
-          #     Type = "oneshot";
-          #     ExecStart = "${pkgs.kdePackages.kservice}/bin/kbuildsycoca6 --noincremental";
-          #     RemainAfterExit = true;
-          #   };
-          #   Install = {
-          #     WantedBy = ["wayland-session@hyprland.desktop.target"];
-          #   };
-          # };
+          kbuildsycoca6 = {
+            Unit = {
+              Description = "Rebuild KDE service cache for KDE apps (Dolphin, Gwenview, Okular)";
+              ConditionEnvironment = "XDG_CURRENT_DESKTOP=Hyprland";
+              After = ["wayland-session@hyprland.desktop.target"];
+              PartOf = ["wayland-session@hyprland.desktop.target"];
+            };
+            Service = {
+              Type = "oneshot";
+              ExecStart = "${pkgs.kdePackages.kservice}/bin/kbuildsycoca6 --noincremental";
+              RemainAfterExit = true;
+            };
+            Install = {
+              WantedBy = ["wayland-session@hyprland.desktop.target"];
+            };
+          };
 
           # Wallpaper daemon — started before pyprland so awww-daemon socket exists
           # when pypr issues the first `awww img` command.
@@ -544,7 +548,7 @@ in {
             };
           };
         }
-        // lib.optionalAttrs config.hyprconf.noctalia.enable {
+        (lib.mkIf config.hyprconf.noctalia.enable {
           noctalia = let
             noctaliaPkg = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
           in {
@@ -580,7 +584,8 @@ in {
           #     WantedBy = ["wayland-session@hyprland.desktop.target"];
           #   };
           # };
-        };
+        })
+      ];
     };
   };
 }

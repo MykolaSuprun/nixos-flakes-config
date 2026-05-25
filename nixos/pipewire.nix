@@ -9,6 +9,9 @@
   config = lib.mkIf config.myconf.nixos.pipewire.enable {
     # Enable sound with pipewire.
     security.rtkit.enable = true;
+    # Expose libpipewire-0.3.so.0 in /run/current-system/sw/lib so Qt Multimedia
+    # can dlopen() it at runtime (resolves "Couldn't load pipewire-0.3 library" warning).
+    environment.systemPackages = [ pkgs.pipewire ];
     services = {
       pipewire = {
         alsa.enable = true;

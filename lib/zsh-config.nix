@@ -46,7 +46,6 @@
 
   extraRC = ''
     gpgconf --launch gpg-agent
-    eval "$(direnv hook zsh)"
     eval "$(carapace _carapace zsh)"
 
     # Source local zshrc overrides if present

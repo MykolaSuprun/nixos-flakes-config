@@ -29,6 +29,9 @@
       krename
       kdePackages.okular
       kdePackages.gwenview
+      kdePackages.kde-cli-tools
+      kdePackages.kio-extras
+      pkgs-stable.zoom-us
 
       nemo-with-extensions
 
@@ -41,16 +44,19 @@
 
       # internet
       mullvad-browser
-      pkgs-stable.protonvpn-gui
+      proton-vpn
       lbry
       vivaldi
+      floorp-bin
       filen-desktop
       impala # tui wifi manager
 
       # social
       discord
       signal-desktop
-      # telegram-desktop
+      ayugram-desktop
+      telegram-desktop
+      viber
       tg
 
       # other

@@ -14,7 +14,9 @@
       };
       direnv = {
         enable = true;
+        silent = true;
         enableBashIntegration = true;
+        enableZshIntegration = true;
         nix-direnv.enable = true;
       };
       gpg.enable = true;
@@ -85,7 +87,7 @@
         };
         hotkeys = {
           # Global hotkeys
-          confirm = ["enter" ""];
+          confirm = ["enter" "l"];
           quit = ["ctrl+c" ""];
           cd_quit = ["Q" ""];
           # Navigation
@@ -136,7 +138,7 @@
           confirm_typing = ["enter" ""];
           cancel_typing = ["esc" ""];
           # Normal Mode Actions
-          parent_directory = ["-" ""];
+          parent_directory = ["h" ""];
           search_bar = ["/" ""];
           # Selection Mode Actions
           file_panel_select_mode_items_select_down = ["J" ""];

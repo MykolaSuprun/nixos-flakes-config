@@ -173,7 +173,13 @@ in {
 
     flatpak.enable = true;
 
-    fprintd = {enable = true;};
+    # fprintd = {
+    #   enable = true;
+    #   tod = {
+    #     enable = true;
+    #     driver = pkgs.libfprint-2-tod1-elan;
+    #   };
+    # };
     udev = {
       packages = [pkgs-stable.bazecor pkgs.bazecor];
       extraRules = ''
@@ -188,11 +194,29 @@ in {
   security = {
     pam = {
       services = {
-        swaylock = {};
-        hyprlock = {};
+        swaylock = {
+          # fprintAuth = true;
+        };
+        hyprlock = {
+          # fprintAuth = true;
+        };
+        # login.fprintAuth = true;
+        # sudo.fprintAuth = true;
+        # greetd.fprintAuth = true; # Enforces fingerprint fallback at the DM stage
       };
     };
     polkit.enable = true;
+    # Allow wheel users to lock their own session via loginctl without a password
+    # dialog. This is required for session_lock to work from terminals and keybinds
+    # when DMS or any other session-lock utility calls loginctl.
+    polkit.extraConfig = ''
+      polkit.addRule(function(action, subject) {
+        if (action.id === "org.freedesktop.login1.lock-session" &&
+            subject.isInGroup("wheel")) {
+          return polkit.Result.YES;
+        }
+      });
+    '';
   };
 
   # ── Users ─────────────────────────────────────────────────────────────────────
