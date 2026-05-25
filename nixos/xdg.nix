@@ -27,11 +27,11 @@
     xdg = {
       portal = {
         enable = true;
-        extraPortals = with pkgs; [xdg-desktop-portal-gtk];
+        extraPortals = [pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal-phosh];
         xdgOpenUsePortal = true;
         config = {
           hyprland = {
-            default = ["hyprland" "gtk"];
+            default = ["hyprland" "gtk" "posh"];
           };
         };
       };

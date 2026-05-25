@@ -11,7 +11,6 @@
   pkgs = import inputs.nixpkgs {
     inherit system;
     config.allowUnfree = true;
-    config.permittedInsecurePackages = ["openssl-1.1.1w"];
     overlays = import ../../../overlays;
   };
   pkgs-stable = import inputs.nixpkgs-stable {
@@ -59,6 +58,9 @@ in {
                   inputs.zen-browser.homeModules.beta
                   inputs.noctalia.homeModules.default
                   inputs.dms.homeModules.dank-material-shell
+                  inputs.dms-plugin-registry.nixosModules.default
+
+                  # inputs.dms-plugin-registry.modules.default
                   ../../../home-manager/users/mykolas/home-geks-nixos.nix
                   # HM feature modules (all gated by myconf.*.enable flags)
                   ../../../home-manager/modules/catppuccin.nix

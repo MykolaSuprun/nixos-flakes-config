@@ -9,7 +9,7 @@ in {
     tmuxConf = pkgs.writeText "tmux.conf" (tmuxConfig.mkTmuxConf {
       inherit pkgs;
       catppuccinFlavor = "latte";
-      smugPresetsDir = ../../home-manager/users/mykolas/config/smug;
+      tmuxpPresetsDir = ../../home-manager/users/mykolas/config/tmuxp;
       seshConfigFile = ../../home-manager/users/mykolas/config/sesh/sesh.toml;
     });
   in {

@@ -103,8 +103,6 @@
     };
     environment.systemPackages = with pkgs; [
       pkgs-stable.lutris
-      ayugram-desktop
-      telegram-desktop
       thunderbolt
       bolt
       tbtools

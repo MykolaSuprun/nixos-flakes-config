@@ -92,11 +92,24 @@ hl.window_rule({
 })
 hl.on("window.open", function(win)
 	if win and win.class == "org.freedesktop.impl.portal.desktop.kde" then
-		hl.exec_cmd(
-			"sh -c 'sleep 0.15 && " ..
-			"hyprctl dispatch resizewindowpixel exact 60% 60%,class:org.freedesktop.impl.portal.desktop.kde && " ..
-			"hyprctl dispatch centerwindow class:org.freedesktop.impl.portal.desktop.kde'"
-		)
+		hl.timer(function()
+			local mon = win.monitor or hl.get_active_monitor()
+			if mon then
+				local w = math.floor(mon.width * 0.6)
+				local h = math.floor(mon.height * 0.6)
+				hl.dispatch(hl.dsp.window.resize({ x = w, y = h, window = win.address }))
+				hl.dispatch(hl.dsp.window.center({ window = win.address }))
+			end
+		end, { timeout = 150, type = "oneshot" })
+	end
+	-- Clipse clipboard manager: enforce a small centered floating size.
+	-- The window class is "clipse" but initialTitle is "kitty", so we match
+	-- both class and title to be safe.
+	if win and (win.class == "clipse" or win.title == "clipse") then
+		hl.timer(function()
+			hl.dispatch(hl.dsp.window.resize({ x = 800, y = 560, window = win.address }))
+			hl.dispatch(hl.dsp.window.center({ window = win.address }))
+		end, { timeout = 50, type = "oneshot" })
 	end
 end)
 
@@ -112,3 +125,6 @@ local scratch_hidden = {
 for _, entry in ipairs(scratch_hidden) do
 	hl.window_rule({ match = entry.match, float = true, workspace = "special:scratch_hidden" })
 end
+
+-- Filen: pseudotile so it keeps its preferred size instead of stretching
+hl.window_rule({ match = { initial_title = "^(Filen)$" }, pseudo = true })

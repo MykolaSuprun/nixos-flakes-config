@@ -37,6 +37,18 @@
         ' | ${pkgs.util-linux}/bin/column -t -s "|"
     fi
   '';
+  session_lock = pkgs.writeShellScriptBin "session_lock" (
+    if config.myconf.dms.enable
+    then ''dms ipc lock lock''
+    else if config.myconf.noctalia.enable
+    then ''noctalia-shell ipc call lockScreen lock''
+    else ''hyprlock''
+  );
+  notification_toggle = pkgs.writeShellScriptBin "notification-panel-toggle" (
+    if config.myconf.dms.enable
+    then ''dms ipc notifications toggle''
+    else ''swaync-client -t''
+  );
   lock_screen = pkgs.writeShellScriptBin "lock_dp1" ''
         state="''${XDG_STATE_HOME}/togglemonitorlock"
         booleanvalue="false"
@@ -58,6 +70,8 @@ in {
     # inputs.caelestia-shell.packages.${system}.with-cli
     menu_script
     hypr_binds_script
+    session_lock
+    notification_toggle
     lock_screen
     hyprlock_script
     hyprlock_script_alt

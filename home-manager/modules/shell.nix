@@ -47,11 +47,11 @@ in {
   options.myconf.shell.enable = lib.mkEnableOption "shell configuration";
   config = lib.mkIf config.myconf.shell.enable (lib.mkMerge [
     (liveLinks.mkLiveLinks {
-      activationName = "linkSmugPresets";
-      nixPath = ../users/mykolas/config/smug;
-      runtimePath = "${config.home.sessionVariables.NIXOS_CONF_DIR}/home-manager/users/mykolas/config/smug";
-      targetPath = "~/.config/smug";
-      filter = name: lib.hasSuffix ".yml" name;
+      activationName = "linkTmuxpPresets";
+      nixPath = ../users/mykolas/config/tmuxp;
+      runtimePath = "${config.home.sessionVariables.NIXOS_CONF_DIR}/home-manager/users/mykolas/config/tmuxp";
+      targetPath = "~/.config/tmuxp";
+      filter = name: lib.hasSuffix ".yaml" name;
     })
     (liveLinks.mkLiveLinks {
       activationName = "linkSeshConfig";
@@ -64,6 +64,7 @@ in {
     home.packages = with pkgs; [
       babelfish
       grc
+      tmuxp
 
       conn-win
       win11

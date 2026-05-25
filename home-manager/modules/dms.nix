@@ -15,6 +15,11 @@
         restartIfChanged = true; # Auto-restart dms.service when dank-material-shell changes
       };
 
+      plugins = {
+        hyprlandSubmap.enable = true;
+        dankHyprlandWindows.enable = true;
+      };
+
       # Core features
       enableSystemMonitoring = true; # System monitoring widgets (dgop)
       enableVPN = true; # VPN management widget
@@ -44,6 +49,7 @@
         matugenTemplatePywalfox = true;
         matugenTemplateZenBrowser = true;
         matugenTemplateVesktop = true;
+        matugenTemplateVencord = true;
         matugenTemplateEquibop = true;
         matugenTemplateGhostty = true;
         matugenTemplateKitty = true;
@@ -62,6 +68,8 @@
         blurEnabled = false;
         popupTransparency = 1;
         dockTransparency = 1;
+
+        dockUseOverlayLayer = true;
         widgetBackgroundColor = "sch";
         widgetColorMode = "default";
         controlCenterTileColorMode = "primary";
@@ -71,6 +79,9 @@
         enableRippleEffects = true;
         syncModeWithPortal = true;
         nightModeEnabled = false;
+        screenPreferences = {
+          wallpaper = [];
+        };
 
         # Typography
         fontFamily = "JetBrains Mono";
@@ -269,6 +280,7 @@
         notificationHistorySaveLow = true;
         notificationHistorySaveNormal = true;
         notificationHistorySaveCritical = true;
+        notificationDedupeEnabled = true;
 
         # OSD
         osdAlwaysShowValue = false;
@@ -302,14 +314,14 @@
         batterySuspendBehavior = 0;
 
         # Lock screen
-        lockBeforeSuspend = false;
-        loginctlLockIntegration = true;
+        lockBeforeSuspend = true;
+        loginctlLockIntegration = false;
         fadeToLockEnabled = true;
         fadeToLockGracePeriod = 5;
         fadeToDpmsEnabled = true;
         fadeToDpmsGracePeriod = 5;
         lockAtStartup = false;
-        enableFprint = false;
+        enableFprint = true;
         enableU2f = false;
         lockScreenActiveMonitor = "all";
         lockScreenNotificationMode = 0;
@@ -319,7 +331,7 @@
         lockScreenShowDate = true;
         lockScreenShowProfileImage = true;
         lockScreenShowPasswordField = true;
-        lockScreenShowMediaPlayer = true;
+        lockScreenShowMediaPlayer = false;
         lockScreenPowerOffMonitorsOnLock = false;
         hideBrightnessSlider = false;
 
@@ -366,6 +378,7 @@
             innerPadding = 4;
             squareCorners = false;
             autoHide = false;
+            useOverlayLayer = false;
           }
         ];
       };
@@ -373,6 +386,7 @@
       session = {
         isLightMode = config.catppuccin.flavor == "latte";
         perModeWallpaper = false;
+        wallpaperPath = "${config.home.homeDirectory}/.config/wallpapers/catppuccin/${config.catppuccin.flavor}/first.jpg";
         includedTransitions = ["fade" "wipe" "disc" "stripes" "iris bloom" "pixelate" "portal"];
         nightModeEnabled = false;
         weatherLocation = "Warszawa, województwo mazowieckie";

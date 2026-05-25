@@ -1,0 +1,23 @@
+session_name: "${TMUXP_SESSION_NAME}"
+start_directory: "${TMUXP_DIR}"
+
+windows:
+  - window_name: editor
+    focus: true
+    panes:
+      - shell_command:
+          - SELF=$TMUX_PANE
+          - tmux split-window -h
+          - tmux split-window -v -t "$SELF"
+          - tmux resize-pane -t "$SELF" -x 75% -y 75%
+          - tmux select-pane -t "$SELF"
+          - nvim .
+        focus: true
+
+  - window_name: test
+    panes:
+      - shell_command: zsh
+
+  - window_name: git
+    panes:
+      - shell_command: lazygit

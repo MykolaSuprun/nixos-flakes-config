@@ -2,13 +2,19 @@
   mkTmuxConf = {
     pkgs,
     catppuccinFlavor ? "latte",
-    smugPresetsDir ? null,
+    tmuxpPresetsDir ? null,
     seshConfigFile ? null,
   }: let
     # Bundled paths (nix store copies) used when no live config is present.
     # On NixOS managed by home-manager, live symlinks in ~/.config take precedence.
-    bundledSmugDir = if smugPresetsDir != null then "${smugPresetsDir}" else "";
-    bundledSeshConf = if seshConfigFile != null then "${seshConfigFile}" else "";
+    bundledTmuxpDir =
+      if tmuxpPresetsDir != null
+      then "${tmuxpPresetsDir}"
+      else "";
+    bundledSeshConf =
+      if seshConfigFile != null
+      then "${seshConfigFile}"
+      else "";
 
     seshPicker = pkgs.writeShellScript "sesh-picker" ''
       LIVE="''${XDG_CONFIG_HOME:-$HOME/.config}/sesh/sesh.toml"
@@ -44,22 +50,37 @@
       [ -n "$selected" ] && sesh_run connect "$selected"
     '';
 
-    smugPicker = pkgs.writeShellScript "smug-picker" ''
-      LIVE="''${XDG_CONFIG_HOME:-$HOME/.config}/smug"
-      if ls "$LIVE"/*.yml 2>/dev/null | grep -q .; then
-        DIR="$LIVE"
-      elif [ -n "${bundledSmugDir}" ] && ls "${bundledSmugDir}"/*.yml 2>/dev/null | grep -q .; then
-        DIR="${bundledSmugDir}"
+    tmuxpPicker = pkgs.writeShellScript "tmuxp-picker" ''
+      LIVE="''${XDG_CONFIG_HOME:-$HOME/.config}/tmuxp"
+      if ls "$LIVE"/*.yaml 2>/dev/null | grep -q .; then
+        PRESETS_DIR="$LIVE"
+      elif [ -n "${bundledTmuxpDir}" ] && ls "${bundledTmuxpDir}"/*.yaml 2>/dev/null | grep -q .; then
+        PRESETS_DIR="${bundledTmuxpDir}"
       else
-        echo 'No smug presets found.' >&2
+        echo 'No tmuxp presets found.' >&2
         exit 0
       fi
       preset=$(
-        ls "$DIR"/*.yml \
-        | xargs -I{} basename {} .yml \
-        | ${pkgs.fzf}/bin/fzf --prompt='preset: ' --border-label ' smug presets '
+        ls "$PRESETS_DIR"/*.yaml \
+        | xargs -I{} basename {} .yaml \
+        | ${pkgs.fzf}/bin/fzf --prompt='layout: ' --border-label ' tmuxp presets '
       )
-      [ -n "$preset" ] && ${pkgs.smug}/bin/smug start -f "$DIR/$preset.yml"
+      [ -z "$preset" ] && exit 0
+      dir=$(
+        { echo "$HOME"; ${pkgs.fd}/bin/fd -H -d 3 -t d . "$HOME/workspaces" 2>/dev/null; } \
+        | ${pkgs.fzf}/bin/fzf \
+            --prompt='directory: ' \
+            --border-label ' select directory ' \
+            --preview '${pkgs.eza}/bin/eza --all --git --icons --color=always {}' \
+            --preview-window 'right:50%'
+      )
+      [ -z "$dir" ] && exit 0
+      name=$(basename "$dir")
+      if tmux has-session -t "$name" 2>/dev/null; then
+        tmux switch-client -t "$name"
+      else
+        TMUXP_SESSION_NAME="$name" TMUXP_DIR="$dir" ${pkgs.tmuxp}/bin/tmuxp load "$PRESETS_DIR/$preset.yaml"
+      fi
     '';
 
     windowPicker = pkgs.writeShellScript "window-picker" ''
@@ -116,7 +137,7 @@
         prefix |            new pane to the right
         M-h/j/k/l           navigate panes  (vim & fzf aware)
         M-H/J/K/L           swap pane with neighbour  (Alt+Shift+h/j/k/l)
-        prefix C-h/j/k/l    resize pane
+        M-C-h/j/k/l         resize pane  (hold to continuously resize)
         prefix z            zoom / unzoom active pane
 
       ── WINDOWS ────────────────────────────────────────────────────────
@@ -139,10 +160,10 @@
           ctrl-q              kill selected session + reload list
           Enter               connect or create session
 
-        prefix S            smug layout picker  (multi-pane presets)
-          presets:  ~/.config/smug/*.yml  (live-linked from nixconf on NixOS)
+        prefix S            tmuxp layout picker  (multi-pane presets)
+          presets:  ~/.config/tmuxp/*.yaml  (live-linked from nixconf on NixOS)
           bundled:  nixconf repo presets used on unmanaged systems
-          CLI:      smug start <name>
+          CLI:      TMUXP_DIR=<path> tmuxp load -s <name> <preset.yaml>
 
         prefix s            built-in session tree (choose-tree)
         prefix $            rename session
@@ -166,7 +187,7 @@
 
       ── MENUS ──────────────────────────────────────────────────────────
         prefix Space        which-key command palette
-        prefix M-Space      rebuild which-key menu  (edits: ~/.config/tmux/plugins/tmux-which-key/config.yaml)
+        prefix R            rebuild which-key menu  (edits: ~/.config/tmux/plugins/tmux-which-key/config.yaml)
         prefix r            reload config  (greps new conf path from updated tmux wrapper)
         prefix /            this cheatsheet
 
@@ -175,8 +196,8 @@
         Starting a new project:
           1. prefix o → type dir/project name → Enter
              sesh creates a session and runs nvim (from sesh.toml wildcard)
-          2. prefix S → pick a layout preset
-             smug builds the full pane layout (editor / lazygit / shell)
+          2. prefix S → pick a layout preset + directory
+             tmuxp builds the full pane layout (editor / lazygit / shell)
           3. C-S-h → bookmark the main window for instant return
 
         Daily driver:
@@ -189,13 +210,13 @@
 
         On any machine without config files (nix run):
           nix run github:<user>/nixconf#tmux
-          All plugins and keybindings work; bundled sesh.toml and smug
+          All plugins and keybindings work; bundled sesh.toml and tmuxp
           presets are included. Clone nixconf and run home-manager switch
           to enable live editing of configs.
 
         Live-editing configs (NixOS, no rebuild needed):
-          sesh rules:    ~/workspaces/src/nixconf/.../config/sesh/sesh.toml
-          smug presets:  ~/workspaces/src/nixconf/.../config/smug/*.yml
+          sesh rules:      ~/workspaces/src/nixconf/.../config/sesh/sesh.toml
+          tmuxp presets:   ~/workspaces/src/nixconf/.../config/tmuxp/*.yaml
     '';
   in ''
     # GENERAL SETTINGS
@@ -259,11 +280,11 @@
     bind -n M-U previous-window
     bind -n M-I next-window
 
-    # vim-like pane resizing
-    bind -r C-k resize-pane -U
-    bind -r C-j resize-pane -D
-    bind -r C-h resize-pane -L
-    bind -r C-l resize-pane -R
+    # pane resizing — hold M-C-h/j/k/l (Alt+Ctrl+hjkl), no prefix needed
+    bind -n M-C-k resize-pane -U 5
+    bind -n M-C-j resize-pane -D 5
+    bind -n M-C-h resize-pane -L 5
+    bind -n M-C-l resize-pane -R 5
 
     # smart pane switching with vim awareness
     is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
@@ -305,10 +326,10 @@
     set -g @continuum-save-interval '10'
     run-shell ${pkgs.tmuxPlugins.continuum}/share/tmux-plugins/continuum/continuum.tmux
 
-    # Smug — layout preset picker (prefix+S)
-    # On NixOS: uses live-linked ~/.config/smug/*.yml  (edit without rebuild)
+    # tmuxp — layout preset picker (prefix+S)
+    # On NixOS: uses live-linked ~/.config/tmuxp/*.yaml  (edit without rebuild)
     # On any system: falls back to bundled presets from the nix store
-    bind-key S display-popup -E -w 60% -h 50% "${smugPicker}"
+    bind-key S display-popup -E -w 80% -h 70% "${tmuxpPicker}"
 
     # Window picker — fzf list of windows in the current session (prefix+w)
     bind-key w display-popup -E -w 80% -h 70% "${windowPicker}"
@@ -333,15 +354,15 @@
     set -g @tmux-which-key-disable-autobuild 1
     run-shell ${pkgs.tmuxPlugins.tmux-which-key}/share/tmux-plugins/tmux-which-key/plugin.sh.tmux
 
-    # Rebuild which-key menu from config.yaml (prefix+M-Space)
-    bind-key M-Space run-shell "${whichKeyRebuild}"
+    # Rebuild which-key menu from config.yaml (prefix+R)
+    bind-key R run-shell "${whichKeyRebuild}"
   '';
 
   runtimeInputs = pkgs:
     with pkgs; [
       wl-clipboard
       fzf
-      smug
+      tmuxp
       sesh
       fd
       eza

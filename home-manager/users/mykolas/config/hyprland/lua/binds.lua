@@ -8,26 +8,37 @@ local menu = "run_menu"
 -- Launch apps
 hl.bind(mod .. " + SHIFT + SPACE", hl.dsp.exec_cmd("pypr toggle term"), { description = "Toggle scratchpad terminal" })
 hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("pypr toggle volume"), { description = "Toggle volume scratchpad" })
-hl.bind(mod .. " + N", hl.dsp.exec_cmd("swaync-client -t"), { description = "Toggle notification panel" })
+hl.bind(mod .. " + N", hl.dsp.exec_cmd("notification-panel-toggle"), { description = "Toggle notification panel" })
 hl.bind(mod .. " + E", hl.dsp.exec_cmd(filemanager), { description = "Open file manager" })
 hl.bind(
 	mod .. " + CTRL + S",
 	hl.dsp.exec_cmd("hyprctl dispatch hyprexpo:expo toggle"),
 	{ description = "Toggle workspace overview" }
 )
-hl.bind(mod .. " + C", hl.dsp.exec_cmd("kitty --class clipse -e clipse"), { description = "Open clipboard manager" })
+hl.bind(mod .. " + C", hl.dsp.exec_cmd("rofi -show binds"), { description = "Open keybind cheatsheet" })
+hl.bind(
+	mod .. " + SHIFT + C",
+	hl.dsp.exec_cmd("kitty --class clipse -e clipse"),
+	{ description = "Open clipboard manager" }
+)
 
 -- Window management
 hl.bind(mod .. " + W", hl.dsp.window.close(), { description = "Close focused window" })
 hl.bind(mod .. " + SHIFT + TAB", hl.dsp.window.float({ action = "toggle" }), { description = "Toggle floating" })
-hl.bind(mod .. " + TAB", hl.dsp.exec_cmd("hyprctl dispatch cyclenext"), { description = "Cycle to next window" })
+hl.bind(
+	mod .. " + TAB",
+	hl.dsp.exec_cmd(
+		[[sh -c 'FLOATING=$(hyprctl activewindow -j | jq -r ".floating"); if [ "$FLOATING" = "true" ]; then hyprctl dispatch "hl.dsp.window.cycle_next({ tiled = true })"; else hyprctl dispatch "hl.dsp.window.cycle_next({ floating = true })"; fi']]
+	),
+	{ description = "Cycle focus between tiled/floating levels" }
+)
 hl.bind(mod .. " + F", hl.dsp.window.fullscreen({ mode = "maximized" }), { description = "Toggle maximized" })
 hl.bind(mod .. " + SHIFT + F", hl.dsp.window.fullscreen(), { description = "Toggle fullscreen" })
 hl.bind(mod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true, description = "Drag window" })
 hl.bind(mod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true, description = "Resize window (mouse)" })
 
 -- Session
-hl.bind(mod .. " + SHIFT + Q", hl.dsp.exec_cmd("loginctl lock-session"), { description = "Lock screen" })
+hl.bind(mod .. " + SHIFT + Q", hl.dsp.exec_cmd("session_lock"), { description = "Lock screen" })
 hl.bind(mod .. " + CTRL + SHIFT + M", hl.dsp.exec_cmd("uwsm stop"), { description = "Stop UWSM session (logout)" })
 
 -- Launch terminal
@@ -120,14 +131,35 @@ hl.define_submap("resize", function()
 		{ repeating = true, description = "[Resize] Grow height" }
 	)
 
-	-- Column width presets via layoutmsg colresize (reliable in scrolling layout)
-	hl.bind("1", hl.dsp.layout("colresize 100"), { repeating = true, description = "[Resize] Column width 100%" })
-	hl.bind("2", hl.dsp.layout("colresize 50"), { repeating = true, description = "[Resize] Column width 50%" })
-	hl.bind("3", hl.dsp.layout("colresize 33"), { repeating = true, description = "[Resize] Column width 33%" })
-	hl.bind("4", hl.dsp.layout("colresize 25"), { repeating = true, description = "[Resize] Column width 25%" })
+	-- Column width presets via layoutmsg colresize (0.0–1.0 fraction scale, same as column_width setting)
+	hl.bind("1", hl.dsp.layout("colresize 1"), { repeating = true, description = "[Resize] Column width 100%" })
+	hl.bind("2", hl.dsp.layout("colresize 0.5"), { repeating = true, description = "[Resize] Column width 50%" })
+	hl.bind("3", hl.dsp.layout("colresize 0.33"), { repeating = true, description = "[Resize] Column width 33%" })
+	hl.bind("4", hl.dsp.layout("colresize 0.25"), { repeating = true, description = "[Resize] Column width 25%" })
 
 	hl.bind("U", hl.dsp.layout("colresize -conf"), { repeating = true, description = "[Resize] Decrease column width" })
 	hl.bind("I", hl.dsp.layout("colresize +conf"), { repeating = true, description = "[Resize] Increase column width" })
+
+	-- Resize all tiled columns to the same width fraction as the focused window.
+	hl.bind(
+		"A",
+		hl.dsp.exec_cmd([=[sh -c '
+	  WIN=$(hyprctl activewindow -j)
+	  WS=$(echo "$WIN" | jq -r ".workspace.id")
+	  WIDTH=$(echo "$WIN" | jq -r ".size[0]")
+	  ADDR=$(echo "$WIN" | jq -r ".address")
+	  MON=$(echo "$WIN" | jq -r ".monitor")
+	  MON_WIDTH=$(hyprctl monitors -j | jq -r ".[$MON] | (.width / .scale)")
+	  FRAC=$(awk "BEGIN { printf \"%.4f\", $WIDTH / $MON_WIDTH }")
+	  hyprctl clients -j | jq -r ".[] | select(.workspace.id == $WS and .floating == false) | .address" | \
+	    while read WADDR; do
+	      hyprctl dispatch "hl.dsp.focus({ window = [[address:${WADDR}]] })"
+	      hyprctl dispatch "hl.dsp.layout([[colresize ${FRAC}]])"
+	    done
+	  hyprctl dispatch "hl.dsp.focus({ window = [[address:${ADDR}]] })"
+	']=]),
+		{ description = "[Resize] Set all column widths to match focused" }
+	)
 
 	hl.bind("escape", hl.dsp.submap("reset"), { description = "[Resize] Exit resize mode" })
 end)
@@ -330,3 +362,53 @@ hl.on("keybinds.submap", function(name)
 		["col.active_border"] = submap_colors[name] or colors.normal_active_border,
 	} })
 end)
+
+-- ── Messaging scratch ESC (issue 4) ──────────────────────────────────────────
+-- When special:scratch_messaging is active, ESC dismisses it.
+-- A dedicated submap is entered on activespecial; only ESC is bound so all
+-- other keystrokes fall through to the focused application unmodified.
+hl.define_submap("messaging_open", function()
+	hl.bind(
+		"escape",
+		hl.dsp.exec_cmd("hyprctl dispatch togglespecialworkspace scratch_messaging"),
+		{ description = "[Messaging] Close messaging workspace" }
+	)
+	hl.bind(
+		mod .. " + X",
+		hl.dsp.workspace.toggle_special("scratch_messaging"),
+		{ description = "[Messaging] Toggle messaging workspace" }
+	)
+	-- no catchall: all other keys pass through to the focused app
+end)
+
+-- workspace.active fires whenever the visible workspace changes on any monitor.
+-- We use it to detect when scratch_messaging appears/disappears.
+local messaging_visible = false
+hl.on("workspace.active", function(ws)
+	local name = (type(ws) == "table" and ws.name) or tostring(ws)
+	if name == "special:scratch_messaging" then
+		messaging_visible = true
+		hl.exec_cmd("hyprctl dispatch submap messaging_open")
+	elseif messaging_visible then
+		messaging_visible = false
+		hl.exec_cmd("hyprctl dispatch submap reset")
+	end
+end)
+
+-- ── Auto-fill remaining windows (issue 2) ────────────────────────────────────
+-- When a window is closed or moved away from a workspace, resize the remaining
+-- tiled windows to fill the visible area via "fit visible".
+-- Special workspaces and empty workspaces are skipped.
+local function fit_visible_if_needed()
+	hl.exec_cmd([=[sh -c '
+	  sleep 0.02
+	  WS=$(hyprctl activeworkspace -j)
+	  WS_NAME=$(echo "$WS" | jq -r ".name")
+	  WIN_COUNT=$(echo "$WS" | jq -r ".windows")
+	  case "$WS_NAME" in special:*) exit 0;; esac
+	  [ "$WIN_COUNT" -gt 0 ] && hyprctl dispatch "hl.dsp.layout([[fit visible]])"
+	']=])
+end
+
+hl.on("window.close", fit_visible_if_needed)
+hl.on("window.move_to_workspace", fit_visible_if_needed)
