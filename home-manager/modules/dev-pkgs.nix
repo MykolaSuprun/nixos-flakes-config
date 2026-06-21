@@ -23,6 +23,10 @@
       fzf = {
         enable = true;
       };
+      btop = {
+        enable = true;
+        package = pkgs.btop-rocm;
+      };
       lazygit = {enable = true;};
       superfile = {
         enable = true;
@@ -281,7 +285,6 @@
       sqlcmd
       killall
       bottom
-      btop
       lazydocker
       lazysql
     ];

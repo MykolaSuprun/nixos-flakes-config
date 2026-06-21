@@ -233,9 +233,21 @@ in {
       hyprshot.enable = true;
     };
 
+    xdg.configFile."hypr/.luarc.json".text = ''
+      {
+        "workspace": {
+          "library": [
+            "${pkgs.hyprland}/share/hypr/stubs"
+          ]
+        },
+        "diagnostics": {
+          "globals": ["hl"]
+        }
+      }
+    '';
+
     home = {
       pointerCursor.hyprcursor.enable = true;
-
       file = {
         "./.config/uwsm" = {
           source = ./../../users/mykolas/config/uwsm;

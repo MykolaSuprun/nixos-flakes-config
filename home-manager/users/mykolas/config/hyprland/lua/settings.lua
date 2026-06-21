@@ -19,6 +19,11 @@ hl.config({
 		column_width = 0.5,
 		focus_fit_method = 1,
 	},
+	master = {
+		allow_small_split = true,
+		orientation = "center",
+		mfact = 5,
+	},
 	decoration = {
 		rounding = 20,
 		inactive_opacity = 0.98,

@@ -45,6 +45,7 @@ in {
         ../../../nixos/sys-pkgs.nix
         ../../../nixos/stylix.nix
         ../../../nixos/xdg.nix
+        ../../../nixos/llm.nix
         inputs.home-manager.nixosModules.home-manager
         {
           home-manager = {
@@ -88,6 +89,7 @@ in {
                 wrappedPkgs.tmux
                 wrappedPkgs.wezterm
                 wrappedPkgs.nix-update
+                wrappedPkgs.hypr-layout-picker
               ];
             };
             extraSpecialArgs = {

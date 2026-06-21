@@ -5,9 +5,27 @@ local terminal = "uwsm app -- ghostty"
 local filemanager = "uwsm app -- ghostty -e superfile"
 local menu = "run_menu"
 
+local function layout_bind(bind_table)
+	return function()
+		local workspace = hl.get_active_special_workspace() or hl.get_active_workspace()
+		if not workspace then
+			return
+		end
+
+		-- THIS is the correct property I botched earlier
+		local layout = workspace.tiled_layout
+
+		-- Execute layout-specific bind, or fallback to default
+		if bind_table[layout] then
+			hl.dispatch(bind_table[layout])
+		elseif bind_table["default"] then
+			hl.dispatch(bind_table["default"])
+		end
+	end
+end
+
 -- Launch apps
-hl.bind(mod .. " + SHIFT + SPACE", hl.dsp.exec_cmd("pypr toggle term"), { description = "Toggle scratchpad terminal" })
-hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("pypr toggle volume"), { description = "Toggle volume scratchpad" })
+hl.bind(mod .. " + CTRL + S", hl.dsp.exec_cmd("pypr toggle volume"), { description = "Toggle volume scratchpad" })
 hl.bind(mod .. " + N", hl.dsp.exec_cmd("notification-panel-toggle"), { description = "Toggle notification panel" })
 hl.bind(mod .. " + E", hl.dsp.exec_cmd(filemanager), { description = "Open file manager" })
 hl.bind(
@@ -21,6 +39,8 @@ hl.bind(
 	hl.dsp.exec_cmd("kitty --class clipse -e clipse"),
 	{ description = "Open clipboard manager" }
 )
+
+hl.bind(mod .. " + SHIFT + SPACE", hl.dsp.exec_cmd("hypr-layout-picker"))
 
 -- Window management
 hl.bind(mod .. " + W", hl.dsp.window.close(), { description = "Close focused window" })
@@ -52,22 +72,123 @@ hl.bind(
 	{ mouse = true, description = "Focus previous monitor" }
 )
 
--- Scrolling layout: promote and column moves
-hl.bind(mod .. " + SHIFT + T", hl.dsp.layout("promote"), { description = "Promote window (scrolling layout)" })
-hl.bind(mod .. " + CTRL + H", hl.dsp.layout("movewindow l"), { description = "Move window left one column" })
-hl.bind(mod .. " + CTRL + L", hl.dsp.layout("movewindow r"), { description = "Move window right one column" })
+-- ==========================================
+-- LAYOUT AWARE: Promote and Column Moves
+-- ==========================================
 
--- Focus movement
-hl.bind(mod .. " + H", hl.dsp.focus({ direction = "l" }), { description = "Focus window left" })
-hl.bind(mod .. " + J", hl.dsp.focus({ direction = "d" }), { description = "Focus window below" })
-hl.bind(mod .. " + K", hl.dsp.focus({ direction = "u" }), { description = "Focus window above" })
-hl.bind(mod .. " + L", hl.dsp.focus({ direction = "r" }), { description = "Focus window right" })
+hl.bind(
+	mod .. " + SHIFT + T",
+	layout_bind({
+		scrolling = hl.dsp.layout("promote"),
+		master = hl.dsp.layout("swapwithmaster"),
+	}),
+	{ description = "Promote window" }
+)
 
--- Window movement / column swaps
-hl.bind(mod .. " + SHIFT + H", hl.dsp.layout("swapcol l"), { description = "Swap column left" })
-hl.bind(mod .. " + SHIFT + J", hl.dsp.window.move({ direction = "d" }), { description = "Move window down" })
-hl.bind(mod .. " + SHIFT + K", hl.dsp.window.move({ direction = "u" }), { description = "Move window up" })
-hl.bind(mod .. " + SHIFT + L", hl.dsp.layout("swapcol r"), { description = "Swap column right" })
+hl.bind(
+	mod .. " + CTRL + H",
+	layout_bind({
+		-- Use the native 'move_into_group' or 'move' logic for columns
+		scrolling = hl.dsp.window.move({ direction = "l", group_aware = true }),
+		default = hl.dsp.window.move({ direction = "l" }),
+	}),
+	{ description = "Move window left (Column aware)" }
+)
+
+hl.bind(
+	mod .. " + CTRL + L",
+	layout_bind({
+		scrolling = hl.dsp.window.move({ direction = "r", group_aware = true }),
+		default = hl.dsp.window.move({ direction = "r" }),
+	}),
+	{ description = "Move window right (Column aware)" }
+)
+
+hl.bind(
+	mod .. " + H",
+	layout_bind({
+		scrolling = hl.dsp.layout("focus l"),
+		default = hl.dsp.focus({ direction = "l" }),
+	})
+)
+
+hl.bind(
+	mod .. " + L",
+	layout_bind({
+		scrolling = hl.dsp.layout("focus r"),
+		default = hl.dsp.focus({ direction = "r" }),
+	})
+)
+
+hl.bind(
+	mod .. " + K",
+	layout_bind({
+		master = hl.dsp.layout("cycleprev"),
+		monocle = hl.dsp.layout("cycleprev"),
+		default = hl.dsp.focus({ direction = "u" }),
+	})
+)
+
+hl.bind(
+	mod .. " + J",
+	layout_bind({
+		master = hl.dsp.layout("cyclenext"),
+		monocle = hl.dsp.layout("cyclenext"),
+		default = hl.dsp.focus({ direction = "d" }),
+	})
+)
+
+-- ==========================================
+-- WINDOW SWAPPING / MOVEMENT
+-- ==========================================
+
+hl.bind(
+	mod .. " + SHIFT + H",
+	layout_bind({
+		scrolling = hl.dsp.layout("swapcol l"),
+		master = hl.dsp.layout("swapwithmaster"),
+		default = hl.dsp.window.move({ direction = "l" }),
+	})
+)
+
+hl.bind(
+	mod .. " + SHIFT + L",
+	layout_bind({
+		scrolling = hl.dsp.layout("swapcol r"),
+		master = hl.dsp.layout("swapwithmaster"),
+		default = hl.dsp.window.move({ direction = "r" }),
+	})
+)
+
+hl.bind(
+	mod .. " + SHIFT + K",
+	layout_bind({
+		master = hl.dsp.layout("swapprev"),
+		monocle = hl.dsp.layout("swapprev"),
+		default = hl.dsp.window.move({ direction = "u" }),
+	})
+)
+
+hl.bind(
+	mod .. " + SHIFT + J",
+	layout_bind({
+		master = hl.dsp.layout("swapnext"),
+		monocle = hl.dsp.layout("swapnext"),
+		default = hl.dsp.window.move({ direction = "d" }),
+	})
+)
+
+-- -- Focus movement
+-- hl.bind(mod .. " + H", hl.dsp.focus({ direction = "l" }), { description = "Focus window left" })
+-- hl.bind(mod .. " + J", hl.dsp.focus({ direction = "d" }), { description = "Focus window below" })
+-- hl.bind(mod .. " + K", hl.dsp.focus({ direction = "u" }), { description = "Focus window above" })
+-- hl.bind(mod .. " + L", hl.dsp.focus({ direction = "r" }), { description = "Focus window right" })
+--
+-- -- Window movement / column swaps
+-- hl.bind(mod .. " + SHIFT + H", hl.dsp.layout("swapcol l"), { description = "Swap column left" })
+-- hl.bind(mod .. " + SHIFT + J", hl.dsp.window.move({ direction = "d" }), { description = "Move window down" })
+-- hl.bind(mod .. " + SHIFT + K", hl.dsp.window.move({ direction = "u" }), { description = "Move window up" })
+-- hl.bind(mod .. " + SHIFT + L", hl.dsp.layout("swapcol r"), { description = "Swap column right" })
 
 -- Screenshot submap
 hl.bind(mod .. " + CTRL + SHIFT + P", hl.dsp.submap("screenshot"), { description = "Enter screenshot mode" })
@@ -181,38 +302,35 @@ end)
 hl.bind(mod .. " + T", hl.dsp.submap("tabgroups"), { description = "Enter tab groups mode" })
 
 hl.define_submap("tabgroups", function()
-	hl.bind("T", hl.dsp.exec_cmd("hyprctl dispatch togglegroup"), { description = "[Tabs] Create / dissolve group" })
-	hl.bind(
-		"U",
-		hl.dsp.exec_cmd("hyprctl dispatch moveoutofgroup"),
-		{ description = "[Tabs] Extract window from group" }
-	)
+	-- Native group creation and extraction
+	hl.bind("T", hl.dsp.group.toggle(), { description = "[Tabs] Create / dissolve group" })
+	hl.bind("U", hl.dsp.window.move({ out_of_group = "u" }), { description = "[Tabs] Extract window from group" })
 
-	-- Cycle tabs (h/k = previous, l/j = next)
-	hl.bind("H", hl.dsp.exec_cmd("hyprctl dispatch changegroupactive b"), { description = "[Tabs] Previous tab" })
-	hl.bind("K", hl.dsp.exec_cmd("hyprctl dispatch changegroupactive b"), { description = "[Tabs] Previous tab" })
-	hl.bind("L", hl.dsp.exec_cmd("hyprctl dispatch changegroupactive f"), { description = "[Tabs] Next tab" })
-	hl.bind("J", hl.dsp.exec_cmd("hyprctl dispatch changegroupactive f"), { description = "[Tabs] Next tab" })
+	-- Cycle tabs (Instant native dispatch)
+	hl.bind("H", hl.dsp.group.prev(), { description = "[Tabs] Previous tab" })
+	hl.bind("K", hl.dsp.group.prev(), { description = "[Tabs] Previous tab" })
+	hl.bind("L", hl.dsp.group.next(), { description = "[Tabs] Next tab" })
+	hl.bind("J", hl.dsp.group.next(), { description = "[Tabs] Next tab" })
 
-	-- Move window into adjacent group
+	-- Native: Move window into adjacent group / layout
 	hl.bind(
 		"SHIFT + H",
-		hl.dsp.exec_cmd("hyprctl dispatch movewindoworgroup l"),
+		hl.dsp.window.move({ into_or_create_group = "l" }),
 		{ description = "[Tabs] Move window into left group" }
 	)
 	hl.bind(
 		"SHIFT + J",
-		hl.dsp.exec_cmd("hyprctl dispatch movewindoworgroup d"),
+		hl.dsp.window.move({ into_or_create_group = "d" }),
 		{ description = "[Tabs] Move window into group below" }
 	)
 	hl.bind(
 		"SHIFT + K",
-		hl.dsp.exec_cmd("hyprctl dispatch movewindoworgroup u"),
+		hl.dsp.window.move({ into_or_create_group = "u" }),
 		{ description = "[Tabs] Move window into group above" }
 	)
 	hl.bind(
 		"SHIFT + L",
-		hl.dsp.exec_cmd("hyprctl dispatch movewindoworgroup r"),
+		hl.dsp.window.move({ into_or_create_group = "r" }),
 		{ description = "[Tabs] Move window into right group" }
 	)
 
@@ -251,6 +369,22 @@ hl.bind(
 	mod .. " + SHIFT + B",
 	hl.dsp.window.move({ workspace = "special:scratch_hidden" }),
 	{ description = "Move window to hidden scratch workspace" }
+)
+hl.bind(mod .. " + A", hl.dsp.workspace.toggle_special("scratch_llm"), { description = "Toggle llm scratch workspace" })
+hl.bind(
+	mod .. " + SHIFT + A",
+	hl.dsp.window.move({ workspace = "special:scratch_llm" }),
+	{ description = "Move window to llm scratch workspace" }
+)
+hl.bind(
+	mod .. " + S",
+	hl.dsp.workspace.toggle_special("scratch_music"),
+	{ description = "Toggle hidden music workspace" }
+)
+hl.bind(
+	mod .. " + SHIFT + S",
+	hl.dsp.window.move({ workspace = "special:scratch_music" }),
+	{ description = "Move window to music scratch workspace" }
 )
 hl.bind(
 	mod .. " + G",

@@ -1,12 +1,50 @@
--- Each entry is { match = { <prop> = <pattern>, ... }, [overrides...] }.
--- The match table accepts any Hyprland match property: class, title,
--- initial_title, initial_class, tag, xwayland, float, etc.
--- Per-entry override fields (size, workspace, center, …) extend or replace
--- the shared effects for that entry only; nil fields are silently ignored.
+local fullscreen_apps = {
+	["steam"] = true,
+	["cider"] = true,
+	["LM-Studio"] = true,
+}
 
--- ── Games ─────────────────────────────────────────────────────────────────────
--- Shared effects: immediate (tearing), fullscreen, sent to scratch_games.
--- Toggle the workspace with mod+G.
+-- Only run once per window
+local done = {}
+
+hl.on("window.active", function(w)
+	if fullscreen_apps[w.class] and not done[w.address] then
+		done[w.address] = true
+		hl.dispatch(hl.dsp.window.fullscreen())
+	end
+end)
+
+hl.on("window.close", function(w)
+	done[w.address] = nil
+end)
+
+-- ── Scratchpad Assignments ────────────────────────────────────────────────────
+-- Define just the identifier; the logic prepends 'special:scratch_'
+local scratchpad_assignments = {
+	-- Format: { match = {...}, id = "suffix" }
+	{ match = { class = "^(org\\.telegram\\.desktop)$" }, id = "messaging" },
+	{ match = { class = "^(AyuGram)$" }, id = "messaging" },
+	{ match = { class = "^(discord|vesktop|webcord)$" }, id = "messaging" },
+	{ match = { class = "^LM-Studio$" }, id = "llm" },
+	{ match = { class = "^(cider)$" }, id = "music" },
+	{ match = { class = "^(nz\\.co\\.mega\\.)$" }, id = "hidden" },
+	{ match = { initial_title = "Cryptomator" }, id = "hidden" },
+	{ match = { initial_title = "^(Filen)$" }, id = "hidden", pseudo = true },
+	{ match = { class = "^(steam)$" }, id = "games" },
+}
+
+for _, entry in ipairs(scratchpad_assignments) do
+	hl.window_rule({
+		match = entry.match,
+		float = false,
+		tile = true,
+		workspace = "special:scratch_" .. entry.id .. " silent",
+		no_initial_focus = true,
+		-- pseudo = entry.pseudo or false,
+	})
+end
+
+-- ── Game Workspaces ───────────────────────────────────────────────────────────
 local games = {
 	{ match = { class = "^(gamescope)$" } },
 	{ match = { class = "^(steam_app_1903340)$" } },
@@ -18,113 +56,68 @@ local games = {
 	{ match = { class = "^(helldivers)$" } },
 	{ match = { class = "^(overwatch)$" } },
 	{ match = { class = "^(steam_app_2767030)$" } },
-	{ match = { class = "^(steam_app_2623190)$" } }, -- oblivion remastered
+	{ match = { class = "^(steam_app_2623190)$" } },
 }
 
 for _, entry in ipairs(games) do
 	hl.window_rule({
-		match            = entry.match,
-		immediate        = true,
-		fullscreen       = true,
-		fullscreen_state = "3 3",
-		workspace        = "special:scratch_games",
+		match = entry.match,
+		immediate = true,
+		fullscreen = true,
+		-- fullscreen_state = "3 3",
+		workspace = "special:scratch_games",
 	})
 end
 
--- ── App workspace assignments ─────────────────────────────────────────────────
--- Each entry: { match = {...}, workspace = "<id>" }
+-- ── App workspace assignments (Non-Scratch) ──────────────────────────────────
 local workspace_assignments = {
-	{ match = { class         = "^(zen-beta)$" },                           workspace = "1"  },
-	{ match = { class         = "^(org\\.telegram\\.desktop)$" },          workspace = "special:scratch_messaging" },
-	{ match = { class         = "^(AyuGram)$" },                            workspace = "special:scratch_messaging" },
-	{ match = { class         = "^(discord|vesktop|webcord)$" },            workspace = "special:scratch_messaging" },
-	{ match = { class         = "^(chromium-browser)$" },                   workspace = "7"  },
-	{ match = { initial_title = "^((s|S)team)$" },                          workspace = "13" },
+	{ match = { class = "^(zen-beta)$" }, workspace = "1" },
+	{ match = { class = "^(chromium-browser)$" }, workspace = "7" },
 }
 
 for _, entry in ipairs(workspace_assignments) do
 	hl.window_rule({ match = entry.match, workspace = entry.workspace })
 end
 
--- ── Floating utility windows ──────────────────────────────────────────────────
--- Shared effects: float, pseudo.
--- Optional per-entry `center = true` for windows that should open centered.
-local floating_utils = {
-	{ match = { class = "^(steam)$" },                         center = true },
-	{ match = { class = "^(kitty-dropterm)$" } },
-	{ match = { class = "^(com\\.saivert\\.pwvucontrol)$" } },
-}
+-- ── Floating/Utility Rules ───────────────────────────────────────────────────
+hl.window_rule({ match = { class = "^(steam)$" }, float = true, center = true })
+hl.window_rule({ match = { class = "^(kitty-dropterm)$" }, float = true, pseudo = true })
+hl.window_rule({ match = { class = "^(com\\.saivert\\.pwvucontrol)$" }, float = true, pseudo = true })
 
-for _, entry in ipairs(floating_utils) do
-	hl.window_rule({ match = entry.match, float = true, pseudo = true, center = entry.center })
-end
-
--- ── Priority floating dialogs ─────────────────────────────────────────────────
--- Shared effects: float, center, pin, stay_focused.
--- Optional per-entry `size` for windows that need a specific size.
-local priority_floating = {
+-- ── Priority & Portals ───────────────────────────────────────────────────────
+local priority = {
 	{ match = { class = "^(org\\.kde\\.ksecretd)$" } },
 	{ match = { class = "^(nm-applet)$" } },
-	{ match = { class = "^(clipse)$" },  size = { "40%", "30%" } },
-	{ match = { title = "clipse" },       size = { "40%", "30%" } },
+	{ match = { class = "^(clipse)$" }, size = { 800, 560 } },
 }
 
-for _, entry in ipairs(priority_floating) do
+for _, entry in ipairs(priority) do
 	hl.window_rule({
-		match        = entry.match,
-		float        = true,
-		center       = true,
-		pin          = true,
+		match = entry.match,
+		float = true,
+		center = true,
+		pin = true,
 		stay_focused = true,
-		size         = entry.size,
+		size = entry.size,
 	})
 end
 
--- KDE portal file picker — force float+center on creation, then override
--- the portal's self-resize to fullscreen via an openwindow callback.
--- The 0.15s delay lets the portal finish its own layout first.
--- pin and stay_focused are intentionally omitted: the picker should only
--- steal focus on first launch and then behave like a normal float.
 hl.window_rule({
-    match        = { class = "^(org\\.freedesktop\\.impl\\.portal\\.desktop\\.kde)$" },
-    float        = true,
-    center       = true,
+	match = { class = "^(org\\.freedesktop\\.impl\\.portal\\.desktop\\.kde)$" },
+	float = true,
+	center = true,
+	size = { "60%", "60%" },
+	suppress_event = "maximize",
 })
-hl.on("window.open", function(win)
-	if win and win.class == "org.freedesktop.impl.portal.desktop.kde" then
-		hl.timer(function()
-			local mon = win.monitor or hl.get_active_monitor()
-			if mon then
-				local w = math.floor(mon.width * 0.6)
-				local h = math.floor(mon.height * 0.6)
-				hl.dispatch(hl.dsp.window.resize({ x = w, y = h, window = win.address }))
-				hl.dispatch(hl.dsp.window.center({ window = win.address }))
-			end
-		end, { timeout = 150, type = "oneshot" })
-	end
-	-- Clipse clipboard manager: enforce a small centered floating size.
-	-- The window class is "clipse" but initialTitle is "kitty", so we match
-	-- both class and title to be safe.
-	if win and (win.class == "clipse" or win.title == "clipse") then
-		hl.timer(function()
-			hl.dispatch(hl.dsp.window.resize({ x = 800, y = 560, window = win.address }))
-			hl.dispatch(hl.dsp.window.center({ window = win.address }))
-		end, { timeout = 50, type = "oneshot" })
-	end
-end)
 
--- ── System tray / hidden scratch workspace ────────────────────────────────────
--- These apps run silently in special:scratch_hidden; toggle with mod+B.
-local scratch_hidden = {
-	{ match = { class         = "^(nz\\.co\\.mega\\.)$" } },
-	{ match = { initial_title = "Cryptomator" } },
-	{ match = { class         = "^(xwaylandvideobridge)$" } },
-	{ match = { initial_title = "^(Filen)$" } },
-}
-
-for _, entry in ipairs(scratch_hidden) do
-	hl.window_rule({ match = entry.match, float = true, workspace = "special:scratch_hidden" })
-end
-
--- Filen: pseudotile so it keeps its preferred size instead of stretching
-hl.window_rule({ match = { initial_title = "^(Filen)$" }, pseudo = true })
+-- ── XWaylandVideoBridge ──────────────────────────────────────────────────────
+hl.window_rule({
+	match = { class = "^(xwaylandvideobridge)$" },
+	workspace = "special:scratch_hidden silent",
+	opacity = "0.0 override",
+	no_anim = true,
+	no_blur = true,
+	no_focus = true,
+	no_initial_focus = true,
+	max_size = { 1, 1 },
+})

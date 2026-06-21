@@ -25,21 +25,20 @@
 
         gamescopeSession = {
           enable = true;
-          env = {DXVK_HDR = "1";};
+          env = {
+            DXVK_HDR = "1";
+            ENABLE_GAMESCOPE_WSI = "1";
+          };
           args = [
             "--adaptive-sync"
-            # "--hdr-enabled"
+            "--hdr-enabled"
+            "--hdr-itm-enable"
             "--mangoapp"
-            # "--rt"
+            "--rt"
             "--steam"
             "--xwayland-count 2"
-            # "-b"
-            # "-f"
-            # "-w 3440"
-            # "-h 1440"
-            "-r 165"
-            # "--expose-wayland"
-            # "--backend wayland"
+            "--force-grab-cursor"
+            "--expose-wayland"
           ];
         };
         # gamescopeSession.args = [
@@ -80,7 +79,10 @@
                 --expose-wayland \
                 --force-grab-cursor \
                 --adaptive-sync \
-                -W 3840 -H 2160 -r 165 \
+                --hdr-enabled \
+                --hdr-itm-enable \
+                --mangoapp \
+                -W 3440 -H 1440 -r 165 \
                 -- ${pkgs.steam}/bin/steam -gamepadui -steamos
             ''}
             Type=Application

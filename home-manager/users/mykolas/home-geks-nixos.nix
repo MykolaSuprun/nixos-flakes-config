@@ -6,8 +6,27 @@
   inputs,
   pkgs,
   ...
-}: {
-  # ── Feature-module enable flags ──────────────────────────────────────────────
+}: let
+  steam-gamescope = pkgs.writeShellScriptBin "steam-gamescope" ''
+    export DXVK_HDR=1
+    export ENABLE_GAMESCOPE_WSI=1
+    exec ${pkgs.gamescope}/bin/gamescope \
+      --adaptive-sync \
+      --hdr-enabled \
+      --hdr-itm-enable \
+      --rt \
+      --mangoapp \
+      --force-grab-cursor \
+      --steam \
+      --xwayland-count 2 \
+      --expose-wayland \
+      --prefer-vk-device 1002:744c \
+      -W 3440 -H 1440 \
+      -r 165 \
+      -f \
+      -- ${pkgs.steam}/bin/steam -gamepadui -steamos
+  '';
+in {
   myconf = {
     shell.enable = true;
     dev.enable = true;
@@ -73,6 +92,22 @@
         "image/tiff" = ["org.kde.gwenview.desktop"];
       };
     };
+    desktopEntries.steam = {
+      name = "Steam";
+      genericName = "Game Store";
+      comment = "Steam powered by Gamescope (3440x1440@165 HDR VRR)";
+      exec = "${steam-gamescope}/bin/steam-gamescope";
+      icon = "steam";
+      categories = ["Game"];
+      type = "Application";
+      terminal = false;
+      actions = {
+        "normal" = {
+          name = "Launch without Gamescope";
+          exec = "${pkgs.steam}/bin/steam";
+        };
+      };
+    };
   };
 
   services.gpg-agent = {
@@ -110,5 +145,5 @@
     };
   };
 
-  home.packages = with pkgs; [];
+  home.packages = [steam-gamescope];
 }

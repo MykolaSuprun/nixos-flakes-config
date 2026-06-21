@@ -24,6 +24,7 @@ in {
     xdg.enable = true;
     catppuccin.enable = true;
     desktop.enable = true;
+    ollama.enable = true;
     # flatpak.enable = false;  # bindfs/theme Flatpak setup – zenbook only
   };
 
@@ -65,7 +66,8 @@ in {
     # when building installer ISOs via nixos-rebuild build-image.
     supportedFilesystems.zfs = false;
 
-    kernelPackages = pkgs.linuxPackages_zen;
+    # kernelPackages = pkgs.linuxPackages_zen;
+    kernelPackages = pkgs.linuxPackages;
     extraModulePackages = with config.boot.kernelPackages; [
       # kvmfr
     ];
@@ -184,6 +186,11 @@ in {
       packages = [pkgs-stable.bazecor pkgs.bazecor];
       extraRules = ''
         SUBSYSTEM=="kvmfr", OWNER="mykolas", GROUP="kvm", MODE="0660"
+        # Permanent symlink for the Raphael iGPU
+        KERNEL=="card*", KERNELS=="0000:59:00.0", SUBSYSTEM=="drm", SUBSYSTEMS=="pci", SYMLINK+="dri/igpu"
+
+        # Permanent symlink for the Navi 31 dGPU (7900 XTX)
+        KERNEL=="card*", KERNELS=="0000:03:00.0", SUBSYSTEM=="drm", SUBSYSTEMS=="pci", SYMLINK+="dri/dgpu"
       '';
     };
     spice-vdagentd.enable = true;

@@ -45,6 +45,9 @@
       # internet
       mullvad-browser
       proton-vpn
+      proton-pass
+      protonmail-desktop
+      proton-authenticator-bin
       lbry
       vivaldi
       floorp-bin

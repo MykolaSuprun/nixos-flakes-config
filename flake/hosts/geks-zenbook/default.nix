@@ -84,6 +84,7 @@ in {
                 wrappedPkgs.tmux
                 wrappedPkgs.wezterm
                 wrappedPkgs.nix-update
+                wrappedPkgs.hypr-layout-picker
               ];
             };
             extraSpecialArgs = {

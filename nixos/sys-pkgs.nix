@@ -15,6 +15,7 @@
         clean.extraArgs = "--keep-since 10d --keep 10";
         flake = "/home/mykolas/workspaces/src/nixconf";
       };
+      usbtop.enable = true;
     };
 
     environment.systemPackages = with pkgs; [
