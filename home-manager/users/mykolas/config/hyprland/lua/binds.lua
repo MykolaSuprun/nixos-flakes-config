@@ -205,17 +205,17 @@ hl.define_submap("screenshot", function()
 	-- With delay
 	hl.bind(
 		mod .. " + S",
-		hl.dsp.exec_cmd("grimblast -w 3 -t png copysave area"),
+		hl.dsp.exec_cmd("sleep 3 && grimblast -t png copysave area"),
 		{ description = "[Screenshot] Copy/save area (3s delay)" }
 	)
 	hl.bind(
 		mod .. " + E",
-		hl.dsp.exec_cmd("grimblast -w 3 -t png edit area"),
+		hl.dsp.exec_cmd("sleep 3 && grimblast -t png edit area"),
 		{ description = "[Screenshot] Edit area (3s delay)" }
 	)
 	hl.bind(
 		mod .. " + A",
-		hl.dsp.exec_cmd("grimblast -w 3 -t png copysave active"),
+		hl.dsp.exec_cmd("grimblast -t png copysave active"),
 		{ description = "[Screenshot] Copy/save active (3s delay)" }
 	)
 	hl.bind("catchall", hl.dsp.submap("reset"))
@@ -405,6 +405,14 @@ hl.bind(
 	mod .. " + SHIFT + X",
 	hl.dsp.window.move({ workspace = "special:scratch_messaging" }),
 	{ description = "Move window to messaging scratch workspace" }
+)
+
+-- Zen scratch workspace
+hl.bind(mod .. " + Z", hl.dsp.workspace.toggle_special("scratch_zen"), { description = "Toggle zen scratch workspace" })
+hl.bind(
+	mod .. " + SHIFT + Z",
+	hl.dsp.window.move({ workspace = "special:scratch_zen" }),
+	{ description = "Move window to zen scratch workspace" }
 )
 
 -- Relative workspace navigation

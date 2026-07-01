@@ -23,7 +23,7 @@ end)
 local scratchpad_assignments = {
 	-- Format: { match = {...}, id = "suffix" }
 	{ match = { class = "^(org\\.telegram\\.desktop)$" }, id = "messaging" },
-	{ match = { class = "^(AyuGram)$" }, id = "messaging" },
+	{ match = { class = "^(com.ayugram.desktop)$" }, id = "messaging" },
 	{ match = { class = "^(discord|vesktop|webcord)$" }, id = "messaging" },
 	{ match = { class = "^LM-Studio$" }, id = "llm" },
 	{ match = { class = "^(cider)$" }, id = "music" },
@@ -31,6 +31,7 @@ local scratchpad_assignments = {
 	{ match = { initial_title = "Cryptomator" }, id = "hidden" },
 	{ match = { initial_title = "^(Filen)$" }, id = "hidden", pseudo = true },
 	{ match = { class = "^(steam)$" }, id = "games" },
+	{ match = { class = "^(zen-beta)$" }, id = "zen" },
 }
 
 for _, entry in ipairs(scratchpad_assignments) do

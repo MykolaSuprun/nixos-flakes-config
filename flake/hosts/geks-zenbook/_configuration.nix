@@ -197,7 +197,7 @@
     };
     gnupg.agent = {
       enable = true;
-      pinentryPackage = pkgs.pinentry-tty;
+      pinentryPackage = pkgs.pinentry-qt;
     };
     neovim = {
       defaultEditor = true;
@@ -205,9 +205,12 @@
     };
     dconf.enable = true;
     partition-manager.enable = true;
+    # SSH agent is handled by gpg-agent with SSH support (configured in
+    # home-manager).  The NixOS ssh-agent is disabled to avoid conflicting
+    # SSH_AUTH_SOCK values.
     ssh = {
-      startAgent = true;
-      enableAskPassword = true;
+      startAgent = false;
+      enableAskPassword = false;
     };
   };
 
@@ -220,7 +223,6 @@
       brightnessctl
     ];
     sessionVariables = {
-      SSH_ASKPASS_REQUIRE = "prefer";
       SYS_THEME =
         if config.catppuccin.enable
         then "catppuccin-${config.catppuccin.flavor}"

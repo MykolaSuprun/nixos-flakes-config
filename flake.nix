@@ -81,7 +81,7 @@
 
     # Tools
     my-nixvim = {
-      url = "github:MykolaSuprun/nixvim-config";
+      url = "gitlab:mykolas-open/nixvim-config";
       flake = true;
     };
 

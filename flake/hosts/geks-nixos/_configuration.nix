@@ -281,7 +281,7 @@ in {
     partition-manager.enable = true;
     gnupg.agent = {
       enable = true;
-      pinentryPackage = pkgs.pinentry-tty;
+      pinentryPackage = pkgs.pinentry-qt;
     };
     virt-manager.enable = true;
     java.enable = true;
@@ -299,9 +299,12 @@ in {
       enable = true;
       binfmt = true;
     };
+    # SSH agent is handled by gpg-agent with SSH support (configured in
+    # home-manager).  The NixOS ssh-agent is disabled to avoid conflicting
+    # SSH_AUTH_SOCK values.
     ssh = {
-      startAgent = true;
-      enableAskPassword = true;
+      startAgent = false;
+      enableAskPassword = false;
     };
   };
 
@@ -316,7 +319,6 @@ in {
       __GL_SHADER_DISK_CACHE_SIZE = "16G";
     };
     sessionVariables = {
-      SSH_ASKPASS_REQUIRE = "prefer";
       IGPU_ADDR = "pci-0000_59_00_0";
       DGPU_ADDR = "pci-0000_03_00_0";
       SYS_THEME =

@@ -57,10 +57,6 @@
         enable = true;
         capSysNice = false;
       };
-      firefox = {
-        enable = true;
-        package = pkgs.firefox;
-      };
     };
 
     services = {

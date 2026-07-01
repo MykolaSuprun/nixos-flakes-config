@@ -56,8 +56,21 @@
 
   services.gpg-agent = {
     enable = true;
+    enableSshSupport = true;
     grabKeyboardAndMouse = true;
-    pinentry.package = pkgs.pinentry-tty;
+    pinentry.package = pkgs.pinentry-qt;
+    defaultCacheTtl = 86400; # 24 hours
+    defaultCacheTtlSsh = 86400; # 24 hours
+    maxCacheTtl = 604800; # 7 days
+    maxCacheTtlSsh = 604800; # 7 days
+  };
+
+  programs.ssh = {
+    enable = true;
+    addKeysToAgent = "yes";
+    controlMaster = "auto";
+    controlPath = "/tmp/ssh-%u-%r@%h:%p";
+    controlPersist = "10m";
   };
 
   programs.home-manager.enable = true;

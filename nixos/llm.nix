@@ -1,5 +1,6 @@
 {
   pkgs,
+  pkgs-stable,
   config,
   lib,
   ...
@@ -24,6 +25,7 @@
       # };
       open-webui = {
         enable = true;
+        package = pkgs-stable.open-webui;
         port = 3000;
       };
     };

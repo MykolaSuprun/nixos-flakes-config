@@ -177,7 +177,7 @@
       ── COPY MODE ──────────────────────────────────────────────────────
         prefix [            enter copy mode
         v                   begin selection
-        Enter / y           copy selection → clipboard (wl-copy)
+        Enter / y           copy selection → clipboard (OSC 52)
         q                   exit copy mode
         / ?                 search forward / backward
 
@@ -242,6 +242,9 @@
     # set escape key delay to 0
     set -s escape-time 0
 
+    # enable OSC 52 clipboard passthrough so copy mode works in any OSC 52-capable terminal
+    set -g set-clipboard on
+
     # set mouse mode
     set -g mouse on
 
@@ -263,9 +266,9 @@
     set -g focus-events on
     set -g clock-mode-style 24
 
-    # copy mode
-    bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "${pkgs.wl-clipboard}/bin/wl-copy"
-    bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "${pkgs.wl-clipboard}/bin/wl-copy"
+    # copy mode — use tmux's native OSC 52 integration (works in any OSC 52-capable terminal)
+    bind-key -T copy-mode-vi Enter send-keys -X copy-selection-and-cancel
+    bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-selection-and-cancel
 
     # splitting panes
     bind '-' split-window -v -c "#{pane_current_path}"
