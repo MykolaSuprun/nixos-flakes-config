@@ -12,6 +12,8 @@
     shell.enable = true;
     dev.enable = true;
     catppuccin.enable = true;
+    helix.enable = true;
+    tmux.enable = true;
   };
 
   # ── Session variables ─────────────────────────────────────────────────────────

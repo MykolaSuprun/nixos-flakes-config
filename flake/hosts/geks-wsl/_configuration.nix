@@ -5,7 +5,6 @@
   config,
   lib,
   pkgs,
-  wrappedPkgs,
   ...
 }: {
   # ── Feature-module enable flags ──────────────────────────────────────────────
@@ -26,12 +25,12 @@
   wsl.defaultUser = "mykolas";
 
   # ── Users ─────────────────────────────────────────────────────────────────────
-  users.defaultUserShell = wrappedPkgs.zsh;
+  users.defaultUserShell = pkgs.zsh;
 
   users.users = {
     mykolas = {
       isNormalUser = true;
-      shell = wrappedPkgs.zsh;
+      shell = pkgs.zsh;
       description = "Mykola Suprun";
       extraGroups = ["wheel" "docker"];
     };

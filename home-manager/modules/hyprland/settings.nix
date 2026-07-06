@@ -169,6 +169,12 @@
 in {
   options = {
     hyprconf = {
+      target = lib.mkOption {
+        type = lib.types.enum ["geks-zenbook" "geks-nixos"];
+        default = "geks-nixos";
+        description = "Target host determining host-conditional Hyprland settings (e.g. AQ_DRM_DEVICES)";
+        example = "geks-zenbook";
+      };
       theme = lib.mkOption {
         type = lib.types.enum themes;
         default =
@@ -191,6 +197,10 @@ in {
       hyprland = {
         enable = lib.mkEnableOption "enables hyprland config";
         flake.enable = lib.mkEnableOption "enables upstream Hyprland flake";
+      };
+
+      hypridle = {
+        oledOptimized = lib.mkEnableOption "OLED-optimized idle timeouts (aggressive dim / screen-off for display longevity)";
       };
 
       noctalia = {
@@ -249,10 +259,21 @@ in {
     home = {
       pointerCursor.hyprcursor.enable = true;
       file = {
-        "./.config/uwsm" = {
-          source = ./../../users/mykolas/config/uwsm;
-          recursive = true;
-        };
+        # UWSM general environment (applies to all compositor sessions) — identical on every host.
+        "./.config/uwsm/env".source = ./../../users/mykolas/config/uwsm/env;
+
+        # UWSM Hyprland-specific environment.
+        # AQ_DRM_DEVICES is only set on hosts that create /dev/dri/igpu and
+        # /dev/dri/dgpu udev symlinks (currently geks-nixos with dual GPUs).
+        # Setting it to non-existent device paths causes Hyprland/aquamarine to
+        # fail finding any DRM device and crash on launch — this was the root
+        # cause of UWSM Hyprland failing to start on the zenbook (single Intel iGPU).
+        "./.config/uwsm/env-hyprland".text =
+          if config.hyprconf.target == "geks-nixos"
+          then ''
+            export AQ_DRM_DEVICES="/dev/dri/igpu:/dev/dri/dgpu"
+          ''
+          else "";
         # Nix-generated Catppuccin palette for Hyprland Lua config.
         # Rebuild home-manager to update when flavor/accent changes.
         "./.config/hypr/lua/catppuccin-palette.lua".text = ''
@@ -328,8 +349,49 @@ in {
           ./../../users/mykolas/config/hyprpaper/hyprpaper.conf;
         "./.config/hypr/hyprlock.conf.alt".source =
           ./../../users/mykolas/config/hyprlock/hyprlock.conf.alt;
-        "./.config/hypr/hypridle.conf".source =
-          ./../../users/mykolas/config/hypridle/hypridle.conf;
+        "./.config/hypr/hypridle.conf" = lib.mkMerge [
+          (lib.mkIf config.hyprconf.hypridle.oledOptimized {
+            text = ''
+              general {
+                  lock_cmd = session_lock
+                  before_sleep_cmd = session_lock
+                  after_sleep_cmd = hyprctl dispatch dpms on
+                  inhibit_sleep = 3
+              }
+
+              listener {
+                  timeout = 60
+                  on-timeout = brightnessctl -s set 5
+                  on-resume = brightnessctl -r
+              }
+
+              listener {
+                  timeout = 60
+                  on-timeout = brightnessctl -sd rgb:kbd_backlight set 0
+                  on-resume = brightnessctl -rd rgb:kbd_backlight
+              }
+
+              listener {
+                  timeout = 90
+                  on-timeout = loginctl lock-session
+              }
+
+              listener {
+                  timeout = 120
+                  on-timeout = hyprctl dispatch dpms off
+                  on-resume = hyprctl dispatch dpms on
+              }
+
+              listener {
+                  timeout = 600
+                  on-timeout = systemctl suspend
+              }
+            '';
+          })
+          (lib.mkIf (!config.hyprconf.hypridle.oledOptimized) {
+            source = ./../../users/mykolas/config/hypridle/hypridle.conf;
+          })
+        ];
         "./.config/pypr/config.toml".text = ''
           [pyprland]
           plugins = [
@@ -435,7 +497,7 @@ in {
         "d %h/.config/hypr/noctalia 0755 - - -"
       ];
       services = lib.mkMerge [
-        (lib.mkIf (!config.myconf.dms.enable) {
+        (lib.mkIf (!(config.myconf.dms.enable or false)) {
           swaync = {
             Unit = {
               Description = "Sway Notification Center";

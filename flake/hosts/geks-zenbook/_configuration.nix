@@ -7,7 +7,6 @@
   config,
   pkgs,
   pkgs-stable,
-  wrappedPkgs,
   lib,
   ...
 }: {
@@ -35,7 +34,7 @@
 
   # ── Theming ───────────────────────────────────────────────────────────────────
   catppuccin = {
-    flavor = "latte";
+    flavor = "mocha";
     accent = "mauve";
   };
 
@@ -163,7 +162,7 @@
   };
 
   # ── Users ─────────────────────────────────────────────────────────────────────
-  users.defaultUserShell = wrappedPkgs.zsh;
+  users.defaultUserShell = pkgs.zsh;
 
   users.mutableUsers = true; # passwords set via passwd; initialPassword is only used on first user creation
   users.users.root.initialPassword = "nixos";
@@ -172,7 +171,7 @@
     isNormalUser = true;
     initialPassword = "nixos";
     description = "Mykola Suprun";
-    shell = wrappedPkgs.zsh;
+    shell = pkgs.zsh;
     extraGroups = [
       "networkmanager"
       "wheel"

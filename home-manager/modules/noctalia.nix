@@ -5,7 +5,14 @@
   config,
   ...
 }: {
-  options.myconf.noctalia.enable = lib.mkEnableOption "Noctalia shell";
+  options.myconf.noctalia = {
+    enable = lib.mkEnableOption "Noctalia shell";
+    barMonitors = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [];
+      description = "Monitor output names to show the bar on. Empty list means all monitors.";
+    };
+  };
   config = lib.mkIf config.myconf.noctalia.enable {
     home.packages = with pkgs; [
       inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
@@ -16,9 +23,9 @@
       settings = {
         settingsVersion = 56;
         bar = {
-          barType = "framed";
+          barType = "floating";
           position = "top";
-          monitors = [];
+          monitors = config.myconf.noctalia.barMonitors;
           density = "default";
           showOutline = false;
           showCapsule = true;
@@ -496,7 +503,7 @@
         colorSchemes = {
           useWallpaperColors = false;
           predefinedScheme = "Catppuccin";
-          darkMode = false;
+          darkMode = true;
           schedulingMode = "off";
           manualSunrise = "06:30";
           manualSunset = "18:30";

@@ -72,11 +72,15 @@ in {
                   ../../../home-manager/modules/fcitx5.nix
                   ../../../home-manager/modules/flatpak-overrides.nix
                   ../../../home-manager/modules/ghostty.nix
+                  ../../../home-manager/modules/helix.nix
+                  ../../../home-manager/modules/kitty.nix
                   ../../../home-manager/modules/noctalia.nix
                   ../../../home-manager/modules/rofi.nix
                   ../../../home-manager/modules/shell.nix
                   ../../../home-manager/modules/stylix.nix
+                  ../../../home-manager/modules/tmux.nix
                   ../../../home-manager/modules/waybar.nix
+                  ../../../home-manager/modules/wezterm.nix
                   ../../../home-manager/modules/zellij.nix
                   ../../../home-manager/modules/hyprland
                 ]
@@ -84,10 +88,6 @@ in {
                   inputs.hyprland.homeManagerModules.default
                 ];
               home.packages = [
-                wrappedPkgs.kitty
-                wrappedPkgs.helix
-                wrappedPkgs.tmux
-                wrappedPkgs.wezterm
                 wrappedPkgs.nix-update
                 wrappedPkgs.hypr-layout-picker
               ];

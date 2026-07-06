@@ -14,8 +14,14 @@
     desktop.enable = true;
     chromium.enable = true;
     noctalia.enable = true;
+    noctalia.barMonitors = ["DP-1"];
     catppuccin.enable = true;
+    catppuccin.flavor = "mocha";
     ghostty.enable = true;
+    kitty.enable = true;
+    helix.enable = true;
+    tmux.enable = true;
+    wezterm.enable = true;
     rofi.enable = true;
     fcitx5.enable = true;
     # zellij.enable = false;
@@ -23,6 +29,7 @@
   };
 
   hyprconf = {
+    target = "geks-zenbook";
     noctalia.enable = true;
     waybar = {
       enable = true;
@@ -32,6 +39,7 @@
       enable = true;
       flake.enable = true;
     };
+    hypridle.oledOptimized = true;
   };
 
   # ── Session variables ─────────────────────────────────────────────────────────

@@ -20,6 +20,14 @@ hl.monitor({
   sdrsaturation = 1.0,
 })
 
+-- Map the secondary display's built-in touch sensor to its output so that
+-- touch input is constrained to the correct monitor.
+-- Run `hyprctl devices` to find the exact touch device name, then update this entry.
+hl.device({
+  name   = "ILTouch0001:00 222A:0001",
+  output = monitor_secondary,
+})
+
 return {
   main      = monitor_main,
   secondary = monitor_secondary,

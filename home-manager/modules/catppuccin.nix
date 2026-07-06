@@ -4,11 +4,18 @@
   config,
   ...
 }: {
-  options.myconf.catppuccin.enable = lib.mkEnableOption "catppuccin theming";
+  options.myconf.catppuccin = {
+    enable = lib.mkEnableOption "catppuccin theming";
+    flavor = lib.mkOption {
+      type = lib.types.enum ["latte" "frappe" "macchiato" "mocha"];
+      default = "latte";
+      description = "Catppuccin color flavor to use";
+    };
+  };
   config = lib.mkIf config.myconf.catppuccin.enable {
     catppuccin = {
       enable = true;
-      flavor = "latte";
+      flavor = config.myconf.catppuccin.flavor;
       accent = "mauve";
       cache.enable = true;
 

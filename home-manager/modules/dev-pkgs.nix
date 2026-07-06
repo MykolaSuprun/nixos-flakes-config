@@ -281,6 +281,7 @@
       fd
       browsh # tui browser
       gh # Github CLI
+      glab
       xclip
       sqlcmd
       killall

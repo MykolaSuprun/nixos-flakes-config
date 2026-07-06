@@ -35,7 +35,12 @@ in {
     dms.enable = true;
     # noctalia.enable = true;
     catppuccin.enable = true;
+    catppuccin.flavor = "latte";
     ghostty.enable = true;
+    kitty.enable = true;
+    helix.enable = true;
+    tmux.enable = true;
+    wezterm.enable = true;
     rofi.enable = true;
     fcitx5.enable = true;
     # zellij.enable = false;
@@ -43,6 +48,7 @@ in {
   };
 
   hyprconf = {
+    target = "geks-nixos";
     waybar = {
       enable = true;
       output = null;

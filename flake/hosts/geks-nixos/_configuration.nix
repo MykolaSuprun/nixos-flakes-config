@@ -7,7 +7,6 @@
   config,
   pkgs,
   pkgs-stable,
-  wrappedPkgs,
   lib,
   ...
 }: let
@@ -229,7 +228,7 @@ in {
   # ── Users ─────────────────────────────────────────────────────────────────────
   users.groups.plugdev = {};
   users.extraGroups.vboxusers.members = ["mykolas"];
-  users.defaultUserShell = wrappedPkgs.zsh;
+  users.defaultUserShell = pkgs.zsh;
 
   users.mutableUsers = true; # passwords set via passwd; initialPassword is only used on first user creation
   users.users.root.initialPassword = "nixos";
@@ -238,7 +237,7 @@ in {
     mykolas = {
       isNormalUser = true;
       initialPassword = "nixos";
-      shell = wrappedPkgs.zsh;
+      shell = pkgs.zsh;
       description = "Mykola Suprun";
       extraGroups = [
         "networkmanager"

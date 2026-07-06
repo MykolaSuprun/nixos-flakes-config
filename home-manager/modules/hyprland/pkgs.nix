@@ -38,14 +38,14 @@
     fi
   '';
   session_lock = pkgs.writeShellScriptBin "session_lock" (
-    if config.myconf.dms.enable
+    if (config.myconf.dms.enable or false)
     then ''dms ipc lock lock''
     else if config.myconf.noctalia.enable
     then ''noctalia-shell ipc call lockScreen lock''
     else ''hyprlock''
   );
   notification_toggle = pkgs.writeShellScriptBin "notification-panel-toggle" (
-    if config.myconf.dms.enable
+    if (config.myconf.dms.enable or false)
     then ''dms ipc notifications toggle''
     else ''swaync-client -t''
   );

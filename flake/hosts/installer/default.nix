@@ -18,6 +18,7 @@
 }: let
   system = "x86_64-linux";
   lib = inputs.nixpkgs.lib;
+  pkgs = inputs.nixpkgs.legacyPackages.${system};
   wrappedPkgs = withSystem system ({config, ...}: config.packages);
 
   # Pre-built system toplevels for every installable host.
@@ -49,7 +50,7 @@ in {
 
         environment.systemPackages = [
           wrappedPkgs.nixos-install
-          wrappedPkgs.tmux
+          pkgs.tmux
           inputs.my-nixvim.packages.${system}.nvim
         ];
 

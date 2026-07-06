@@ -11,12 +11,12 @@
       cache.enable = true;
       grub = {
         enable = true;
-        flavor = "mocha";
+        flavor = config.catppuccin.flavor;
       };
       plymouth.enable = true;
       tty = {
         enable = true;
-        # flavor = "mocha";
+        flavor = config.catppuccin.flavor;
       };
       sddm.enable = true;
     };
