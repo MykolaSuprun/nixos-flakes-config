@@ -236,6 +236,9 @@
     set-option -a terminal-overrides ",alacritty:RGB"
     set -ag terminal-overrides ",xterm-ghostty:RGB"
 
+    # iTerm2 on macOS has a known OSC 52 issue — this fixes copy mode paste
+    set-option -a terminal-overrides ",iTerm2.Mac:RGB"
+
     # propagate kitty identity so graphics protocol detection works inside tmux
     set -ga update-environment KITTY_WINDOW_ID
 
@@ -361,14 +364,21 @@
     bind-key R run-shell "${whichKeyRebuild}"
   '';
 
-  runtimeInputs = pkgs:
-    with pkgs; [
-      wl-clipboard
-      fzf
-      tmuxp
-      sesh
-      fd
-      eza
-      less
-    ];
+  runtimeInputs = pkgs: let
+    clipTool = if pkgs.stdenv.hostPlatform.isLinux then
+      pkgs.wl-clipboard
+    else
+      pkgs.writeShellScriptBin "clip" ''
+        #!/bin/sh
+        exec pbcopy "$@"
+      '';
+  in with pkgs; [
+    clipTool
+    fzf
+    tmuxp
+    sesh
+    fd
+    eza
+    less
+  ];
 }

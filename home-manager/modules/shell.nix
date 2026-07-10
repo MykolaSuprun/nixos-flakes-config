@@ -61,76 +61,79 @@ in {
       filter = name: lib.hasSuffix ".toml" name;
     })
     {
-    home.packages = with pkgs; [
-      babelfish
-      grc
-      tmuxp
+      home.packages = with pkgs; [
+        babelfish
+        grc
+        tmuxp
 
-      conn-win
-      win11
-      flake-init
-    ];
+        conn-win
+        win11
+        flake-init
+      ];
 
-    programs = {
-      nushell = {
-        enable = true;
-        envFile.source = ./../users/mykolas/config/nushell/env.nu;
-        configFile.source = ./../users/mykolas/config/nushell/config.nu;
-      };
-      carapace = {
-        enable = true;
-        enableNushellIntegration = true;
-        enableZshIntegration = true;
-        enableFishIntegration = true;
-        enableBashIntegration = true;
-      };
-      fzf = {
-        enable = true;
-        tmux.enableShellIntegration = true;
-        enableZshIntegration = true;
-        enableFishIntegration = true;
-        enableBashIntegration = true;
-      };
-      starship = {
-        enable = true;
-        enableBashIntegration = true;
-        enableZshIntegration = true;
-        enableFishIntegration = true;
-        enableNushellIntegration = true;
-        enableTransience = true;
-      };
-      zoxide = {
-        enable = true;
-        enableBashIntegration = true;
-        enableZshIntegration = true;
-        enableFishIntegration = true;
-        enableNushellIntegration = true;
-        options = [
-          "--cmd cd"
-        ];
-      };
-      direnv = {
-        enableZshIntegration = true;
-        enableBashIntegration = true;
-        enableFishIntegration = true;
-      };
-      zsh = {
-        enable = true;
-        enableCompletion = true;
-        autosuggestion.enable = true;
-        defaultKeymap = "viins";
-        initContent = ''
-          source ${shell_init}/bin/init_shell
-          ${zshConfig.extraRC}
-        '';
-        antidote = {
+      programs = {
+        nushell = {
           enable = true;
-          plugins = [
-            "jeffreytse/zsh-vi-mode"
+          envFile.source = ./../users/mykolas/config/nushell/env.nu;
+          configFile.source = ./../users/mykolas/config/nushell/config.nu;
+        };
+        carapace = {
+          enable = true;
+          enableNushellIntegration = true;
+          enableZshIntegration = true;
+          enableFishIntegration = true;
+          enableBashIntegration = true;
+        };
+        fzf = {
+          enable = true;
+          tmux.enableShellIntegration = true;
+          enableZshIntegration = true;
+          enableFishIntegration = true;
+          enableBashIntegration = true;
+        };
+        starship = {
+          enable = true;
+          enableBashIntegration = true;
+          enableZshIntegration = true;
+          enableFishIntegration = true;
+          enableNushellIntegration = true;
+          enableTransience = true;
+        };
+        zoxide = {
+          enable = true;
+          enableBashIntegration = true;
+          enableZshIntegration = true;
+          enableFishIntegration = true;
+          enableNushellIntegration = true;
+          options = [
+            "--cmd cd"
           ];
         };
+        direnv = {
+          enableZshIntegration = true;
+          enableBashIntegration = true;
+          enableFishIntegration = true;
+        };
+        zsh = {
+          enable = true;
+          enableCompletion = true;
+          autosuggestion.enable = true;
+          defaultKeymap = "viins";
+          initContent = ''
+            source ${shell_init}/bin/init_shell
+            ${zshConfig.extraRC}
+          '';
+          antidote = {
+            enable = true;
+            plugins = [
+              "jeffreytse/zsh-vi-mode"
+            ];
+          };
+        };
+        herdr = {
+          enable = true;
+        };
       };
-    };
-  }
+    }
   ]);
 }

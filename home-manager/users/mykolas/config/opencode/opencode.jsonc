@@ -1,0 +1,32 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "lmstudio": {
+      "name": "LM Studio",
+      "api": "openai",
+      "options": {
+        "baseURL": "http://localhost:1234/v1",
+        "apiKey": "{env:OPENCODE_LM_STUDIO_API_KEY}"
+      },
+      "models": {
+        "qwen3.6-35b-a3b-mtp-iq4_nl": {
+          "name": "Qwen3.6 35B A3B MTP (IQ4_NL)",
+          "tool_call": true,
+          "limit": { "context": 131072, "output": 8192 }
+        }
+      }
+    }
+  },
+  "mcp": {
+    "kagi": {
+      "type": "local",
+      "command": ["uvx", "kagimcp"],
+      "enabled": true,
+      "environment": {
+        "KAGI_API_KEY": "{env:KAGI_API_KEY}",
+        "SSL_CERT_FILE": "/etc/ssl/certs/ca-certificates.crt",
+        "NIX_SSL_CERT_FILE": "/etc/ssl/certs/ca-certificates.crt"
+      }
+    }
+  }
+}

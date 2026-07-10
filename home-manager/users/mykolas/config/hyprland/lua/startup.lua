@@ -4,7 +4,7 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("uwsm app -s b -- vivaldi", { workspace = "1 silent" })
 
 	-- Regular Workspaces (Launched Silently via Workspace Flag)
-	hl.exec_cmd("uwsm app -s a kitty", { workspace = "2 silent" })
+	hl.exec_cmd("uwsm app -s a ghostty", { workspace = "2 silent" })
 	hl.exec_cmd("uwsm app -s a obsidian", { workspace = "11 silent" })
 
 	-- Scratchpad Applications

@@ -10,7 +10,9 @@
   # ── Feature-module enable flags ──────────────────────────────────────────────
   myconf = {
     shell.enable = true;
+    ssh.enable = true;
     dev.enable = true;
+    git.enable = true;
     catppuccin.enable = true;
     helix.enable = true;
     tmux.enable = true;
@@ -32,15 +34,23 @@
 
   services.gpg-agent = {
     enable = true;
+    enableSshSupport = true;
     grabKeyboardAndMouse = true;
     pinentry.package = pkgs.pinentry-tty;
+    defaultCacheTtl = 86400; # 24 hours
+    defaultCacheTtlSsh = 86400; # 24 hours
+    maxCacheTtl = 604800; # 7 days
+    maxCacheTtlSsh = 604800; # 7 days
+    # Allow TTY-based passphrase prompts when no display is available.
+    extraConfig = ''
+      allow-loopback-pinentry
+    '';
   };
 
   programs.home-manager.enable = true;
 
   # ── Dotfile symlinks ──────────────────────────────────────────────────────────
   home.file = {
-    "./.gitconfig".source = ./config/gitconfig/gitconfig;
     "./.gnupg/" = {
       source = ./config/gnupg;
       recursive = true;

@@ -41,8 +41,10 @@ in {
               # HM feature modules used by WSL
               ../../../home-manager/modules/catppuccin.nix
               ../../../home-manager/modules/dev-pkgs.nix
+              ../../../home-manager/modules/git.nix
               ../../../home-manager/modules/helix.nix
               ../../../home-manager/modules/shell.nix
+              ../../../home-manager/modules/ssh.nix
               ../../../home-manager/modules/tmux.nix
             ];
             home.packages = [

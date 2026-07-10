@@ -20,7 +20,7 @@
     dejavu_fonts
   ];
   home.file = {
-    "./.gitconfig".source = ./gitconfig/gitconfig;
+    # Git config is now managed via myconf.git.enable in the geks-nix-on-droid module
   };
 
   fonts.fontconfig.enable = true;

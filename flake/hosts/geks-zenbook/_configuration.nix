@@ -194,19 +194,14 @@
       enable = true;
       binfmt = true;
     };
-    gnupg.agent = {
-      enable = true;
-      pinentryPackage = pkgs.pinentry-qt;
-    };
     neovim = {
       defaultEditor = true;
       vimAlias = true;
     };
     dconf.enable = true;
     partition-manager.enable = true;
-    # SSH agent is handled by gpg-agent with SSH support (configured in
-    # home-manager).  The NixOS ssh-agent is disabled to avoid conflicting
-    # SSH_AUTH_SOCK values.
+    # SSH agent is handled by HM's gpg-agent with enableSshSupport.
+    # The NixOS ssh-agent is disabled to avoid conflicting SSH_AUTH_SOCK values.
     ssh = {
       startAgent = false;
       enableAskPassword = false;

@@ -10,7 +10,9 @@
   # ── Feature-module enable flags ──────────────────────────────────────────────
   myconf = {
     shell.enable = true;
+    ssh.enable = true;
     dev.enable = true;
+    git.enable = true;
     desktop.enable = true;
     chromium.enable = true;
     noctalia.enable = true;
@@ -24,6 +26,7 @@
     wezterm.enable = true;
     rofi.enable = true;
     fcitx5.enable = true;
+    opencode.enable = true;
     # zellij.enable = false;
     # flatpakOverrides.enable = false;
   };
@@ -71,14 +74,11 @@
     defaultCacheTtlSsh = 86400; # 24 hours
     maxCacheTtl = 604800; # 7 days
     maxCacheTtlSsh = 604800; # 7 days
-  };
-
-  programs.ssh = {
-    enable = true;
-    addKeysToAgent = "yes";
-    controlMaster = "auto";
-    controlPath = "/tmp/ssh-%u-%r@%h:%p";
-    controlPersist = "10m";
+    # Allow TTY-based passphrase prompts when no display is available
+    # (e.g. SSH sessions, TTY-only contexts outside UWSM/Hyprland).
+    extraConfig = ''
+      allow-loopback-pinentry
+    '';
   };
 
   programs.home-manager.enable = true;
@@ -91,7 +91,6 @@
       source = ./config/autostart;
       recursive = true;
     };
-    "./.gitconfig".source = ./config/gitconfig/gitconfig;
     "./.gnupg/" = {
       source = ./config/gnupg;
       recursive = true;

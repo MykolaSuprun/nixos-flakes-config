@@ -29,7 +29,9 @@
 in {
   myconf = {
     shell.enable = true;
+    ssh.enable = true;
     dev.enable = true;
+    git.enable = true;
     desktop.enable = true;
     chromium.enable = true;
     dms.enable = true;
@@ -43,6 +45,7 @@ in {
     wezterm.enable = true;
     rofi.enable = true;
     fcitx5.enable = true;
+    opencode.enable = true;
     # zellij.enable = false;
     # flatpakOverrides.enable = false;
   };
@@ -125,14 +128,11 @@ in {
     defaultCacheTtlSsh = 86400; # 24 hours
     maxCacheTtl = 604800; # 7 days
     maxCacheTtlSsh = 604800; # 7 days
-  };
-
-  programs.ssh = {
-    enable = true;
-    addKeysToAgent = "yes";
-    controlMaster = "auto";
-    controlPath = "/tmp/ssh-%u-%r@%h:%p";
-    controlPersist = "10m";
+    # Allow TTY-based passphrase prompts when no display is available
+    # (e.g. SSH sessions, TTY-only contexts outside UWSM/Hyprland).
+    extraConfig = ''
+      allow-loopback-pinentry
+    '';
   };
 
   programs.home-manager.enable = true;
@@ -155,7 +155,6 @@ in {
       recursive = true;
     };
     "./.config/freerdp/sdl-freerdp.json".source = ./config/freerdp/sdl-freerdp.json;
-    "./.gitconfig".source = ./config/gitconfig/gitconfig;
     # Default terminal for xdg-terminal-exec (read by DMS Default Apps settings)
     ".config/xdg-terminals.list".text = "com.mitchellh.ghostty.desktop\n";
     "./.gnupg/" = {

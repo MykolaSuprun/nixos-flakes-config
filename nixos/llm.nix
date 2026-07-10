@@ -11,6 +11,7 @@
     environment.systemPackages = with pkgs; [
       vulkan-tools
       lmstudio
+      opencode
     ];
 
     services = {
@@ -25,7 +26,7 @@
       # };
       open-webui = {
         enable = true;
-        package = pkgs-stable.open-webui;
+        package = pkgs.open-webui;
         port = 3000;
       };
     };

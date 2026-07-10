@@ -110,7 +110,7 @@
       # looking-glass-client
       spice
       steamtinkerlaunch
-      winboat
+      pkgs-stable.winboat
     ];
 
     systemd.services.unblock-bluetooth = {

@@ -1,8 +1,13 @@
 {pkgs, ...}: {
   imports = [
     ./shell.nix
+    ./ssh.nix
     ./tmux.nix
+    ./git.nix
   ];
+
+  myconf.git.enable = true;
+  myconf.ssh.enable = true;
 
   catppuccin = {
     enable = true;

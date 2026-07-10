@@ -66,17 +66,20 @@ in {
                   ../../../home-manager/modules/dev-pkgs.nix
                   ../../../home-manager/modules/fcitx5.nix
                   ../../../home-manager/modules/flatpak-overrides.nix
+                  ../../../home-manager/modules/git.nix
                   ../../../home-manager/modules/ghostty.nix
                   ../../../home-manager/modules/helix.nix
                   ../../../home-manager/modules/kitty.nix
                   ../../../home-manager/modules/noctalia.nix
                   ../../../home-manager/modules/rofi.nix
                   ../../../home-manager/modules/shell.nix
+                  ../../../home-manager/modules/ssh.nix
                   ../../../home-manager/modules/stylix.nix
                   ../../../home-manager/modules/tmux.nix
                   ../../../home-manager/modules/waybar.nix
                   ../../../home-manager/modules/wezterm.nix
                   ../../../home-manager/modules/zellij.nix
+                  ../../../home-manager/modules/opencode.nix
                   ../../../home-manager/modules/hyprland
                 ]
                 ++ lib.optionals useHyprlandFlake [
