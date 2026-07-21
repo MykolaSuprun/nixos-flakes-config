@@ -12,7 +12,57 @@
         "qwen3.6-35b-a3b-mtp-iq4_nl": {
           "name": "Qwen3.6 35B A3B MTP (IQ4_NL)",
           "tool_call": true,
-          "limit": { "context": 131072, "output": 8192 }
+          "limit": { "context": 262144, "output": 65536 }
+        },
+        "qwen3.6-35b-a3b-mtp@iq4_nl": {
+          "name": "Qwen3.6 35B A3B MTP (IQ4_NL)",
+          "tool_call": true,
+          "limit": { "context": 262144, "output": 65536 }
+        },
+        "qwen/text-embedding-qwen3-embedding-0.6b:Q8_0": {
+          "name": "Qwen3 Embedding 0.6B (Q8_0)",
+          "tool_call": false,
+          "limit": { "context": 32768, "output": 1 }
+        },
+        "enacimie/text-embedding-qwen3-embedding-0.6b:Q4_K_M": {
+          "name": "Qwen3 Embedding 0.6B (Q4_K_M)",
+          "tool_call": false,
+          "limit": { "context": 32768, "output": 1 }
+        },
+        "text-embedding-qwen3-embedding-4b": {
+          "name": "Qwen3 Embedding 4B",
+          "tool_call": false,
+          "limit": { "context": 32768, "output": 1 }
+        }
+      }
+    },
+    "openrouter": {
+      "name": "OpenRouter",
+      "api": "openai",
+      "options": {
+        "baseURL": "https://openrouter.ai/api/v1",
+        "apiKey": "{env:OPENCODE_OPENROUTER_API_KEY}"
+      },
+      "models": {
+        "moonshotai/kimi-k2.7-code": {
+          "name": "Moonshot AI Kimi K2.7 Code",
+          "tool_call": true,
+          "limit": { "context": 262144, "output": 262144 }
+        },
+        "deepseek/deepseek-v4-pro": {
+          "name": "DeepSeek V4 Pro",
+          "tool_call": true,
+          "limit": { "context": 1048576, "output": 384000 }
+        },
+        "qwen/qwen3.7-plus": {
+          "name": "Qwen 3.7 Plus",
+          "tool_call": true,
+          "limit": { "context": 1000000, "output": 64000 }
+        },
+        "deepseek/deepseek-v4-flash": {
+          "name": "DeepSeek V4 Flash",
+          "tool_call": true,
+          "limit": { "context": 1048576, "output": 384000 }
         }
       }
     }

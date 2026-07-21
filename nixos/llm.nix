@@ -15,15 +15,15 @@
     ];
 
     services = {
-      # ollama = {
-      #   enable = true;
-      #   package = pkgs.ollama-vulkan;
-      #
-      #   environmentVariables = {
-      #     # Targets the 7900 XTX directly and prevents any fallback to the 7950X3D's iGPU
-      #     GGML_VK_VISIBLE_DEVICES = "0";
-      #   };
-      # };
+      ollama = {
+        enable = false;
+        package = pkgs.ollama-vulkan;
+
+        environmentVariables = {
+          # Targets the 7900 XTX directly and prevents any fallback to the 7950X3D's iGPU
+          GGML_VK_VISIBLE_DEVICES = "0";
+        };
+      };
       open-webui = {
         enable = true;
         package = pkgs.open-webui;

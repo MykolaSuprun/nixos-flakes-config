@@ -91,6 +91,20 @@
       source = ./config/autostart;
       recursive = true;
     };
+    # KWallet defaults — pre-seeded so the first-ever kwalletd6 prompt (after
+    # enabling nixos/secrets.nix) defaults to a blowfish "kdewallet" using the
+    # login password, which pam_kwallet_init then auto-unlocks. The apiEnabled
+    # line opts kwalletd6 into serving org.freedesktop.secrets on Hyprland.
+    "./.config/kwalletrc".text = ''
+      [Wallet]
+      Enabled=true
+      Default Wallet=kdewallet
+      First Use=false
+      Close When Idle=false
+
+      [org.freedesktop.secrets]
+      apiEnabled=true
+    '';
     "./.gnupg/" = {
       source = ./config/gnupg;
       recursive = true;

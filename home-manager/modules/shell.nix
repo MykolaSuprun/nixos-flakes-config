@@ -130,9 +130,8 @@ in {
             ];
           };
         };
-        herdr = {
-          enable = true;
-        };
+        # herdr is now managed by home-manager/modules/herdr.nix,
+                # gated behind myconf.herdr.enable with tmux-like keybindings.
       };
     }
   ]);

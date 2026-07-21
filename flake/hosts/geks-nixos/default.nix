@@ -10,12 +10,14 @@
   system = "x86_64-linux";
   pkgs = import inputs.nixpkgs {
     inherit system;
-    config.allowUnfree = true;
+      config.allowUnfree = true;
+      config.permittedInsecurePackages = ["electron-40.10.5"];
     overlays = import ../../../overlays;
   };
   pkgs-stable = import inputs.nixpkgs-stable {
     inherit system;
     config.allowUnfree = true;
+      config.permittedInsecurePackages = ["electron-40.10.5"];
   };
   lib = inputs.nixpkgs.lib;
   useHyprlandFlake = true;
@@ -42,6 +44,7 @@ in {
         ../../../nixos/input_method.nix
         ../../../nixos/nix-conf.nix
         ../../../nixos/pipewire.nix
+        ../../../nixos/secrets.nix
         ../../../nixos/sys-pkgs.nix
         ../../../nixos/stylix.nix
         ../../../nixos/xdg.nix
@@ -74,6 +77,7 @@ in {
                   ../../../home-manager/modules/git.nix
                   ../../../home-manager/modules/ghostty.nix
                   ../../../home-manager/modules/helix.nix
+                  ../../../home-manager/modules/herdr.nix
                   ../../../home-manager/modules/kitty.nix
                   ../../../home-manager/modules/noctalia.nix
                   ../../../home-manager/modules/rofi.nix

@@ -13,6 +13,8 @@
       rm -f ~/.config/hypr/hyprland.conf.hm-back
       rm -f ~/.config/ghostty/config.hm-back
       rm -f ~/.gtkrc-2.0.hm-back
+      rm -f ~/.config/gtk-3.0/gtk.css
+      rm -f ~/.config/gtk-4.0/gtk.css.hm-back
 
       # Capture lock state before build
       lock_before=$(cat flake.lock)

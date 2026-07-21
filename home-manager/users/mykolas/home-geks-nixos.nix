@@ -48,6 +48,7 @@ in {
     opencode.enable = true;
     # zellij.enable = false;
     # flatpakOverrides.enable = false;
+        herdr.enable = true;
   };
 
   hyprconf = {
@@ -99,6 +100,10 @@ in {
         "image/avif" = ["org.kde.gwenview.desktop"];
         "image/svg+xml" = ["org.kde.gwenview.desktop"];
         "image/tiff" = ["org.kde.gwenview.desktop"];
+                "application/pdf" = ["org.kde.okular.desktop"];
+                "application/oxps" = ["org.kde.okular.desktop"];
+                "application/x-pdf" = ["org.kde.okular.desktop"];
+                "application/epub+zip" = ["org.kde.okular.desktop"];
       };
     };
     desktopEntries.steam = {
@@ -150,6 +155,20 @@ in {
       source = ./config/autostart;
       recursive = true;
     };
+    # KWallet defaults — pre-seeded so the first-ever kwalletd6 prompt (after
+    # enabling nixos/secrets.nix) defaults to a blowfish "kdewallet" using the
+    # login password, which pam_kwallet_init then auto-unlocks. The apiEnabled
+    # line opts kwalletd6 into serving org.freedesktop.secrets on Hyprland.
+    "./.config/kwalletrc".text = ''
+      [Wallet]
+      Enabled=true
+      Default Wallet=kdewallet
+      First Use=false
+      Close When Idle=false
+
+      [org.freedesktop.secrets]
+      apiEnabled=true
+    '';
     "./.config/clipse" = {
       source = ./config/clipse;
       recursive = true;

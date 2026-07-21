@@ -449,8 +449,6 @@ in {
           "File manager" = "uwsm app -- kitty -e yazi"
           "Wallpaper cycle" = "pypr wall next"
         '';
-        "./.config/xdg-desktop-portal/hyprland-portals.conf".source =
-          ./../../users/mykolas/config/hyprland-portals/hyprland-portals.conf;
 
         # Deploy wallpapers directory (catppuccin/<flavor>/, lockscreen/) into ~/.config/wallpapers
         "./.config/wallpapers" = {
@@ -597,6 +595,32 @@ in {
             Service = {
               Type = "oneshot";
               ExecStart = "${pkgs.kdePackages.kservice}/bin/kbuildsycoca6 --noincremental";
+              RemainAfterExit = true;
+            };
+            Install = {
+              WantedBy = ["wayland-session@hyprland.desktop.target"];
+            };
+          };
+
+          # Unlock KDE Wallet using the PAM_KWALLET5_LOGIN token injected by
+          # pam_kwallet5 at login. Under Plasma, Plasma's own starter handles
+          # unlock; this oneshot is Hyprland-only (ConditionEnvironment below)
+          # so it never runs in any other session, current or future.
+          # pam_kwallet_init D-Bus-activates kwalletd6 (which serves
+          # org.freedesktop.secrets via its ksecretsservice plugin) and unlocks
+          # the default wallet. Pre-req: a wallet named "kdewallet" must exist
+          # with blowfish encryption and the same password as the login (the
+          # first run after enabling prompts once to create it).
+          kwallet-pam-init = {
+            Unit = {
+              Description = "Unlock KDE Wallet using PAM credentials (Hyprland only)";
+              ConditionEnvironment = "XDG_CURRENT_DESKTOP=Hyprland";
+              After = ["wayland-session@hyprland.desktop.target"];
+              PartOf = ["wayland-session@hyprland.desktop.target"];
+            };
+            Service = {
+              Type = "oneshot";
+              ExecStart = "${pkgs.kdePackages.kwallet-pam}/libexec/pam_kwallet_init";
               RemainAfterExit = true;
             };
             Install = {

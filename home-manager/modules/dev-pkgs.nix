@@ -288,6 +288,11 @@
       bottom
       lazydocker
       lazysql
+
+      #lsp
+      nixd
+      pyright
+      clang-tools
     ];
   };
 }

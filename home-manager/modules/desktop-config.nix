@@ -13,7 +13,17 @@
     };
 
     programs = {
-      zen-browser.enable = true;
+      zen-browser = {
+        enable = true;
+        # Mirror Firefox's portal picker setting (zen-browser HM module is
+        # built on mkFirefoxModule, so the schema is identical). Zen is the
+        # DEFAULT_BROWSER on these hosts, so this matters more than the
+        # Firefox block below for day-to-day use.
+        profiles.default.settings = {
+          "widget.use-xdg-desktop-portal.file-picker" = 1;
+          "widget.use-xdg-desktop-portal" = true;
+        };
+      };
       firefox = {
         enable = true;
         policies = {
@@ -69,6 +79,11 @@
             "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
             # Optional: Often needed for custom UI svgs/themes to render correctly in userChrome
             "svg.context-properties.content.enabled" = true;
+            # Use the XDG desktop portal's file picker (Dolphin via
+            # xdg-desktop-portal-kde, see nixos/xdg.nix) instead of Firefox's
+            # bundled GTK dialog. Value must be a number, not a string.
+            "widget.use-xdg-desktop-portal.file-picker" = 1;
+            "widget.use-xdg-desktop-portal" = true;
           };
           extensions = {
             force = true;
@@ -88,44 +103,56 @@
                   display: none !important;
               }
 
-              /* 1. Base Container - Set to a wider invisible hit-box */
+              /* 1. Base container — collapsed to a hairline; only the trigger
+                 zone below is interactive. */
               #sidebar-box {
                 position: relative !important;
-                min-width: 0px !important; /* The visible thin line */
+                min-width: 0px !important;
                 max-width: 0px !important;
                 z-index: 100 !important;
                 overflow: visible !important;
               }
 
-              /* 2. Create an invisible "Hover Buffer" that extends into the page */
+              /* 2. Invisible trigger zone — 6px strip flush with the screen
+                 edge, full height. Deliberate: the cursor must dwell right at
+                 the edge, so a grazing motion passes through without firing. */
               #sidebar-box::after {
                 content: "" !important;
                 position: absolute !important;
                 top: 0 !important;
                 left: 0 !important;
-                width: 30px !important; /* The new, forgiving trigger zone */
+                width: 6px !important;
                 height: 100% !important;
                 z-index: 99 !important;
               }
 
-              /* 3. The Sidebar */
+              /* 3. The sidebar — off-canvas by default. Retract path uses the
+                 0s delay here, so it folds back the instant the cursor leaves. */
               #sidebar {
                 position: absolute !important;
                 left: 0px !important;
                 width: 260px !important;
                 height: 100vh !important;
                 margin-left: -260px !important;
-                transition: margin-left 0.2s ease-out 0s !important;
-                z-index: 101 !important; /* Must be above the buffer */
+                opacity: 0.85 !important;
+                transition:
+                  margin-left 0.16s cubic-bezier(0.22, 1, 0.36, 1) 0s,
+                  opacity 0.16s cubic-bezier(0.22, 1, 0.36, 1) 0s !important;
+                z-index: 101 !important; /* Above the trigger buffer */
                 background: var(--lwt-accent-color) !important;
               }
 
-              /* 4. Trigger logic - FIX DRAG & DROP */
-              /* -moz-drag-over to trigger expansion when holding a tab */
+              /* 4. Reveal on hover / drag-over. A small 0.12s open delay makes
+                 the trigger deliberate despite the narrow zone — a fast swipe
+                 across the 6px strip won't fire. Retraction falls back to the
+                 rule above (no delay), so it's immediate. */
               #sidebar-box:hover #sidebar,
               #sidebar-box:-moz-drag-over #sidebar {
                 margin-left: 0px !important;
-                transition-delay: 0.15s !important;
+                opacity: 1 !important;
+                transition:
+                  margin-left 0.16s cubic-bezier(0.22, 1, 0.36, 1) 0.12s,
+                  opacity 0.16s cubic-bezier(0.22, 1, 0.36, 1) 0.12s !important;
               }
             '';
         };

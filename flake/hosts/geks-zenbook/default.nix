@@ -11,12 +11,13 @@
   pkgs = import inputs.nixpkgs {
     inherit system;
     config.allowUnfree = true;
-    config.permittedInsecurePackages = ["openssl-1.1.1w"];
+    config.permittedInsecurePackages = ["openssl-1.1.1w" "electron-40.10.5"];
     overlays = import ../../../overlays;
   };
   pkgs-stable = import inputs.nixpkgs-stable {
     inherit system;
     config.allowUnfree = true;
+    config.permittedInsecurePackages = ["electron-40.10.5"];
   };
   lib = inputs.nixpkgs.lib;
   useHyprlandFlake = true;
@@ -43,6 +44,7 @@ in {
         ../../../nixos/input_method.nix
         ../../../nixos/nix-conf.nix
         ../../../nixos/pipewire.nix
+        ../../../nixos/secrets.nix
         ../../../nixos/sys-pkgs.nix
         ../../../nixos/stylix.nix
         ../../../nixos/xdg.nix

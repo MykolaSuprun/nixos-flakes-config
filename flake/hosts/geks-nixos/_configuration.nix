@@ -23,6 +23,7 @@ in {
     xdg.enable = true;
     catppuccin.enable = true;
     desktop.enable = true;
+    secrets.enable = true;
     ollama.enable = true;
     # flatpak.enable = false;  # bindfs/theme Flatpak setup – zenbook only
   };
@@ -205,6 +206,15 @@ in {
         };
         hyprlock = {
           # fprintAuth = true;
+        };
+        # Auto-unlock KWallet at login so ProtonVPN (and other Secret Service
+        # clients under Hyprland) retrieve credentials without an extra prompt.
+        # Requires login password == kdewallet password. pam_kwallet_init,
+        # run as a Hyprland systemd oneshot (settings.nix), consumes the
+        # PAM_KWALLET5_LOGIN token this injects. Plasma handles its own unlock.
+        greetd.kwallet = {
+          enable = true;
+          package = pkgs.kdePackages.kwallet-pam;
         };
         # login.fprintAuth = true;
         # sudo.fprintAuth = true;
