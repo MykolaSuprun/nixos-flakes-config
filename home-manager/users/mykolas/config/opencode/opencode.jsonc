@@ -77,6 +77,11 @@
         "SSL_CERT_FILE": "/etc/ssl/certs/ca-certificates.crt",
         "NIX_SSL_CERT_FILE": "/etc/ssl/certs/ca-certificates.crt"
       }
+    },
+    "agent-search": {
+      "type": "local",
+      "command": ["/home/mykolas/.venvs/agent-search-mcp/bin/agent-search-mcp"],
+      "enabled": true
     }
   }
 }
