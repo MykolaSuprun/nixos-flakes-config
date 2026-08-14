@@ -54,7 +54,6 @@ self: super: let
       pkgs.scalafmt
       pkgs.google-java-format
       pkgs.ktlint
-      pkgs.swiftformat
       pkgs.csharpier
       pkgs.ocamlformat
     ];
