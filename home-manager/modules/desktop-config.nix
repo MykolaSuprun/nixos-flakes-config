@@ -114,8 +114,8 @@
               }
 
               /* 2. Invisible trigger zone — 6px strip flush with the screen
-                 edge, full height. Deliberate: the cursor must dwell right at
-                 the edge, so a grazing motion passes through without firing. */
+                 edge, full height. The cursor must dwell right at the edge,
+                 so a grazing motion passes through without firing. */
               #sidebar-box::after {
                 content: "" !important;
                 position: absolute !important;
@@ -126,8 +126,9 @@
                 z-index: 99 !important;
               }
 
-              /* 3. The sidebar — off-canvas by default. Retract path uses the
-                 0s delay here, so it folds back the instant the cursor leaves. */
+              /* 3. The sidebar — off-canvas by default. Retract path uses a
+                  0.3s grace delay + 0.2s fade-out, totalling ~0.5s between
+                  cursor-exit and fully hidden. */
               #sidebar {
                 position: absolute !important;
                 left: 0px !important;
@@ -136,23 +137,21 @@
                 margin-left: -260px !important;
                 opacity: 0.85 !important;
                 transition:
-                  margin-left 0.16s cubic-bezier(0.22, 1, 0.36, 1) 0s,
-                  opacity 0.16s cubic-bezier(0.22, 1, 0.36, 1) 0s !important;
+                  margin-left 0.2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s,
+                  opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s !important;
                 z-index: 101 !important; /* Above the trigger buffer */
                 background: var(--lwt-accent-color) !important;
               }
 
-              /* 4. Reveal on hover / drag-over. A small 0.12s open delay makes
-                 the trigger deliberate despite the narrow zone — a fast swipe
-                 across the 6px strip won't fire. Retraction falls back to the
-                 rule above (no delay), so it's immediate. */
+              /* 4. Reveal on hover / drag-over — instant trigger (0s delay)
+                  with a very quick 0.1s expand animation. */
               #sidebar-box:hover #sidebar,
               #sidebar-box:-moz-drag-over #sidebar {
                 margin-left: 0px !important;
                 opacity: 1 !important;
                 transition:
-                  margin-left 0.16s cubic-bezier(0.22, 1, 0.36, 1) 0.12s,
-                  opacity 0.16s cubic-bezier(0.22, 1, 0.36, 1) 0.12s !important;
+                  margin-left 0.1s cubic-bezier(0.22, 1, 0.36, 1) 0s,
+                  opacity 0.1s cubic-bezier(0.22, 1, 0.36, 1) 0s !important;
               }
             '';
         };
@@ -179,6 +178,8 @@
       pkgs-stable.zoom-us
 
       nemo-with-extensions
+
+      ddcutil # monitor management
 
       clipse
       pkgs.kdePackages.qttools

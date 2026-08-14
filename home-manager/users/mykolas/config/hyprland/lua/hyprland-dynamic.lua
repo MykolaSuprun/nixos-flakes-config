@@ -1,6 +1,7 @@
 -- Hyprland Lua entry point (requires Hyprland >= 0.55)
 -- Modules are loaded from ~/.config/hypr/lua/ via symlinks managed by home-manager.
 -- lua/monitors.lua is symlinked to the host-specific monitors file by settings.nix.
+-- order of loading does matter since files down the list can rely on variables defined in files above
 
 require("lua/settings")
 require("lua/monitors")

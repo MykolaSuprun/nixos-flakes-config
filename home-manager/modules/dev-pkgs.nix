@@ -293,6 +293,9 @@
       nixd
       pyright
       clang-tools
+
+      #LLM
+      pkgs.llama-cpp-rocm
     ];
   };
 }

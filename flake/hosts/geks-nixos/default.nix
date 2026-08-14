@@ -49,6 +49,7 @@ in {
         ../../../nixos/stylix.nix
         ../../../nixos/xdg.nix
         ../../../nixos/llm.nix
+        ../../../nixos/moshi-hook.nix
         inputs.home-manager.nixosModules.home-manager
         {
           home-manager = {

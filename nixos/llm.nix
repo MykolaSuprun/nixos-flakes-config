@@ -29,6 +29,7 @@
         package = pkgs.open-webui;
         port = 3000;
       };
+      comfyui.enable = true;
     };
   };
 }

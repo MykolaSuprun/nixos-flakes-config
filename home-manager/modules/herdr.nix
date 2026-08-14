@@ -38,11 +38,10 @@
         # Mirror the tmux config so muscle memory transfers between the
         # two multiplexers.  Prefix = C-Space (same as tmux).
         keys = {
-          prefix = "ctrl+space";
+          prefix = "ctrl+e";
 
           # Pane navigation — prefix+h/j/k/l (matches tmux prefix).
-          # Direct chords use Alt+Shift+h/j/k/l (tmux uses Alt+hjkl
-          # without prefix).  The Shift modifier helps avoid interfering
+          # Direct chords use Alt+Shift+h/j/k/l (tmux uses Alt+hjkl without prefix).  The Shift modifier helps avoid interfering
           # with normal typing in editors/shells.
           focus_pane_left = ["prefix+h" "alt+shift+h"];
           focus_pane_down = ["prefix+j" "alt+shift+j"];

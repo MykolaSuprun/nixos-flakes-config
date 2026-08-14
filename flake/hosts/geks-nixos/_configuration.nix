@@ -25,6 +25,7 @@ in {
     desktop.enable = true;
     secrets.enable = true;
     ollama.enable = true;
+    moshi-hook.enable = true;
     # flatpak.enable = false;  # bindfs/theme Flatpak setup – zenbook only
   };
 
@@ -98,6 +99,8 @@ in {
     cpu.amd.updateMicrocode =
       lib.mkDefault config.hardware.enableRedistributableFirmware;
 
+    i2c.enable = true;
+
     graphics = {
       # package = pkgs-hyprland.mesa.drivers;
       # package32 = pkgs-hyprland.pkgsi686Linux.mesa.drivers;
@@ -134,11 +137,15 @@ in {
     LC_TIME = "en_IE.UTF-8";
   };
 
+  networking.firewall.trustedInterfaces = ["tailscale0"];
+
   # ── Services ──────────────────────────────────────────────────────────────────
   services = {
     tuned.enable = true;
     upower.enable = true;
-
+    openssh = {
+      enable = true;
+    };
     greetd = {
       enable = true;
     };
@@ -162,6 +169,13 @@ in {
           };
         };
       };
+    };
+
+    tailscale = {
+      enable = true;
+      # extraUpFlags only applies with authKeyFile; extraSetFlags runs
+      # `tailscale set --ssh` on every boot so Tailscale SSH stays enabled.
+      extraSetFlags = ["--ssh"];
     };
 
     resolved.enable = true;
@@ -309,6 +323,9 @@ in {
     ssh = {
       startAgent = false;
       enableAskPassword = false;
+    };
+    mosh = {
+      enable = true;
     };
   };
 

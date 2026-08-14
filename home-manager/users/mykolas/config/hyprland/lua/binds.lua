@@ -72,6 +72,9 @@ hl.bind(
 	{ mouse = true, description = "Focus previous monitor" }
 )
 
+-- Toggle monitors on/off via rofi picker (disables without editing the config)
+hl.bind(mod .. " + SHIFT + D", hl.dsp.exec_cmd("monitor-toggle"), { description = "Toggle monitor (rofi)" })
+
 -- ==========================================
 -- LAYOUT AWARE: Promote and Column Moves
 -- ==========================================
