@@ -205,6 +205,7 @@ self: super: let
       pkgs.visidata
       pkgs.csvtk
       pkgs.miller
+      pkgs.python314
     ];
   in
     lsps ++ formatters ++ linters ++ security ++ devCli;

@@ -659,7 +659,7 @@ in {
             };
             Service = {
               Slice = "app-graphical.slice";
-              ExecStart = "${noctaliaPkg}/bin/noctalia-shell --no-duplicate";
+              ExecStart = "${noctaliaPkg}/bin/noctalia";
               Restart = "on-failure";
               RestartSec = 1;
             };

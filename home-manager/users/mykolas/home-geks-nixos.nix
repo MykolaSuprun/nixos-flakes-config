@@ -34,8 +34,7 @@ in {
     git.enable = true;
     desktop.enable = true;
     chromium.enable = true;
-    dms.enable = true;
-    # noctalia.enable = true;
+    dms.enable = false; # Noctalia is now the default desktop shell on geks-nixos
     catppuccin.enable = true;
     catppuccin.flavor = "latte";
     ghostty.enable = true;
@@ -51,8 +50,11 @@ in {
         herdr.enable = true;
   };
 
+  programs.noctalia.enable = true; # v5 Noctalia shell (built-in default settings)
+
   hyprconf = {
     target = "geks-nixos";
+    noctalia.enable = true;
     waybar = {
       enable = true;
       output = null;

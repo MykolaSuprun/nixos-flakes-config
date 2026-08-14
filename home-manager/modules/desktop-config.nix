@@ -4,6 +4,7 @@
   pkgs-stable,
   lib,
   config,
+  wrappedPkgs,
   ...
 }: {
   options.myconf.desktop.enable = lib.mkEnableOption "desktop apps";
@@ -211,6 +212,7 @@
       # other
       onlyoffice-desktopeditors
       bluetui
+      wrappedPkgs.bt-profile-switch # bluetooth device profile switcher (A2DP <-> HFP)
       pkgs-stable.megasync
       cryptomator
       qbittorrent
@@ -239,6 +241,7 @@
       gimp
       vlc
       cider-2
+      yt-dlp
 
       # gaming
       pkgs-stable.limo
@@ -252,6 +255,7 @@
       bemenu
       pkgs.freerdp
       pkgs-stable.gtk-frdp
+      evtest
     ];
   };
 }

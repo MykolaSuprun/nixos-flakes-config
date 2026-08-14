@@ -93,6 +93,12 @@
           # Workspace picker — prefix+w (matches tmux's window picker)
           workspace_picker = "prefix+w";
 
+          # Workspace navigation in the picker — vim-style j/k (defaults
+          # are arrow keys; keep them as aliases).  Matches the hjkl
+          # pane-navigation motion used elsewhere.
+          navigate_workspace_down = ["j" "down"];
+          navigate_workspace_up = ["k" "up"];
+
           # Goto navigator — prefix+g
           goto = "prefix+g";
 

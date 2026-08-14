@@ -30,7 +30,7 @@ in {
         inputs.determinate.nixosModules.default
         inputs.catppuccin.nixosModules.catppuccin
         inputs.stylix.nixosModules.stylix
-        inputs.sysc-greet.nixosModules.default
+        inputs.noctalia-greeter.nixosModules.default
         inputs.disko.nixosModules.disko
         ./_disk-config.nix
         ./_hardware.nix
@@ -80,7 +80,6 @@ in {
                   ../../../home-manager/modules/helix.nix
                   ../../../home-manager/modules/herdr.nix
                   ../../../home-manager/modules/kitty.nix
-                  ../../../home-manager/modules/noctalia.nix
                   ../../../home-manager/modules/rofi.nix
                   ../../../home-manager/modules/shell.nix
                   ../../../home-manager/modules/ssh.nix

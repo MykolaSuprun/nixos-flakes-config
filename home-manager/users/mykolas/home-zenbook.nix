@@ -15,8 +15,6 @@
     git.enable = true;
     desktop.enable = true;
     chromium.enable = true;
-    noctalia.enable = true;
-    noctalia.barMonitors = ["DP-1"];
     catppuccin.enable = true;
     catppuccin.flavor = "mocha";
     ghostty.enable = true;
@@ -30,6 +28,8 @@
     # zellij.enable = false;
     # flatpakOverrides.enable = false;
   };
+
+  programs.noctalia.enable = true; # v5 Noctalia shell (built-in default settings)
 
   hyprconf = {
     target = "geks-zenbook";

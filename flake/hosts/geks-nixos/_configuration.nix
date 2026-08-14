@@ -149,15 +149,7 @@ in {
     greetd = {
       enable = true;
     };
-    sysc-greet = {
-      enable = true;
-      compositor = "hyprland";
-      settings = {
-        terminal = {
-          vt = 1;
-        };
-      };
-    };
+    # Noctalia greeter owns greetd's default_session (see programs.noctalia-greeter below).
 
     keyd = {
       enable = true;
@@ -272,6 +264,7 @@ in {
         "qemu-libvirtd"
         "plugdev"
         "gamemode"
+        "input"
       ];
     };
   };
@@ -301,6 +294,7 @@ in {
       useBabelfish = true;
     };
     zsh.enable = true;
+    noctalia-greeter.enable = true; # Noctalia login greeter
     partition-manager.enable = true;
     virt-manager.enable = true;
     java.enable = true;

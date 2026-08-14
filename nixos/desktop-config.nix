@@ -88,7 +88,10 @@
       ];
 
       ananicy = {
-        enable = true;
+        # Disabled: ananicy-cpp 1.2.0 fails to build on current nixpkgs
+        # (glibc 2.42 header tightening, missing <cstring>/<cstdint> —
+        # NixOS/nixpkgs#552211). Re-enable once the fix lands upstream.
+        enable = false;
         package = pkgs.ananicy-cpp;
         rulesProvider = pkgs.ananicy-rules-cachyos;
         extraRules = [

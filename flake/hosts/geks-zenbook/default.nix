@@ -72,7 +72,6 @@ in {
                   ../../../home-manager/modules/ghostty.nix
                   ../../../home-manager/modules/helix.nix
                   ../../../home-manager/modules/kitty.nix
-                  ../../../home-manager/modules/noctalia.nix
                   ../../../home-manager/modules/rofi.nix
                   ../../../home-manager/modules/shell.nix
                   ../../../home-manager/modules/ssh.nix
