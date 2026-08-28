@@ -239,8 +239,30 @@ in {
       # hyprpolkitagent.enable = true;
     };
 
+    # Lock screen theming via the official catppuccin/swaylock port — follows
+    # catppuccin.flavor (latte on geks-nixos, mocha on geks-zenbook).
+    catppuccin.swaylock.enable = true;
+
     programs = {
       hyprshot.enable = true;
+      # Plain swaylock (current upstream, suspend/resume-hardened) over the
+      # effects fork: nixpkgs' swaylock-effects is frozen on the 2022 1.7 base
+      # and misses 1.8.x password-buffer fixes after suspend/resume.
+      # Colors come from catppuccin.swaylock; only structural settings here.
+      # Wallpaper is passed at runtime by session_lock so a missing wallpaper
+      # can never prevent locking.
+      swaylock = {
+        enable = true;
+        package = pkgs.swaylock;
+        settings = {
+          font = "JetBrainsMono Nerd Font";
+          indicator-radius = 110;
+          indicator-thickness = 12;
+          indicator-idle-visible = true;
+          scaling = "fill";
+          ignore-empty-password = true;
+        };
+      };
     };
 
     xdg.configFile."hypr/.luarc.json".text = ''
@@ -263,15 +285,35 @@ in {
         "./.config/uwsm/env".source = ./../../users/mykolas/config/uwsm/env;
 
         # UWSM Hyprland-specific environment.
-        # AQ_DRM_DEVICES is only set on hosts that create /dev/dri/igpu and
-        # /dev/dri/dgpu udev symlinks (currently geks-nixos with dual GPUs).
-        # Setting it to non-existent device paths causes Hyprland/aquamarine to
-        # fail finding any DRM device and crash on launch — this was the root
-        # cause of UWSM Hyprland failing to start on the zenbook (single Intel iGPU).
+        # Dynamically discovers available GPUs and sets AQ_DRM_DEVICES with iGPU as
+        # primary renderer (first in list). Three-layer fallback:
+        #   1. udev symlinks /dev/dri/{igpu,dgpu} from _configuration.nix rules
+        #   2. kernel by-path PCI symlinks (works without udev rules)
+        #   3. unset → aquamarine auto-detects (any remaining card node)
+        # If a GPU is absent, its path is simply omitted — never crashes Hyprland.
+        # UWSM env files are sourced as shell scripts, so dynamic logic is valid.
         "./.config/uwsm/env-hyprland".text =
           if config.hyprconf.target == "geks-nixos"
           then ''
-            export AQ_DRM_DEVICES="/dev/dri/igpu:/dev/dri/dgpu"
+            unset AQ_DRM_DEVICES
+            devices=""
+
+            # Try udev symlinks (primary = igpu, secondary = dgpu)
+            for path in /dev/dri/igpu /dev/dri/dgpu; do
+              [ -e "$path" ] && devices="''${devices:+$devices:}$path"
+            done
+
+            # Fallback: kernel built-in by-path PCI symlinks (always match current state)
+            if [ -z "$devices" ]; then
+              for path in /dev/dri/by-path/pci-*-card; do
+                [ -L "$path" ] || continue
+                # Skip boot framebuffers (not real GPU render nodes)
+                echo "$path" | grep -q "platform.*framebuffer" && continue
+                devices="''${devices:+$devices:}$path"
+              done
+            fi
+
+            [ -n "$devices" ] && export AQ_DRM_DEVICES="$devices"
           ''
           else "";
         # Nix-generated Catppuccin palette for Hyprland Lua config.
@@ -343,8 +385,6 @@ in {
           ./../../users/mykolas/config/hyprlock/hyprlock.conf;
         "./.config/swaync/style.css".source =
           ./../../users/mykolas/config/swaync/latte.css;
-        "./.config/swaylock/config".source =
-          ./../../users/mykolas/config/swaylock/latte.conf;
         "./.config/hypr/hyprpaper.conf".source =
           ./../../users/mykolas/config/hyprpaper/hyprpaper.conf;
         "./.config/hypr/hyprlock.conf.alt".source =
@@ -354,8 +394,14 @@ in {
             text = ''
               general {
                   lock_cmd = session_lock
+                  # before_sleep_cmd is required again: the lock screen is now
+                  # swaylock (noctalia's own lock screen is disabled — it
+                  # crashes on resume from suspend), so nothing else locks
+                  # pre-suspend.
                   before_sleep_cmd = session_lock
-                  after_sleep_cmd = hyprctl dispatch dpms on
+                  # Passive net: relaunch swaylock only if it died while
+                  # locked; never touches a living lock client.
+                  after_sleep_cmd = fix-lock --auto
                   inhibit_sleep = 3
               }
 
@@ -378,8 +424,10 @@ in {
 
               listener {
                   timeout = 120
-                  on-timeout = hyprctl dispatch dpms off
-                  on-resume = hyprctl dispatch dpms on
+                  # Legacy `hyprctl dispatch dpms X` fails under configType=lua;
+                  # the working form is hyprctl eval with hl.dsp.dpms().
+                  on-timeout = hyprctl eval 'hl.dsp.dpms("off")'
+                  on-resume = hyprctl eval 'hl.dsp.dpms("on")'
               }
 
               listener {
@@ -392,6 +440,21 @@ in {
             source = ./../../users/mykolas/config/hypridle/hypridle.conf;
           })
         ];
+        # Disable noctalia's own lock screen — it crashes on resume from
+        # suspend (upstream EGL context-recovery bug), so swaylock takes over
+        # via the session_lock script. Kills all noctalia lock triggers:
+        # IPC, logind PrepareForSleep and its internal idle daemon.
+        # MUST be named noctalia.toml — that is the only config file noctalia
+        # reads (a differently-named toml in the same dir is ignored, which is
+        # exactly why the lock kept breaking after the first attempt).
+        "./.config/noctalia/noctalia.toml" =
+          lib.mkIf config.hyprconf.noctalia.enable {
+            text = ''
+              [lockscreen]
+              enabled = false
+              lock_before_suspend = false
+            '';
+          };
         "./.config/pypr/config.toml".text = ''
           [pyprland]
           plugins = [

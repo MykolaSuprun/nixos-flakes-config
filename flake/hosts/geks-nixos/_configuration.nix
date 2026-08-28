@@ -83,6 +83,13 @@ in {
     ];
 
     # kernelParams = [ "amd_iommu=on" ];
+    # AMD GPU suspend/resume stability: disable runtime PM (prevents GPU
+    # suspend/resume crashes, hyprwm/hyprlock#953) and force deep sleep (S3)
+    # instead of s2idle on this desktop.
+    kernelParams = [
+      "amdgpu.runpm=0"
+      "mem_sleep_default=deep"
+    ];
     # extraModprobeConfig = "options vfio-pci ids=1002:164e";
     # postBootCommands = ''
     #   DEVS="0000:59:00.0"

@@ -271,6 +271,7 @@
       nix-init
       nix-direnv
       codecrafters-cli
+      exercism
       netcat
       zip
 
@@ -288,6 +289,7 @@
       bottom
       lazydocker
       lazysql
+      sqlit-tui
 
       #lsp
       nixd

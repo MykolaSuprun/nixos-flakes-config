@@ -67,6 +67,9 @@ hl.config({
 	misc = {
 		vrr = 1,
 		disable_hyprland_logo = true,
+		-- Let a session lock be restored/re-grabbed after compositor or lock
+		-- client restarts instead of dropping the lock state.
+		allow_session_lock_restore = 1,
 	},
 	plugin = {},
 })
