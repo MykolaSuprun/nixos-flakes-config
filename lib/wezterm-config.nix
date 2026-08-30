@@ -1,5 +1,5 @@
 {
-  mkWeztermConfig = {colorScheme ? "Catppuccin Latte"}: ''
+  mkWeztermConfig = {}: ''
     local wezterm = require("wezterm")
     local config = wezterm.config_builder()
 
@@ -35,7 +35,6 @@
     config.enable_wayland = true
     config.enable_kitty_graphics = true
     config.front_end = "WebGpu"
-    config.color_scheme = "${colorScheme}"
 
     config.term = "wezterm"
     config.set_environment_variables = {

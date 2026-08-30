@@ -23,7 +23,7 @@
             # Add your cursor themes and icon packages here
             # Cursors
             bibata-cursors
-            catppuccin-cursors.mochaMauve # or .lattePink, .frappeLavender, etc.
+            catppuccin-cursors.${config.catppuccin.flavor + "Mauve"}
 
             # GTK themes
             gnome-themes-extra

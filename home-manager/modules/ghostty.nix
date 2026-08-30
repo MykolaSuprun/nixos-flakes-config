@@ -12,9 +12,6 @@
       installVimSyntax = true;
 
       settings = {
-        # Theme — auto-tracks catppuccin module flavor
-        theme = "catppuccin-${config.catppuccin.flavor}";
-
         # Font — JetBrainsMono Nerd Font with ligatures
         font-family = "JetBrainsMono NF Regular";
         font-size = 10;

@@ -468,6 +468,11 @@ hl.bind(mod .. " + SHIFT + 0", hl.dsp.window.move({ workspace = 10 }), { descrip
 -- Launchers
 hl.bind("ALT + SPACE", hl.dsp.exec_cmd(menu), { description = "Open application launcher" })
 hl.bind(mod .. " + CTRL + SPACE", hl.dsp.exec_cmd("hyprlauncher"), { description = "Open Hypr launcher" })
+hl.bind(
+	mod .. " + CTRL + T",
+	hl.dsp.exec_cmd("kitty --class specialisation-picker -e specialisation-picker"),
+	{ description = "Open Catppuccin specialisation picker" }
+)
 
 -- Audio / media
 hl.bind(

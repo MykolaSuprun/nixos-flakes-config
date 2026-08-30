@@ -40,7 +40,7 @@ in {
 
   # ── Theming ───────────────────────────────────────────────────────────────────
   catppuccin = {
-    flavor = "latte";
+    flavor = lib.mkDefault "latte";
     accent = "mauve";
   };
 

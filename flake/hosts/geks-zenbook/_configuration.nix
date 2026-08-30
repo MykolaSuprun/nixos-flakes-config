@@ -35,7 +35,7 @@
 
   # ── Theming ───────────────────────────────────────────────────────────────────
   catppuccin = {
-    flavor = "mocha";
+    flavor = lib.mkDefault "mocha";
     accent = "mauve";
   };
 

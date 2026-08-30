@@ -1,7 +1,6 @@
 {
   mkTmuxConf = {
     pkgs,
-    catppuccinFlavor ? "latte",
     tmuxpPresetsDir ? null,
     seshConfigFile ? null,
   }: let
@@ -307,11 +306,8 @@
     bind -n M-K swap-pane -t '{above}'
     bind -n M-L swap-pane -t '{right-of}'
 
-    # Catppuccin
-    set -g @catppuccin_flavor "${catppuccinFlavor}"
-    run-shell ${pkgs.tmuxPlugins.catppuccin}/share/tmux-plugins/catppuccin/catppuccin.tmux
-
-    # Pane borders — fully frame and highlight active pane
+    # Catppuccin theming handled by catppuccin/nix (catppuccin.tmux.enable = true)
+    # Pane borders — uses @thm_* vars provided by catppuccin.tmux
     set -g pane-border-lines heavy
     set -g pane-active-border-style "fg=#{@thm_blue},bold"
     set -g pane-border-style "fg=#{@thm_overlay_0}"

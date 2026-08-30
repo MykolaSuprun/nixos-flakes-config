@@ -11,9 +11,7 @@
       enable = true;
       # Mirror catppuccin flavor: base16-schemes has catppuccin-{latte,frappe,macchiato,mocha}.yaml
       base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-${config.catppuccin.flavor}.yaml";
-      # Wallpaper: only latte and mocha variants exist in the wallpapers dir.
-      # Both hosts use catppuccin.flavor = "latte".
-      image = ../home-manager/users/mykolas/config/wallpapers/catppuccin/latte/forrest.png;
+      image = ../home-manager/users/mykolas/config/wallpapers/catppuccin/${config.catppuccin.flavor}/forrest.png;
       # Do not auto-theme apps — catppuccin-nix handles most of them.
       autoEnable = false;
       fonts = {

@@ -7,7 +7,6 @@
   tmuxConfig = import ../../lib/tmux-config.nix;
   tmuxConfText = tmuxConfig.mkTmuxConf {
     inherit pkgs;
-    catppuccinFlavor = config.catppuccin.flavor;
     tmuxpPresetsDir = ../users/mykolas/config/tmuxp;
     seshConfigFile = ../users/mykolas/config/sesh/sesh.toml;
   };

@@ -48,6 +48,7 @@ in {
         ../../../nixos/sys-pkgs.nix
         ../../../nixos/stylix.nix
         ../../../nixos/xdg.nix
+        ../../../nixos/specialisations.nix
         inputs.home-manager.nixosModules.home-manager
         {
           home-manager = {
@@ -89,6 +90,7 @@ in {
               home.packages = [
                 wrappedPkgs.nix-update
                 wrappedPkgs.hypr-layout-picker
+                wrappedPkgs.specialisation-picker
               ];
             };
             extraSpecialArgs = {

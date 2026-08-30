@@ -5,6 +5,7 @@
   config,
   inputs,
   pkgs,
+  lib,
   ...
 }: {
   # ── Feature-module enable flags ──────────────────────────────────────────────
@@ -16,7 +17,7 @@
     desktop.enable = true;
     chromium.enable = true;
     catppuccin.enable = true;
-    catppuccin.flavor = "mocha";
+    catppuccin.flavor = lib.mkDefault "mocha";
     ghostty.enable = true;
     kitty.enable = true;
     helix.enable = true;

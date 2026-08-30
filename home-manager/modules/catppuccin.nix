@@ -18,6 +18,8 @@
       flavor = config.myconf.catppuccin.flavor;
       accent = "mauve";
       cache.enable = true;
+      # Selective theming: disable autoEnable and opt-in per app
+      autoEnable = false;
 
       hyprland = {
         enable = false;
@@ -42,6 +44,19 @@
       };
       # Disabled: stylix.targets.gtk owns icon theming to avoid duplicate catppuccin-papirus-folders
       gtk.icon.enable = false;
+
+      # Native catppuccin/nix modules
+      kitty.enable = true;
+      ghostty.enable = true;
+      wezterm.enable = true;
+      helix.enable = true;
+      tmux.enable = true;
+      waybar.enable = true;
+      swaync.enable = true;
+      yazi.enable = true;
+      delta.enable = true;
+      bat.enable = true;
+      lazygit.enable = true;
     };
     qt = {
       enable = true;

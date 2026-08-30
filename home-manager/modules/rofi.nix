@@ -11,7 +11,7 @@
       package = pkgs.rofi;
       extraConfig = {
         modi = "run,drun,window,binds:hypr-binds-list";
-        icon-theme = "catppuccin-pairus-folders";
+        icon-theme = "Papirus";
         show-icons = true;
         terminal = "kitty";
         drun-display-format = "{icon} {name}";

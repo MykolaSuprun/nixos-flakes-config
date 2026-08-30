@@ -381,10 +381,11 @@ in {
           source = ./../../users/mykolas/config/hyprlock/hyprlock-assets;
           recursive = true;
         };
-        "./.config/hypr/hyprlock.conf".source =
-          ./../../users/mykolas/config/hyprlock/hyprlock.conf;
-        "./.config/swaync/style.css".source =
-          ./../../users/mykolas/config/swaync/latte.css;
+        "./.config/hypr/hyprlock.conf".text =
+          let
+            base = builtins.readFile ./../../users/mykolas/config/hyprlock/hyprlock.conf;
+          in
+          builtins.replaceStrings ["hyprlock-assets/mocha.conf"] ["hyprlock-assets/${catppuccinFlavor}.conf"] base;
         "./.config/hypr/hyprpaper.conf".source =
           ./../../users/mykolas/config/hyprpaper/hyprpaper.conf;
         "./.config/hypr/hyprlock.conf.alt".source =

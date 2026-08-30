@@ -50,6 +50,7 @@ in {
         ../../../nixos/xdg.nix
         ../../../nixos/llm.nix
         ../../../nixos/moshi-hook.nix
+        ../../../nixos/specialisations.nix
         inputs.home-manager.nixosModules.home-manager
         {
           home-manager = {
@@ -97,6 +98,7 @@ in {
               home.packages = [
                 wrappedPkgs.nix-update
                 wrappedPkgs.hypr-layout-picker
+                wrappedPkgs.specialisation-picker
               ];
             };
             extraSpecialArgs = {

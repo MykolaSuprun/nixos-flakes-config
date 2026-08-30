@@ -5,6 +5,7 @@
   config,
   inputs,
   pkgs,
+  lib,
   ...
 }: let
   steam-gamescope = pkgs.writeShellScriptBin "steam-gamescope" ''
@@ -36,7 +37,7 @@ in {
     chromium.enable = true;
     dms.enable = false; # Noctalia is now the default desktop shell on geks-nixos
     catppuccin.enable = true;
-    catppuccin.flavor = "latte";
+    catppuccin.flavor = lib.mkDefault "latte";
     ghostty.enable = true;
     kitty.enable = true;
     helix.enable = true;

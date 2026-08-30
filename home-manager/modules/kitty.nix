@@ -1,5 +1,4 @@
 {
-  pkgs,
   lib,
   config,
   ...
@@ -10,7 +9,7 @@ in {
   config = lib.mkIf config.myconf.kitty.enable {
     programs.kitty = {
       enable = true;
-      settings = kittyConfig.settings // kittyConfig.themes.${config.catppuccin.flavor};
+      settings = kittyConfig.settings;
     };
   };
 }
