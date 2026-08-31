@@ -85,6 +85,12 @@
       flake = true;
     };
 
+    # Dev environment picker TUI (vim-keyed nix develop / flake template scaffolder)
+    flake-env = {
+      url = "gitlab:mykolas-open/flake-env";
+      flake = true;
+    };
+
     # Disk partitioning
     disko = {
       url = "github:nix-community/disko/latest";

@@ -226,6 +226,8 @@
       inputs.my-nixvim.packages.${pkgs.stdenv.hostPlatform.system}.nixvim
       inputs.my-nixvim.packages.${pkgs.stdenv.hostPlatform.system}.codevim
       inputs.my-nixvim.packages.${pkgs.stdenv.hostPlatform.system}.nvim
+      # flake-env picker TUI — nix develop / template scaffolder
+      inputs.flake-env.packages.${pkgs.stdenv.hostPlatform.system}.picker
       vscode
       neovide
       # mynav
