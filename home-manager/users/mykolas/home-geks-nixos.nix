@@ -49,15 +49,16 @@ in {
     # zellij.enable = false;
     # flatpakOverrides.enable = false;
         herdr.enable = true;
+    audio-recovery.enable = true; # restart audio stack after resume (xHCI reinit wedges it)
   };
 
   programs.noctalia.enable = true; # v5 Noctalia shell (built-in default settings)
 
-  hyprconf = {
+    hyprconf = {
     target = "geks-nixos";
     noctalia.enable = true;
     waybar = {
-      enable = true;
+      enable = false;
       output = null;
     };
     hyprland = {

@@ -265,7 +265,6 @@ in {
       extraGroups = [
         "networkmanager"
         "wheel"
-        "docker"
         "libvirtd"
         "kvm"
         "qemu-libvirtd"

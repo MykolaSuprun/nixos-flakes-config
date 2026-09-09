@@ -69,6 +69,7 @@ in {
                   # inputs.dms-plugin-registry.modules.default
                   ../../../home-manager/users/mykolas/home-geks-nixos.nix
                   # HM feature modules (all gated by myconf.*.enable flags)
+                  ../../../home-manager/modules/audio-recovery.nix
                   ../../../home-manager/modules/catppuccin.nix
                   ../../../home-manager/modules/dms.nix
                   ../../../home-manager/modules/chromium.nix

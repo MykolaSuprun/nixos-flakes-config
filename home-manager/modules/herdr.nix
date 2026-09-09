@@ -90,8 +90,9 @@
           close_tab = "prefix+shift+x";
 
           # ── Workspaces (sessions in tmux) ────────────────────────────
-          # Workspace picker — prefix+w (matches tmux's window picker)
-          workspace_picker = "prefix+w";
+          # Native picker/navigator live on Ctrl fallbacks — prefix+w and
+          # prefix+g are handled by plugins (see keys.command below).
+          workspace_picker = "prefix+ctrl+w";
 
           # Workspace navigation in the picker — vim-style j/k (defaults
           # are arrow keys; keep them as aliases).  Matches the hjkl
@@ -99,8 +100,20 @@
           navigate_workspace_down = ["j" "down"];
           navigate_workspace_up = ["k" "up"];
 
-          # Goto navigator — prefix+g
-          goto = "prefix+g";
+          # Goto navigator — native kept on Ctrl fallback (plugin on prefix+g)
+          goto = "prefix+ctrl+g";
+
+          # Instant jumps — no picker needed for ≤9 (mirrors prefix+1..9 tabs)
+          switch_workspace = "prefix+shift+1..9";
+          focus_agent = "prefix+alt+1..9";
+
+          # Step through workspaces/agents without opening a picker.
+          # prefix+o takes the tmux sesh-picker slot; shift+n stays
+          # new_workspace so next-workspace uses o instead.
+          previous_workspace = "prefix+shift+p";
+          next_workspace = "prefix+o";
+          previous_agent = "prefix+alt+p";
+          next_agent = "prefix+alt+n";
 
           # New workspace — prefix+Shift+n
           new_workspace = "prefix+shift+n";
@@ -136,6 +149,45 @@
 
           # Edit scrollback in $EDITOR — prefix+e
           edit_scrollback = "prefix+e";
+
+          # ── Plugin actions ───────────────────────────────────────────
+          # Require (imperative — Herdr has no declarative plugin support):
+          #   herdr plugin install haphamdev/herdr-simple-switcher
+          #   herdr plugin install yoshiori/herdr-configurable-picker
+          # Plus PROJECTS_ROOT in the simple-switcher config.env for
+          # open-project (fd Git-repo discovery).
+          command = [
+            {
+              key = "prefix+w";
+              type = "plugin_action";
+              command = "simple-switcher.switch-workspace";
+              description = "switch workspace (fzf)";
+            }
+            {
+              key = "prefix+t";
+              type = "plugin_action";
+              command = "simple-switcher.switch-tab";
+              description = "switch tab (fzf)";
+            }
+            {
+              key = "prefix+a";
+              type = "plugin_action";
+              command = "simple-switcher.switch-agent";
+              description = "switch agent (fzf)";
+            }
+            {
+              key = "prefix+shift+o";
+              type = "plugin_action";
+              command = "simple-switcher.open-project";
+              description = "open project (fzf)";
+            }
+            {
+              key = "prefix+g";
+              type = "plugin_action";
+              command = "yoshiori.herdr-configurable-picker.open";
+              description = "goto picker (tree)";
+            }
+          ];
         };
 
         # ── UI ─────────────────────────────────────────────────────────

@@ -66,10 +66,13 @@
   #                     start a fresh one. Only run this when the lock is
   #                     actually misbehaving (dead keyboard etc).
   #   fix-lock --auto   PASSIVE safety net (hypridle after_sleep_cmd): acts
-  #                     ONLY when logind says the session is locked AND no
-  #                     swaylock process exists (lock client died overnight).
-  #                     A living swaylock is never touched — the normal
-  #                     wake → type password → unlock flow is untouched.
+  #                     ONLY when logind says the session is locked, and:
+  #                       - no swaylock exists (lock client died) → relaunch;
+  #                       - systemd-suspend FAILED since the last handled
+  #                         resume (wedged DRM freezes living clients) →
+  #                         force-restart even a living swaylock.
+  #                     A living swaylock after a CLEAN resume is never
+  #                     touched — the normal wake → unlock flow is untouched.
   fix_lock = pkgs.writeShellScriptBin "fix-lock" ''
     launch() {
       img=$(find "$HOME/.config/wallpapers/lockscreen" -maxdepth 1 -xtype f \
@@ -92,7 +95,26 @@
       [ -n "$sess" ] || exit 0
       # Session not locked → nothing to protect.
       loginctl show-session "$sess" -p LockedHint 2>/dev/null | grep -q '=yes' || exit 0
-      # Lock client alive → NORMAL case. Hands off, always.
+      # Failed systemd-suspend leaves DRM outputs wedged (amdgpu VRAM-eviction
+      # abort), freezing a living swaylock. A NEW failure since the last
+      # handled resume means a live client can't be trusted → force-restart.
+      # Scoped by exit timestamp: reset-failed needs root, so without this
+      # every later resume would nuke a healthy lock.
+      state_dir="''${XDG_STATE_HOME:-$HOME/.local/state}/fix-lock"
+      failed_ts=""
+      if [ "$(systemctl is-failed systemd-suspend.service 2>/dev/null)" = "failed" ]; then
+        failed_ts=$(systemctl show systemd-suspend.service -p ExecMainExitTimestampMonotonic --value 2>/dev/null || true)
+      fi
+      if [ -n "$failed_ts" ] && [ "$failed_ts" != "0" ] \
+        && [ "$failed_ts" != "$(cat "$state_dir/last-handled-failure" 2>/dev/null)" ]; then
+        mkdir -p "$state_dir"
+        printf '%s' "$failed_ts" > "$state_dir/last-handled-failure"
+        pidof swaylock >/dev/null 2>&1 && pkill -x swaylock
+        sleep 0.2
+        launch
+        exit 0
+      fi
+      # Lock client alive after a CLEAN resume → NORMAL case. Hands off, always.
       pidof swaylock >/dev/null 2>&1 && exit 0
       # Locked but clientless: the lock died while asleep → restore it.
       launch

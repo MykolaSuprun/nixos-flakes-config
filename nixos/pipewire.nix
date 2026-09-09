@@ -11,7 +11,9 @@
     security.rtkit.enable = true;
     # Expose libpipewire-0.3.so.0 in /run/current-system/sw/lib so Qt Multimedia
     # can dlopen() it at runtime (resolves "Couldn't load pipewire-0.3 library" warning).
-    environment.systemPackages = [ pkgs.pipewire ];
+    # alsa-utils (aplay/speaker-test) and pulseaudio client tools (pactl/paplay)
+    # for CLI audio control — the pulseaudio daemon itself is NOT enabled.
+    environment.systemPackages = [ pkgs.pipewire pkgs.alsa-utils pkgs.pulseaudio ];
     services = {
       pipewire = {
         alsa.enable = true;

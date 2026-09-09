@@ -185,7 +185,6 @@
     extraGroups = [
       "networkmanager"
       "wheel"
-      "docker"
       "kvm"
       "qemu-libvirtd"
       "plugdev"

@@ -125,5 +125,21 @@
       };
       wantedBy = ["sysinit.target"]; # Run early in the boot process
     };
+
+    # Restart bluetoothd after resume: on this platform every S3 resume fails on
+    # all xHCI controllers ("xHC error in resume, USBSTS 0x401, Reinit"), which
+    # re-enumerates the BT adapter (hci0<->hci1) and leaves bluetoothd with stale
+    # MediaEndpoints — BT audio then fails with "a2dp-sink profile connect
+    # failed: Device or resource busy" until bluetoothd is restarted.
+    # WantedBy+After suspend.target = starts after the system resumes.
+    systemd.services."bluetooth-resume-recovery" = {
+      description = "Restart bluetooth after resume (xHCI reinit wedges BT audio)";
+      wantedBy = ["suspend.target"];
+      after = ["suspend.target"];
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${pkgs.systemd}/bin/systemctl restart bluetooth.service";
+      };
+    };
   };
 }

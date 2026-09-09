@@ -6,6 +6,10 @@
 # The upstream package already wraps the binary with ripgrep; we re-wrap in
 # postFixup to prepend our tool set (nested wrappers are fine — each layer
 # only prepends PATH).
+#
+# HERDR_AGENT is set per-process (not exported globally) so Herdr's
+# foreground-process detection still recognizes opencode through the
+# makeWrapper bash script (which otherwise runs as .opencode-wrapped).
 self: super: let
   # The toolbox opencode's agent can call by name. Grouped by role for
   # readability; the wrapper flattens them into one PATH prefix.
@@ -217,7 +221,8 @@ in {
       (oldAttrs.postFixup or "")
       + ''
         wrapProgram $out/bin/opencode \
-          --prefix PATH : ${super.lib.makeBinPath (opencodeTools super)}
+          --prefix PATH : ${super.lib.makeBinPath (opencodeTools super)} \
+          --set HERDR_AGENT "opencode"
       '';
   });
 }
