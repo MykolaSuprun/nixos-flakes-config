@@ -12,7 +12,7 @@
     inherit system;
     config.allowUnfree = true;
     config.permittedInsecurePackages = ["openssl-1.1.1w" "electron-40.10.5"];
-    overlays = import ../../../overlays;
+    overlays = import ../../../overlays ++ [inputs.nixconf-private.overlays.lmstudio];
   };
   pkgs-stable = import inputs.nixpkgs-stable {
     inherit system;
@@ -67,6 +67,8 @@ in {
                   ../../../home-manager/modules/chromium.nix
                   ../../../home-manager/modules/desktop-config.nix
                   ../../../home-manager/modules/dev-pkgs.nix
+                  # Private LLM tooling (llama-cpp-rocm + comfyui CLI)
+                  inputs.nixconf-private.homeManagerModules.llm-tools
                   ../../../home-manager/modules/fcitx5.nix
                   ../../../home-manager/modules/flatpak-overrides.nix
                   ../../../home-manager/modules/git.nix
@@ -82,6 +84,8 @@ in {
                   ../../../home-manager/modules/wezterm.nix
                   ../../../home-manager/modules/zellij.nix
                   ../../../home-manager/modules/opencode.nix
+                  ../../../home-manager/modules/openpets.nix
+                  ../../../home-manager/modules/chatgpt.nix
                   ../../../home-manager/modules/hyprland
                 ]
                 ++ lib.optionals useHyprlandFlake [

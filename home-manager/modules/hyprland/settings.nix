@@ -398,10 +398,16 @@ in {
                   # before_sleep_cmd is required again: the lock screen is now
                   # swaylock (noctalia's own lock screen is disabled — it
                   # crashes on resume from suspend), so nothing else locks
-                  # pre-suspend.
-                  before_sleep_cmd = session_lock
-                  # Passive net: relaunch swaylock only if it died while
-                  # locked; never touches a living lock client.
+                  # pre-suspend. fix-lock --record snapshots the pre-suspend
+                  # lock state (instant, never blocks suspend) so
+                  # after_sleep_cmd can repair a clientless lock even when
+                  # logind LockedHint says no.
+                  before_sleep_cmd = fix-lock --record; session_lock
+                  # Passive safety net: immediate repair pass on wake + a
+                  # detached --recheck 10s later (the amdgpu/DRI output-reset
+                  # storm kills clients AFTER the immediate check runs).
+                  # A living lock client is never touched — the normal
+                  # wake → unlock flow is unaffected.
                   after_sleep_cmd = fix-lock --auto
                   inhibit_sleep = 3
               }

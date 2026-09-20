@@ -16,7 +16,9 @@
       --hdr-enabled \
       --hdr-itm-enable \
       --rt \
-      --mangoapp \
+      # NOTE (2026-09-11): --mangoapp REMOVED — mangoapp 0.8.4 is X11-only and
+      # segfaults (XInternAtom on NULL Display) under gamescope --expose-wayland;
+      # gamescope's reaper respawns it ~1/sec (96k coredumps/day observed).
       --force-grab-cursor \
       --steam \
       --xwayland-count 2 \
@@ -46,6 +48,8 @@ in {
     rofi.enable = true;
     fcitx5.enable = true;
     opencode.enable = true;
+    openpets.enable = true;
+    chatgpt.enable = true;
     # zellij.enable = false;
     # flatpakOverrides.enable = false;
         herdr.enable = true;

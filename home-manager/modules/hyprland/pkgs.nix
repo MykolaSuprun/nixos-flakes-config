@@ -51,6 +51,20 @@
     else if config.hyprconf.noctalia.enable
     then ''
       pidof swaylock >/dev/null && exit 0
+      # VT/ssh recovery: without a Wayland socket this exec would fail —
+      # borrow it from the running session (same trick as fix-lock).
+      if [ -z "''${WAYLAND_DISPLAY:-}" ]; then
+        donor=$(pgrep -U "$(id -u)" -x hypridle 2>/dev/null | head -n 1)
+        [ -z "$donor" ] && donor=$(pidof Hyprland 2>/dev/null | tr ' ' '\n' | head -n 1)
+        if [ -n "$donor" ] && [ -r "/proc/$donor/environ" ]; then
+          while IFS= read -r -d "" kv; do
+            case "$kv" in
+              WAYLAND_DISPLAY=*|HYPRLAND_INSTANCE_SIGNATURE=*|XDG_RUNTIME_DIR=*)
+                export "$kv" ;;
+            esac
+          done < "/proc/$donor/environ"
+        fi
+      fi
       img=$(find "$HOME/.config/wallpapers/lockscreen" -maxdepth 1 -xtype f \
         \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) 2>/dev/null | sort | head -n 1)
       if [ -n "$img" ]; then
@@ -62,19 +76,73 @@
     else ''hyprlock''
   );
   # fix-lock — restore a broken Hyprland session lock (swaylock).
-  #   fix-lock          MANUAL emergency: kill the current lock client and
-  #                     start a fresh one. Only run this when the lock is
-  #                     actually misbehaving (dead keyboard etc).
-  #   fix-lock --auto   PASSIVE safety net (hypridle after_sleep_cmd): acts
-  #                     ONLY when logind says the session is locked, and:
-  #                       - no swaylock exists (lock client died) → relaunch;
-  #                       - systemd-suspend FAILED since the last handled
-  #                         resume (wedged DRM freezes living clients) →
-  #                         force-restart even a living swaylock.
-  #                     A living swaylock after a CLEAN resume is never
-  #                     touched — the normal wake → unlock flow is untouched.
+  #   fix-lock            MANUAL emergency: kill the current lock client and
+  #                       start a fresh one. Kill is pidof-based and verified
+  #                       (never `pkill -x`: HM installs swaylock as
+  #                       `.swaylock-wrapped`, which -x can never match).
+  #                       Works from a VT via Wayland-env import (see below).
+  #   fix-lock --auto     PASSIVE safety net (hypridle after_sleep_cmd):
+  #                       immediate repair pass + schedules a detached
+  #                       `--recheck` 10s later. The delayed pass is required:
+  #                       the amdgpu/DRI output-reset storm kills Wayland
+  #                       clients ~1s AFTER resume, i.e. after the immediate
+  #                       check has already run.
+  #   fix-lock --record   hypridle before_sleep_cmd helper: snapshot whether
+  #                       the session is locked going into suspend. Instant,
+  #                       always exits 0. Lets --auto/--recheck repair a
+  #                       clientless lock even when logind LockedHint is no
+  #                       (keybind locks, Hyprland lock-restore state).
+  #   fix-lock --recheck  Delayed repair pass, spawned by --auto. Never run
+  #                       by hand (use manual mode instead).
+  # Repair rule (repair_once): living client after a CLEAN resume is never
+  # touched; a living client after a NEW failed systemd-suspend is restarted
+  # (wedged DRM freezes it); a clientless session that is (or was at
+  # suspend) locked gets a fresh client; a clientless UNLOCKED session is
+  # left alone.
   fix_lock = pkgs.writeShellScriptBin "fix-lock" ''
+    state_dir="''${XDG_STATE_HOME:-$HOME/.local/state}/fix-lock"
+
+    fx_log() {
+      mkdir -p "$state_dir" 2>/dev/null
+      printf '%s [%s] %s\n' "$(date '+%F %T')" "''${1:-run}" "$2" >>"$state_dir/fix-lock.log" 2>/dev/null
+      if [ "$(wc -l <"$state_dir/fix-lock.log" 2>/dev/null)" -gt 400 ]; then
+        tail -n 300 "$state_dir/fix-lock.log" >"$state_dir/fix-lock.log.tmp" 2>/dev/null \
+          && mv "$state_dir/fix-lock.log.tmp" "$state_dir/fix-lock.log"
+      fi
+    }
+
+    # Hyprland session up? NOTE: never `pgrep -x Hyprland` — the binary is
+    # wrapped (comm `.Hyprland-wrapp`), which -x can never match. hypridle
+    # (unwrapped, exact match works) implies the session; pidof matches the
+    # wrapped Hyprland via argv[0].
+    session_up() {
+      pgrep -U "$(id -u)" -x hypridle >/dev/null 2>&1 && return 0
+      pidof Hyprland >/dev/null 2>&1
+    }
+
+    # Borrow WAYLAND_DISPLAY/HYPRLAND_INSTANCE_SIGNATURE from the running
+    # session when invoked somewhere without them (VT login, ssh). Without
+    # this any swaylock launched here exits instantly, looking "ineffective".
+    ensure_wayland_env() {
+      [ -n "''${WAYLAND_DISPLAY:-}" ] && [ -n "''${HYPRLAND_INSTANCE_SIGNATURE:-}" ] && return 0
+      donor=$(pgrep -U "$(id -u)" -x hypridle 2>/dev/null | head -n 1)
+      [ -z "$donor" ] && donor=$(pidof Hyprland 2>/dev/null | tr ' ' '\n' | head -n 1)
+      [ -n "$donor" ] && [ -r "/proc/$donor/environ" ] || return 1
+      while IFS= read -r -d "" kv; do
+        case "$kv" in
+          WAYLAND_DISPLAY=*|HYPRLAND_INSTANCE_SIGNATURE=*|XDG_RUNTIME_DIR=*)
+            export "$kv" ;;
+        esac
+      done < "/proc/$donor/environ"
+      [ -n "''${WAYLAND_DISPLAY:-}" ]
+    }
+
     launch() {
+      ensure_wayland_env
+      if [ -z "''${WAYLAND_DISPLAY:-}" ]; then
+        echo "fix-lock: ERROR: no WAYLAND_DISPLAY — no running Hyprland session found" >&2
+        return 1
+      fi
       img=$(find "$HOME/.config/wallpapers/lockscreen" -maxdepth 1 -xtype f \
         \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) 2>/dev/null | sort | head -n 1)
       if [ -n "$img" ]; then
@@ -82,48 +150,121 @@
       else
         setsid swaylock </dev/null >/dev/null 2>&1 &
       fi
+      for ((i = 0; i < 20; i++)); do
+        pidof swaylock >/dev/null 2>&1 && return 0
+        sleep 0.1
+      done
+      echo "fix-lock: ERROR: swaylock did not appear after launch" >&2
+      return 1
     }
 
-    if [ "''${1:-}" = "--auto" ]; then
-      # Only meaningful inside a running Hyprland session.
-      [ -n "''${HYPRLAND_INSTANCE_SIGNATURE:-}" ] || exit 0
+    # pidof (argv[0] match) is the reliable handle for the wrapped binary.
+    kill_client() {
+      pids=$(pidof swaylock 2>/dev/null) || return 0
+      kill $pids 2>/dev/null
+      for ((i = 0; i < 30; i++)); do
+        pidof swaylock >/dev/null 2>&1 || return 0
+        sleep 0.1
+      done
+      pids=$(pidof swaylock 2>/dev/null) || return 0
+      kill -9 $pids 2>/dev/null
+      sleep 0.3
+      if pidof swaylock >/dev/null 2>&1; then
+        echo "fix-lock: ERROR: swaylock PIDs $(pidof swaylock 2>/dev/null) refuse to die, aborting" >&2
+        return 1
+      fi
+      return 0
+    }
+
+    resolve_session() {
       sess="''${XDG_SESSION_ID:-}"
       if [ -z "$sess" ]; then
         sess=$(loginctl list-sessions --no-legend 2>/dev/null \
           | awk -v u="''${USER:-$(id -un)}" '$3 == u { print $1; exit }')
       fi
-      [ -n "$sess" ] || exit 0
-      # Session not locked → nothing to protect.
-      loginctl show-session "$sess" -p LockedHint 2>/dev/null | grep -q '=yes' || exit 0
-      # Failed systemd-suspend leaves DRM outputs wedged (amdgpu VRAM-eviction
-      # abort), freezing a living swaylock. A NEW failure since the last
-      # handled resume means a live client can't be trusted → force-restart.
-      # Scoped by exit timestamp: reset-failed needs root, so without this
-      # every later resume would nuke a healthy lock.
-      state_dir="''${XDG_STATE_HOME:-$HOME/.local/state}/fix-lock"
-      failed_ts=""
-      if [ "$(systemctl is-failed systemd-suspend.service 2>/dev/null)" = "failed" ]; then
-        failed_ts=$(systemctl show systemd-suspend.service -p ExecMainExitTimestampMonotonic --value 2>/dev/null || true)
+      printf '%s' "$sess"
+    }
+
+    snapshot_locked() {
+      [ "$(sed -n 's/^locked=//p' "$state_dir/suspend-state" 2>/dev/null)" = 1 ]
+    }
+
+    repair_once() {
+      phase="$1"
+      if pidof swaylock >/dev/null 2>&1; then
+        # Failed systemd-suspend leaves DRM outputs wedged (amdgpu
+        # VRAM-eviction abort), freezing a living swaylock. A NEW failure
+        # since the last handled resume means a live client can't be
+        # trusted → force-restart. Scoped by exit timestamp: reset-failed
+        # needs root, so without this every later resume would nuke a
+        # healthy lock.
+        failed_ts=""
+        if [ "$(systemctl is-failed systemd-suspend.service 2>/dev/null)" = "failed" ]; then
+          failed_ts=$(systemctl show systemd-suspend.service -p ExecMainExitTimestampMonotonic --value 2>/dev/null || true)
+        fi
+        if [ -n "$failed_ts" ] && [ "$failed_ts" != "0" ] \
+          && [ "$failed_ts" != "$(cat "$state_dir/last-handled-failure" 2>/dev/null)" ]; then
+          printf '%s' "$failed_ts" >"$state_dir/last-handled-failure"
+          fx_log "$phase" "failed suspend ($failed_ts): restarting living swaylock"
+          kill_client || { fx_log "$phase" "kill failed, aborting (not launching a second client)"; return 1; }
+          launch && fx_log "$phase" "relaunch ok" || fx_log "$phase" "relaunch FAILED"
+          return 0
+        fi
+        fx_log "$phase" "client alive after clean resume, hands off"
+        return 0
       fi
-      if [ -n "$failed_ts" ] && [ "$failed_ts" != "0" ] \
-        && [ "$failed_ts" != "$(cat "$state_dir/last-handled-failure" 2>/dev/null)" ]; then
-        mkdir -p "$state_dir"
-        printf '%s' "$failed_ts" > "$state_dir/last-handled-failure"
-        pidof swaylock >/dev/null 2>&1 && pkill -x swaylock
-        sleep 0.2
-        launch
-        exit 0
+      # Locked but clientless: the lock died (typically in the post-resume
+      # output-reset storm) → restore it. The pre-suspend snapshot covers
+      # locks logind does not know about (keybind locks, Hyprland
+      # lock-restore state), where LockedHint stays no.
+      sess=$(resolve_session)
+      if { [ -n "$sess" ] && loginctl show-session "$sess" -p LockedHint 2>/dev/null | grep -q '=yes'; } \
+        || snapshot_locked; then
+        fx_log "$phase" "locked but clientless: relaunching swaylock"
+        launch && fx_log "$phase" "relaunch ok" || fx_log "$phase" "relaunch FAILED"
+      else
+        fx_log "$phase" "unlocked and clientless, nothing to do"
       fi
-      # Lock client alive after a CLEAN resume → NORMAL case. Hands off, always.
-      pidof swaylock >/dev/null 2>&1 && exit 0
-      # Locked but clientless: the lock died while asleep → restore it.
-      launch
+      return 0
+    }
+
+    if [ "''${1:-}" = "--record" ]; then
+      # Pre-suspend snapshot for --auto/--recheck. Runs as before_sleep_cmd:
+      # must be instant and must never block suspend → exit 0 always.
+      mkdir -p "$state_dir" 2>/dev/null || true
+      locked=0
+      pidof swaylock >/dev/null 2>&1 && locked=1
+      if [ "$locked" = 0 ]; then
+        sess=$(resolve_session)
+        [ -n "$sess" ] && loginctl show-session "$sess" -p LockedHint 2>/dev/null | grep -q '=yes' && locked=1
+      fi
+      printf 'locked=%s\nts=%s\n' "$locked" "$(date +%s)" >"$state_dir/suspend-state.tmp" \
+        && mv "$state_dir/suspend-state.tmp" "$state_dir/suspend-state"
       exit 0
     fi
 
-    # Manual force-restart: kill whatever is there, start clean.
-    pidof swaylock >/dev/null 2>&1 && pkill -x swaylock
-    sleep 0.2
+    if [ "''${1:-}" = "--auto" ]; then
+      # Only meaningful with a running Hyprland session.
+      session_up || exit 0
+      repair_once immediate
+      # Post-resume output-reset storm kills clients AFTER this check:
+      # schedule a detached delayed recheck (convergent — no-op unless the
+      # session is locked and clientless).
+      setsid "$0" --recheck </dev/null >/dev/null 2>&1 &
+      exit 0
+    fi
+
+    if [ "''${1:-}" = "--recheck" ]; then
+      sleep 10
+      session_up || exit 0
+      repair_once delayed
+      exit 0
+    fi
+
+    # Manual force-restart: kill whatever is there (verified — never launch
+    # a second client while the old one still holds ext-session-lock),
+    # then start clean.
+    kill_client || exit 1
     launch
   '';
   notification_toggle = pkgs.writeShellScriptBin "notification-panel-toggle" (

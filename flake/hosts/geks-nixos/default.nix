@@ -12,7 +12,16 @@
     inherit system;
       config.allowUnfree = true;
       config.permittedInsecurePackages = ["electron-40.10.5"];
-    overlays = import ../../../overlays;
+    # opencode pinned to last known-good nix build (1.18.29 from
+    # nixpkgs-opencode-pin) — applied FIRST so overlays/opencode.nix still
+    # re-wraps the dev toolbox on top of the pinned package.
+    overlays = [
+      (final: prev: {
+        opencode = inputs.nixpkgs-opencode-pin.legacyPackages.${system}.opencode;
+      })
+    ] ++ import ../../../overlays ++ [
+      inputs.nixconf-private.overlays.lmstudio
+    ];
   };
   pkgs-stable = import inputs.nixpkgs-stable {
     inherit system;
@@ -36,6 +45,7 @@ in {
         ./_hardware.nix
         ./_configuration.nix
         # NixOS feature modules (all gated by myconf.nixos.*.enable flags)
+        ../../../nixos/bees.nix
         ../../../nixos/catppuccin.nix
         ../../../nixos/desktop-config.nix
         ../../../nixos/flatpak.nix
@@ -48,7 +58,12 @@ in {
         ../../../nixos/sys-pkgs.nix
         ../../../nixos/stylix.nix
         ../../../nixos/xdg.nix
-        ../../../nixos/llm.nix
+        # Private AI stack (nixconf-private flake input): local LLM
+        # (ollama + open-webui) + ComfyUI (GPU + CPU lanes, ROCm package,
+        # egress lockdown, gpu-purge). Rebuild as the user with
+        # --use-remote-sudo.
+        inputs.nixconf-private.nixosModules.llm
+        inputs.nixconf-private.nixosModules.comfyui
         ../../../nixos/moshi-hook.nix
         ../../../nixos/specialisations.nix
         inputs.home-manager.nixosModules.home-manager
@@ -75,6 +90,8 @@ in {
                   ../../../home-manager/modules/chromium.nix
                   ../../../home-manager/modules/desktop-config.nix
                   ../../../home-manager/modules/dev-pkgs.nix
+                  # Private LLM tooling (llama-cpp-rocm + comfyui CLI)
+                  inputs.nixconf-private.homeManagerModules.llm-tools
                   ../../../home-manager/modules/fcitx5.nix
                   ../../../home-manager/modules/flatpak-overrides.nix
                   ../../../home-manager/modules/git.nix
@@ -91,6 +108,8 @@ in {
                   ../../../home-manager/modules/wezterm.nix
                   ../../../home-manager/modules/zellij.nix
                   ../../../home-manager/modules/opencode.nix
+                  ../../../home-manager/modules/openpets.nix
+                  ../../../home-manager/modules/chatgpt.nix
                   ../../../home-manager/modules/hyprland
                 ]
                 ++ lib.optionals useHyprlandFlake [

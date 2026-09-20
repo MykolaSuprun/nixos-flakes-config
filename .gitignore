@@ -1,3 +1,16 @@
 result
 .agents
 .opencode
+
+# Local-only documentation / workflow state (never public):
+# task backlog (domain memory), research digests, plugin state.
+task_backlog/
+.tmp/
+.backlog/
+
+# Local-only artifacts (credentials/junk — never public):
+windows-containers/win_11_bacis.yaml
+home-manager/users/mykolas/config/distrobox/dockerfiles/archlinux/log
+
+# Local-only env (vault task dir)
+.envrc

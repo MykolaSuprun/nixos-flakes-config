@@ -3,6 +3,7 @@
   pkgs,
   lib,
   config,
+  wrappedPkgs,
   ...
 }: {
   options.myconf.dev.enable = lib.mkEnableOption "development packages";
@@ -297,9 +298,6 @@
       nixd
       pyright
       clang-tools
-
-      #LLM
-      pkgs.llama-cpp-rocm
     ];
   };
 }

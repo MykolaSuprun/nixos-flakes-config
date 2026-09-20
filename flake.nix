@@ -23,6 +23,13 @@
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
     nixpkgs-stable.url = "https://flakehub.com/f/NixOS/nixpkgs/*";
+    # Pinned nixpkgs for opencode (last known-good nix build: opencode 1.18.29
+    # built with bun 1.3.13). Main nixpkgs moved to 1.18.30 built with bun 1.4.2
+    # (deterministic startup crash) and a sandbox rebuild under bun 1.3.14
+    # segfaults — so opencode is sourced from this rev until nixpkgs is fixed.
+    # DROP when main nixpkgs ships a working opencode again (remove input +
+    # the pin overlay in flake/hosts/geks-nixos/default.nix, rebuild).
+    nixpkgs-opencode-pin.url = "github:NixOS/nixpkgs/1043b385fdb6d0959825aed31437ff411d6a7978";
     home-manager = {
       url = "https://flakehub.com/f/nix-community/home-manager/0.1";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -95,6 +102,12 @@
     disko = {
       url = "github:nix-community/disko/latest";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nixconf-private = {
+      url = "git+ssh://git@gitlab.com/nix-private/nixconf-private.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
     };
   };
 

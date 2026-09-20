@@ -26,7 +26,26 @@ in {
     secrets.enable = true;
     ollama.enable = true;
     moshi-hook.enable = true;
+    # btrfs dedup (bees) — 2026-09-11 storage baseline, see
+    # task_backlog/storage_backlog.md. 2GB mlocked hash table, 4 workers,
+    # loadavg ceiling 4 (polite defaults; 16/16 HOT during the 2026-09-12
+    # initial crawl, reverted on settlement).
+    bees.enable = true;
+    bees.hashTableSizeMB = 2048;
     # flatpak.enable = false;  # bindfs/theme Flatpak setup – zenbook only
+  };
+
+  # ── Swap ────────────────────────────────────────────────────────────────────
+  # zram, not a disk swapfile (2026-09-15 — the 64G btrfs swapfile was created
+  # fine but the kernel refuses multi-device-spanning swapfiles; see storage
+  # backlog). 25% of 96G ≈ 24G device ≈ 50-70G effective at zstd ratios.
+  # No disk surgery, no placement constraints, faster than SSD swap.
+  # Hibernation NOT wired.
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+    memoryPercent = 25;
+    priority = 100;
   };
 
   hyprconf = {
@@ -56,11 +75,20 @@ in {
         enable = true;
         efiSupport = true;
         efiInstallAsRemovable = true;
-        maxGenerations = 50;
+        # 511M /boot filled at 50 (~10-15M per kernel+initrd) → ENOSPC on
+        # switch 2026-09-11. 10 keeps ~150M headroom; prune old generations
+        # + GC once by hand, the cap enforces itself on future switches.
+        maxGenerations = 10;
       };
     };
 
     plymouth.enable = true;
+
+    # Second pool disk (SPCC 477G, whole-disk LUKS, pool-add 2026-09-12 — see
+    # task_backlog/storage_backlog.md). Same passphrase as root `crypted`;
+    # stage-1 retries entered passwords automatically → single boot prompt.
+    # by-uuid: kernel nvme numbering is unstable across boots, never use it.
+    initrd.luks.devices.crypted2.device = "/dev/disk/by-uuid/f4aed711-b947-4570-b0f2-df8b0d26b915";
 
     # ZFS is not used on this host (ext4 + LUKS). Explicitly disabled so that
     # zfs-kernel (currently broken for linux-zen) is never pulled in — including
@@ -75,6 +103,14 @@ in {
     kernelModules = [
       "btintel"
       "btusb"
+      # Rootless docker networking — previously injected by the root daemon
+      # module (docker.nix), which is now disabled. All four are =m, so they
+      # must be explicitly loaded or rootless container networking breaks
+      # after reboot.
+      "bridge"
+      "veth"
+      "br_netfilter"
+      "xt_nat"
       # "vfio_virqfd"
       # "vfio_pci"
       # "vfio_iommu_type1"
@@ -272,15 +308,27 @@ in {
         "gamemode"
         "input"
       ];
+      # Keep user services (rootless docker) running after logout — without
+      # linger the rootless daemon and its containers stop when the user
+      # logs out (NixOS wiki / docker rootless docs).
+      linger = true;
     };
   };
 
   # ── Virtualisation ────────────────────────────────────────────────────────────
   virtualisation = {
+    # Rootless-only docker (official pattern, NixOS wiki + docker docs):
+    # the root daemon module (docker.nix) is disabled; rootless is a separate
+    # module (docker-rootless.nix) gated independently on rootless.enable.
+    # setSocketVariable exports DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+    # via environment.extraInit. Root-daemon containers/images stay dormant in
+    # /var/lib/docker until migrated — see task_backlog/docker_backlog.md.
     docker = {
-      enable = true;
-      rootless.enable = true;
-      enableOnBoot = true;
+      enable = false;
+      rootless = {
+        enable = true;
+        setSocketVariable = true;
+      };
     };
     # podman = { ... };
     libvirtd = {
@@ -387,6 +435,14 @@ in {
       distrobox
       docker-compose
       lazydocker
+      # btrfs visibility (2026-09-11): btdu (CoW-aware usage TUI, shared extents
+      # counted once), compsize (per-dir compression ratios), btrfs-assistant
+      # (snapper/scrub/balance GUI — no compression/dedup stats). NOTE: no
+      # `bees` package here — verified it ships no status CLI, only beesd +
+      # bees-service-wrapper which the service already uses internally.
+      btdu
+      compsize
+      btrfs-assistant
     ];
   };
 

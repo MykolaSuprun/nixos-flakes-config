@@ -10,6 +10,16 @@
     services.hardware = {
       bolt.enable = true;
     };
+    # Crash-loop defense (2026-09-11): bound systemd-coredump so a respawning
+    # crasher (e.g. mangoapp, 96k dumps/day observed) can't saturate disk/IO.
+    # Depth only — the real fix is removing the crasher (see --mangoapp notes).
+    environment.etc."systemd/coredump.conf.d/10-limits.conf".text = ''
+      [Coredump]
+      MaxUse=2G
+      KeepFree=30G
+      ProcessSizeMax=1G
+      ExternalSizeMax=1G
+    '';
     hardware.steam-hardware.enable = true;
     services.teamviewer.enable = true;
     programs = {
@@ -33,7 +43,7 @@
             "--adaptive-sync"
             "--hdr-enabled"
             "--hdr-itm-enable"
-            "--mangoapp"
+            # NOTE (2026-09-11): "--mangoapp" REMOVED — same XInternAtom crash-loop as steam-gamescope wrapper.
             "--rt"
             "--steam"
             "--xwayland-count 2"
@@ -77,7 +87,7 @@
                 --adaptive-sync \
                 --hdr-enabled \
                 --hdr-itm-enable \
-                --mangoapp \
+                # NOTE (2026-09-11): --mangoapp REMOVED — same XInternAtom crash-loop as steam-gamescope wrapper.
                 -W 3440 -H 1440 -r 165 \
                 -- ${pkgs.steam}/bin/steam -gamepadui -steamos
             ''}
