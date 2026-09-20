@@ -53,7 +53,16 @@ hl.bind(
 	),
 	{ description = "Cycle focus between tiled/floating levels" }
 )
-hl.bind(mod .. " + F", hl.dsp.window.fullscreen({ mode = "maximized" }), { description = "Toggle maximized" })
+hl.bind(
+	mod .. " + F",
+	layout_bind({
+		-- tape: pin the column to 100% width, restore its exact previous width
+		-- on the second toggle. Other layouts: native maximized fullscreen state.
+		["lua:tape"] = hl.dsp.layout("maximize"),
+		default = hl.dsp.window.fullscreen({ mode = "maximized" }),
+	}),
+	{ description = "Toggle maximized" }
+)
 hl.bind(mod .. " + SHIFT + F", hl.dsp.window.fullscreen(), { description = "Toggle fullscreen" })
 hl.bind(mod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true, description = "Drag window" })
 hl.bind(mod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true, description = "Resize window (mouse)" })
@@ -83,6 +92,7 @@ hl.bind(mod .. " + SHIFT + D", hl.dsp.exec_cmd("monitor-toggle"), { description 
 hl.bind(
 	mod .. " + SHIFT + T",
 	layout_bind({
+		["lua:tape"] = hl.dsp.layout("promote"),
 		scrolling = hl.dsp.layout("promote"),
 		master = hl.dsp.layout("swapwithmaster"),
 	}),
@@ -92,6 +102,8 @@ hl.bind(
 hl.bind(
 	mod .. " + CTRL + H",
 	layout_bind({
+		-- tape: niri smart move — join the column to the left, or become a new column
+		["lua:tape"] = hl.dsp.layout("move l"),
 		-- Use the native 'move_into_group' or 'move' logic for columns
 		scrolling = hl.dsp.window.move({ direction = "l", group_aware = true }),
 		default = hl.dsp.window.move({ direction = "l" }),
@@ -102,6 +114,7 @@ hl.bind(
 hl.bind(
 	mod .. " + CTRL + L",
 	layout_bind({
+		["lua:tape"] = hl.dsp.layout("move r"),
 		scrolling = hl.dsp.window.move({ direction = "r", group_aware = true }),
 		default = hl.dsp.window.move({ direction = "r" }),
 	}),
@@ -111,6 +124,7 @@ hl.bind(
 hl.bind(
 	mod .. " + H",
 	layout_bind({
+		["lua:tape"] = hl.dsp.layout("focus l"),
 		scrolling = hl.dsp.layout("focus l"),
 		default = hl.dsp.focus({ direction = "l" }),
 	})
@@ -119,6 +133,7 @@ hl.bind(
 hl.bind(
 	mod .. " + L",
 	layout_bind({
+		["lua:tape"] = hl.dsp.layout("focus r"),
 		scrolling = hl.dsp.layout("focus r"),
 		default = hl.dsp.focus({ direction = "r" }),
 	})
@@ -127,6 +142,8 @@ hl.bind(
 hl.bind(
 	mod .. " + K",
 	layout_bind({
+		-- tape: focus the window above within the column stack
+		["lua:tape"] = hl.dsp.layout("focus u"),
 		master = hl.dsp.layout("cycleprev"),
 		monocle = hl.dsp.layout("cycleprev"),
 		default = hl.dsp.focus({ direction = "u" }),
@@ -136,6 +153,7 @@ hl.bind(
 hl.bind(
 	mod .. " + J",
 	layout_bind({
+		["lua:tape"] = hl.dsp.layout("focus d"),
 		master = hl.dsp.layout("cyclenext"),
 		monocle = hl.dsp.layout("cyclenext"),
 		default = hl.dsp.focus({ direction = "d" }),
@@ -149,6 +167,7 @@ hl.bind(
 hl.bind(
 	mod .. " + SHIFT + H",
 	layout_bind({
+		["lua:tape"] = hl.dsp.layout("swapcol l"),
 		scrolling = hl.dsp.layout("swapcol l"),
 		master = hl.dsp.layout("swapwithmaster"),
 		default = hl.dsp.window.move({ direction = "l" }),
@@ -158,6 +177,7 @@ hl.bind(
 hl.bind(
 	mod .. " + SHIFT + L",
 	layout_bind({
+		["lua:tape"] = hl.dsp.layout("swapcol r"),
 		scrolling = hl.dsp.layout("swapcol r"),
 		master = hl.dsp.layout("swapwithmaster"),
 		default = hl.dsp.window.move({ direction = "r" }),
@@ -167,6 +187,8 @@ hl.bind(
 hl.bind(
 	mod .. " + SHIFT + K",
 	layout_bind({
+		-- tape: move the window up within its column stack
+		["lua:tape"] = hl.dsp.layout("move u"),
 		master = hl.dsp.layout("swapprev"),
 		monocle = hl.dsp.layout("swapprev"),
 		default = hl.dsp.window.move({ direction = "u" }),
@@ -176,6 +198,7 @@ hl.bind(
 hl.bind(
 	mod .. " + SHIFT + J",
 	layout_bind({
+		["lua:tape"] = hl.dsp.layout("move d"),
 		master = hl.dsp.layout("swapnext"),
 		monocle = hl.dsp.layout("swapnext"),
 		default = hl.dsp.window.move({ direction = "d" }),
@@ -546,20 +569,6 @@ hl.on("workspace.active", function(ws)
 	end
 end)
 
--- ── Auto-fill remaining windows (issue 2) ────────────────────────────────────
--- When a window is closed or moved away from a workspace, resize the remaining
--- tiled windows to fill the visible area via "fit visible".
--- Special workspaces and empty workspaces are skipped.
-local function fit_visible_if_needed()
-	hl.exec_cmd([=[sh -c '
-	  sleep 0.02
-	  WS=$(hyprctl activeworkspace -j)
-	  WS_NAME=$(echo "$WS" | jq -r ".name")
-	  WIN_COUNT=$(echo "$WS" | jq -r ".windows")
-	  case "$WS_NAME" in special:*) exit 0;; esac
-	  [ "$WIN_COUNT" -gt 0 ] && hyprctl dispatch "hl.dsp.layout([[fit visible]])"
-	']=])
-end
-
-hl.on("window.close", fit_visible_if_needed)
-hl.on("window.move_to_workspace", fit_visible_if_needed)
+-- NOTE: the former "Auto-fill remaining windows" (fit visible on close/move)
+-- hack was removed — tape auto-rebalances per its width rules, and on scrollable
+-- fallback workspaces the fit submap (SUPER+CTRL+F) covers it manually.

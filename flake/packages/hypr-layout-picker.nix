@@ -35,8 +35,9 @@
         [[ -z "$WORKSPACE_ID" ]] && err "Failed to fetch active workspace ID."
 
         # ── Prompt User ───────────────────────────────────────────────────────────────
-        # Define your available layouts here
-        LAYOUTS="dwindle\nmaster\nscrolling\nmonocle"
+        # Define your available layouts here (lua:tape is the default; the rest
+        # are per-workspace fallbacks)
+        LAYOUTS="lua:tape\ndwindle\nmaster\nscrolling\nmonocle"
 
         CHOICE=$(echo -e "$LAYOUTS" | rofi -dmenu -i -p "󰕰 Layout")
 

@@ -9,7 +9,9 @@ hl.config({
 		no_focus_fallback = true,
 		resize_on_border = false,
 		extend_border_grab_area = 0,
-		layout = "scrolling",
+		-- lua:tape = custom layout (tape-layout.lua). scrolling/master/dwindle/
+		-- monocle remain available per-workspace via hypr-layout-picker.
+		layout = "lua:tape",
 		["col.inactive_border"] = colors.inactive_border,
 		["col.nogroup_border"] = colors.nogroup_border,
 		["col.active_border"] = colors.normal_active_border,

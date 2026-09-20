@@ -4,6 +4,7 @@
 -- order of loading does matter since files down the list can rely on variables defined in files above
 
 require("lua/settings")
+require("lua/tape-layout") -- registers the lua:tape custom layout (inert until a workspace uses it)
 require("lua/monitors")
 require("lua/workspaces")
 require("lua/gestures")
