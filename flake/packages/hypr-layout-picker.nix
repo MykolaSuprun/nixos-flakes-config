@@ -11,6 +11,7 @@
       runtimeInputs = with pkgs; [
         hyprland # provides hyprctl
         jq # JSON parsing
+        rofi # menu (used by the picker flow)
 
         libnotify # provides notify-send
         coreutils # provides echo, printf, etc.

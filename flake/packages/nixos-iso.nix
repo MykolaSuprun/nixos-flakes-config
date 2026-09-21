@@ -4,15 +4,15 @@
 # to interactively partition, format, and install the system.
 #
 # Usage:
-#   nixos-iso               # use FLAKE_REF env var, or auto-detect (local git repo → GitHub)
+#   nixos-iso               # use FLAKE_REF env var, or auto-detect (local git repo → GitLab)
 #   nixos-iso --local       # force local checkout (must be run from repo root or $NIXOS_CONF_DIR)
-#   nixos-iso --github      # force GitHub (github:MykolaSuprun/nixos-flakes-config)
+#   nixos-iso --gitlab      # force the public GitLab flake (gitlab:mykolas-open/nixos-flakes-config)
 #   FLAKE_REF=. nixos-iso   # explicit override
 {...}: {
   perSystem = {pkgs, ...}: let
     nixos-iso = pkgs.writeShellApplication {
       name = "nixos-iso";
-      runtimeInputs = [pkgs.git];
+      runtimeInputs = [pkgs.git pkgs.nix pkgs.findutils pkgs.coreutils];
       text = ''
         # --- Flake source resolution -----------------------------------------------
         # Explicit flags take precedence over $FLAKE_REF and auto-detection.
@@ -20,7 +20,8 @@
         for arg in "$@"; do
           case "$arg" in
             --local)  _flag="local"  ;;
-            --github) _flag="github" ;;
+            --gitlab) _flag="gitlab" ;;
+            --github) _flag="gitlab" ;; # legacy alias
             *) echo "error: unknown argument: $arg" >&2; exit 1 ;;
           esac
         done
@@ -32,15 +33,15 @@
             exit 1
           fi
           FLAKE_REF="$_local_dir"
-        elif [ "$_flag" = "github" ]; then
-          FLAKE_REF="github:MykolaSuprun/nixos-flakes-config"
+        elif [ "$_flag" = "gitlab" ]; then
+          FLAKE_REF="gitlab:mykolas-open/nixos-flakes-config"
         elif [ -z "''${FLAKE_REF:-}" ]; then
-          # Auto-detect: prefer local git repo, fall back to GitHub.
+          # Auto-detect: prefer local git repo, fall back to the public GitLab flake.
           _local_dir="''${NIXOS_CONF_DIR:-$PWD}"
           if git -C "$_local_dir" rev-parse --git-dir &>/dev/null; then
             FLAKE_REF="$_local_dir"
           else
-            FLAKE_REF="github:MykolaSuprun/nixos-flakes-config"
+            FLAKE_REF="gitlab:mykolas-open/nixos-flakes-config"
           fi
         fi
 

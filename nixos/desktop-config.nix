@@ -21,7 +21,6 @@
       ExternalSizeMax=1G
     '';
     hardware.steam-hardware.enable = true;
-    services.teamviewer.enable = true;
     programs = {
       steam = {
         enable = true;
@@ -51,12 +50,6 @@
             "--expose-wayland"
           ];
         };
-        # gamescopeSession.args = [
-        #   "-f -b -g -e --rt -w 3440 -h 1440 -W 3440 -H 1440 -r 165"
-        #   "--hdr-enabled --force-grab-cursor --immediate-flips --mangoapp"
-        #   "--adaptive-sync --backend=wayland --expose-wayland"
-        # ];
-        # extraPackages = [ pkgs.gamescope ];
       };
       gamemode = {
         enable = true;
@@ -74,22 +67,30 @@
         (pkgs.writeTextFile {
           name = "gamescope-steam-session";
           destination = "/share/wayland-sessions/gamescope-steam.desktop";
-          text = ''
+          text = let
+            # NOTE (2026-09-11): --mangoapp REMOVED — same XInternAtom crash-loop as steam-gamescope wrapper.
+            gamescopeArgs = [
+              "--rt"
+              "--prefer-vk-device"
+              "1002:744c"
+              "--expose-wayland"
+              "--force-grab-cursor"
+              "--adaptive-sync"
+              "--hdr-enabled"
+              "--hdr-itm-enable"
+              "-W"
+              "3440"
+              "-H"
+              "1440"
+              "-r"
+              "165"
+            ];
+          in ''
             [Desktop Entry]
             Name=Steam (Gamescope)
             Comment=Steam Big Picture Mode via Gamescope
             Exec=${pkgs.writeShellScript "gamescope-steam-optimized" ''
-              ${pkgs.gamescope}/bin/gamescope \
-                --rt \
-                --prefer-vk-device 1002:744c \
-                --expose-wayland \
-                --force-grab-cursor \
-                --adaptive-sync \
-                --hdr-enabled \
-                --hdr-itm-enable \
-                # NOTE (2026-09-11): --mangoapp REMOVED — same XInternAtom crash-loop as steam-gamescope wrapper.
-                -W 3440 -H 1440 -r 165 \
-                -- ${pkgs.steam}/bin/steam -gamepadui -steamos
+              exec ${pkgs.gamescope}/bin/gamescope ${lib.escapeShellArgs gamescopeArgs} -- ${pkgs.steam}/bin/steam -gamepadui -steamos
             ''}
             Type=Application
           '';

@@ -12,7 +12,7 @@
   perSystem = {pkgs, ...}: let
     nixos-flash = pkgs.writeShellApplication {
       name = "nixos-flash";
-      runtimeInputs = [pkgs.fzf pkgs.util-linux pkgs.coreutils pkgs.gnugrep pkgs.gawk pkgs.pv];
+      runtimeInputs = [pkgs.fzf pkgs.util-linux pkgs.coreutils pkgs.findutils pkgs.gnugrep pkgs.gawk pkgs.pv];
       text = ''
         FZF_BIND=(--bind "j:down,k:up,g:first,G:last,ctrl-d:half-page-down,ctrl-u:half-page-up")
 

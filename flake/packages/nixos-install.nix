@@ -27,8 +27,13 @@
         pkgs.fzf
         pkgs.util-linux
         pkgs.coreutils
+        pkgs.findutils
+        pkgs.gnugrep
+        pkgs.gnused
+        pkgs.gawk
         pkgs.jq
         pkgs.git
+        pkgs.nix
         pkgs.nixos-install-tools
         disko-install
       ];
@@ -52,7 +57,7 @@
             elif git -C "$PWD" rev-parse --git-dir &>/dev/null; then
               FLAKE_REF="$PWD"
             else
-              FLAKE_REF="github:MykolaSuprun/nixos-flakes-config"
+              FLAKE_REF="gitlab:mykolas-open/nixos-flakes-config"
             fi
           fi
           echo "Using flake: $FLAKE_REF"
@@ -70,8 +75,8 @@
           mkdir -p ~/.config/nix
           cat <<EOF > ~/.config/nix/nix.conf
 experimental-features = nix-command flakes
-extra-substituters = https://cache.nixos.org https://nix-community.cachix.org https://install.determinate.systems
-extra-trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkN8ET+NDs5/KznmBBmRQ= cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=
+extra-substituters = ${builtins.concatStringsSep " " (import ../../cache.nix).trusted-substituters}
+extra-trusted-public-keys = ${builtins.concatStringsSep " " (import ../../cache.nix).trusted-public-keys}
 EOF
           sudo mkdir -p /root/.config/nix
           sudo cp ~/.config/nix/nix.conf /root/.config/nix/nix.conf

@@ -1,11 +1,15 @@
 {
   description = "NixOS flake";
 
+  # Substituters/keys are single-sourced in cache.nix (repo root) for all
+  # NixOS/installer consumers. nixConfig CANNOT import it: nix refuses thunked
+  # nixConfig values, so this literal list must be kept in sync with cache.nix.
   nixConfig = {
     experimental-features = ["nix-command" "flakes"];
     trusted-substituters = [
       "https://cache.nixos.org"
       "https://nix-community.cachix.org"
+      "https://hyprland.cachix.org"
       "https://install.determinate.systems"
       "https://noctalia.cachix.org"
     ];
@@ -14,6 +18,13 @@
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
+      "cache.flakehub.com-4:Asi8qIv291s0aYLyH6IOnr5Kf6+OF14WVjkE6t3xMio="
+      "cache.flakehub.com-5:zB96CRlL7tiPtzA9/WKyPkp3A2vqxqgdgyTVNGShPDU="
+      "cache.flakehub.com-6:W4EGFwAGgBj3he7c5fNh9NkOXw0PUVaxygCVKeuvaqU="
+      "cache.flakehub.com-7:mvxJ2DZVHn/kRxlIaxYNMuDG1OvMckZu32um1TadOR8="
+      "cache.flakehub.com-8:moO+OVS0mnTjBTcOUh2kYLQEd59ExzyoW1QgQ8XAARQ="
+      "cache.flakehub.com-9:wChaSeTI6TeCuV/Sg2513ZIM9i0qJaYsF+lZCXg0J6o="
+      "cache.flakehub.com-10:2GqeNlIp6AKp4EF2MVbE1kBOp9iBSyo0UPR9KoR0o1Y="
       "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
     ];
   };
@@ -40,8 +51,11 @@
     import-tree.url = "github:vic/import-tree";
 
     # Platform-specific
+    # follows is safe here: NixOS-WSL is a module-only flake with no binary
+    # cache — dedup avoids a second nixpkgs download (verified 2026-09-20).
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
+      inputs.nixpkgs.follows = "nixpkgs";
       flake = true;
     };
 

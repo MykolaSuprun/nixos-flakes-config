@@ -9,7 +9,6 @@ task_backlog/
 .backlog/
 
 # Local-only artifacts (credentials/junk — never public):
-windows-containers/win_11_bacis.yaml
 home-manager/users/mykolas/config/distrobox/dockerfiles/archlinux/log
 
 # Local-only env (vault task dir)

@@ -18,16 +18,6 @@
     )
   );
 
-  conn-win = pkgs.writeShellScriptBin "conn-win" ''
-      sdl-freerdp /v:localhost:3389 /u:VM /size:1920x1080 /sound \
-    /gfx:AVC444,mask:0xFFFFFFFF /bpp:32 /gdi:hw /network:lan -compression \
-    +aero +menu-anims +window-drag +clipboard -grab-keyboard -grab-mouse \
-    /cert:ignore /sec:nla:off
-  '';
-
-  win11 = pkgs.writeShellScriptBin "win11" ''
-    docker compose -f $NIXOS_CONF_DIR/windows-containers/win_11_bacis.yaml up
-  '';
   flake-init = pkgs.writeShellScriptBin "flake-init" ''
     FLAKE_DIR="''${NIXOS_CONF_DIR:-$HOME/workspaces/src/nixconf}"
     FZF_BIND=(--bind "j:down,k:up,g:first,G:last,ctrl-d:half-page-down,ctrl-u:half-page-up")
@@ -66,8 +56,6 @@ in {
         grc
         tmuxp
 
-        conn-win
-        win11
         flake-init
       ];
 

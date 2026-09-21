@@ -21,10 +21,9 @@
 
         core.editor = "nvim";
 
-        # Delta pager settings (core.pager and interactive.diffFilter are
-        # automatically set by programs.delta.enableGitIntegration in dev-pkgs.nix)
-        delta.navigate = true;
-        delta."side-by-side" = true;
+        # Delta options live in programs.delta.options below; core.pager and
+        # interactive.diffFilter come from programs.delta.enableGitIntegration
+        # (dev-pkgs.nix). Do NOT duplicate delta.* keys here.
 
         merge.conflictstyle = "zdiff3";
         merge.tool = "nvimdiff";

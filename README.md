@@ -260,12 +260,12 @@ flake/
     geks-wsl/      # WSL2 minimal
     Each host contains: default.nix  _configuration.nix  _hardware.nix  _disk-config.nix
   packages/        # nixos-install  nixos-flash  nixos-build  nixos-check
-                   # nixos-remote-build  nix-update
+                   # nixos-remote-build  nixos-iso  nix-update  hypr-layout-picker
+cache.nix          # single source of truth for binary-cache substituters/keys
 nixos/             # Shared NixOS feature modules (each gated by a myconf.* enable flag)
 home-manager/      # Home Manager modules and per-user configs
 lib/               # Config generators (helix, zsh, tmux, kitty, wezterm, …)
 overlays/          # Nixpkgs overlays
-pkgs/              # Custom packages
 templates/         # nix flake init templates (go, haskell, python-uv, scala, java)
 ```
 

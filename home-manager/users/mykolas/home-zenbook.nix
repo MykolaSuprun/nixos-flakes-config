@@ -1,6 +1,7 @@
 # Home-manager configuration for mykolas on geks-zenbook (Intel laptop, Hyprland).
-# HM feature modules (home-manager/modules/*.nix) are auto-imported by import-tree
-# in the host's default.nix; enable flags below activate them.
+# HM feature modules (home-manager/modules/*.nix) are hand-listed in the
+# host's default.nix (import-tree is NOT used for them); enable flags below
+# activate them.
 {
   config,
   inputs,
@@ -26,8 +27,6 @@
     rofi.enable = true;
     fcitx5.enable = true;
     opencode.enable = true;
-    # zellij.enable = false;
-    # flatpakOverrides.enable = false;
   };
 
   programs.noctalia.enable = true; # v5 Noctalia shell (built-in default settings)
@@ -39,10 +38,7 @@
       enable = true;
       output = ["DP-1"];
     };
-    hyprland = {
-      enable = true;
-      flake.enable = true;
-    };
+    hyprland.enable = true;
     hypridle.oledOptimized = true;
   };
 

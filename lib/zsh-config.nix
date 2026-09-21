@@ -9,7 +9,6 @@
       nixgc = "nix-collect-garbage";
       confdir = "cd $NIXOS_CONF_DIR";
       editconf = "cd $NIXOS_CONF_DIR; nixvim .";
-      nxcnf = "$NIXOS_CONF_DIR/nxcnf.sh";
       spf = "superfile";
     };
     integrations = {
@@ -38,7 +37,6 @@
     env = {
       GPG_TTY = "$(tty)";
       VI_MODE_SET_CURSOR = "true";
-      NIXPKGS_ALLOW_UNFREE = "1";
       EDITOR = "nvim";
       VISUAL = "nvim";
     };

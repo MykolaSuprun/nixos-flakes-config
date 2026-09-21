@@ -13,6 +13,8 @@
         git
         jq
         fzf
+        coreutils
+        diffutils
       ];
 
       text = ''

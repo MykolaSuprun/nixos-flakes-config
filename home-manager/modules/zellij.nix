@@ -23,7 +23,7 @@
           // Enabled at start?
           is_enabled true
           // Lock when any open these programs open.
-          triggers "nvim|vim|git|fzf|zoxide|lazygit|lazydocker"
+          triggers "nvim|vim|git|fzf|zoxide|lazygit|podman-tui"
           // Reaction to input occurs after this many seconds.
           // (An existing scheduled reaction prevents additional reactions.)
           reaction_seconds "0.3"

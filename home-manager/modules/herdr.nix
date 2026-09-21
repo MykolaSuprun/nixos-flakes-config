@@ -1,7 +1,7 @@
 # Herdr — agent multiplexer that lives in your terminal.
-# Bindings mirror the tmux config (lib/tmux-config.nix) so that pane
-# navigation, splits, and tab switching use the same prefix key and
-# the same hjkl-based motion, giving a consistent UX across both tools.
+# Bindings are tmux-MOTION compatible (hjkl, prefix+letter verbs) but note:
+# the prefix here is ctrl+e (NOT tmux's C-Space — tmux needs C-Space itself
+# inside embedded panes).
 {
   config,
   lib,
@@ -35,14 +35,14 @@
         };
 
         # ── Keybindings ─────────────────────────────────────────────────
-        # Mirror the tmux config so muscle memory transfers between the
-        # two multiplexers.  Prefix = C-Space (same as tmux).
+        # tmux-motion-compatible bindings. Prefix is ctrl+e on purpose:
+        # C-Space stays tmux's prefix so embedded tmux sessions keep working.
         keys = {
           prefix = "ctrl+e";
 
-          # Pane navigation — prefix+h/j/k/l (matches tmux prefix).
-          # Direct chords use Alt+Shift+h/j/k/l (tmux uses Alt+hjkl without prefix).  The Shift modifier helps avoid interfering
-          # with normal typing in editors/shells.
+          # Pane navigation — prefix+h/j/k/l.
+          # Direct chords use Alt+Shift+h/j/k/l (tmux uses Alt+hjkl). The Shift
+          # modifier avoids interfering with normal typing in editors/shells.
           focus_pane_left = ["prefix+h" "alt+shift+h"];
           focus_pane_down = ["prefix+j" "alt+shift+j"];
           focus_pane_up = ["prefix+k" "alt+shift+k"];

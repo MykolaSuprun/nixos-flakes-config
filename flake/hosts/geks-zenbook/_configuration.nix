@@ -1,7 +1,6 @@
 # NixOS system configuration for geks-zenbook (Intel laptop + Hyprland).
-# Hardware is imported separately via hardware.nix.
-# Feature modules (nixos/*.nix) are auto-imported by import-tree in default.nix;
-# enable flags below activate them.
+# Feature modules (nixos/*.nix) are hand-listed in the host's default.nix
+# (import-tree is NOT used for them); enable flags below activate them.
 {
   inputs,
   config,
@@ -15,7 +14,8 @@
     nixConf.enable = true;
     fonts.enable = true;
     pipewire.enable = true;
-    inputMethod.enable = true;
+    # fcitx5 is HM-owned only (home-manager/modules/fcitx5.nix) — the NixOS-side
+    # module was removed (dual daemon/config conflict).
     syspkgs.enable = true;
     xdg.enable = true;
     catppuccin.enable = true;
@@ -26,11 +26,7 @@
 
   hyprconf = {
     target = "geks-zenbook";
-    monitorsConf = "geks-zenbook-monitors.conf";
-    hyprland = {
-      enable = true;
-      flake.enable = true;
-    };
+    hyprland.enable = true;
   };
 
   # ── Theming ───────────────────────────────────────────────────────────────────

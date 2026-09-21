@@ -16,13 +16,15 @@
     environment.systemPackages = [ pkgs.pipewire pkgs.alsa-utils pkgs.pulseaudio ];
     services = {
       pipewire = {
+        enable = true;
         alsa.enable = true;
         alsa.support32Bit = true;
         pulse.enable = true;
         wireplumber.enable = true;
         socketActivation = true;
       };
-      pulseaudio.package = pkgs.pulseaudioFull;
+      # Note: the pulseaudio daemon stays disabled; client tools come from
+      # environment.systemPackages above (pactl talks to pipewire-pulse).
     };
 
     hardware = {

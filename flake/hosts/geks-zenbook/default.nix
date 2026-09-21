@@ -11,12 +11,15 @@
   pkgs = import inputs.nixpkgs {
     inherit system;
     config.allowUnfree = true;
-    config.permittedInsecurePackages = ["openssl-1.1.1w" "electron-40.10.5"];
+
     overlays = import ../../../overlays ++ [inputs.nixconf-private.overlays.lmstudio];
   };
   pkgs-stable = import inputs.nixpkgs-stable {
     inherit system;
     config.allowUnfree = true;
+    # winboat (from pkgs-stable) pulls stable's electron-40.10.5, which
+    # nixpkgs marks insecure. Scoped to pkgs-stable only; openssl-1.1.1w
+    # exemption removed — nothing in the closure depends on it anymore.
     config.permittedInsecurePackages = ["electron-40.10.5"];
   };
   lib = inputs.nixpkgs.lib;
@@ -41,7 +44,6 @@ in {
         ../../../nixos/flatpak.nix
         ../../../nixos/fonts.nix
         ../../../nixos/hyprland.nix
-        ../../../nixos/input_method.nix
         ../../../nixos/nix-conf.nix
         ../../../nixos/pipewire.nix
         ../../../nixos/secrets.nix
@@ -70,7 +72,6 @@ in {
                   # Private LLM tooling (llama-cpp-rocm + comfyui CLI)
                   inputs.nixconf-private.homeManagerModules.llm-tools
                   ../../../home-manager/modules/fcitx5.nix
-                  ../../../home-manager/modules/flatpak-overrides.nix
                   ../../../home-manager/modules/git.nix
                   ../../../home-manager/modules/ghostty.nix
                   ../../../home-manager/modules/helix.nix

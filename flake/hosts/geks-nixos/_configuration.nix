@@ -1,7 +1,6 @@
 # NixOS system configuration for geks-nixos (AMD desktop + Hyprland + gaming).
-# Hardware is imported separately via hardware.nix.
-# Feature modules (nixos/*.nix) are auto-imported by import-tree in default.nix;
-# enable flags below activate them.
+# Feature modules (nixos/*.nix) are hand-listed in the host's default.nix
+# (import-tree is NOT used for them); enable flags below activate them.
 {
   inputs,
   config,
@@ -18,7 +17,8 @@ in {
     nixConf.enable = true;
     fonts.enable = true;
     pipewire.enable = true;
-    inputMethod.enable = false;
+    # fcitx5 is HM-owned only (home-manager/modules/fcitx5.nix) — the NixOS-side
+    # module was removed (dual daemon/config conflict).
     syspkgs.enable = true;
     xdg.enable = true;
     catppuccin.enable = true;
@@ -50,11 +50,7 @@ in {
 
   hyprconf = {
     target = "geks-nixos";
-    monitorsConf = "geks-nixos-monitors.conf";
-    hyprland = {
-      enable = true;
-      flake.enable = true;
-    };
+    hyprland.enable = true;
   };
 
   # ── Theming ───────────────────────────────────────────────────────────────────
@@ -103,10 +99,9 @@ in {
     kernelModules = [
       "btintel"
       "btusb"
-      # Rootless docker networking — previously injected by the root daemon
-      # module (docker.nix), which is now disabled. All four are =m, so they
-      # must be explicitly loaded or rootless container networking breaks
-      # after reboot.
+      # Rootless container networking (podman netavark/cni) — previously
+      # injected by the docker daemon module. All four are =m, so they
+      # must be explicitly loaded or container networking breaks after reboot.
       "bridge"
       "veth"
       "br_netfilter"
@@ -308,29 +303,27 @@ in {
         "gamemode"
         "input"
       ];
-      # Keep user services (rootless docker) running after logout — without
-      # linger the rootless daemon and its containers stop when the user
-      # logs out (NixOS wiki / docker rootless docs).
+      # Keep user services (rootless containers etc.) running after logout —
+      # without linger podman user services stop when the user logs out.
       linger = true;
     };
   };
 
   # ── Virtualisation ────────────────────────────────────────────────────────────
   virtualisation = {
-    # Rootless-only docker (official pattern, NixOS wiki + docker docs):
-    # the root daemon module (docker.nix) is disabled; rootless is a separate
-    # module (docker-rootless.nix) gated independently on rootless.enable.
-    # setSocketVariable exports DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
-    # via environment.extraInit. Root-daemon containers/images stay dormant in
-    # /var/lib/docker until migrated — see task_backlog/docker_backlog.md.
-    docker = {
-      enable = false;
-      rootless = {
-        enable = true;
-        setSocketVariable = true;
-      };
+    # Podman (daemonless) — replaced rootless docker on 2026-09-20 (user
+    # decision; the windows VM compose was dropped in favor of winboat).
+    # dockerCompat gives tools that hard-code /var/run/docker.sock a compat
+    # socket; rootless use is native podman (distrobox picks it up
+    # automatically). dns_enabled gives compose-style projects service-name
+    # DNS on the default network. Docker images/containers stay dormant in
+    # /var/lib/docker until the migration session — see the docker backlog.
+    containers.enable = true;
+    podman = {
+      enable = true;
+      dockerCompat = true;
+      defaultNetwork.settings.dns_enabled = true;
     };
-    # podman = { ... };
     libvirtd = {
       enable = true;
       extraConfig = "";
@@ -361,7 +354,7 @@ in {
       enable = true;
       libraries = with pkgs; [libGL libGLU libglibutil];
     };
-    usbtop.enable = true;
+    # usbtop is enabled in nixos/sys-pkgs.nix (syspkgs module) — no per-host duplicate.
     appimage = {
       enable = true;
       binfmt = true;

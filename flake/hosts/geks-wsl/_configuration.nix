@@ -1,6 +1,6 @@
 # NixOS-WSL system configuration for geks-wsl (minimal, no GUI).
-# Feature modules (nixos/*.nix) are auto-imported by import-tree in default.nix;
-# enable flags below activate them.
+# Feature modules (nixos/*.nix) are hand-listed in the host's default.nix
+# (import-tree is NOT used for them); enable flags below activate them.
 {
   config,
   lib,

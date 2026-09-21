@@ -13,26 +13,21 @@
 in {
   options = {
     hyprconf = {
+      # Read by the HM hyprland modules (settings.nix) to pick host-specific
+      # monitor/GPU values. NOTE: the option is declared separately in the NixOS
+      # and HM namespaces — keep both decls in sync.
       target = lib.mkOption {
         type = lib.types.enum ["geks-zenbook" "geks-nixos"];
         default = "geks-nixos";
-        description = "Target system determining hyprland configuration variant (deprecated, use monitorsConf)";
+        description = "Target system determining hyprland configuration variant";
         example = "geks-zenbook";
-      };
-      monitorsConf = lib.mkOption {
-        type = lib.types.str;
-        default = "monitors-default.conf";
-        description = "Hyprland monitors config filename (e.g. geks-nixos-monitors.conf)";
       };
       hyprland = {
         enable = lib.mkEnableOption "enables hyprland config";
-        flake.enable = lib.mkEnableOption "enables upstream Hyprland flake";
       };
     };
   };
   config = lib.mkIf config.hyprconf.hyprland.enable {
-    environment.systemPackages = with pkgs; [
-    ];
     programs = {
       hyprland = {
         enable = true;
@@ -46,20 +41,7 @@ in {
       };
     };
 
-    # fix for video drivers mismatch causing fps drops when using stable nixos branch
-    # hardware.opengl = {
-    #   package = pkgs-unstable.mesa.drivers;
-    #
-    #   # if you also want 32-bit support (e.g for Steam)
-    #   driSupport32Bit = true;
-    #   package32 = pkgs-unstable.pkgsi686Linux.mesa.drivers;
-    # };
-
     services = {
-      hypridle = {
-        enable = false;
-        # package = inputs.hypridle.packages.${pkgs.system}.hypridle;
-      };
       dbus.implementation = "broker";
     };
   };

@@ -12,16 +12,6 @@
   hyprSrcPath = "${config.home.sessionVariables.NIXOS_CONF_DIR}/home-manager/users/mykolas/config/hyprland";
   hyprTargetPath = "~/.config/hypr";
 
-  hypr_plugins_pkgs =
-    if useHyprlandFlake
-    then inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}
-    else pkgs.hyprlandPlugins;
-
-  hy3_pkgs =
-    if useHyprlandFlake
-    then inputs.hy3.packages.${pkgs.stdenv.hostPlatform.system}
-    else pkgs.hyprlandPlugins;
-
   themes = [
     "catppuccin-latte"
     "catppuccin-mocha"
@@ -196,7 +186,8 @@ in {
 
       hyprland = {
         enable = lib.mkEnableOption "enables hyprland config";
-        flake.enable = lib.mkEnableOption "enables upstream Hyprland flake";
+        # Note: the flake-vs-nixpkgs Hyprland choice is driven by the
+        # useHyprlandFlake specialArg in each host's default.nix, not an option.
       };
 
       hypridle = {
@@ -279,6 +270,9 @@ in {
     '';
 
     home = {
+      # Explicit enable: HM deprecated the implicit generation trigger
+      # (relying on home.pointerCursor alone now warns).
+      pointerCursor.enable = true;
       pointerCursor.hyprcursor.enable = true;
       file = {
         # UWSM general environment (applies to all compositor sessions) — identical on every host.
@@ -535,11 +529,8 @@ in {
       systemd.enable = false;
       configType = "lua";
 
-      plugins = [
-        # hypr_plugins_pkgs.hyprexpo
-        # pkgs.hyprlandPlugins.hyprexpo
-        # hy3_pkgs.hy3
-      ];
+      # No hyprland plugins in use. To add one: plugins = [pkgs.hyprlandPlugins.<name>].
+      plugins = [];
 
       xwayland.enable = true;
 

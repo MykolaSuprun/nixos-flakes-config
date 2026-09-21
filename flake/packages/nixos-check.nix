@@ -9,18 +9,19 @@
   }: let
     nixos-check = pkgs.writeShellApplication {
       name = "nixos-check";
-      runtimeInputs = [pkgs.jq pkgs.fzf];
+      runtimeInputs = [pkgs.jq pkgs.fzf pkgs.nix pkgs.git];
       text = ''
         # Set FLAKE_REF to override the source flake (e.g. FLAKE_REF=. for local).
-        FLAKE_REF="''${FLAKE_REF:-github:MykolaSuprun/nixos-flakes-config}"
+        FLAKE_REF="''${FLAKE_REF:-gitlab:mykolas-open/nixos-flakes-config}"
 
-        # Determinate Nix substituter flags — required on first run / fresh systems
+        # Binary-substituter flags — required on first run / fresh systems
         # to avoid compiling Determinate Nix from source (no-op on v3.6.0+).
+        # List single-sourced in cache.nix (repo root).
         DETERMINATE_OPTS=(
           --accept-flake-config
           --show-trace
-          --option extra-substituters https://install.determinate.systems
-          --option extra-trusted-public-keys "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
+          --option extra-substituters "${builtins.concatStringsSep " " (import ../../cache.nix).trusted-substituters}"
+          --option extra-trusted-public-keys "${builtins.concatStringsSep " " (import ../../cache.nix).trusted-public-keys}"
         )
 
         FZF_BIND=(--bind "j:down,k:up,g:first,G:last,ctrl-d:half-page-down,ctrl-u:half-page-up")

@@ -12,10 +12,10 @@
       moshi-hook
     ];
 
-    # User-level daemon, bound to the Hyprland session exactly like the other
-    # services in home-manager/modules/hyprland/settings.nix (swaync, awww,
-    # hyprpolkitagent): BindsTo + WantedBy wayland-session@hyprland.desktop.target
-    # with ConditionEnvironment so it never starts outside Hyprland.
+    # User-level unit, MANUAL start only (2026-09-20: on-demand by user decision —
+    # no autostart of a proprietary always-on agent bridge). Start it with:
+    #   systemctl --user start moshi-hook
+    # ConditionEnvironment keeps it from starting outside a Hyprland session.
     # Runs as the user (not root) so it can read ~/.config/moshi/ pairing
     # secrets and the agent hook sockets. Pair once manually:
     #   moshi-hook pair --token <token from Moshi>
@@ -24,16 +24,12 @@
       Unit = {
         Description = "Moshi host gateway (moshi-hook serve)";
         ConditionEnvironment = "XDG_CURRENT_DESKTOP=Hyprland";
-        BindsTo = ["wayland-session@hyprland.desktop.target"];
-        After = ["wayland-session@hyprland.desktop.target"];
       };
       Service = {
         ExecStart = "${pkgs.moshi-hook}/bin/moshi-hook serve";
         Restart = "on-failure";
       };
-      Install = {
-        WantedBy = ["wayland-session@hyprland.desktop.target"];
-      };
+      # No Install.WantedBy: intentionally not pulled in by any target.
     };
   };
 }

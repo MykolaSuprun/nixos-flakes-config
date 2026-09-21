@@ -166,8 +166,6 @@
           ffmpeg
           zip
           ripgrep
-          resvg
-          imagemagick
           wl-clipboard
         ];
         plugins = {
@@ -231,7 +229,6 @@
       inputs.flake-env.packages.${pkgs.stdenv.hostPlatform.system}.picker
       vscode
       neovide
-      # mynav
       # sublime4
       # zed-editor
       nvtopPackages.amd
@@ -282,7 +279,6 @@
       uv
 
       # terminal utils
-      fd
       browsh # tui browser
       gh # Github CLI
       glab
@@ -290,7 +286,8 @@
       sqlcmd
       killall
       bottom
-      lazydocker
+      podman-compose
+      podman-tui
       lazysql
       sqlit-tui
 

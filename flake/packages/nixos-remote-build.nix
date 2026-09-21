@@ -1,4 +1,4 @@
-# Rebuild the running NixOS system from the published GitHub flake.
+# Rebuild the running NixOS system from the published flake.
 # Useful when the local checkout is unavailable or you want a clean remote build.
 # Set FLAKE_REF=. to use the local tree instead (must be committed).
 # vim-style keybindings: j/k=navigate, g/G=top/bottom, ctrl-d/u=half-page.
@@ -10,16 +10,17 @@
   }: let
     nixos-remote-build = pkgs.writeShellApplication {
       name = "nixos-remote-build";
-      runtimeInputs = [pkgs.fzf pkgs.jq pkgs.nixos-rebuild];
+      runtimeInputs = [pkgs.fzf pkgs.jq pkgs.nixos-rebuild pkgs.nix];
       text = ''
-        # Set FLAKE_REF=. to use a local checkout instead of GitHub.
-        FLAKE_REF="''${FLAKE_REF:-github:MykolaSuprun/nixos-flakes-config}"
+        # Set FLAKE_REF=. to use a local checkout instead of the public flake.
+        FLAKE_REF="''${FLAKE_REF:-gitlab:mykolas-open/nixos-flakes-config}"
 
+        # Binary-substituter flags; list single-sourced in cache.nix (repo root).
         DETERMINATE_OPTS=(
           --accept-flake-config
           --show-trace
-          --option extra-substituters https://install.determinate.systems
-          --option extra-trusted-public-keys "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
+          --option extra-substituters "${builtins.concatStringsSep " " (import ../../cache.nix).trusted-substituters}"
+          --option extra-trusted-public-keys "${builtins.concatStringsSep " " (import ../../cache.nix).trusted-public-keys}"
         )
 
         FZF_BIND=(--bind "j:down,k:up,g:first,G:last,ctrl-d:half-page-down,ctrl-u:half-page-up")

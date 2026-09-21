@@ -3,6 +3,7 @@
   config,
   pkgs,
   system,
+  lib,
   ...
 }: let
   hyprlock_script = pkgs.writeShellScriptBin "run_hyprlock" ''
@@ -425,14 +426,16 @@
       "GPU status" \
       "Check render GPU" | rofi -dmenu -i -p "GPU Runner")
 
+    # Free-text run dialog: the user supplies the command to run, executed with
+    # `sh -c` (no eval of the interactive shell; setsid detaches it cleanly).
     case "$CHOICE" in
       "Run on dGPU (7900 XTX)")
         APP=$(rofi -dmenu -i -p "dGPU:")
-        [ -n "$APP" ] && DRI_PRIME=1 eval "$APP" &
+        [ -n "$APP" ] && DRI_PRIME=1 setsid sh -c "exec $APP" </dev/null >/dev/null 2>&1 &
         ;;
       "Run on iGPU (Raphael)")
         APP=$(rofi -dmenu -i -p "iGPU:")
-        [ -n "$APP" ] && eval "$APP" &
+        [ -n "$APP" ] && setsid sh -c "exec $APP" </dev/null >/dev/null 2>&1 &
         ;;
       "GPU status")
         STATUS="GPU Devices:
@@ -481,53 +484,56 @@
     esac
   '';
 in {
-  # Packages necessary for hyprland
-  home.packages = with pkgs; [
-    # inputs.caelestia-shell.packages.${system}.with-cli
-    menu_script
-    hypr_binds_script
-    session_lock
-    notification_toggle
-    lock_screen
-    monitor_toggle
-    gpu_runner_script
-    fix_lock
-    hyprlock_script
-    hyprlock_script_alt
-    hyprlang
-    hyprlock
-    hyprlauncher
-    hyprpwcenter
-    hyprcursor
-    hypridle
-    grimblast
-    pyprland
-    hyprsysteminfo
-    hyprland-qt-support
-    hyprutils
-    bluejay
-    networkmanagerapplet
-    swayosd
-    app2unit
+  # Gated like every other module (hyprconf.hyprland.enable, declared in
+  # settings.nix) so this file never activates on non-Hyprland hosts.
+  config = lib.mkIf config.hyprconf.hyprland.enable {
+    # Packages necessary for hyprland
+    home.packages = with pkgs; [
+      menu_script
+      hypr_binds_script
+      session_lock
+      notification_toggle
+      monitor_toggle
+      fix_lock
+      hyprlock_script
+      hyprlock_script_alt
+      hyprlang
+      hyprlock
+      hyprlauncher
+      hyprpwcenter
+      hyprcursor
+      hypridle
+      grimblast
+      pyprland
+      hyprsysteminfo
+      hyprland-qt-support
+      hyprutils
+      bluejay
+      networkmanagerapplet
+      swayosd
+      app2unit
 
-    kdePackages.qt6ct
-    rofi-network-manager
-    swaynotificationcenter
-    libnotify
-    # kdePackages.polkit-kde-agent-1
-    hyprpolkitagent
-    kdePackages.qtwayland
-    xrdb
-    dbus-broker
-    wlr-randr
-    wayland-bongocat
-    # hyper
-    # terminal
-    # pipewire control
-    # media control
-    playerctl
-    pwvucontrol # volume control
-    # wallpaper engine
-    awww
-  ];
+      kdePackages.qt6ct
+      rofi-network-manager
+      swaynotificationcenter
+      libnotify
+      hyprpolkitagent
+      kdePackages.qtwayland
+      xrdb
+      dbus-broker
+      wlr-randr
+      wayland-bongocat
+      # media control
+      playerctl
+      pwvucontrol # volume control
+      # wallpaper engine
+      awww
+    ]
+    # geks-nixos-specific tooling (AMD dual-GPU PCI IDs, hardcoded monitor
+    # layout) — pointless on other hosts.
+    ++ lib.optionals (config.hyprconf.target == "geks-nixos") [
+      lock_screen
+      gpu_runner_script
+    ];
+  };
 }

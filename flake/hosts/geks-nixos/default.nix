@@ -10,8 +10,8 @@
   system = "x86_64-linux";
   pkgs = import inputs.nixpkgs {
     inherit system;
-      config.allowUnfree = true;
-      config.permittedInsecurePackages = ["electron-40.10.5"];
+    config.allowUnfree = true;
+
     # opencode pinned to last known-good nix build (1.18.29 from
     # nixpkgs-opencode-pin) — applied FIRST so overlays/opencode.nix still
     # re-wraps the dev toolbox on top of the pinned package.
@@ -26,7 +26,11 @@
   pkgs-stable = import inputs.nixpkgs-stable {
     inherit system;
     config.allowUnfree = true;
-      config.permittedInsecurePackages = ["electron-40.10.5"];
+    # winboat (from pkgs-stable) pulls stable's electron-40.10.5, which
+    # nixpkgs marks insecure (upstream Signal-style Electron window). Scope:
+    # pkgs-stable only — the main pkgs instance needs NO exemption.
+    # Drop when winboat's stable Electron advances past the insecure window.
+    config.permittedInsecurePackages = ["electron-40.10.5"];
   };
   lib = inputs.nixpkgs.lib;
   useHyprlandFlake = true;
@@ -51,7 +55,6 @@ in {
         ../../../nixos/flatpak.nix
         ../../../nixos/fonts.nix
         ../../../nixos/hyprland.nix
-        ../../../nixos/input_method.nix
         ../../../nixos/nix-conf.nix
         ../../../nixos/pipewire.nix
         ../../../nixos/secrets.nix
@@ -81,7 +84,6 @@ in {
                   inputs.dms.homeModules.dank-material-shell
                   inputs.dms-plugin-registry.nixosModules.default
 
-                  # inputs.dms-plugin-registry.modules.default
                   ../../../home-manager/users/mykolas/home-geks-nixos.nix
                   # HM feature modules (all gated by myconf.*.enable flags)
                   ../../../home-manager/modules/audio-recovery.nix
@@ -93,7 +95,6 @@ in {
                   # Private LLM tooling (llama-cpp-rocm + comfyui CLI)
                   inputs.nixconf-private.homeManagerModules.llm-tools
                   ../../../home-manager/modules/fcitx5.nix
-                  ../../../home-manager/modules/flatpak-overrides.nix
                   ../../../home-manager/modules/git.nix
                   ../../../home-manager/modules/ghostty.nix
                   ../../../home-manager/modules/helix.nix

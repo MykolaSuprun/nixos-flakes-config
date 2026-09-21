@@ -1,6 +1,7 @@
 # Home-manager configuration for mykolas on geks-nixos (AMD desktop, Hyprland).
-# HM feature modules (home-manager/modules/*.nix) are auto-imported by import-tree
-# in the host's default.nix; enable flags below activate them.
+# HM feature modules (home-manager/modules/*.nix) are hand-listed in the
+# host's default.nix (import-tree is NOT used for them); enable flags below
+# activate them.
 {
   config,
   inputs,
@@ -8,27 +9,36 @@
   lib,
   ...
 }: let
-  steam-gamescope = pkgs.writeShellScriptBin "steam-gamescope" ''
-    export DXVK_HDR=1
-    export ENABLE_GAMESCOPE_WSI=1
-    exec ${pkgs.gamescope}/bin/gamescope \
-      --adaptive-sync \
-      --hdr-enabled \
-      --hdr-itm-enable \
-      --rt \
-      # NOTE (2026-09-11): --mangoapp REMOVED — mangoapp 0.8.4 is X11-only and
-      # segfaults (XInternAtom on NULL Display) under gamescope --expose-wayland;
-      # gamescope's reaper respawns it ~1/sec (96k coredumps/day observed).
-      --force-grab-cursor \
-      --steam \
-      --xwayland-count 2 \
-      --expose-wayland \
-      --prefer-vk-device 1002:744c \
-      -W 3440 -H 1440 \
-      -r 165 \
-      -f \
-      -- ${pkgs.steam}/bin/steam -gamepadui -steamos
-  '';
+  # NOTE (2026-09-11): --mangoapp REMOVED — mangoapp 0.8.4 is X11-only and
+  # segfaults (XInternAtom on NULL Display) under gamescope --expose-wayland;
+  # gamescope's reaper respawns it ~1/sec (96k coredumps/day observed).
+  steam-gamescope = let
+    gamescopeArgs = [
+      "--adaptive-sync"
+      "--hdr-enabled"
+      "--hdr-itm-enable"
+      "--rt"
+      "--force-grab-cursor"
+      "--steam"
+      "--xwayland-count"
+      "2"
+      "--expose-wayland"
+      "--prefer-vk-device"
+      "1002:744c"
+      "-W"
+      "3440"
+      "-H"
+      "1440"
+      "-r"
+      "165"
+      "-f"
+    ];
+  in
+    pkgs.writeShellScriptBin "steam-gamescope" ''
+      export DXVK_HDR=1
+      export ENABLE_GAMESCOPE_WSI=1
+      exec ${pkgs.gamescope}/bin/gamescope ${lib.escapeShellArgs gamescopeArgs} -- ${pkgs.steam}/bin/steam -gamepadui -steamos
+    '';
 in {
   myconf = {
     shell.enable = true;
@@ -50,9 +60,7 @@ in {
     opencode.enable = true;
     openpets.enable = true;
     chatgpt.enable = true;
-    # zellij.enable = false;
-    # flatpakOverrides.enable = false;
-        herdr.enable = true;
+    herdr.enable = true;
     audio-recovery.enable = true; # restart audio stack after resume (xHCI reinit wedges it)
   };
 
@@ -65,10 +73,7 @@ in {
       enable = false;
       output = null;
     };
-    hyprland = {
-      enable = true;
-      flake.enable = true;
-    };
+    hyprland.enable = true;
   };
 
   # ── Session variables ─────────────────────────────────────────────────────────
@@ -80,8 +85,8 @@ in {
     APP2UNIT_SLICES = "a=app-graphical.slice b=background-graphical.slice s=session-graphical.slice";
     NIXOS_TARGET = "geks-nixos";
     BEMENU_BACKEND = "wayland";
-    DEFAULT_BROWSER = "$(which zen-beta)";
-    BROWSER = "$(which zen-beta)";
+    BROWSER = "${inputs.zen-browser.packages.${pkgs.system}.beta}/bin/zen";
+    DEFAULT_BROWSER = "${inputs.zen-browser.packages.${pkgs.system}.beta}/bin/zen";
   };
 
   # ── User identity ─────────────────────────────────────────────────────────────

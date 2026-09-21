@@ -1,6 +1,7 @@
 # Home-manager configuration for mykolas on geks-wsl (minimal, no GUI).
-# HM feature modules (home-manager/modules/*.nix) are auto-imported by import-tree
-# in the host's default.nix; enable flags below activate them.
+# HM feature modules (home-manager/modules/*.nix) are hand-listed in the
+# host's default.nix (import-tree is NOT used for them); enable flags below
+# activate them.
 {
   config,
   pkgs,
