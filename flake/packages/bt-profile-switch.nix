@@ -10,14 +10,17 @@
     btProfileSwitch = pkgs.writeShellApplication {
       name = "bt-profile-switch";
 
-      # Runtime deps: python3 (stdlib curses TUI), bluez (bluetoothctl),
-      # pipewire (pw-dump), wireplumber (wpctl). The Python script calls
-      # these via subprocess, so they must be on PATH when it runs.
+      # Runtime deps: python3 (control flow), bluez (bluetoothctl),
+      # pipewire (pw-dump), wireplumber (wpctl), rofi (menu UI), libnotify
+      # (result toasts). The Python script calls these via subprocess, so
+      # they must be on PATH when it runs.
       runtimeInputs = with pkgs; [
         python3
         bluez
         pipewire
         wireplumber
+        rofi
+        libnotify
       ];
 
       text = ''

@@ -1,32 +1,34 @@
 #!/usr/bin/env python3
-"""bt-profile-switch — pick a Bluetooth audio device and switch its audio mode.
+"""bt-profile-switch — rofi picker for Bluetooth audio profile switching.
 
-A small curses TUI that lists paired Bluetooth audio devices and lets you
-switch each between High Fidelity Audio (A2DP) and Handsfree (HFP) modes.
+Lists paired Bluetooth audio devices in a rofi dmenu and switches the picked
+device between High Fidelity Audio (A2DP) and Handsfree (HFP) modes. Results
+are reported via notify-send; the tool exits after one switch (re-run for more).
 
 Why modes instead of raw profiles: WirePlumber's EnumProfile only lists the
 profile family of the CURRENT mode, and Bose QC Ultra / Open Earbuds drop
-their A2DP endpoints entirely when in HFP mode (codec-switch bug). So the TUI
-groups profiles into logical modes and, when the target mode's profiles are
-missing, automatically reconnects the device to restore them.
+their A2DP endpoints entirely when in HFP mode (codec-switch bug). So the
+picker groups profiles into logical modes and, when the target mode's
+profiles are missing, automatically reconnects the device to restore them.
+
+bluetoothctl output is ANSI-colorized for SOME devices (e.g. devices with
+LE bonds show up gray as '\x1b[1;30mDevice ...\x1b[0m') — strip escapes
+everywhere or those devices silently vanish from the parser (bluez 5.87).
 
 Data sources:
-  - bluetoothctl devices/info  -> paired devices + connection status
-  - pw-dump                    -> PipeWire card id + available/active profiles
-  - wpctl set-profile          -> apply the profile switch
-  - bluetoothctl disconnect/connect -> recovery for stuck devices
+  - bluetoothctl devices Paired / info   -> paired devices + connection status
+  - pw-dump                              -> PipeWire card id + available/active profiles
+  - wpctl set-profile                    -> apply the profile switch
+  - bluetoothctl disconnect/connect      -> recovery for stuck devices
 
-Keys:
-  Up/Down or j/k   navigate
-  Enter            select device / apply mode
-  c                connect a disconnected device
-  r                refresh device list
-  Left / Esc / q   back or quit
+CLI (non-interactive, for debugging without a rofi display):
+  --print-devices   list detected devices + current profile, then exit
 """
 
-import curses
 import json
+import re
 import subprocess
+import sys
 import time
 
 # A2DP sink/source, HFP, HSP — used to filter audio-capable devices.
@@ -49,6 +51,16 @@ MODE_OPTIONS = [
     ("off", "Off"),
 ]
 
+BACK_ITEM = "← Back"
+
+# bluez 5.x colors some lines (gray for certain devices) even when piped.
+ANSI_RE = re.compile(r"\x1b\[[0-9;]*m")
+
+
+def strip_ansi(text):
+    """Remove ANSI escape sequences from bluetoothctl output."""
+    return ANSI_RE.sub("", text)
+
 
 def run(cmd, timeout=10):
     """Run a command, return (returncode, stdout, stderr)."""
@@ -57,6 +69,30 @@ def run(cmd, timeout=10):
         return p.returncode, p.stdout, p.stderr
     except Exception as exc:
         return -1, "", str(exc)
+
+
+def notify(summary, body="", icon="bluetooth-active"):
+    """Fire a desktop notification; failure is harmless."""
+    run(["notify-send", "-a", "Bluetooth", "-i", icon, summary, body])
+
+
+def rofi_select(prompt, items, current=0):
+    """Show a rofi dmenu; return the selected index, or None on cancel."""
+    args = ["rofi", "-dmenu", "-i", "-format", "i", "-p", prompt,
+            "-selected-row", str(current)]
+    rc, out, _ = run(args)
+    if rc != 0 or not out.strip():
+        return None
+    try:
+        idx = int(out.strip())
+        return idx if 0 <= idx < len(items) else None
+    except ValueError:
+        return None
+
+
+def rofi_error(text):
+    """Show an error message in rofi (blocks until dismissed)."""
+    run(["rofi", "-e", text], timeout=120)
 
 
 def mode_of(profile_name):
@@ -71,7 +107,7 @@ def mode_of(profile_name):
 
 
 def short_profile(name):
-    """Compact label for the device list, e.g. 'a2dp-sink-sbc_xq' -> 'A2DP SBC_XQ'."""
+    """Compact label, e.g. 'a2dp-sink-sbc_xq' -> 'A2DP SBC_XQ'."""
     if name == "off":
         return "off"
     if name.startswith("a2dp"):
@@ -84,10 +120,16 @@ def short_profile(name):
 
 
 def get_paired_audio_devices():
-    """Return [{mac, name, connected}] for all paired audio-capable devices."""
-    rc, out, _ = run(["bluetoothctl", "devices"])
+    """Return [{mac, name, connected}] for paired audio-capable devices.
+
+    Uses 'devices Paired' (not 'devices', which lists every MAC bluez has
+    ever seen — TVs, random LE addresses — and is slow to filter).
+    """
+    rc, out, _ = run(["bluetoothctl", "devices", "Paired"])
     if rc != 0:
-        return []
+        # Older bluez has no Paired subcommand; fall back to 'devices'.
+        rc, out, _ = run(["bluetoothctl", "devices"])
+    out = strip_ansi(out)
     devices = []
     for line in out.splitlines():
         parts = line.split(maxsplit=2)
@@ -97,6 +139,7 @@ def get_paired_audio_devices():
     audio = []
     for d in devices:
         rc, out, _ = run(["bluetoothctl", "info", d["mac"]])
+        out = strip_ansi(out)
         if not any(u in out for u in AUDIO_UUIDS):
             continue
         d["connected"] = "Connected: yes" in out
@@ -164,215 +207,138 @@ def connect_device(mac):
     return rc == 0, err
 
 
-def recover_card(stdscr, device):
+def recover_card(device):
     """Reconnect a stuck device once to restore its profiles.
 
     Bose devices drop their A2DP endpoints while in HFP mode (codec-switch
     bug); a disconnect/reconnect cycle brings them back. The PipeWire card
     gets a NEW id on reconnect, so re-fetch and return the fresh card.
     """
-    show_message(
-        stdscr,
-        f"{device['name']} is in a broken profile state (only one audio mode available).\n"
-        "Reconnecting the device to restore its profiles...",
-    )
+    notify(device["name"],
+           "broken profile state — reconnecting to restore profiles…",
+           "bluetooth-disabled")
     run(["bluetoothctl", "disconnect", device["mac"]], timeout=20)
     time.sleep(1)
     rc, _, err = run(["bluetoothctl", "connect", device["mac"]], timeout=20)
     if rc != 0:
-        show_message(stdscr, f"Reconnect failed: {err.strip() or 'unknown error'}")
+        rofi_error(f"Reconnect failed: {err.strip() or 'unknown error'}")
         return None
     for _ in range(15):
         time.sleep(1)
         cards = get_pipewire_cards()
         if device["mac"] in cards:
             return cards[device["mac"]]
-    show_message(stdscr, "Device reconnected but no PipeWire card appeared.")
+    rofi_error("Device reconnected but no PipeWire card appeared.")
     return None
 
 
-def draw_menu(stdscr, title, items, selected, footer):
-    """items: list of (label, curses attr)."""
-    h, w = stdscr.getmaxyx()
-    stdscr.erase()
-
-    y = 0
-    if title:
-        stdscr.addnstr(y, 0, title, w - 1, curses.A_BOLD)
-        y += 1
-        stdscr.addnstr(y, 0, "-" * min(w - 1, len(title)), w - 1, curses.A_DIM)
-        y += 1
-
-    for i, (label, attr) in enumerate(items):
-        if y >= h - 1:
-            break
-        if i == selected:
-            stdscr.addnstr(y, 0, "> " + label, w - 1, curses.A_REVERSE | attr)
-        else:
-            stdscr.addnstr(y, 0, "  " + label, w - 1, attr)
-        y += 1
-
-    if footer:
-        stdscr.addnstr(h - 1, 0, footer, w - 1, curses.A_DIM)
-    stdscr.refresh()
-
-
-def show_message(stdscr, text):
-    h, w = stdscr.getmaxyx()
-    stdscr.erase()
-    lines = text.splitlines()
-    start = max(0, h // 2 - len(lines) // 2)
-    for i, line in enumerate(lines):
-        if start + i < h - 1:
-            stdscr.addnstr(start + i, 0, line, w - 1)
-    stdscr.addnstr(h - 1, 0, "Press any key to continue", w - 1, curses.A_DIM)
-    stdscr.refresh()
-    stdscr.getch()
-
-
-def device_screen(stdscr):
-    """List paired audio devices; return the selected device or None on quit."""
-    devices = get_paired_audio_devices()
-    cards = get_pipewire_cards()
-    selected = 0
-
-    while True:
-        if not devices:
-            show_message(stdscr, "No paired Bluetooth audio devices found.\n"
-                                 "Pair one with bluetoothctl, then press r to refresh.")
-            return None
-
-        items = []
-        for d in devices:
-            card = cards.get(d["mac"])
-            if d["connected"] and card:
-                active = ", ".join(short_profile(n) for n in card["active"]) or "?"
-                label = f"{d['name']}  [{d['mac']}]  {active}"
-                attr = curses.A_NORMAL
-            elif d["connected"]:
-                label = f"{d['name']}  [{d['mac']}]  connected (no profiles)"
-                attr = curses.A_NORMAL
-            else:
-                label = f"{d['name']}  [{d['mac']}]  disconnected"
-                attr = curses.A_DIM
-            items.append((label, attr))
-
-        selected = min(selected, max(0, len(items) - 1))
-        draw_menu(
-            stdscr,
-            "Bluetooth audio devices",
-            items,
-            selected,
-            "Up/Down j/k: navigate   Enter: select   c: connect   r: refresh   q: quit",
-        )
-
-        key = stdscr.getch()
-        if key in (-1, ord("q"), 27):  # EOF or quit
-            return None
-        elif key in (curses.KEY_UP, ord("k")):
-            selected = max(0, selected - 1)
-        elif key in (curses.KEY_DOWN, ord("j")):
-            selected = min(len(items) - 1, selected + 1)
-        elif key in (curses.KEY_ENTER, 10, 13):
-            return devices[selected]
-        elif key == ord("c"):
-            d = devices[selected]
-            if not d["connected"]:
-                ok, err = connect_device(d["mac"])
-                show_message(stdscr, f"Connect {d['name']}: {'OK' if ok else err.strip()}")
-                devices = get_paired_audio_devices()
-                cards = get_pipewire_cards()
-        elif key == ord("r"):
-            devices = get_paired_audio_devices()
-            cards = get_pipewire_cards()
-
-
-def mode_screen(stdscr, device):
-    """Switch a connected device between A2DP (high fidelity) and HFP (handsfree)."""
-    if not device["connected"]:
-        show_message(stdscr, f"{device['name']} is not connected.\n"
-                             "Connect it from the device list (press c).")
-        return
-
-    cards = get_pipewire_cards()
+def device_status_label(device, cards):
+    """One-line status suffix for the device list."""
     card = cards.get(device["mac"])
-    if not card:
-        show_message(stdscr, f"{device['name']} is not available in PipeWire.\n"
-                             "Press r in the device list to refresh.")
-        return
+    if device["connected"] and card:
+        active = ", ".join(short_profile(n) for n in card["active"]) or "?"
+        return f"  [{active}]"
+    if device["connected"]:
+        return "  [connected — no profiles]"
+    return "  [disconnected]"
 
+
+def mode_menu(device, card):
+    """Pick and apply an audio mode for a connected device. Returns nothing."""
     by_mode = group_by_mode(card["profiles"])
     active_modes = {mode_of(n) for n in card["active"]}
 
-    # Start with the currently active mode selected.
-    selected = 0
-    for i, (m, _) in enumerate(MODE_OPTIONS):
+    items, current = [], 0
+    for i, (m, label) in enumerate(MODE_OPTIONS):
+        marker = "● " if m in active_modes else "  "
+        items.append(f"{marker}{label}")
         if m in active_modes:
-            selected = i
-            break
+            current = i
+    items.append(f"  {BACK_ITEM}")
 
-    while True:
-        items = []
-        for m, label in MODE_OPTIONS:
-            marker = "*" if m in active_modes else " "
-            cur = ""
-            if m in active_modes and by_mode[m]:
-                cur = "  <- current"
-            items.append((f"{marker} {label}{cur}", curses.A_NORMAL))
+    idx = rofi_select(f"󰂯 {device['name']}", items, current)
+    if idx is None or items[idx].endswith(BACK_ITEM):
+        return
 
-        selected = min(selected, max(0, len(items) - 1))
-        draw_menu(
-            stdscr,
-            f"Audio mode for {device['name']}",
-            items,
-            selected,
-            "Up/Down j/k: navigate   Enter: apply   Left/Esc: back   q: quit",
-        )
-
-        key = stdscr.getch()
-        if key in (-1, ord("q"), 27, curses.KEY_LEFT):  # EOF, quit, or back
+    m, label = MODE_OPTIONS[idx]
+    profiles = by_mode[m]
+    if not profiles:
+        # Stuck state (Bose bug): only one family exposed. Reconnect.
+        card = recover_card(device)
+        if card is None:
             return
-        elif key in (curses.KEY_UP, ord("k")):
-            selected = max(0, selected - 1)
-        elif key in (curses.KEY_DOWN, ord("j")):
-            selected = min(len(items) - 1, selected + 1)
-        elif key in (curses.KEY_ENTER, 10, 13):
-            m, label = MODE_OPTIONS[selected]
-            profiles = by_mode[m]
-            if not profiles:
-                # Stuck state (Bose bug): only one family exposed. Reconnect.
-                card = recover_card(stdscr, device)
-                if card is None:
-                    return
-                by_mode = group_by_mode(card["profiles"])
-                profiles = by_mode[m]
-                if not profiles:
-                    show_message(stdscr, f"No {label} profiles available even after reconnect.")
-                    continue
+        by_mode = group_by_mode(card["profiles"])
+        profiles = by_mode[m]
+        if not profiles:
+            rofi_error(f"No {label} profiles available even after reconnect.")
+            return
 
-            pref = {"a2dp": A2DP_PREF, "headset": HFP_PREF, "off": ["off"]}[m]
-            idx = pick_best(profiles, pref)
-            name = next((n for i, n, _ in profiles if i == idx), str(idx))
-            ok, err = apply_profile(card["card_id"], idx)
-            show_message(stdscr, f"Switch {device['name']} to {label} ({short_profile(name)}): "
-                                 f"{'OK' if ok else err.strip()}")
-
-            # Refresh state after the switch.
-            cards = get_pipewire_cards()
-            card = cards.get(device["mac"])
-            if card:
-                by_mode = group_by_mode(card["profiles"])
-                active_modes = {mode_of(n) for n in card["active"]}
+    pref = {"a2dp": A2DP_PREF, "headset": HFP_PREF, "off": ["off"]}[m]
+    pidx = pick_best(profiles, pref)
+    name = next((n for i, n, _ in profiles if i == pidx), str(pidx))
+    ok, err = apply_profile(card["card_id"], pidx)
+    if ok:
+        notify(device["name"], f"switched to {label} ({short_profile(name)})")
+    else:
+        rofi_error(f"Switch to {label} failed: {err.strip() or 'unknown error'}")
 
 
-def main(stdscr):
-    curses.curs_set(0)
+def print_devices():
+    """Non-interactive dump of detected devices + state (debug/test path)."""
+    devices = get_paired_audio_devices()
+    cards = get_pipewire_cards()
+    if not devices:
+        print("no paired bluetooth audio devices found")
+        return 1
+    for d in devices:
+        print(f"{d['name']}  [{d['mac']}]{device_status_label(d, cards)}")
+    return 0
+
+
+def main():
+    devices = get_paired_audio_devices()
+    cards = get_pipewire_cards()
+
     while True:
-        device = device_screen(stdscr)
-        if device is None:
-            break
-        mode_screen(stdscr, device)
+        if not devices:
+            rofi_error("No paired Bluetooth audio devices found.\n"
+                       "Pair one with bluetoothctl first.")
+            return
+
+        items = [d["name"] + device_status_label(d, cards) for d in devices]
+        idx = rofi_select("󰂯 Bluetooth audio", items)
+        if idx is None:
+            return
+
+        device = devices[idx]
+        if not device["connected"]:
+            # Only useful action for a disconnected device: connect it.
+            idx = rofi_select(f"󰂯 {device['name']} (disconnected)",
+                              ["  Connect", f"  {BACK_ITEM}"])
+            if idx != 0:
+                # Cancel or Back (index 1) — return to the device list.
+                continue
+            notify(device["name"], "connecting…")
+            ok, err = connect_device(device["mac"])
+            if not ok:
+                rofi_error(f"Connect failed: {err.strip() or 'unknown error'}")
+            devices = get_paired_audio_devices()
+            cards = get_pipewire_cards()
+            continue
+
+        card = cards.get(device["mac"])
+        if not card:
+            rofi_error(f"{device['name']} is not available in PipeWire.")
+            return
+
+        mode_menu(device, card)
+        return  # one action per invocation (as documented)
 
 
 if __name__ == "__main__":
-    curses.wrapper(main)
+    if len(sys.argv) > 1 and sys.argv[1] == "--print-devices":
+        sys.exit(print_devices())
+    if len(sys.argv) > 1 and sys.argv[1] in ("--help", "-h"):
+        print(__doc__)
+        sys.exit(0)
+    main()
