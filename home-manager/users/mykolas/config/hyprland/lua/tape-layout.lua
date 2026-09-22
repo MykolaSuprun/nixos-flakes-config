@@ -124,6 +124,7 @@ local function column_of(st, id)
 end
 
 -- Column containing the currently focused window; also refreshes last_active.
+-- Returns nil when the focused window is not tiled here (e.g. a floater).
 local function active_column(st, ctx)
 	for ci, col in ipairs(st.columns) do
 		for _, id in ipairs(col.members) do
@@ -135,6 +136,18 @@ local function active_column(st, ctx)
 			end
 		end
 	end
+end
+
+-- Focused column, falling back to the last-seen one while a floating window
+-- holds focus (so colresize/fit/maximize/move act on the intended column).
+local function current_ci(st, ctx)
+	local ci = active_column(st, ctx)
+	if ci then
+		st.last_ci = ci
+	else
+		ci = st.last_ci
+	end
+	return ci or 1
 end
 
 local function focus_window(ctx, id)
@@ -150,8 +163,12 @@ end
 -- as their own column right after the focused column.
 local function sync(st, ctx)
 	local ids = {}
+	-- nil-window targets (transient construction, some groups) are skipped:
+	-- their tmp fallback id is index-based and would churn columns every recalc.
 	for _, t in ipairs(ctx.targets) do
-		ids[target_id(t)] = true
+		if t.window then
+			ids[target_id(t)] = true
+		end
 	end
 
 	local kept = {}
@@ -178,10 +195,12 @@ local function sync(st, ctx)
 		end
 	end
 	for _, t in ipairs(ctx.targets) do
-		local id = target_id(t)
-		if not present[id] then
-			insert_at = insert_at + 1
-			table.insert(st.columns, insert_at, { members = { id }, override = false })
+		if t.window then
+			local id = target_id(t)
+			if not present[id] then
+				insert_at = insert_at + 1
+				table.insert(st.columns, insert_at, { members = { id }, override = false })
+			end
 		end
 	end
 end
@@ -257,7 +276,7 @@ local function layout_msg(ctx, msg)
 
 	-- ── Focus ────────────────────────────────────────────────────────────────
 	if cmd == "focus" then
-		local ci = active_column(st, ctx) or 1
+		local ci = current_ci(st, ctx)
 		if arg == "l" or arg == "r" then
 			local n = #st.columns
 			local ni = ((ci - 1 + (arg == "r" and 1 or -1)) % n) + 1 -- wrap, like scrolling
@@ -281,7 +300,7 @@ local function layout_msg(ctx, msg)
 
 	-- ── Column ordering ──────────────────────────────────────────────────────
 	if cmd == "swapcol" or cmd == "movecol" then
-		local ci = active_column(st, ctx) or 1
+		local ci = current_ci(st, ctx)
 		local n = #st.columns
 		local ni = ((ci - 1 + (arg == "r" and 1 or -1)) % n) + 1
 		st.columns[ci], st.columns[ni] = st.columns[ni], st.columns[ci]
@@ -291,13 +310,18 @@ local function layout_msg(ctx, msg)
 
 	-- ── Window movement between columns ──────────────────────────────────────
 	if cmd == "move" or cmd == "consume" or cmd == "expel" or cmd == "promote" then
-		local aci = active_column(st, ctx)
-		local col = aci and st.columns[aci]
+		local aci = current_ci(st, ctx)
+		local col = st.columns[aci]
 		local id = col and (col.last_active or col.members[1])
 		if not id then
 			return true
 		end
 		local _, mi = column_of(st, id)
+
+		-- Validate BEFORE detaching: an invalid arg must not mutate state.
+		if cmd == "move" and not (arg == "l" or arg == "r" or arg == "u" or arg == "d") then
+			return "tape: move expects l|r|u|d"
+		end
 
 		-- u/d: reorder the window within its own column stack (no detach)
 		if cmd == "move" and (arg == "u" or arg == "d") then
@@ -311,7 +335,10 @@ local function layout_msg(ctx, msg)
 
 		-- Detach the window from its column (empty columns disappear).
 		table.remove(col.members, mi)
-		if #col.members == 0 then
+		-- After removing the source column, old index aci+1 now sits at aci;
+		-- earlier indices are unaffected. Track the shift explicitly.
+		local removed = #col.members == 0
+		if removed then
 			table.remove(st.columns, aci)
 		end
 
@@ -319,20 +346,29 @@ local function layout_msg(ctx, msg)
 		local dest_new -- ...or create a new column before this index
 		if cmd == "move" then
 			if arg == "l" then
-				dest_col = st.columns[math.max(1, aci - 1)]
-				dest_new = math.max(1, aci - 1)
-			elseif arg == "r" then
-				dest_col = aci < #st.columns + 1 and st.columns[aci + 1] or nil
-				dest_new = math.min(#st.columns + 1, aci + 1)
-			else
-				table.insert(col.members, mi, id) -- unknown direction: put it back
-				return "tape: move expects l|r"
+				if aci == 1 then
+					-- Left edge: stacked member becomes its own column before
+					-- the edge; a sole-member column is already at the edge
+					-- (insert at 1 after removal = structural no-op).
+					dest_new = 1
+				else
+					-- Left neighbor's index is unaffected by any removal shift.
+					dest_col = st.columns[aci - 1]
+					dest_new = aci - 1
+				end
+			else -- arg == "r"
+				-- Removal-shifted right neighbor now sits at aci, not aci + 1.
+				local r = removed and aci or aci + 1
+				dest_col = st.columns[r]
+				dest_new = math.min(#st.columns + 1, r)
 			end
 		elseif cmd == "consume" then
 			dest_col = st.columns[aci - 1]
 			dest_new = aci
 		elseif cmd == "expel" or cmd == "promote" then
-			dest_new = aci + 1
+			-- A sole-member column already IS its own column; re-inserting at
+			-- aci keeps it in place (at aci + 1 it would creep right by one).
+			dest_new = removed and aci or aci + 1
 		end
 
 		if dest_col then
@@ -351,12 +387,17 @@ local function layout_msg(ctx, msg)
 
 	-- ── Viewport ─────────────────────────────────────────────────────────────
 	if cmd == "fit_active_view" then
-		fit_view(st, area, active_column(st, ctx) or 1)
+		-- Only nudge the viewport when a TILED window holds focus; with a
+		-- floater focused (active_column = nil) the tape must stay put.
+		local ci = active_column(st, ctx)
+		if ci then
+			fit_view(st, area, ci)
+		end
 		return true
 	end
 
 	if cmd == "center" then
-		center_view(st, area, active_column(st, ctx) or 1)
+		center_view(st, area, current_ci(st, ctx))
 		return true
 	end
 
@@ -364,7 +405,7 @@ local function layout_msg(ctx, msg)
 	-- "view"/"scroll" because "move l|r" is the smart window move above).
 	if cmd == "view" or cmd == "scroll" then
 		if arg:match("col$") then
-			local ci = active_column(st, ctx) or 1
+			local ci = current_ci(st, ctx)
 			local step = col_width_px(st, area, st.columns[ci])
 			st.view = st.view + (arg:sub(1, 1) == "-" and -step or step)
 		else
@@ -386,7 +427,7 @@ local function layout_msg(ctx, msg)
 			return true
 		end
 
-		local ci = active_column(st, ctx) or 1
+		local ci = current_ci(st, ctx)
 		local col = st.columns[ci]
 		if not col then
 			return true
@@ -415,7 +456,7 @@ local function layout_msg(ctx, msg)
 
 	-- ── Fit operations ───────────────────────────────────────────────────────
 	if cmd == "fit" then
-		local ci = active_column(st, ctx) or 1
+		local ci = current_ci(st, ctx)
 		local n = #st.columns
 
 		if arg == "active" then
@@ -468,7 +509,7 @@ local function layout_msg(ctx, msg)
 
 	-- ── Maximize (column) with width restore ────────────────────────────────
 	if cmd == "maximize" then
-		local ci = active_column(st, ctx) or 1
+		local ci = current_ci(st, ctx)
 		local col = st.columns[ci]
 		if not col then
 			return true
