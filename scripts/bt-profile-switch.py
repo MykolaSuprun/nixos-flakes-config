@@ -77,10 +77,15 @@ def notify(summary, body="", icon="bluetooth-active"):
 
 
 def rofi_select(prompt, items, current=0):
-    """Show a rofi dmenu; return the selected index, or None on cancel."""
+    """Show a rofi dmenu; return the selected index, or None on cancel.
+
+    timeout=None is required: the menu is interactive, so the default 10s
+    run() timeout would kill rofi mid-browse and silently return None —
+    the exact "does nothing" failure this rewrite introduced (gen 215).
+    """
     args = ["rofi", "-dmenu", "-i", "-format", "i", "-p", prompt,
             "-selected-row", str(current)]
-    rc, out, _ = run(args)
+    rc, out, _ = run(args, timeout=None)
     if rc != 0 or not out.strip():
         return None
     try:
@@ -107,15 +112,20 @@ def mode_of(profile_name):
 
 
 def short_profile(name):
-    """Compact label, e.g. 'a2dp-sink-sbc_xq' -> 'A2DP SBC_XQ'."""
+    """Compact label, e.g. 'a2dp-sink-sbc_xq' -> 'A2DP SBC_XQ'.
+
+    Exact names lack the trailing dash, so removeprefix leaves them
+    unchanged (codec == name) — fall back to the bare family instead of
+    echoing the raw profile (was "HFP HEADSET-HEAD-UNIT" / "A2DP A2DP-SINK").
+    """
     if name == "off":
         return "off"
     if name.startswith("a2dp"):
         codec = name.removeprefix("a2dp-sink-")
-        return f"A2DP {codec.upper()}" if codec else "A2DP"
+        return "A2DP" if codec == name else f"A2DP {codec.upper()}"
     if name.startswith("headset-head-unit"):
         codec = name.removeprefix("headset-head-unit-")
-        return f"HFP {codec.upper()}" if codec else "HFP"
+        return "HFP" if codec == name else f"HFP {codec.upper()}"
     return name
 
 

@@ -44,6 +44,20 @@
       bluetooth = {
         enable = true;
         powerOnBoot = true;
+        # Patched bluez for the DAEMON ONLY — deliberately not a global
+        # pkgs.bluez overlay (which rebuilds every reverse-dep: pipewire →
+        # chromium/electron via WebRTC, a multi-hour cascade for a
+        # daemon-only fix; verified 2026-09-23 by drv-requisites diff).
+        #
+        # Upstream b7d71e5 fixes the 5.87 load_remote_sep() cache regression
+        # ("Unable to load LastUsed", A2DP connect EBUSY, HFP-only headsets;
+        # bluez#2285, Bose QC Ultra). The bug lives in bluetoothd
+        # (profiles/audio/a2dp.c); libbluetooth (linked by PipeWire et al.)
+        # is untouched, so PipeWire/Chromium keep cached upstream libs while
+        # the daemon gets the fix. DROP when nixpkgs ships bluez > 5.87.
+        package = pkgs.bluez.overrideAttrs (old: {
+          patches = (old.patches or []) ++ [ ../patches/bluez-a2dp-fix-load-remote-sep.patch ];
+        });
         settings = {
           General = {
             Enable = "Source,Sink,Media,Socket";

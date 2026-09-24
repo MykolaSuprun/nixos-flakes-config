@@ -42,6 +42,12 @@ hl.bind(
 
 hl.bind(mod .. " + SHIFT + SPACE", hl.dsp.exec_cmd("hypr-layout-picker"))
 hl.bind(mod .. " + V", hl.dsp.exec_cmd("hypr-gpu-run"), { description = "GPU runner (rofi)" })
+-- Bluetooth audio profile picker (A2DP <-> HFP) via rofi menu
+hl.bind(
+	mod .. " + CTRL + B",
+	hl.dsp.exec_cmd("bt-profile-switch"),
+	{ description = "Bluetooth audio mode (rofi)" }
+)
 
 -- Window management
 hl.bind(mod .. " + W", hl.dsp.window.close(), { description = "Close focused window" })
