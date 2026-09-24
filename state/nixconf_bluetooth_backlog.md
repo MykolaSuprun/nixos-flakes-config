@@ -87,9 +87,22 @@ before the config saw them. Stage, not commit.
 - The Bose is dual-stack: BREDR connected, LE bonded ("LE-Bose QC Ultra
   Headphones" is the LE identity name).
 
+### 2026-09-24: script stdin fix + config simplification
+- `rofi_select` never piped `items` to rofi stdin (dmenu reads options from
+  stdin → always empty list). Fixed via `run(..., input_text=...)`; verified
+  rofi receives device + mode lists. (Missed in the first fix pass.)
+- `nixos/pipewire.nix`: removed dead `settings.General.Enable` (BlueZ 5.87
+  logs "Unknown key Enable"; profiles auto-enable) and unneeded
+  `settings.General.Experimental` (only gates BAP/LE Audio; kernel lacks ISO
+  sockets; classic A2DP/HFP need no flag). Rationale per Arch Wiki +
+  WirePlumber 0.5.17 docs + BlueZ issue #2285 + Mint HFP-stuck thread.
+- Rofi discoverability: tool lives in Run tab (PATH binary, no .desktop),
+  not Apps/drun. Keybind pending deploy.
+
 ### Next actions
-- Reconnect Bose after the bluez patch; verify A2DP (`pw-dump` EnumProfile has
-  a2dp-*; `wpctl inspect 70` profile != headset-head-unit).
+- Rebuild + switch (deploys fixed script, keybind, daemon patch, simplified
+  config); restart bluetoothd; reconnect Bose; verify A2DP (`pw-dump`
+  EnumProfile has a2dp-*).
 - Optionally clear the bluez cache to purge junk LE addresses.
 
 ### Resume point

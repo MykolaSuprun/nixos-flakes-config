@@ -62,10 +62,15 @@ def strip_ansi(text):
     return ANSI_RE.sub("", text)
 
 
-def run(cmd, timeout=10):
-    """Run a command, return (returncode, stdout, stderr)."""
+def run(cmd, timeout=10, input_text=None):
+    """Run a command, return (returncode, stdout, stderr).
+
+    input_text (str) is piped to the child's stdin — required for rofi
+    dmenu, which reads its option list from stdin (no stdin = empty list).
+    """
     try:
-        p = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+        p = subprocess.run(cmd, capture_output=True, text=True,
+                           timeout=timeout, input=input_text)
         return p.returncode, p.stdout, p.stderr
     except Exception as exc:
         return -1, "", str(exc)
@@ -85,7 +90,9 @@ def rofi_select(prompt, items, current=0):
     """
     args = ["rofi", "-dmenu", "-i", "-format", "i", "-p", prompt,
             "-selected-row", str(current)]
-    rc, out, _ = run(args, timeout=None)
+    # Pipe the menu entries — dmenu shows an empty list without stdin input
+    # (the exact "empty pick list" failure; items were built but never sent).
+    rc, out, _ = run(args, timeout=None, input_text="\n".join(items) + "\n")
     if rc != 0 or not out.strip():
         return None
     try:

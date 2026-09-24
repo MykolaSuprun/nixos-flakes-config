@@ -58,12 +58,10 @@
         package = pkgs.bluez.overrideAttrs (old: {
           patches = (old.patches or []) ++ [ ../patches/bluez-a2dp-fix-load-remote-sep.patch ];
         });
-        settings = {
-          General = {
-            Enable = "Source,Sink,Media,Socket";
-            Experimental = true;
-          };
-        };
+        # No [General] settings: BlueZ 5.87 ignores Enable= ("Unknown key",
+        # verified in journal) — profiles auto-enable; Experimental is
+        # unneeded for classic A2DP/HFP (only gates BAP/LE Audio, which needs
+        # kernel ISO sockets we lack). Minimal = enable + powerOn + daemon.
       };
     };
   };
