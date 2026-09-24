@@ -18,7 +18,34 @@
         target = "wayland-session@hyprland.desktop.target";
       };
 
-      cli.enable = true; # `caelestia` CLI: IPC (`caelestia shell …`), wallpaper/scheme switching
+      cli = {
+        enable = true; # `caelestia` CLI: IPC (`caelestia shell …`), wallpaper/scheme switching
+        # Theme engine fully disarmed: every target defaults to ON when
+        # cli.json has no theme section, and each scheme change would
+        # otherwise recolor live terminals (OSC to all ptys), rewrite
+        # fuzzel/htop/btop configs, flip dconf GTK/Qt behind Stylix's back,
+        # and drop files into the Hyprland config. Persistent theming is
+        # Nix-managed (Stylix + catppuccin-nix); light/dark switching across
+        # all apps belongs in NixOS specialisations, not this runtime engine.
+        # The shell itself still recolors from state/scheme.json (ungated).
+        settings.theme = {
+          enableTerm = false;
+          enableHypr = false;
+          enableDiscord = false;
+          enableSpicetify = false;
+          enablePandora = false;
+          enableFuzzel = false;
+          enableBtop = false;
+          enableNvtop = false;
+          enableHtop = false;
+          enableGtk = false;
+          enableQt = false;
+          enableWarp = false;
+          enableChromium = false;
+          enableZed = false;
+          enableCava = false;
+        };
+      };
 
       # Sparse overrides only — upstream README warns a full dump of the
       # example config goes stale across updates. Everything omitted falls
@@ -34,6 +61,12 @@
           idle.timeouts = [];
         };
         paths.wallpaperDir = "${config.home.homeDirectory}/.config/wallpapers/catppuccin/${config.catppuccin.flavor}";
+        # No automatic light/dark flips by wallpaper luminance: with a static
+        # scheme each flip is a flavour change the user must choose (mocha has
+        # no light mode, latte no dark one). Long term the shell flavour
+        # should track myconf.catppuccin.flavor via the flavour
+        # specialisations (nixos/specialisations.nix).
+        services.smartScheme = false;
       };
     };
 
