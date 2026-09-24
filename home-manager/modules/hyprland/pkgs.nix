@@ -39,18 +39,29 @@
     fi
   '';
   # Session lock launcher shared by hypridle, keybinds and menus.
-  # The noctalia branch launches swaylock instead of "noctalia msg session
-  # lock": noctalia v5's native lock screen crashes on resume from suspend
-  # ("your lockscreen app died"; upstream EGL context-recovery bugs
-  # noctalia#2892/#3916/#1493). pidof guard: only one client can hold the
-  # ext-session-lock, so skip if a lock is already active. Wallpaper is the
-  # first image dropped in ~/.config/wallpapers/lockscreen/ — passed as a
-  # flag only when present, so a missing wallpaper never blocks locking.
+  # Per-shell fan-out:
+  #   dms       → `dms ipc lock lock`
+  #   caelestia → native lock via `caelestia shell lock lock`, with a
+  #               swaylock fallback if the shell is down (better locked
+  #               than not; fix-lock is inert under Caelestia so the
+  #               fallback is unmanaged).
+  #   noctalia  → swaylock instead of "noctalia msg session lock": noctalia
+  #               v5's native lock screen crashes on resume from suspend
+  #               ("your lockscreen app died"; upstream EGL context-recovery
+  #               bugs noctalia#2892/#3916/#1493).
+  #   none      → hyprlock.
+  # pidof guard: only one client can hold the ext-session-lock, so skip if
+  # a lock is already active. Wallpaper is the first image dropped in
+  # ~/.config/wallpapers/lockscreen/ — passed as a flag only when present,
+  # so a missing wallpaper never blocks locking.
   session_lock = pkgs.writeShellScriptBin "session_lock" (
     if (config.myconf.dms.enable or false)
     then ''dms ipc lock lock''
-    else if config.hyprconf.noctalia.enable
+    else if config.hyprconf.noctalia.enable || (config.myconf.caelestia.enable or false)
     then ''
+      ${lib.optionalString (config.myconf.caelestia.enable or false) ''
+        caelestia shell lock lock 2>/dev/null && exit 0
+      ''}
       pidof swaylock >/dev/null && exit 0
       # VT/ssh recovery: without a Wayland socket this exec would fail —
       # borrow it from the running session (same trick as fix-lock).
@@ -111,6 +122,18 @@
           && mv "$state_dir/fix-lock.log.tmp" "$state_dir/fix-lock.log"
       fi
     }
+
+    ${lib.optionalString (config.myconf.caelestia.enable or false) ''
+      # Caelestia owns its lock natively (see session_lock) and heals its
+      # own client — a swaylock repair pass here would stack a SECOND lock
+      # over it (logind LockedHint=yes + no swaylock client reads as
+      # "locked but clientless"). So all passive modes are no-ops; manual
+      # mode refuses (nothing swaylock-based to manage).
+      case "''${1:-}" in
+        --record|--auto|--recheck) exit 0 ;;
+        "") echo "fix-lock: inert under Caelestia native lock" >&2; exit 1 ;;
+      esac
+    ''}
 
     # Hyprland session up? NOTE: never `pgrep -x Hyprland` — the binary is
     # wrapped (comm `.Hyprland-wrapp`), which -x can never match. hypridle
@@ -271,6 +294,10 @@
   notification_toggle = pkgs.writeShellScriptBin "notification-panel-toggle" (
     if (config.myconf.dms.enable or false)
     then ''dms ipc notifications toggle''
+    # Caelestia sidebar hosts the notification center
+    # (upstream: `caelestia shell drawers toggle sidebar`).
+    else if (config.myconf.caelestia.enable or false)
+    then ''caelestia shell drawers toggle sidebar''
     else ''swaync-client -t''
   );
   lock_screen = pkgs.writeShellScriptBin "lock_dp1" ''

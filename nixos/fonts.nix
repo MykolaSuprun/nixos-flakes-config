@@ -54,6 +54,8 @@
       paratype-pt-serif
       corefonts # windows fonts
       rubik
+      material-symbols # Caelestia shell icon font (Material Symbols Rounded)
+      nerd-fonts.caskaydia-cove # Caelestia shell mono font (CaskaydiaCove NF)
       hannom
       wqy_zenhei
       wqy_microhei

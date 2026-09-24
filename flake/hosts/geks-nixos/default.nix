@@ -83,10 +83,12 @@ in {
                   inputs.noctalia.homeModules.default
                   inputs.dms.homeModules.dank-material-shell
                   inputs.dms-plugin-registry.nixosModules.default
+                  inputs.caelestia-shell.homeManagerModules.default
 
                   ../../../home-manager/users/mykolas/home-geks-nixos.nix
                   # HM feature modules (all gated by myconf.*.enable flags)
                   ../../../home-manager/modules/audio-recovery.nix
+                  ../../../home-manager/modules/caelestia.nix
                   ../../../home-manager/modules/catppuccin.nix
                   ../../../home-manager/modules/dms.nix
                   ../../../home-manager/modules/chromium.nix

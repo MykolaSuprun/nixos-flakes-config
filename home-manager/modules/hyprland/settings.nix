@@ -556,7 +556,10 @@ in {
         "d %h/.config/hypr/noctalia 0755 - - -"
       ];
       services = lib.mkMerge [
-        (lib.mkIf (!(config.myconf.dms.enable or false)) {
+        # swaync only when no shell owns notifications itself (dms and
+        # caelestia both run their own notification centers; two daemons
+        # would fight over org.freedesktop.Notifications).
+        (lib.mkIf (!(config.myconf.dms.enable or false) && !(config.myconf.caelestia.enable or false)) {
           swaync = {
             Unit = {
               Description = "Sway Notification Center";
