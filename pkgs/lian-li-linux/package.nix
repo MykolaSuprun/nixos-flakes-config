@@ -143,6 +143,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
     substituteInPlace crates/lianli-control/src/account.rs \
       --replace-fail '"/usr/bin/systemctl"' '"/run/current-system/sw/bin/systemctl"' \
       --replace-fail '.env("PATH", "/usr/bin:/bin")' '.env("PATH", "/run/current-system/sw/bin:/run/wrappers/bin:/usr/bin:/bin")'
+
+    # Media validation shells out to an absolute FHS ffmpeg path that doesn't
+    # exist on NixOS. (Everything else — ffprobe/ffmpeg in video/h264/
+    # pixel_cleaner — is name-based and resolved via the wrapped PATH below.)
+    substituteInPlace crates/lianli-media/src/validation.rs \
+      --replace-fail '"/usr/bin/ffmpeg"' '"${ffmpeg}/bin/ffmpeg"'
   '';
 
   # Build the frontend dist/ from the prefetched node_modules. The src-tauri
@@ -195,9 +201,14 @@ rustPlatform.buildRustPackage (finalAttrs: {
   '';
 
   # tray-icon dlopens libayatana-appindicator at runtime rather than linking it.
+  # The daemon shells out to ffprobe/ffmpeg (fps probe, video decode, h264
+  # scaling, pixel cleaning) by bare name — wrap it with ffmpeg on PATH so it
+  # works under the bare systemd user-service environment.
   postFixup = ''
     wrapProgram $out/bin/lianli-gui \
       --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ libayatana-appindicator ]}"
+    wrapProgram $out/bin/lianli-daemon \
+      --prefix PATH : "${lib.makeBinPath [ ffmpeg ]}"
   '';
 
   passthru = { inherit libevdi; };
