@@ -30,6 +30,14 @@ in {
     services.udev.packages = [cfg.package];
     users.groups.lianli = {};
 
+    # v1.1.x daemon refuses to start without these root-owned shared flock
+    # files (both user-mode and system-mode daemons share them).
+    # Mirrors upstream packaging/tmpfiles.d/lianli.conf.
+    systemd.tmpfiles.rules = [
+      "f /run/lianli-daemon.lock 0666 root root - -"
+      "f /run/lianli-control.lock 0666 root root - -"
+    ];
+
     # Per-user daemon: talks to the GUI via a socket in $XDG_RUNTIME_DIR.
     systemd.user.services.lianli-daemon = {
       description = "Lian Li Device Daemon";
