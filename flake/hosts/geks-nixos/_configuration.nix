@@ -26,6 +26,9 @@ in {
     secrets.enable = true;
     ollama.enable = true;
     moshi-hook.enable = true;
+    # Lian Li HydroShift LCD 360R (HSLCD36RW) + UNI FAN SL V2 hub: fan curves,
+    # pump, ARGB, 480x480 LCD streaming via lian-li-linux (udev + user daemon).
+    lianli.enable = true;
     # btrfs dedup (bees) — 2026-09-11 storage baseline, see
     # task_backlog/storage_backlog.md. 2GB mlocked hash table, 4 workers,
     # loadavg ceiling 4 (polite defaults; 16/16 HOT during the 2026-09-12

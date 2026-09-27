@@ -55,6 +55,7 @@ in {
         ../../../nixos/flatpak.nix
         ../../../nixos/fonts.nix
         ../../../nixos/hyprland.nix
+        ../../../nixos/lianli.nix
         ../../../nixos/nix-conf.nix
         ../../../nixos/pipewire.nix
         ../../../nixos/secrets.nix
