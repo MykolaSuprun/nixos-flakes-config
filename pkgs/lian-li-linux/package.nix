@@ -132,6 +132,17 @@ rustPlatform.buildRustPackage (finalAttrs: {
     substituteInPlace crates/lianli-gui/src-tauri/tauri.conf.json \
       --replace-fail '"beforeBuildCommand": "npm run build"' '"beforeBuildCommand": ""' \
       --replace-fail '"beforeDevCommand": "npm run dev"' '"beforeDevCommand": ""'
+
+    # FHS hardcodings in the health/diagnostic helpers: /bin/cat and
+    # /usr/bin/systemctl don't exist on NixOS (only /bin/sh, via binsh), so
+    # every spawned diagnostic failed with ENOENT ("Starting diagnostic
+    # command: No such file or directory"). Point them at store/profile paths;
+    # /run/wrappers added to the helper PATH for setuid tools (pkexec).
+    substituteInPlace crates/lianli-control/src/command.rs \
+      --replace-fail '"/bin/cat"' '"${coreutils}/bin/cat"'
+    substituteInPlace crates/lianli-control/src/account.rs \
+      --replace-fail '"/usr/bin/systemctl"' '"/run/current-system/sw/bin/systemctl"' \
+      --replace-fail '.env("PATH", "/usr/bin:/bin")' '.env("PATH", "/run/current-system/sw/bin:/run/wrappers/bin:/usr/bin:/bin")'
   '';
 
   # Build the frontend dist/ from the prefetched node_modules. The src-tauri
