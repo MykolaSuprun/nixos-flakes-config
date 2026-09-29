@@ -1,7 +1,7 @@
 # lib/opencode-tools.nix — the dev toolbox opencode's agent can call by name:
-# LSPs, formatters, linters, security scanners and CLI utilities. Shared by
-# the opencode (v1) and opencode2 (v2) overlays so both wrappers carry the
-# same tool set from one source of truth.
+# LSPs, formatters, linters, security scanners and CLI utilities. Consumed by
+# overlays/opencode.nix (V2 build; the separate V1 and opencode2 wrapper
+# overlays were retired 2026-09-29).
 #
 # Lives in lib/ (not overlays/) because overlays/default.nix auto-imports
 # every .nix file in overlays/ as an overlay — a helper there would be

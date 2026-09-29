@@ -12,14 +12,10 @@
     inherit system;
     config.allowUnfree = true;
 
-    # opencode pinned to last known-good nix build (1.18.29 from
-    # nixpkgs-opencode-pin) — applied FIRST so overlays/opencode.nix still
-    # re-wraps the dev toolbox on top of the pinned package.
-    overlays = [
-      (final: prev: {
-        opencode = inputs.nixpkgs-opencode-pin.legacyPackages.${system}.opencode;
-      })
-    ] ++ import ../../../overlays ++ [
+    # overlays/opencode.nix supplies pkgs.opencode (V2 from the npm prebuilt,
+    # shadowing nixpkgs' broken V1 build); the former nixpkgs-opencode-pin
+    # pin overlay was retired together with V1 on 2026-09-29.
+    overlays = import ../../../overlays ++ [
       inputs.nixconf-private.overlays.lmstudio
     ];
   };

@@ -229,9 +229,9 @@
       inputs.flake-env.packages.${pkgs.stdenv.hostPlatform.system}.picker
       vscode
       neovide
-      # opencode v2 (overlays/opencode2.nix) — coexists with the pinned v1
-      # `opencode` from the private llm module
-      opencode2
+      # opencode (overlays/opencode.nix) — V2 build from the npm prebuilt.
+      # V1 pin + the opencode2 compat alias retired 2026-09-29.
+      opencode
       # sublime4
       # zed-editor
       nvtopPackages.amd

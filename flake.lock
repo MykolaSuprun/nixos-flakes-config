@@ -1283,22 +1283,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-opencode-pin": {
-      "locked": {
-        "lastModified": 1788959995,
-        "narHash": "sha256-6aUB2lsfZ0GLbO4gpRkUwNrxB7O2M6RzRwXStIt2JcA=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "1043b385fdb6d0959825aed31437ff411d6a7978",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "1043b385fdb6d0959825aed31437ff411d6a7978",
-        "type": "github"
-      }
-    },
     "nixpkgs-regression": {
       "locked": {
         "lastModified": 1643052045,
@@ -1654,7 +1638,6 @@
         "nixconf-private": "nixconf-private",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_10",
-        "nixpkgs-opencode-pin": "nixpkgs-opencode-pin",
         "nixpkgs-stable": "nixpkgs-stable",
         "noctalia": "noctalia",
         "noctalia-greeter": "noctalia-greeter",
