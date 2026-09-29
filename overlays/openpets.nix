@@ -56,7 +56,15 @@ in {
       # No --no-sandbox: NixOS enables user namespaces; add only if sandbox errors force it.
       . ${prev.makeWrapper}/nix-support/setup-hook
       wrapProgram $out/bin/openpets \
-        --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true}}"
+        --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true}}" \
+        --set-default OPENPETS_NATIVE_WAYLAND 1
+      # ^ --set-default (not --set): the layer-shell backend must engage on
+      # every launch path — systemd unit, uwsm/rofi .desktop launcher
+      # (app-*.scope), tray, direct CLI — because the app's single-instance
+      # lock makes whichever path starts FIRST win. Unit-only env proved
+      # fragile: a launcher-started instance blocked the unit's (env-carrying)
+      # relaunch. Escape hatch: OPENPETS_NATIVE_WAYLAND=0 overrides (falls
+      # back to the x11-default backend, i.e. pre-fix behavior).
     '';
 
     meta = with prev.lib; {

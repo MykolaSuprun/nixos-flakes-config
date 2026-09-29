@@ -23,12 +23,10 @@ in {
       Service = {
         ExecStart = "${pkgs.openpets}/bin/openpets";
         Restart = "on-failure";
-        # Opt in to upstream's experimental native Wayland (wlr-layer-shell)
-        # backend: the pet is a transparent overlay surface, not a framed
-        # XWayland window. Requires resources/openpets-wayland-helper (built
-        # by overlays/openpets.nix); falls back to the normal window path if
-        # the helper cannot start.
-        Environment = ["OPENPETS_NATIVE_WAYLAND=1"];
+        # NOTE: OPENPETS_NATIVE_WAYLAND=1 is set (as a default) by the
+        # package wrapper itself — so every launch path (unit, uwsm/rofi
+        # .desktop, tray) engages the layer-shell backend, not just this
+        # unit. No unit-level Environment needed; see overlays/openpets.nix.
       };
       Install.WantedBy = ["graphical-session.target"];
     };
