@@ -22,11 +22,23 @@ in {
       };
       Service = {
         ExecStart = "${pkgs.openpets}/bin/openpets";
-        Restart = "on-failure";
+
+        # OpenPets' packaged bootstrap spawns the real process detached and
+        # exits 0 after a ~600ms handoff. Under Type=simple, systemd treated
+        # the unit as finished and killed the whole cgroup — including the
+        # detached app ("start" looked like a no-op; unit: inactive/dead,
+        # status=0/SUCCESS). oneshot + RemainAfterExit keeps the unit active
+        # while the detached process tree lives on, and `stop` tears the
+        # cgroup down cleanly (app + wayland helper). TimeoutStartSec bounds
+        # the handoff. No Restart=: the app holds a single-instance lock, so
+        # automatic retries can only relay into the running instance.
+        Type = "oneshot";
+        RemainAfterExit = true;
+        TimeoutStartSec = "30s";
         # NOTE: OPENPETS_NATIVE_WAYLAND=1 is set (as a default) by the
-        # package wrapper itself — so every launch path (unit, uwsm/rofi
-        # .desktop, tray) engages the layer-shell backend, not just this
-        # unit. No unit-level Environment needed; see overlays/openpets.nix.
+        # package wrapper itself — every launch path (unit, uwsm/rofi
+        # .desktop, tray) engages the layer-shell backend; see
+        # overlays/openpets.nix.
       };
       Install.WantedBy = ["graphical-session.target"];
     };
