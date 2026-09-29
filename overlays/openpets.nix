@@ -1,17 +1,44 @@
-final: prev: {
+final: prev: let
+  # Full upstream source tree — needed to build the wlr-layer-shell helper
+  # (openpets-wayland-helper below; upstream PR #166). Track the AppImage
+  # version line on bumps: v4.0.1 == 10a2ccfc.
+  openpetsSrc = prev.fetchFromGitHub {
+    owner = "OpenPetsHQ";
+    repo = "openpets";
+    rev = "v4.0.1";
+    hash = "sha256-eleCffuott6Z7VPZnv+CgQkwBzsgPsjO6j2BCOKreCo=";
+  };
+in {
   # OpenPets desktop (Electron) repackaged from the official AppImage.
   # No nixpkgs package, NUR package, or third-party flake exists (verified 2026-09-10; still none at 4.0.x).
   # Asset naming: OpenPets-<version>-linux-x86_64.AppImage; hash via `nix store prefetch-file`,
   # cross-checked against upstream SHA256SUMS (both agree for 4.0.1).
   # AppImage contents verified: openpets.desktop + openpets.png at root,
   # usr/share/icons/hicolor/512x512/apps/openpets.png.
-  openpets = prev.appimageTools.wrapType2 (finalAttrs: {
+  # NOTE: wrapAppImage, not wrapType2 — on this nixpkgs rev wrapType2's
+  # extendDrvArgs ALWAYS recomputes `contents = extract {pname,version,src}`,
+  # discarding a user-supplied contents. wrapAppImage (the layer below)
+  # honours it (contents ? prev.src; runScript uses finalAttrs.contents).
+  openpets = prev.appimageTools.wrapAppImage (finalAttrs: {
     pname = "openpets";
     version = "4.0.1";
 
     src = prev.fetchurl {
       url = "https://github.com/OpenPetsHQ/openpets/releases/download/v${finalAttrs.version}/OpenPets-${finalAttrs.version}-linux-x86_64.AppImage";
       hash = "sha256-qtsPP8RGpBMXSjn19Co0+czfm8C6VBa+hdXYtatFgjw=";
+    };
+
+    # Inject the layer-shell helper into the extraction itself, at exactly
+    # the packaged location upstream intends (PR #166 "packaging" still
+    # open): resources/openpets-wayland-helper, which Electron resolves via
+    # process.resourcesPath relative to the real binary — a merged symlink
+    # farm does NOT work (the farm links point back at the untouched
+    # extraction, so resourcesPath never sees the helper).
+    contents = prev.appimageTools.extract {
+      inherit (finalAttrs) pname version src;
+      postExtract = ''
+        install -Dm755 ${final.openpets-wayland-helper}/bin/openpets-wayland-helper $out/resources/openpets-wayland-helper
+      '';
     };
 
     extraInstallCommands = ''
@@ -59,6 +86,37 @@ final: prev: {
       homepage = "https://github.com/OpenPetsHQ/openpets";
       license = licenses.mit;
       mainProgram = "openpets-mcp";
+      platforms = ["x86_64-linux"];
+    };
+  };
+
+  # Native Rust helper that owns the wlr-layer-shell overlay surface: the
+  # hidden Electron renderer streams BGRA pet frames to it over a unix
+  # socket (~30fps). Activated via OPENPETS_NATIVE_WAYLAND=1 (set in the
+  # systemd user unit). Without it, pet windows degrade to framed opaque
+  # XWayland windows on Hyprland/Niri (the Electron X11 shell-exclusion
+  # dance times out — the reason for the visible frame we hit in v4.0.1).
+  openpets-wayland-helper = prev.rustPlatform.buildRustPackage {
+    pname = "openpets-wayland-helper";
+    version = "4.0.1";
+
+    src = openpetsSrc;
+    # Crate root is self-contained (own Cargo.toml + Cargo.lock).
+    sourceRoot = "source/apps/desktop/native/openpets-wayland-helper";
+
+    cargoLock = {
+      lockFile = "${openpetsSrc}/apps/desktop/native/openpets-wayland-helper/Cargo.lock";
+    };
+
+    # smithay-client-toolkit's build.rs drives pkg-config to find xkbcommon.
+    nativeBuildInputs = [prev.pkg-config];
+    buildInputs = [prev.wayland prev.libxkbcommon];
+
+    meta = with prev.lib; {
+      description = "Rust helper carrying the OpenPets pet on a wlr-layer-shell overlay surface (native Wayland backend, upstream PR #166)";
+      homepage = "https://github.com/OpenPetsHQ/openpets/tree/main/apps/desktop/native/openpets-wayland-helper";
+      license = licenses.mit;
+      mainProgram = "openpets-wayland-helper";
       platforms = ["x86_64-linux"];
     };
   };
