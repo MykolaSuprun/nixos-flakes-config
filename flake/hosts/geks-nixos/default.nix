@@ -17,6 +17,10 @@
     # pin overlay was retired together with V1 on 2026-09-29.
     overlays = import ../../../overlays ++ [
       inputs.nixconf-private.overlays.lmstudio
+      # First-party OpenClaw (see home-manager/modules/openclaw.nix): nixpkgs'
+      # own openclaw stays marked insecure; this overlay supplies the
+      # upstream-maintained package the HM module consumes.
+      inputs.nix-openclaw.overlays.default
     ];
   };
   pkgs-stable = import inputs.nixpkgs-stable {
@@ -110,6 +114,7 @@ in {
                   ../../../home-manager/modules/opencode.nix
                   ../../../home-manager/modules/openpets.nix
                   ../../../home-manager/modules/chatgpt.nix
+                  ../../../home-manager/modules/openclaw.nix
                   ../../../home-manager/modules/hyprland
                 ]
                 ++ lib.optionals useHyprlandFlake [

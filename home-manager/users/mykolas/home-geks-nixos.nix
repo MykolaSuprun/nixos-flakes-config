@@ -60,6 +60,7 @@ in {
     fcitx5.enable = true;
     opencode.enable = true;
     openpets.enable = true;
+    openclaw.enable = true;
     chatgpt.enable = true;
     herdr.enable = true;
     audio-recovery.enable = true; # restart audio stack after resume (xHCI reinit wedges it)

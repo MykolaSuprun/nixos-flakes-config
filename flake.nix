@@ -123,6 +123,18 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
     };
+
+    # OpenClaw — first-party Nix distribution (official openclaw org flake).
+    # Chosen over nixpkgs' package: that one is permanently marked insecure
+    # (LLM prompt-injection policy flag, not a patchable CVE; nixpkgs
+    # maintainer confirmed no fix without the permit). This flake ships the
+    # same upstream app unmarked, newer, with a deterministic Nix-mode
+    # runtime. nixpkgs follows ours — the overlay feeds OUR pkgs instance
+    # (applied in flake/hosts/geks-nixos/default.nix).
+    nix-openclaw = {
+      url = "github:openclaw/nix-openclaw";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs:
