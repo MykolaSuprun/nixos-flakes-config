@@ -42,5 +42,25 @@ in {
       };
       Install.WantedBy = ["graphical-session.target"];
     };
+
+    # Restart the pet after system resume: the unit above is oneshot +
+    # RemainAfterExit with no Restart=, so a resume-killed process tree
+    # leaves the unit "active" while the app is dead — nothing else will
+    # ever restart it. User units WantedBy+After suspend.target run after
+    # the system resumes (same pattern as audio-recovery.nix). Requisite
+    # skips the restart cleanly when no graphical session is active
+    # (suspend from a TTY or before login).
+    systemd.user.services."openpets-resume-recovery" = {
+      Unit = {
+        Description = "Restart OpenPets after system resume";
+        After = ["graphical-session.target" "suspend.target"];
+        Requisite = ["graphical-session.target"];
+      };
+      Service = {
+        Type = "oneshot";
+        ExecStart = "${pkgs.systemd}/bin/systemctl --user restart openpets.service";
+      };
+      Install.WantedBy = ["suspend.target"];
+    };
   };
 }

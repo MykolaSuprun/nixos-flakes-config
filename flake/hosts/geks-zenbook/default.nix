@@ -62,7 +62,6 @@ in {
                 [
                   inputs.catppuccin.homeModules.catppuccin
                   inputs.zen-browser.homeModules.beta
-                  inputs.noctalia.homeModules.default
                   inputs.caelestia-shell.homeManagerModules.default
                   ../../../home-manager/users/mykolas/home-zenbook.nix
                   # HM feature modules (all gated by myconf.*.enable flags)

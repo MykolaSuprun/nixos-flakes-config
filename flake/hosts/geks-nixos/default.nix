@@ -81,7 +81,6 @@ in {
                 [
                   inputs.catppuccin.homeModules.catppuccin
                   inputs.zen-browser.homeModules.beta
-                  inputs.noctalia.homeModules.default
                   inputs.dms.homeModules.dank-material-shell
                   inputs.dms-plugin-registry.nixosModules.default
                   inputs.caelestia-shell.homeManagerModules.default
