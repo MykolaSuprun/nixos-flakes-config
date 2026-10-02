@@ -14,20 +14,20 @@ final: prev:
 #   curl -fsSL https://persistent.oaistatic.com/codex-app-prod/linux/deb/dists/stable/main/binary-{amd64,arm64}/Packages \
 #     | grep -E '^(Version|Filename|SHA256):'
 #   nix --extra-experimental-features nix-command hash convert --hash-algo sha256 --to sri <hex>
-# Version pinned 2026-09-12. Hashes via index SHA256 -> SRI (no prefetch needed).
+# Version pinned 2026-10-02. Hashes via index SHA256 -> SRI (no prefetch needed).
 let
   system = prev.stdenv.hostPlatform.system;
 
-  version = "26.908.40834";
+  version = "26.930.21537";
 
   sources = {
     x86_64-linux = {
       debArch = "amd64";
-      hash = "sha256-2je457zvquoBnEeMrL5sc+4d3RXg4euzx+8KQt2BisI=";
+      hash = "sha256-YP222JXXdviDH/NaeD3gTNv6KA8PPZclhDFfmOV6olY=";
     };
     aarch64-linux = {
       debArch = "arm64";
-      hash = "sha256-uuXFylhWJaEWqId97cRV5MJ8oCBj6pPb1qBQbtahLTE=";
+      hash = "sha256-9kbAHuvTekkxfvYq7eh3wina7uTxyrnvPrYaHPZClWQ=";
     };
   };
 
@@ -80,23 +80,36 @@ let
     path = Path(sys.argv[1])
     data = path.read_bytes()
 
-    ditto = re.findall(rb"await (\w+)\(`/usr/bin/ditto`,\[`--noqtn`,\w+,\w+\]\);return", data)
-    if len(ditto) != 1:
+    ditto_all = list(re.finditer(
+        rb"await (\w+)\(`/usr/bin/ditto`,\[`--noqtn`,\w+,\w+\]\);return", data
+    ))
+    if len(ditto_all) != 1:
         raise RuntimeError(
-            f"ChatGPT asar patch: expected 1 darwin ditto anchor, found {len(ditto)}"
+            f"ChatGPT asar patch: expected 1 darwin ditto anchor, found {len(ditto_all)}"
         )
-    old_matches = re.findall(
-        rb"await [\w.]+\.cp\(\w+,\w+,\{recursive:!0,verbatimSymlinks:!0\}\);return", data
-    )
+    # 26.930: upstream also added verbatimSymlinks to the unrelated directory-copy
+    # helper (codex-CLI provisioner staging / self-updater), so the plugin-copy
+    # fs.cp call is no longer globally unique. The plugin-copy site is stable:
+    # it sits immediately after the darwin ditto branch in the same function
+    # (34 bytes away in 26.930). Anchor on the ditto match: the next such cp
+    # call within a small window IS the plugin-copy fallback.
+    old_matches = [
+        m for m in re.finditer(
+            rb"await [\w.]+\.cp\(\w+,\w+,\{recursive:!0,verbatimSymlinks:!0\}\);return",
+            data,
+        )
+        if 0 < m.start() - ditto_all[0].end() < 200
+    ]
     if len(old_matches) != 1:
         raise RuntimeError(
-            f"ChatGPT asar patch: expected 1 fs.cp fallback, found {len(old_matches)}"
+            "ChatGPT asar patch: expected 1 fs.cp fallback adjacent to the ditto "
+            f"anchor (within 200 bytes), found {len(old_matches)}"
         )
-    old = old_matches[0]
+    old = old_matches[0].group()
     args = re.match(rb"await [\w.]+\.cp\((\w+),(\w+),", old)
     new = (
         b"await "
-        + ditto[0]
+        + ditto_all[0].group(1)
         + b"(`plugin-cp`,["
         + args.group(1)
         + b","
@@ -176,6 +189,8 @@ let
       pipewire
       stdenv.cc.cc
       systemdLibs
+      # remote-control-device-key.node (26.930) links TPM2 esys/mu/tcti-device
+      tpm2-tss
       wayland
       libx11
       libxcomposite
