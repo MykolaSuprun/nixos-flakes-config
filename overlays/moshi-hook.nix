@@ -3,13 +3,14 @@ final: prev: {
   # Asset naming: moshi-hook_<OS>_<arch>.tar.gz, verified against the published
   # sha256 on first fetch.
   moshi-hook = let
-    version = "0.3.19";
+    version = "0.4.13";
     # Per-arch sha256 (SRI) verified via `nix store prefetch-file` against
-    # https://cdn.getmoshi.app/hook/v0.3.19/moshi-hook_Linux_<arch>.tar.gz
-    # and cross-checked with the auto-published Formula/moshi-hook.rb.
+    # https://cdn.getmoshi.app/hook/v0.4.13/moshi-hook_Linux_<arch>.tar.gz
+    # No upstream index exists (Homebrew formula 404 as of 2026-10-02);
+    # version ceiling established by CDN path probing (0.4.14+ = 404).
     hashes = {
-      x86_64 = "sha256-yUzj3luOe20bnxLVAaldsEfwG/Mra4N+KaQikmfuedQ=";
-      arm64 = "sha256-EsBimaR3DwrYEl6VzUnMb3EtGK4SMIr50iUIWbZ6e44=";
+      x86_64 = "sha256-+3nMsexUVjhBvvfjAiTvvxXtDVL9jw4Z/oydC2LK6II=";
+      arm64 = "sha256-vlgTfFJObr4sT4UWLmgvtelJ5mSWKnF9HPvPt5FIEpA=";
     };
   in
     prev.stdenv.mkDerivation {

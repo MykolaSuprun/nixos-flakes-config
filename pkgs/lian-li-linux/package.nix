@@ -47,14 +47,14 @@ let
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "lianli-linux";
-  version = "1.1.4";
+  version = "1.1.5";
 
   src = fetchFromGitHub {
     owner = "sgtaziz";
     repo = "lian-li-linux";
     tag = "v${finalAttrs.version}";
     fetchSubmodules = true; # vendored tinyuz + HDiffPatch C++ live in submodules
-    hash = "sha256-sXoSFlY8OTQCa7WPVp/JQ3BkVaON9pfZE4AJ0tziF5k=";
+    hash = "sha256-8D1ru/T1tlcRtx5FYfhVIKlzIbFDBOIp4fklnCTwupg=";
   };
 
   # Vue frontend dependencies: node_modules produced by a fixed-output
@@ -133,22 +133,17 @@ rustPlatform.buildRustPackage (finalAttrs: {
       --replace-fail '"beforeBuildCommand": "npm run build"' '"beforeBuildCommand": ""' \
       --replace-fail '"beforeDevCommand": "npm run dev"' '"beforeDevCommand": ""'
 
-    # FHS hardcodings in the health/diagnostic helpers: /bin/cat and
-    # /usr/bin/systemctl don't exist on NixOS (only /bin/sh, via binsh), so
+    # FHS hardcodings in the health/diagnostic helpers: /usr/bin/systemctl and
+    # /usr/bin/journalctl don't exist on NixOS (only /bin/sh, via binsh), so
     # every spawned diagnostic failed with ENOENT ("Starting diagnostic
-    # command: No such file or directory"). Point them at store/profile paths;
-    # /run/wrappers added to the helper PATH for setuid tools (pkexec).
-    substituteInPlace crates/lianli-control/src/command.rs \
-      --replace-fail '"/bin/cat"' '"${coreutils}/bin/cat"'
+    # command: No such file or directory"). Point them at profile paths.
+    # (1.1.5 upstream made helper PATH inherit the caller env and dropped the
+    # /bin/cat and absolute-ffmpeg hardcodes — those substitutions are gone.)
     substituteInPlace crates/lianli-control/src/account.rs \
+      --replace-fail '"/usr/bin/systemctl"' '"/run/current-system/sw/bin/systemctl"'
+    substituteInPlace crates/lianli-control/src/diagnostic_logs.rs \
       --replace-fail '"/usr/bin/systemctl"' '"/run/current-system/sw/bin/systemctl"' \
-      --replace-fail '.env("PATH", "/usr/bin:/bin")' '.env("PATH", "/run/current-system/sw/bin:/run/wrappers/bin:/usr/bin:/bin")'
-
-    # Media validation shells out to an absolute FHS ffmpeg path that doesn't
-    # exist on NixOS. (Everything else — ffprobe/ffmpeg in video/h264/
-    # pixel_cleaner — is name-based and resolved via the wrapped PATH below.)
-    substituteInPlace crates/lianli-media/src/validation.rs \
-      --replace-fail '"/usr/bin/ffmpeg"' '"${ffmpeg}/bin/ffmpeg"'
+      --replace-fail '"/usr/bin/journalctl"' '"/run/current-system/sw/bin/journalctl"'
   '';
 
   # Build the frontend dist/ from the prefetched node_modules. The src-tauri
@@ -177,10 +172,9 @@ rustPlatform.buildRustPackage (finalAttrs: {
     # The rules reference GROUP="lianli" (created by the NixOS module).
     install -Dm644 packaging/udev/60-lianli.rules \
       $out/lib/udev/rules.d/60-lianli.rules
-    # NixOS validates absolute program paths in udev rules at build time, and
-    # /bin/chmod doesn't exist here (evdi rule). Point it at a real chmod.
-    substituteInPlace $out/lib/udev/rules.d/60-lianli.rules \
-      --replace-fail "/bin/chmod" "${coreutils}/bin/chmod"
+    # (1.1.4 substituted /bin/chmod in the evdi rule here; 1.1.5 rewrote it to
+    # /bin/sh -c 'exec chmod ...' — /bin/sh exists on NixOS, and the chmod only
+    # matters for evdi desktop-mode LCDs, deliberately out of scope here.)
 
     # systemd user unit (for non-NixOS use; the NixOS module defines its own)
     install -Dm644 packaging/systemd/lianli-daemon.service \

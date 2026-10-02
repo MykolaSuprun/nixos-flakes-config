@@ -21,7 +21,7 @@
 # build immutable; HERDR_AGENT lets Herdr's foreground-process detection
 # recognize opencode through the wrapper.
 self: super: let
-  version = "2.0.12";
+  version = "2.0.22";
 
   # Nix system -> npm platform package suffix.
   platformMap = {
@@ -33,7 +33,7 @@ self: super: let
 
   # SRI sha512 from the registry's dist.integrity field.
   hashes = {
-    linux-x64 = "sha512-/h+IXHYYdXLMhUXC/ll8x6oZoQILCKHI0xkbS1z+bZuJSc/Kv6D0sAF5ES2T87DQBrFmJwyV8XQqhCspy8SKyg==";
+    linux-x64 = "sha512-DlV1qgEDDnVqpTWMPqv7tCHCcXodzZBFaMcxjsiYdY6E5gHH2Q68JfasVksyQ1nu6m1887WQKGhOsepE+oKyYw==";
   };
 
   isLinux = super.stdenv.hostPlatform.isLinux;
