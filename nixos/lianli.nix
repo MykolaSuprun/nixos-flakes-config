@@ -21,6 +21,18 @@ in {
       defaultText = lib.literalExpression "pkgs.lianli-linux";
       description = "The lianli-linux package to use (overlay: pkgs/lian-li-linux).";
     };
+
+    user = lib.mkOption {
+      type = lib.types.str;
+      default = "mykolas";
+      description = ''
+        Primary user added to the lianli group. The udev rules' GROUP="lianli"
+        + MODE="0660" makes group access race-free (no logind uaccess timing),
+        so the daemon starts before the graphical session without losing the
+        device-open window (boot race hit 2026-10-03: 18 retries expired
+        ~2 min before the greeter session granted the uaccess ACL).
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -29,6 +41,7 @@ in {
     # Non-root USB/hidraw access for Lian Li devices (uaccess + lianli group).
     services.udev.packages = [cfg.package];
     users.groups.lianli = {};
+    users.users.${cfg.user}.extraGroups = ["lianli"];
 
     # v1.1.x daemon refuses to start without these root-owned shared flock
     # files (both user-mode and system-mode daemons share them).
