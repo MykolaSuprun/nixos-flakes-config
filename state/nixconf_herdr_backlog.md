@@ -100,7 +100,33 @@ Domain memory for herdr (agent multiplexer) work in this repo.
 
 ## Current Item
 
-**Item 1 implemented + validated + plugin changes reviewed → ready to rebuild**
+**ITEM 3 cycle 2 — COMPLETE, awaiting user re-test**
+
+Cycle-2 implementation (2026-10-06, herdr-preview-grid, uncommitted):
+- Sort (root cause fixed): live socket query proved 0.9.1 emits only
+  idle/working/unknown (zero blocked) → strict-blocked matcher never fired.
+  User approved semantics B: ready-for-input = idle ∨ done ∨ blocked floats
+  (herdr docs: idle AND done both = awaiting user; working sinks; unknown
+  excluded). isReadyForInput() replaces isBlocked(); spaces derive ready from
+  any pane (robust vs rollup).
+- Sizing: auto scale 3x/4x → 1.5x normal / 2x large (18/24 → 9/12 lines,
+  exactly ~50% down); tile_min_width 90 → 60; explicit int scale still pins.
+- Density ("smaller font" ask): terminal fonts are a hard no (single cell
+  size, no ANSI control) → squeeze_blank_lines=true collapses blank runs to
+  separators + trims edges; +8 rows read headroom post-squeeze.
+- Test cycle: 2 failures, both resolved honestly (1st: tail-window can open
+  on separator blank → real fix = re-trim leading after windowing; 2nd: my
+  test mis-assumed no-squeeze semantics = plain tailLines, unchanged since
+  v0.1). Final: gofmt/vet/test/build ALL-GREEN. Binary rebuilt (deployed —
+  next prefix+w/a uses it). README/example/deployed config updated.
+- Next: user re-test (sort + size + density); commits pending in both repos
+  (plugin: 9 files; nixconf: item-1 conversion + backlogs).
+
+**COMMITTING (2026-10-06, user ordered "commit both"):** plugin repo first,
+then nixconf (code + backlog together). Re-test feedback deferred to next
+cycle if anything's off.
+
+<details><summary>Item 1 history (2026-10-01 → 10-02, complete)</summary>
 
 - Implementation complete (2026-10-01): new live config
   `home-manager/users/mykolas/config/herdr/config.toml` (ported verbatim from
@@ -126,9 +152,24 @@ Domain memory for herdr (agent multiplexer) work in this repo.
   `readlink ~/.config/herdr/config.toml` points into the checkout, reload
   (prefix+shift+r) to activate the new bindings, test preview-grid, then
   commit code + backlog together.
+</details>
 
 ## Backlog
 
+- [ ] **3. preview-grid: 3-4x bigger previews + priority sort (awaiting-input first)**
+  - Why: preview tiles are too small to be useful (6 preview lines, ~26 inner
+    cols); default MRU sort buries agents that need input.
+  - Claim: sizing is static config only (PreviewLines 6, TileMinWidth 30,
+    view.go layout()); no priority sort mode exists (config.go: "usage" |
+    "natural"); AgentStatus ("blocked" = awaiting input) is available on
+    agents and panes (spaces derivable from panes, robust vs rollup).
+  - Verification: code read of internal/{config,app,herdr,mru} — confirmed.
+  - Approach: dynamic preview_scale (3x/4x auto, viewport-clamped) +
+    tile_min_width 90 + sort="priority" default — user-approved 2026-10-06;
+    implemented same day
+  - Verdict: verified
+  - Status: in-progress (implemented + validated; awaiting user live test,
+    then commits in BOTH repos)
 - [ ] **1. Convert herdr installation to be dynamically switchable (like hyprland)**
   - Why: every config tweak (keys/theme/UI) currently needs a full nix rebuild;
     `config.toml` is an immutable store symlink.
@@ -142,7 +183,7 @@ Domain memory for herdr (agent multiplexer) work in this repo.
   - Approach: A — live-linked config.toml (user decision 2026-10-01);
     implemented 2026-10-01/02
   - Verdict: verified
-  - Status: in-progress (awaiting user switch + commit)
+  - Status: done (live since 2026-10-06; commit still pending — see Done)
 - [ ] **2. Apply research findings to improve hyprland config (e.g. runtime theming)**
   - Why: hyprland is already live-linked Lua, but `catppuccin-palette.lua` is
     Nix-generated (rebuild needed on flavor/accent change).
@@ -155,7 +196,11 @@ Domain memory for herdr (agent multiplexer) work in this repo.
 
 ## Done
 
-- (none yet)
+- [x] **1. Convert herdr installation to be dynamically switchable** — 2026-10-06 —
+  live-linked config.toml via lib/live-links.nix; rebuilt + verified
+  (readlink → checkout); pending commit only. Files:
+  home-manager/users/mykolas/config/herdr/config.toml (new),
+  home-manager/modules/herdr.nix (rewritten), AGENTS.md (bullet).
 
 ## Decisions
 
@@ -171,8 +216,13 @@ Domain memory for herdr (agent multiplexer) work in this repo.
   include support); HERDR_CONFIG_PATH brittle (socket dir coupling); approach A
   (live-linked config.toml) aligns with the community-standard
   mkOutOfStoreSymlink pattern AND this repo's existing live-links usage.
-  hyprland item 2 has two candidate designs (matugen pipeline vs zero-tool
-  4-flavor runtime palette). Awaiting user decisions.
+  hyprland item 2 is still pending: two candidate designs (matugen pipeline
+  vs zero-tool 4-flavor runtime palette).
+
+- 2026-10-06: Preview-grid sort semantics: user approved B — ready-for-input
+  = blocked ∨ idle ∨ done (herdr docs: idle AND done both mean ready for
+  input); working sinks; MRU within groups. Verified live server: 0.9.1
+  currently emits zero `blocked`, so strict matching would never fire here.
 
 - 2026-10-01: USER DECIDED — item 1 approach = A (live-linked config.toml,
   "dynamically linked config"). Implementation started. The terminal-theme
