@@ -48,7 +48,7 @@ in {
     desktop.enable = true;
     chromium.enable = true;
     dms.enable = false; # Noctalia is now the default desktop shell on geks-nixos
-    caelestia.enable = true; # Caelestia is the default desktop shell on geks-nixos
+    caelestia.enable = false; # Caelestia shell disabled — replaced by custom qs shell (qs-flow); swaylock owns locking
     catppuccin.enable = true;
     catppuccin.flavor = lib.mkDefault "latte";
     ghostty.enable = true;
@@ -66,8 +66,9 @@ in {
     audio-recovery.enable = true; # restart audio stack after resume (xHCI reinit wedges it)
   };
 
-  # Noctalia off — Caelestia is the default shell (input + greeter stay for
-  # easy rollback; noctalia-greeter still owns the login screen).
+  # Noctalia off — no desktop shell runs by default right now (custom qs
+  # shell in progress). Noctalia input + greeter stay for easy rollback;
+  # noctalia-greeter still owns the login screen.
   programs.noctalia.enable = false;
 
     hyprconf = {

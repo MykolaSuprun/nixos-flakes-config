@@ -39,16 +39,61 @@ in {
   };
 
   # ── Swap ────────────────────────────────────────────────────────────────────
-  # zram, not a disk swapfile (2026-09-15 — the 64G btrfs swapfile was created
-  # fine but the kernel refuses multi-device-spanning swapfiles; see storage
-  # backlog). 25% of 96G ≈ 24G device ≈ 50-70G effective at zstd ratios.
-  # No disk surgery, no placement constraints, faster than SSD swap.
-  # Hibernation NOT wired.
+  # Layered swap: zram first (fast, compressed RAM), loop-backed disk file as
+  # the deep overflow. A PLAIN btrfs swapfile is kernel-forbidden here — the
+  # pool spans 2 devices (2026-09-15, gen 207: "swapfile must be on one
+  # device") — so the 64G NOCOW file is attached with `losetup --direct-io=on`
+  # and the kernel swaps on the loop BLOCK device, which carries no such
+  # restriction. Priority zram 100 > file 10: pressure lands on zram first,
+  # the file catches true overflow.
+  # One-time file setup (sudo):
+  #   mkdir -p /var/swap && chattr +C /var/swap
+  #   dd if=/dev/zero of=/var/swap/swapfile bs=1M count=65536 status=progress
+  #   chmod 600 /var/swap/swapfile && mkswap /var/swap/swapfile
+  # (+C on the dir → file is NOCOW/uncompressed, no CoW overhead under swap
+  # IO.) Service fails soft: a missing file never blocks boot. Hibernation
+  # NOT wired (a loop swap cannot resume — accepted).
   zramSwap = {
     enable = true;
     algorithm = "zstd";
     memoryPercent = 25;
     priority = 100;
+  };
+
+  systemd.services.swap-loopfile = let
+    util = pkgs.util-linux;
+    file = "/var/swap/swapfile";
+  in {
+    description = "Swap on a loop-backed btrfs file (multi-device pool forbids plain swapfiles)";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "local-fs.target" ];
+    unitConfig.RequiresMountsFor = [ "/var/swap" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = pkgs.writeShellScript "swap-loopfile-up" ''
+        PATH=${pkgs.coreutils}/bin:${util}/bin:${pkgs.gnugrep}/bin
+        if [ ! -f "${file}" ]; then
+          echo "swap-loopfile: ${file} missing — create it once (see host _configuration.nix)" >&2
+          exit 1
+        fi
+        dev=$(losetup -j "${file}" -n --output NAME 2>/dev/null | head -n1)
+        if [ -z "$dev" ]; then
+          dev=$(losetup -f --show --direct-io=on "${file}")
+        fi
+        if ! grep -qs "^$dev " /proc/swaps; then
+          swapon -p 10 "$dev"
+        fi
+      '';
+      ExecStop = pkgs.writeShellScript "swap-loopfile-down" ''
+        PATH=${pkgs.coreutils}/bin:${util}/bin:${pkgs.gnugrep}/bin
+        dev=$(losetup -j "${file}" -n --output NAME 2>/dev/null | head -n1)
+        if [ -n "$dev" ]; then
+          swapoff "$dev" 2>/dev/null || true
+          losetup -d "$dev" 2>/dev/null || true
+        fi
+      '';
+    };
   };
 
   hyprconf = {
@@ -79,6 +124,15 @@ in {
         # + GC once by hand, the cap enforces itself on future switches.
         maxGenerations = 10;
       };
+    };
+
+    # zram-first layering reclaim tuning (Fedora zram-generator guidance; the
+    # NixOS zram module sets no sysctls itself — verified in pinned nixpkgs):
+    # aggressive anon swap-out lands on high-prio zram first, then the file;
+    # readahead is meaningless on compressed-RAM swap.
+    kernel.sysctl = {
+      "vm.swappiness" = 180;
+      "vm.page-cluster" = 0;
     };
 
     plymouth.enable = true;

@@ -389,13 +389,12 @@ in {
             text = ''
               general {
                   lock_cmd = session_lock
-                  # before_sleep_cmd is required again: the lock screen is now
-                  # swaylock (noctalia's own lock screen is disabled — it
-                  # crashes on resume from suspend), so nothing else locks
-                  # pre-suspend. fix-lock --record snapshots the pre-suspend
-                  # lock state (instant, never blocks suspend) so
-                  # after_sleep_cmd can repair a clientless lock even when
-                  # logind LockedHint says no.
+                  # before_sleep_cmd: swaylock is the single lock (caelestia
+                  # disabled 2026-10-11; the old hyprlock fallback is gone),
+                  # so nothing else locks pre-suspend. fix-lock --record
+                  # snapshots the pre-suspend lock state (instant, never blocks
+                  # suspend) so after_sleep_cmd can repair a clientless lock
+                  # even when logind LockedHint says no.
                   before_sleep_cmd = fix-lock --record; session_lock
                   # Passive safety net: immediate repair pass on wake + a
                   # detached --recheck 10s later (the amdgpu/DRI output-reset
@@ -556,10 +555,10 @@ in {
         "d %h/.config/hypr/noctalia 0755 - - -"
       ];
       services = lib.mkMerge [
-        # swaync only when no shell owns notifications itself (dms and
-        # caelestia both run their own notification centers; two daemons
-        # would fight over org.freedesktop.Notifications).
-        (lib.mkIf (!(config.myconf.dms.enable or false) && !(config.myconf.caelestia.enable or false)) {
+        # swaync only when no shell owns notifications itself (dms runs its
+        # own notification center; two daemons would fight over
+        # org.freedesktop.Notifications). caelestia was disabled 2026-10-11.
+        (lib.mkIf (!(config.myconf.dms.enable or false)) {
           swaync = {
             Unit = {
               Description = "Sway Notification Center";
