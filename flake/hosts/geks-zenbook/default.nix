@@ -70,7 +70,8 @@ in {
                   ../../../home-manager/modules/chromium.nix
                   ../../../home-manager/modules/desktop-config.nix
                   ../../../home-manager/modules/dev-pkgs.nix
-                  # Private LLM tooling (llama-cpp-rocm + comfyui CLI)
+                  # Private LLM tooling (llama-cpp-rocm + comfy-ui CLI from
+                  # the utensils/comfyui-nix flake, prebuilt ROCm wheels)
                   inputs.nixconf-private.homeManagerModules.llm-tools
                   ../../../home-manager/modules/fcitx5.nix
                   ../../../home-manager/modules/git.nix

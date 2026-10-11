@@ -63,9 +63,9 @@ in {
         ../../../nixos/stylix.nix
         ../../../nixos/xdg.nix
         # Private AI stack (nixconf-private flake input): local LLM
-        # (ollama + open-webui) + ComfyUI (GPU + CPU lanes, ROCm package,
-        # egress lockdown, gpu-purge). Rebuild as the user with
-        # --use-remote-sudo.
+        # (ollama + open-webui) + ComfyUI (clean default install on :8188
+        # via the utensils/comfyui-nix flake, prebuilt ROCm wheels).
+        # Rebuild as the user with --use-remote-sudo.
         inputs.nixconf-private.nixosModules.llm
         inputs.nixconf-private.nixosModules.comfyui
         ../../../nixos/moshi-hook.nix
@@ -94,7 +94,8 @@ in {
                   ../../../home-manager/modules/chromium.nix
                   ../../../home-manager/modules/desktop-config.nix
                   ../../../home-manager/modules/dev-pkgs.nix
-                  # Private LLM tooling (llama-cpp-rocm + comfyui CLI)
+                  # Private LLM tooling (llama-cpp-rocm + comfy-ui CLI from
+                  # the utensils/comfyui-nix flake, prebuilt ROCm wheels)
                   inputs.nixconf-private.homeManagerModules.llm-tools
                   ../../../home-manager/modules/fcitx5.nix
                   ../../../home-manager/modules/git.nix
