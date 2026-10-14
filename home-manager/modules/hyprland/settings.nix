@@ -558,7 +558,13 @@ in {
         # swaync only when no shell owns notifications itself (dms runs its
         # own notification center; two daemons would fight over
         # org.freedesktop.Notifications). caelestia was disabled 2026-10-11.
-        (lib.mkIf (!(config.myconf.dms.enable or false)) {
+        # swaync only when no shell owns notifications itself (dms and qs-flow
+        # both run their own notification centers; two daemons would fight over
+        # org.freedesktop.Notifications — and the loser SILENTLY gives up, so
+        # the shell's center would render with no toasts. Verified live:
+        # swaync held the name while qs-flow logged "could not register").
+        # caelestia was disabled 2026-10-11; qs-flow replaces it.
+        (lib.mkIf (!(config.myconf.dms.enable or false) && !(config.myconf.qs-flow.enable or false)) {
           swaync = {
             Unit = {
               Description = "Sway Notification Center";

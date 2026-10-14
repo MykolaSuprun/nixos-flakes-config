@@ -67,9 +67,11 @@ in {
                   inputs.catppuccin.homeModules.catppuccin
                   inputs.zen-browser.homeModules.beta
                   inputs.caelestia-shell.homeManagerModules.default
+                  inputs.qs-flow.homeManagerModules.default
                   ../../../home-manager/users/mykolas/home-zenbook.nix
                   # HM feature modules (all gated by myconf.*.enable flags)
                   ../../../home-manager/modules/caelestia.nix
+                  ../../../home-manager/modules/qs-flow.nix
                   ../../../home-manager/modules/catppuccin.nix
                   ../../../home-manager/modules/chromium.nix
                   ../../../home-manager/modules/desktop-config.nix

@@ -41,17 +41,25 @@
   # Session lock launcher shared by hypridle, keybinds and menus.
   #   dms  → `dms ipc lock lock` (DankMaterialShell's own lock; dms is off on
   #          both hosts — branch kept so re-enabling it still works).
-  #   else → swaylock. This is the single lock everywhere caelestia formerly
-  #          owned (caelestia was disabled 2026-10-11). NOTE: previously the
-  #          "no shell" fallback was hyprlock, which silently locked with
-  #          hyprlock once caelestia/noctalia were both off — now it is
-  #          unconditionally swaylock.
+  #   qs-flow → `qs-flow-lock` (the vendored minflair lockscreen: a real
+  #          ext-session-lock, held by the quickshell process). Only ONE
+  #          ext-session-lock can exist, so this branch MUST come first — it
+  #          returns before the swaylock path.
+  #   else → swaylock (fallback when no shell owns a lock; also the repair
+  #          target for fix-lock). Caution: once qs-flow owns the lock there is
+  #          no swaylock client, so fix-lock must treat it as a live lock.
   # pidof guard: only one client can hold the ext-session-lock, so skip if
   # a lock is already active. Wallpaper is the first image dropped in
   # ~/.config/wallpapers/lockscreen/ — passed as a flag only when present,
   # so a missing wallpaper never blocks locking.
   session_lock = pkgs.writeShellScriptBin "session_lock" (
-    if (config.myconf.dms.enable or false)
+    # qs-flow first: its lockscreen is a real ext-session-lock held by the
+    # quickshell process (vendored minflair). Only ONE ext-session-lock can
+    # exist, so this branch must win over the swaylock fallback below.
+    # `|| exec swaylock` keeps locking possible when the shell is down.
+    if (config.myconf.qs-flow.enable or false)
+    then ''qs-flow-lock || exec swaylock''
+    else if (config.myconf.dms.enable or false)
     then ''dms ipc lock lock''
     else ''
       pidof swaylock >/dev/null && exit 0
@@ -140,11 +148,30 @@
       [ -n "''${WAYLAND_DISPLAY:-}" ]
     }
 
+    # Is a qs-flow lockscreen (ext-session-lock held by quickshell) live?
+    # There is no swaylock pid in that case — the client is the shell itself.
+    qsflow_lock_live() {
+      command -v qs-flow-lock >/dev/null 2>&1 || return 1
+      # a locked quickshell session renders LockScreen surfaces; probe via IPC
+      qs ipc -p "''${QS_FLOW_SHELL_DIR:-$HOME/.config/quickshell/qs-flow}/shell.qml" \
+        call lockScreen locked 2>/dev/null | grep -qi true
+    }
+
     launch() {
       ensure_wayland_env
       if [ -z "''${WAYLAND_DISPLAY:-}" ]; then
         echo "fix-lock: ERROR: no WAYLAND_DISPLAY — no running Hyprland session found" >&2
         return 1
+      fi
+      # qs-flow path: only ONE ext-session-lock can exist, so never start
+      # swaylock alongside it — re-trigger the shell's lock instead.
+      if command -v qs-flow-lock >/dev/null 2>&1 && [ "''${QS_FLOW_LOCK:-1}" = 1 ]; then
+        qs-flow-lock >/dev/null 2>&1 || true
+        for ((i = 0; i < 20; i++)); do
+          qsflow_lock_live && return 0
+          sleep 0.1
+        done
+        echo "fix-lock: qs-flow lock not confirmed; falling back to swaylock" >&2
       fi
       img=$(find "$HOME/.config/wallpapers/lockscreen" -maxdepth 1 -xtype f \
         \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) 2>/dev/null | sort | head -n 1)
@@ -163,6 +190,17 @@
 
     # pidof (argv[0] match) is the reliable handle for the wrapped binary.
     kill_client() {
+      # qs-flow holds the lock as the shell process — unlock through IPC
+      # rather than hunting a swaylock pid that does not exist.
+      if qsflow_lock_live; then
+        qs-flow-lock >/dev/null 2>&1 || true
+        for ((i = 0; i < 30; i++)); do
+          qsflow_lock_live || return 0
+          sleep 0.1
+        done
+        echo "fix-lock: ERROR: qs-flow lock did not release" >&2
+        return 1
+      fi
       pids=$(pidof swaylock 2>/dev/null) || return 0
       kill $pids 2>/dev/null
       for ((i = 0; i < 30; i++)); do

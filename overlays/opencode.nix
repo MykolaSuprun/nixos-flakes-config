@@ -77,8 +77,13 @@ in {
       # The agent spawns these tools by name — the dev toolbox
       # (lib/opencode-tools.nix), plus ripgrep which opencode shells out to
       # for code search.
+      # self (final chain), not super: the wrapper must carry the FINAL tool
+      # versions — an overlay that overrides a toolbox tool (e.g. the TEMP
+      # tsserver pnpm-hash overlay) is invisible via super, because this file
+      # sorts before it in overlays/default.nix's alphabetical auto-import
+      # (hit for real 2026-10-14: build used the stale prev tsserver).
       wrapProgram $out/bin/opencode \
-        --prefix PATH : ${super.lib.makeBinPath ([super.ripgrep] ++ import ../lib/opencode-tools.nix super)} \
+        --prefix PATH : ${self.lib.makeBinPath ([self.ripgrep] ++ import ../lib/opencode-tools.nix self)} \
         --set OPENCODE_DISABLE_AUTOUPDATE true \
         --set HERDR_AGENT "opencode"
     '';
