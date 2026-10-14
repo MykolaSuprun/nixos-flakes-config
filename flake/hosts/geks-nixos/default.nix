@@ -17,9 +17,10 @@
     # pin overlay was retired together with V1 on 2026-09-29.
     overlays = import ../../../overlays ++ [
       inputs.nixconf-private.overlays.lmstudio
-      # First-party OpenClaw (see home-manager/modules/openclaw.nix): nixpkgs'
-      # own openclaw stays marked insecure; this overlay supplies the
-      # upstream-maintained package the HM module consumes.
+      # First-party OpenClaw (HM module lives in nixconf-private:
+      # homeManagerModules.openclaw): nixpkgs' own openclaw stays marked
+      # insecure; this overlay supplies the upstream-maintained package the
+      # HM module consumes.
       inputs.nix-openclaw.overlays.default
     ];
   };
@@ -84,6 +85,7 @@ in {
                   inputs.dms.homeModules.dank-material-shell
                   inputs.dms-plugin-registry.nixosModules.default
                   inputs.caelestia-shell.homeManagerModules.default
+                  inputs.qs-flow.homeManagerModules.default
 
                   ../../../home-manager/users/mykolas/home-geks-nixos.nix
                   # HM feature modules (all gated by myconf.*.enable flags)
@@ -91,6 +93,7 @@ in {
                   ../../../home-manager/modules/caelestia.nix
                   ../../../home-manager/modules/catppuccin.nix
                   ../../../home-manager/modules/dms.nix
+                  ../../../home-manager/modules/qs-flow.nix
                   ../../../home-manager/modules/chromium.nix
                   ../../../home-manager/modules/desktop-config.nix
                   ../../../home-manager/modules/dev-pkgs.nix
@@ -114,7 +117,9 @@ in {
                   ../../../home-manager/modules/opencode.nix
                   ../../../home-manager/modules/openpets.nix
                   ../../../home-manager/modules/chatgpt.nix
-                  ../../../home-manager/modules/openclaw.nix
+                  # OpenClaw: full module (config, secrets wiring, autostart)
+                  # lives in nixconf-private — personal data stays private.
+                  inputs.nixconf-private.homeManagerModules.openclaw
                   ../../../home-manager/modules/hyprland
                 ]
                 ++ lib.optionals useHyprlandFlake [

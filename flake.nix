@@ -94,6 +94,12 @@
       url = "github:caelestia-dots/shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # qs-flow — private shell flake (vendored minflair + 3-layer settings).
+    # URL is git+ssh so the private repo is fetched with the user's SSH key.
+    qs-flow = {
+      url = "git+ssh://git@gitlab.com/nix-private/qs-flow.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     sysc-greet = {
       url = "github:Nomadcxx/sysc-greet";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -124,6 +130,11 @@
       url = "git+ssh://git@gitlab.com/nix-private/nixconf-private.git";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
+      # nixconf-private declares its own nix-openclaw input (for standalone
+      # use); dedupe it to OUR top-level input so there is exactly one
+      # nix-openclaw lock entry — the overlay (pkgs.openclaw) and the private
+      # HM module always come from the same pinned rev.
+      inputs.nix-openclaw.follows = "nix-openclaw";
     };
 
     # OpenClaw — first-party Nix distribution (official openclaw org flake).

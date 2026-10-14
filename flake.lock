@@ -1307,16 +1307,19 @@
         "flake-parts": [
           "flake-parts"
         ],
+        "nix-openclaw": [
+          "nix-openclaw"
+        ],
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1791742346,
-        "narHash": "sha256-txxTewSR2okbxh8qF/CqI/ZaLCt8dy40pISoncQUylY=",
+        "lastModified": 1791944408,
+        "narHash": "sha256-S8ol247aH1sUPNjp+1vB6lOa3fR26NAlLkpwhqkBQuk=",
         "ref": "refs/heads/main",
-        "rev": "f4975ccdb5bb112c4ffda27bad32cd24fb649f86",
-        "revCount": 15,
+        "rev": "65c8a83cc9aed4bb59b535f2d1d25a1125a28403",
+        "revCount": 17,
         "type": "git",
         "url": "ssh://git@gitlab.com/nix-private/nixconf-private.git"
       },
@@ -1808,6 +1811,26 @@
         "type": "github"
       }
     },
+    "qs-flow": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791764436,
+        "narHash": "sha256-f4QX0BBAetcBNt9QNNmwgwVZy7P7tUt8Et2XKUuswtc=",
+        "ref": "refs/heads/main",
+        "rev": "834f7c4d0fd088aa77f938129f7394ee2835f456",
+        "revCount": 27,
+        "type": "git",
+        "url": "ssh://git@gitlab.com/nix-private/qs-flow.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@gitlab.com/nix-private/qs-flow.git"
+      }
+    },
     "quickshell": {
       "inputs": {
         "nixpkgs": [
@@ -1852,6 +1875,7 @@
         "nixpkgs-stable": "nixpkgs-stable",
         "noctalia": "noctalia",
         "noctalia-greeter": "noctalia-greeter",
+        "qs-flow": "qs-flow",
         "stylix": "stylix",
         "sysc-greet": "sysc-greet",
         "zen-browser": "zen-browser"
