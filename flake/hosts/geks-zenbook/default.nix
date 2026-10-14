@@ -12,7 +12,11 @@
     inherit system;
     config.allowUnfree = true;
 
-    overlays = import ../../../overlays ++ [inputs.nixconf-private.overlays.lmstudio];
+    overlays = import ../../../overlays ++ [
+      inputs.nixconf-private.overlays.lmstudio
+      # OpenPets packages — moved to nixconf-private 2026-10-14.
+      inputs.nixconf-private.overlays.openpets
+    ];
   };
   pkgs-stable = import inputs.nixpkgs-stable {
     inherit system;
@@ -87,7 +91,10 @@ in {
                   ../../../home-manager/modules/wezterm.nix
                   ../../../home-manager/modules/zellij.nix
                   ../../../home-manager/modules/opencode.nix
-                  ../../../home-manager/modules/openpets.nix
+                  # OpenPets: module lives in nixconf-private (moved
+                  # 2026-10-14, openclaw precedent) — needs that flake's
+                  # overlays.openpets for pkgs.openpets*.
+                  inputs.nixconf-private.homeManagerModules.openpets
                   ../../../home-manager/modules/chatgpt.nix
                   ../../../home-manager/modules/hyprland
                 ]

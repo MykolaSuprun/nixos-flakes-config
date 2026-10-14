@@ -17,6 +17,9 @@
     # pin overlay was retired together with V1 on 2026-09-29.
     overlays = import ../../../overlays ++ [
       inputs.nixconf-private.overlays.lmstudio
+      # OpenPets packages (desktop AppImage repack, MCP bridge, wayland
+      # helper, opencode V2 plugin) — moved to nixconf-private 2026-10-14.
+      inputs.nixconf-private.overlays.openpets
       # First-party OpenClaw (HM module lives in nixconf-private:
       # homeManagerModules.openclaw): nixpkgs' own openclaw stays marked
       # insecure; this overlay supplies the upstream-maintained package the
@@ -115,7 +118,10 @@ in {
                   ../../../home-manager/modules/wezterm.nix
                   ../../../home-manager/modules/zellij.nix
                   ../../../home-manager/modules/opencode.nix
-                  ../../../home-manager/modules/openpets.nix
+                  # OpenPets: module lives in nixconf-private (moved
+                  # 2026-10-14, openclaw precedent) — needs that flake's
+                  # overlays.openpets for pkgs.openpets*.
+                  inputs.nixconf-private.homeManagerModules.openpets
                   ../../../home-manager/modules/chatgpt.nix
                   # OpenClaw: full module (config, secrets wiring, autostart)
                   # lives in nixconf-private — personal data stays private.
