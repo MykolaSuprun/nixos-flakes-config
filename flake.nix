@@ -69,7 +69,19 @@
       url = "github:nix-community/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hyprland.url = "github:hyprwm/Hyprland/v0.55.4"; # Or the exact tag name, e.g., "v0.55.4"
+    # Official Hyprland flake, tracked on main (flake.lock pins the exact rev).
+    # 2026-10-14: switched from pinned tags after v0.56.2 proved unbuildable
+    # against a current nixpkgs — that tag (Aug 5) predates hyprwm's gcc-16
+    # stdenv migration (Aug 11), so ALL its dep pins self-build with
+    # gcc15Stdenv and cannot link a gcc16 world; hand-pinning the whole
+    # subtree is unmaintainable. The flake's own lock is gcc16-consistent and
+    # current enough that its Hyprland loads the system mesa from
+    # /run/opengl-driver. Do NOT add nixpkgs follows here: it changes the
+    # derivation hash and defeats hyprland.cachix.org, and mixing Hyprland's
+    # older nixpkgs/glibc with the system's newer mesa is exactly what caused
+    # the 2026-10-14 login crash (gen 238: mesa 26.2.4 needs GLIBC_2.43,
+    # Hyprland's June-2026 closure had glibc 2.42 → CBackend::create() abort).
+    hyprland.url = "github:hyprwm/Hyprland";
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";

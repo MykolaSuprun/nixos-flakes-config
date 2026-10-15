@@ -122,3 +122,30 @@ hl.window_rule({
 	no_initial_focus = true,
 	max_size = { 1, 1 },
 })
+
+-- ── Livepet (desktop pet animation layer) ────────────────────────────────────
+-- S1 standalone Electron host: a floating, pinned, always-on-top pet window.
+-- Launched via `electron --class=livepet-host …` — the generic electron
+-- binary reports WM_CLASS "electron" unless --class is passed (measured
+-- 2026-10-14); the rule matches BOTH so manual launches without --class
+-- still float. Click-through stays off in v1 (the pet is draggable).
+hl.window_rule({
+	match = { class = "^(livepet-host)$" },
+	float = true,
+	pin = true,
+	no_anim = true,
+	no_blur = true,
+	no_shadow = true,
+	no_focus = true,
+	no_initial_focus = true,
+})
+hl.window_rule({
+	match = { class = "^(electron)$", title = "^(livepet-host)$" },
+	float = true,
+	pin = true,
+	no_anim = true,
+	no_blur = true,
+	no_shadow = true,
+	no_focus = true,
+	no_initial_focus = true,
+})
