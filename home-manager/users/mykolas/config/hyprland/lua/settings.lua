@@ -24,7 +24,7 @@ hl.config({
 	master = {
 		allow_small_split = true,
 		orientation = "center",
-		mfact = 5,
+		mfact = 0.5,
 	},
 	decoration = {
 		rounding = 20,
