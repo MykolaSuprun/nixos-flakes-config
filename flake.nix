@@ -147,6 +147,25 @@
       # nix-openclaw lock entry — the overlay (pkgs.openclaw) and the private
       # HM module always come from the same pinned rev.
       inputs.nix-openclaw.follows = "nix-openclaw";
+
+      # ⚠️  PROVISIONAL: comfyui-nix pinned to a LOCAL PATCHED FORK (2026-10-15)
+      #
+      # utensils/comfyui-nix upstream is stuck on ComfyUI v0.37.0 (last commit
+      # 2026-09-27, no bump PR open). v0.37.0 cannot resolve alembic revision
+      # 0008_drop_asset_meta, which a newer build already applied to the shared
+      # user/comfyui.db — reverting caused:
+      #   alembic.util.exc.CommandError: Can't locate revision identified by
+      #   '0008_drop_asset_meta'
+      # We therefore track ComfyUI releases ourselves at:
+      #   /home/mykolas/workspaces/src/comfyui-nix-patched  (commit b623486)
+      # which bumps ONLY nix/versions.nix to ComfyUI 0.40.0 + its coupled
+      # wheel closure (frontend 1.55.17, templates 0.11.82, kitchen 0.2.37,
+      # aimdo 0.5.6, embeddedDocs 0.5.14).
+      #
+      # ⚠️  REMOVE this override block once upstream releases >= 0.40.0, then
+      #     `nix flake update nixconf-private` to pick it up. The fork is a
+      #     single-file patch so a future upstream bump is a clean drop-in.
+      inputs.comfyui-nix.url = "git+file:///home/mykolas/workspaces/src/comfyui-nix-patched";
     };
 
     # OpenClaw — first-party Nix distribution (official openclaw org flake).
