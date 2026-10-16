@@ -4,8 +4,12 @@ hl.config({
 	general = {
 		allow_tearing = true,
 		border_size = 4,
-		gaps_in = 2,
-		gaps_out = 2,
+		-- Aligned with the qs-flow convex shell contract (reserved [8,40,8,8],
+		-- frame cutout radius 40): gaps_out 8 matches the bezel, and rounding
+		-- 32 = 40 - 8 keeps window corner arcs concentric inside the cutout so
+		-- borders never overlap the shell frame.
+		gaps_in = 4,
+		gaps_out = 8,
 		no_focus_fallback = true,
 		resize_on_border = false,
 		extend_border_grab_area = 0,
@@ -27,7 +31,7 @@ hl.config({
 		mfact = 0.5,
 	},
 	decoration = {
-		rounding = 20,
+		rounding = 32,
 		inactive_opacity = 0.98,
 		blur = {
 			enabled = true,
