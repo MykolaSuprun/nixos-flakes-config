@@ -119,15 +119,35 @@ in {
         enable = true;
         efiSupport = true;
         efiInstallAsRemovable = true;
-        # Cap is sized from a MEASURED per-generation footprint, not a guess.
-        # 2026-10-16 ENOSPC on switch (kernel 6.18.55 -> 6.18.56): initrds have
-        # grown to ~37M (kernel ~13M) = ~50M per generation, so the old
-        # "~10-15M" estimate this line was based on was ~4x too small.
-        # 4 generations x ~50M = ~200M, leaving ~300M of headroom on the 511M
-        # ESP for kernel bumps. Do not raise this without re-measuring:
-        #   ls -l /boot/limine/kernels/ | awk '{s+=$5} END {print s/1048576" MiB"}'
-        # and comparing against `df -h /boot`.
-        maxGenerations = 4;
+        # Sized from a MEASURED per-generation footprint — not a guess.
+        # 2026-10-16 ENOSPC on switch (kernel 6.18.55 -> 6.18.56): the
+        # "~10-15M per kernel+initrd" this line was originally based on was
+        # ~12x too small. Measured reality on this host:
+        #   kernel bzImage                                    13.2 MiB
+        #   initrd x4 (one per Catppuccin specialisation)    148.8 MiB  (37.2 each)
+        #   ----------------------------------------------------------
+        #   PER GENERATION                                    162.0 MiB
+        # The 4x multiplier is the specialisations in nixos/specialisations.nix:
+        # each is its own toplevel, so each gets its own 37 MiB initrd.
+        # The kernel is shared and deduped by store path.
+        #
+        # limine's installer COPIES NEW FILES BEFORE PRUNING OLD ONES, so the
+        # ESP must transiently hold (maxGenerations + 1) generations.
+        # On the 511 MiB ESP that means:
+        #   maxGenerations=2 -> 486 MiB transient  (fits, ~10 MiB headroom)
+        #   maxGenerations=5 -> 972 MiB transient  DO NOT REACH THIS STATE
+        # This cap is therefore NOT self-enforcing: it only bounds how many
+        # generations limine will *write*, and any value above 2 cannot fit.
+        # Safety comes from keeping the profile pruned to ~2 generations:
+        #   nix-env --delete-generations <old...> -p /nix/var/nix/profiles/system
+        #   sudo nix-collect-garbage -d
+        # plus deleting unreferenced files in /boot/limine/kernels (the prune
+        # step only runs after a SUCCESSFUL install, so it never fires while
+        # you are out of space).
+        #
+        # Re-measure before changing:
+        #   du -sh /boot/limine/kernels ; df -h /boot
+        maxGenerations = 5;
       };
     };
 
