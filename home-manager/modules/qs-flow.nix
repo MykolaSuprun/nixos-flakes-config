@@ -49,6 +49,30 @@
       };
     };
 
+
+    # REsume recovery: on this machine the amdgpu/DRI output-reset storm that
+    # follows every S3 resume kills Wayland RENDERING while the quickshell
+    # process survives (event loop answers IPC; surfaces stay mapped but the
+    # frame is stale and no new windows can map). A live-but-wedged shell is
+    # invisible to Restart=always — the process has to be recycled from the
+    # outside. Same pattern as audio-recovery.nix: user units WantedBy+After
+    # suspend.target start after the system resumes. Unconditional restart:
+    # probing (IPC answers even when wedged) costs more than the ~2s bar
+    # rebuild — and the screen is coming up from black anyway.
+    systemd.user.services."qs-flow-resume-recovery" = {
+      Unit = {
+        Description = "Restart qs-flow after resume (DRI output-reset storm wedges rendering while the process survives)";
+        After = ["suspend.target" "qs-flow.service"];
+      };
+      Service = {
+        Type = "oneshot";
+        ExecStart = "${pkgs.systemd}/bin/systemctl --user restart qs-flow.service";
+      };
+      Install = {
+        WantedBy = ["suspend.target"];
+      };
+    };
+
     # Only run inside a Hyprland session (same guard style as dms/noctalia).
     systemd.user.services.qs-flow.Unit.ConditionEnvironment = "XDG_CURRENT_DESKTOP=Hyprland";
   };

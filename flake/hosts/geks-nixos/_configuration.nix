@@ -202,6 +202,10 @@ in {
     kernelParams = [
       "amdgpu.runpm=0"
       "mem_sleep_default=deep"
+      # Fail-safe for the 2026-10-15/16 box freezes (DMCUB/DMUB storm on the
+      # iGPU display engine under heavy dGPU compute): on an amdgpu hang, the
+      # driver RESETS the GPU instead of hanging the whole display stack.
+      "amdgpu.gpu_recovery=1"
     ];
     # extraModprobeConfig = "options vfio-pci ids=1002:164e";
     # postBootCommands = ''
@@ -256,6 +260,19 @@ in {
     LC_TELEPHONE = "en_IE.UTF-8";
     LC_TIME = "en_IE.UTF-8";
   };
+
+  # ── GPU-workload host hardening (2026-10-15/16 freeze postmortem) ──────────
+  # oomd was running with an EMPTY /etc/systemd/oomd.conf and did nothing in
+  # both incidents. Give it real defaults: kill a pressure-generating cgroup
+  # after 20% memory pressure for 20s — BEFORE the box thrashes/fails.
+  environment.etc."systemd/oomd.conf.d/10-geks-geks.conf".text = ''
+    [OOM]
+    DefaultMemoryPressureLimit=20%
+    DefaultMemoryPressureDurationSec=20s
+  '';
+  # Opt the comfyui service into oomd management (its MemoryMax comes from the
+  # private flake's comfyui module; this adds the oomd kill contract on top).
+  systemd.services.comfyui.serviceConfig.ManagedOOMMemoryPressure = "kill";
 
   networking.firewall.trustedInterfaces = ["tailscale0"];
 

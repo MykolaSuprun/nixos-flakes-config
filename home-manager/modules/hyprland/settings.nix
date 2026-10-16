@@ -305,16 +305,26 @@ in {
         #   3. unset → aquamarine auto-detects (any remaining card node)
         # If a GPU is absent, its path is simply omitted — never crashes Hyprland.
         # UWSM env files are sourced as shell scripts, so dynamic logic is valid.
-        "./.config/uwsm/env-hyprland".text =
+        # Shared render-GPU picker — SINGLE SOURCE OF TRUTH used by both the
+        # start-hyprland wrapper (greetd/TTY path, see nixos/hyprland.nix) and
+        # the uwsm env file below. iGPU-first by default; dGPU-first when
+        # ~/.config/hypr/render-gpu-mode contains "dgpu" (set via hypr-gpu-run).
+        # Only active on geks-nixos (dual-GPU); empty no-op elsewhere.
+        "./.config/hypr/render-gpu-env.sh".text =
           if config.hyprconf.target == "geks-nixos"
           then ''
+            mode=$(cat "''${XDG_CONFIG_HOME:-$HOME/.config}/hypr/render-gpu-mode" 2>/dev/null || echo igpu)
             unset AQ_DRM_DEVICES
             devices=""
-
-            # Try udev symlinks (primary = igpu, secondary = dgpu)
-            for path in /dev/dri/igpu /dev/dri/dgpu; do
-              [ -e "$path" ] && devices="''${devices:+$devices:}$path"
-            done
+            if [ "$mode" = "dgpu" ]; then
+              for path in /dev/dri/dgpu /dev/dri/igpu; do
+                [ -e "$path" ] && devices="''${devices:+$devices:}$path"
+              done
+            else
+              for path in /dev/dri/igpu /dev/dri/dgpu; do
+                [ -e "$path" ] && devices="''${devices:+$devices:}$path"
+              done
+            fi
 
             # Fallback: kernel built-in by-path PCI symlinks (always match current state)
             if [ -z "$devices" ]; then
@@ -327,6 +337,12 @@ in {
             fi
 
             [ -n "$devices" ] && export AQ_DRM_DEVICES="$devices"
+          ''
+          else "";
+        "./.config/uwsm/env-hyprland".text =
+          if config.hyprconf.target == "geks-nixos"
+          then ''
+            source "''${XDG_CONFIG_HOME:-$HOME/.config}/hypr/render-gpu-env.sh"
           ''
           else "";
         # Nix-generated Catppuccin palette for Hyprland Lua config.
