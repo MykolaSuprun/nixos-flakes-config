@@ -438,7 +438,10 @@ in {
 
               listener {
                   timeout = 90
-                  on-timeout = loginctl lock-session
+                  # loginctl lock-session only sets logind's LockedHint — it
+                  # never RUNS a lock client (screen stays visibly unlocked).
+                  # session_lock fans out qs-flow-lock -> swaylock.
+                  on-timeout = session_lock
               }
 
               listener {
