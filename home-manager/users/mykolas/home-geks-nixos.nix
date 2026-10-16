@@ -49,6 +49,7 @@ in {
     chromium.enable = true;
     dms.enable = false; # Noctalia is now the default desktop shell on geks-nixos
     caelestia.enable = false; # Caelestia shell disabled — replaced by custom qs shell (qs-flow); swaylock owns locking
+    qs-flow.enable = true; # vendored-minflair quickshell shell: HM install, session autostart, immutable base settings, qs-flow-first lock
     catppuccin.enable = true;
     catppuccin.flavor = lib.mkDefault "latte";
     ghostty.enable = true;
