@@ -36,20 +36,25 @@
 in {
   options.myconf.shell.enable = lib.mkEnableOption "shell configuration";
   config = lib.mkIf config.myconf.shell.enable (lib.mkMerge [
-    (liveLinks.mkLiveLinks {
-      activationName = "linkTmuxpPresets";
-      nixPath = ../users/mykolas/config/tmuxp;
-      runtimePath = "${config.home.sessionVariables.NIXOS_CONF_DIR}/home-manager/users/mykolas/config/tmuxp";
-      targetPath = "~/.config/tmuxp";
-      filter = name: lib.hasSuffix ".yaml" name;
-    })
-    (liveLinks.mkLiveLinks {
-      activationName = "linkSeshConfig";
-      nixPath = ../users/mykolas/config/sesh;
-      runtimePath = "${config.home.sessionVariables.NIXOS_CONF_DIR}/home-manager/users/mykolas/config/sesh";
-      targetPath = "~/.config/sesh";
-      filter = name: lib.hasSuffix ".toml" name;
-    })
+    # tmuxp presets and sesh configs are read at SPAWN time, so live-link
+    # changes need no reload hook (nothing holds them in memory).
+    {
+      home.activation =
+        (liveLinks.mkLiveLinks {
+          activationName = "linkTmuxpPresets";
+          nixPath = ../users/mykolas/config/tmuxp;
+          runtimePath = "${config.home.sessionVariables.NIXOS_CONF_DIR}/home-manager/users/mykolas/config/tmuxp";
+          targetPath = "~/.config/tmuxp";
+          filter = name: lib.hasSuffix ".yaml" name;
+        }).home.activation
+        // (liveLinks.mkLiveLinks {
+          activationName = "linkSeshConfig";
+          nixPath = ../users/mykolas/config/sesh;
+          runtimePath = "${config.home.sessionVariables.NIXOS_CONF_DIR}/home-manager/users/mykolas/config/sesh";
+          targetPath = "~/.config/sesh";
+          filter = name: lib.hasSuffix ".toml" name;
+        }).home.activation;
+    }
     {
       home.packages = with pkgs; [
         babelfish

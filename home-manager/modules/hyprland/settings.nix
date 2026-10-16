@@ -156,6 +156,21 @@
   catppuccinP = catppuccinPalettes.${catppuccinFlavor};
   catppuccinAccentHex = catppuccinP.${catppuccinAccent};
   mkCatppuccinRgb = hex: "rgb(${hex})";
+
+  # Best-effort live reload of every running Hyprland instance after the live
+  # links settle on a switch. Mirrors HM's own hyprland-module reloadConfig
+  # (hyprctl -i <instance> reload config-only); uses plain `hyprctl` from PATH
+  # so the binary matches the RUNNING Hyprland (the official flake — a hyprctl
+  # from another pkgs set could be IPC-version-skewed). Silent when no session
+  # is running (TTY switch, remote build).
+  hyprlandLiveReload = ''
+    if command -v hyprctl >/dev/null 2>&1; then
+      for _hypr_dir in "''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"/hypr/*; do
+        [ -d "$_hypr_dir" ] || continue
+        hyprctl -i "''${_hypr_dir##*/}" reload config-only >/dev/null 2>&1 || true
+      done
+    fi
+  '';
 in {
   options = {
     hyprconf = {
@@ -200,7 +215,12 @@ in {
     };
   };
   config = lib.mkIf config.hyprconf.hyprland.enable {
-    # Symlink Lua config files from flake repo into ~/.config/hypr for live editing.
+    # Symlink Lua config files from flake repo into ~/.config/hypr for live
+    # editing. Both the lua/ directory and the entry-point symlink go through
+    # mkLiveLinks (atomic ln -sfn, collision-guarded, self-pruning); each
+    # instance reloads the running session once when its links actually
+    # changed, so a switch lands on a live Hyprland instead of waiting for a
+    # relogin.
     home.activation = lib.mkMerge [
       (liveLinks.mkLiveLinks {
         activationName = "linkHyprlandLua";
@@ -208,22 +228,21 @@ in {
         runtimePath = "${hyprSrcPath}/lua";
         targetPath = "~/.config/hypr/lua";
         filter = name: lib.hasSuffix ".lua" name;
+        onLink = hyprlandLiveReload;
       }).home.activation
 
-      {
-        linkHyprlandExtra = lib.hm.dag.entryAfter ["writeBoundary"] ''
-          mkdir -p ${hyprTargetPath}
-
-          # Symlink Lua entry point
-          rm -f ${hyprTargetPath}/hyprland-dynamic.lua
-          ln -s ${hyprSrcPath}/lua/hyprland-dynamic.lua ${hyprTargetPath}/hyprland-dynamic.lua
-
-          # Ensure icon_theme is set in hyprtoolkit.conf (managed by noctalia, which only writes colors)
-          # if [ -f ${hyprTargetPath}/hyprtoolkit.conf ] && ! grep -q "icon_theme" ${hyprTargetPath}/hyprtoolkit.conf; then
-          #   echo "icon_theme = Papirus-Light" >> ${hyprTargetPath}/hyprtoolkit.conf
-          # fi
-        '';
-      }
+      (liveLinks.mkLiveLinks {
+        # Lua entry point (`require("hyprland-dynamic")`). Was an inline
+        # rm+ln activation; folded in here so it gets the same guards and
+        # fires the reload after the lua links settle.
+        activationName = "linkHyprlandDynamic";
+        nixPath = ./../../users/mykolas/config/hyprland/lua;
+        runtimePath = "${hyprSrcPath}/lua";
+        targetPath = hyprTargetPath;
+        filter = name: name == "hyprland-dynamic.lua";
+        after = ["writeBoundary" "linkHyprlandLua"];
+        onLink = hyprlandLiveReload;
+      }).home.activation
     ];
 
     services = {

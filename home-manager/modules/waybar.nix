@@ -27,6 +27,9 @@ in {
       runtimePath    = "${waybarConfSrc}/themes";
       targetPath     = "~/.config/waybar/themes";
       filter         = name: lib.hasSuffix ".css" name;
+      # CSS-only live reload: waybar picks stylesheet changes up on SIGUSR2.
+      # A config.jsonc change still needs a waybar restart (out of scope here).
+      onLink         = "pkill -SIGUSR2 waybar >/dev/null 2>&1 || true";
     }).home.activation;
 
     programs.waybar = {

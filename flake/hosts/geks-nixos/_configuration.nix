@@ -119,10 +119,15 @@ in {
         enable = true;
         efiSupport = true;
         efiInstallAsRemovable = true;
-        # 511M /boot filled at 50 (~10-15M per kernel+initrd) → ENOSPC on
-        # switch 2026-09-11. 10 keeps ~150M headroom; prune old generations
-        # + GC once by hand, the cap enforces itself on future switches.
-        maxGenerations = 10;
+        # Cap is sized from a MEASURED per-generation footprint, not a guess.
+        # 2026-10-16 ENOSPC on switch (kernel 6.18.55 -> 6.18.56): initrds have
+        # grown to ~37M (kernel ~13M) = ~50M per generation, so the old
+        # "~10-15M" estimate this line was based on was ~4x too small.
+        # 4 generations x ~50M = ~200M, leaving ~300M of headroom on the 511M
+        # ESP for kernel bumps. Do not raise this without re-measuring:
+        #   ls -l /boot/limine/kernels/ | awk '{s+=$5} END {print s/1048576" MiB"}'
+        # and comparing against `df -h /boot`.
+        maxGenerations = 4;
       };
     };
 

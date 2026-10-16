@@ -37,6 +37,15 @@ in {
       runtimePath = "${herdrSrcPath}";
       targetPath = "~/.config/herdr";
       filter = name: name == "config.toml";
+      # herdr reads its config at startup — reload the running server (if any)
+      # so an edit lands without the prefix+shift+r dance. Best-effort: no
+      # herdr on PATH or no socket → no-op.
+      onLink = ''
+        if command -v herdr >/dev/null 2>&1 && [ -S "${config.home.homeDirectory}/.config/herdr/herdr.sock" ]; then
+          HERDR_SOCKET_PATH="${config.home.homeDirectory}/.config/herdr/herdr.sock" \
+            herdr server reload-config >/dev/null 2>&1 || true
+        fi
+      '';
     }).home.activation;
 
     programs.herdr = {
