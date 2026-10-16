@@ -308,7 +308,8 @@ in {
         # Shared render-GPU picker — SINGLE SOURCE OF TRUTH used by both the
         # start-hyprland wrapper (greetd/TTY path, see nixos/hyprland.nix) and
         # the uwsm env file below. iGPU-first by default; dGPU-first when
-        # ~/.config/hypr/render-gpu-mode contains "dgpu" (set via hypr-gpu-run).
+        # ~/.config/hypr/render-gpu-mode contains "dgpu" (set via the qs-flow
+        # GPU Runner bar widget — the rofi hypr-gpu-run script was retired).
         # Only active on geks-nixos (dual-GPU); empty no-op elsewhere.
         "./.config/hypr/render-gpu-env.sh".text =
           if config.hyprconf.target == "geks-nixos"

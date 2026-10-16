@@ -458,97 +458,6 @@
     esac
   '';
 
-  # ── GPU Runner (per-app AMD PRIME offloading) ─────────────────────────────
-  # hypr-gpu-run: rofi menu to launch apps on the dGPU (DRI_PRIME=1) or iGPU (default).
-  # The compositor always renders on the iGPU (primary in AQ_DRM_DEVICES); this
-  # tool selects WHICH APP uses the dGPU.
-  gpu_runner_script = pkgs.writeShellScriptBin "hypr-gpu-run" ''
-    # PCI-stable PRIME selectors. Plain DRI_PRIME=1 is session-default-dependent
-    # (silently wrong whenever the session default flips) — use explicit PCI ids.
-    # Host-verified: 0x744c @ 03:00.0 = 7900 XTX dGPU | 0x164e @ 59:00.0 = Raphael iGPU.
-    DGPU_PRIME="pci-0000_03_00_0"
-    IGPU_PRIME="pci-0000_59_00_0"
-    MODE_FILE="''${XDG_CONFIG_HOME:-$HOME/.config}/hypr/render-gpu-mode"
-
-    CHOICE=$(printf '%s\n' \
-      "Run on dGPU (7900 XTX)" \
-      "Run on iGPU (Raphael)" \
-      "Switch compositor render GPU → dGPU (next login)" \
-      "Switch compositor render GPU → iGPU (next login)" \
-      "GPU status" \
-      "Check render GPU" | rofi -dmenu -i -p "GPU Runner")
-
-    # Free-text run dialog: the user supplies the command to run, executed with
-    # `sh -c` (no eval of the interactive shell; setsid detaches it cleanly).
-    case "$CHOICE" in
-      "Run on dGPU (7900 XTX)")
-        APP=$(rofi -dmenu -i -p "dGPU:")
-        [ -n "$APP" ] && DRI_PRIME=$DGPU_PRIME setsid sh -c "exec $APP" </dev/null >/dev/null 2>&1 &
-        ;;
-      "Run on iGPU (Raphael)")
-        APP=$(rofi -dmenu -i -p "iGPU:")
-        [ -n "$APP" ] && DRI_PRIME=$IGPU_PRIME setsid sh -c "exec $APP" </dev/null >/dev/null 2>&1 &
-        ;;
-      "Switch compositor render GPU → dGPU (next login)")
-        mkdir -p "''${XDG_CONFIG_HOME:-$HOME/.config}/hypr"
-        echo "dgpu" > "$MODE_FILE"
-        notify-send -a "Hyprland" -i "video-card" "Render GPU → dGPU (7900 XTX)" "Applies on next login — the compositor must restart to change render device." -t 8000
-        ;;
-      "Switch compositor render GPU → iGPU (next login)")
-        mkdir -p "''${XDG_CONFIG_HOME:-$HOME/.config}/hypr"
-        rm -f "$MODE_FILE"
-        notify-send -a "Hyprland" -i "video-card" "Render GPU → iGPU (Raphael)" "Applies on next login — default restored. Compositor restart required." -t 8000
-        ;;
-      "GPU status")
-        STATUS="GPU Devices:
-      $(ls -la /dev/dri/igpu /dev/dri/dgpu 2>/dev/null || echo '  no udev symlinks')
-
-      AQ_DRM_DEVICES: ''${AQ_DRM_DEVICES:-unset}
-
-      amdgpu cards:
-      $(for c in /dev/dri/card? /dev/dri/card??; do
-        [ -e "$c" ] || continue
-        echo "  $c"
-        udevadm info -q property "$c" 2>/dev/null | grep -E 'ID_PATH=|DRIVER=' | tr '\n' ' '
-        echo
-      done)"
-        notify-send -a "Hyprland" -i "preferences-system" "GPU Status" "$STATUS" -t 15000
-        ;;
-      "Check render GPU")
-        # Compositor's ACTUAL renderer = AQ_DRM_DEVICES first (this script runs
-        # as a Hyprland child and inherits its env). Display ownership via
-        # sysfs below (card numbering varies between boots → PCI device ID).
-        RENDER="''${AQ_DRM_DEVICES:-unset}"
-        MODE=$(cat "$MODE_FILE" 2>/dev/null || echo "igpu (default)")
-        # Verified on this host:
-        #   0x164e (card at 59:00.0) = Raphael iGPU
-        #   0x744c (card at 03:00.0) = 7900 XTX dGPU
-        LABEL=""
-        for card in /sys/class/drm/card[0-9]; do
-          [ -e "$card/device/device" ] || continue
-          DEVID=$(cat "$card/device/device" 2>/dev/null)
-          case "$DEVID" in
-            0x164e) NAME="Raphael iGPU" ;;
-            0x744c) NAME="7900 XTX dGPU" ;;
-            *) NAME="unknown (0x$DEVID)" ;;
-          esac
-
-          # Check if this card has any connected display
-          for conn in "$card"/card*-*-*; do
-            [ -e "$conn/status" ] || continue
-            [ "$(cat "$conn/status")" = "connected" ] || continue
-            LABEL="''${LABEL:+$LABEL, }$NAME (drives display)"
-            break
-          done
-        done
-
-        [ -z "$LABEL" ] && LABEL="(none driving a display)"
-        notify-send -a "Hyprland" -i "video-card" "Render GPU" "Compositor this session: $RENDER (first = primary renderer)
-Next-login config: $MODE
-Displays: $LABEL" -t 12000
-        ;;
-    esac
-  '';
 in {
   # Gated like every other module (hyprconf.hyprland.enable, declared in
   # settings.nix) so this file never activates on non-Hyprland hosts.
@@ -599,7 +508,6 @@ in {
     # layout) — pointless on other hosts.
     ++ lib.optionals (config.hyprconf.target == "geks-nixos") [
       lock_screen
-      gpu_runner_script
     ];
   };
 }
