@@ -29,6 +29,11 @@
 --   fit_active_view   internal: scroll the viewport to the focused column
 --                     (driven by the window.active event below)
 --
+-- Monitor crossing: focus/move at the stack's top/bottom row or the tape's
+-- leftmost/rightmost column crosses to the monitor in that direction when
+-- one exists; without a neighbor the prior behavior applies (focus wraps,
+-- move reorders / niri-smart-moves).
+--
 -- Commands shared with scrolling: focus l|r|u|d, swapcol l|r, consume,
 -- expel, promote, center, move <±px|±col>, colresize <v|±v|+conf|-conf|all v>,
 -- fit active|visible|all|toend|tobeg.
@@ -159,6 +164,62 @@ local function focus_window(ctx, id)
 	end
 end
 
+-- Monitor of the workspace being laid out (nil while targets are transient).
+local function workspace_monitor(ctx)
+	for _, t in ipairs(ctx.targets) do
+		if t.window and t.window.monitor then
+			return t.window.monitor
+		end
+	end
+end
+
+-- HL.Monitor x/y are logical but width/height are raw mode pixels; divide by
+-- scale to rebuild the logical box Hyprland's direction lookup operates on
+-- (CMonitor::m_size = mode size / scale, rounded).
+local function logical_box(mon)
+	local s = (mon.scale and mon.scale > 0) and mon.scale or 1
+	return {
+		x = mon.x,
+		y = mon.y,
+		w = math.floor(mon.width / s + 0.5),
+		h = math.floor(mon.height / s + 0.5),
+	}
+end
+
+-- Mirror of Hyprland's monitor direction lookup: among enabled monitors, the
+-- one sharing an edge with `mon` in direction dir ("l"|"r"|"u"|"d") with the
+-- longest overlap along that edge; nil when no monitor sits in that direction.
+local function monitor_in_direction(mon, dir)
+	if not mon then
+		return nil
+	end
+	local a = logical_box(mon)
+	local best, best_len = nil, -1
+	for _, m in ipairs(hl.get_monitors()) do
+		if m.id ~= mon.id then
+			local b = logical_box(m)
+			local sticks, len
+			if dir == "l" then
+				sticks = math.abs(b.x + b.w - a.x) < 2
+				len = math.min(a.y + a.h, b.y + b.h) - math.max(a.y, b.y)
+			elseif dir == "r" then
+				sticks = math.abs(b.x - a.x - a.w) < 2
+				len = math.min(a.y + a.h, b.y + b.h) - math.max(a.y, b.y)
+			elseif dir == "u" then
+				sticks = math.abs(b.y + b.h - a.y) < 2
+				len = math.min(a.x + a.w, b.x + b.w) - math.max(a.x, b.x)
+			elseif dir == "d" then
+				sticks = math.abs(b.y - a.y - a.h) < 2
+				len = math.min(a.x + a.w, b.x + b.w) - math.max(a.x, b.x)
+			end
+			if sticks and math.max(0, len) > best_len then
+				best, best_len = m, math.max(0, len)
+			end
+		end
+	end
+	return best
+end
+
 -- Reconcile state with ctx.targets: drop closed windows, insert new windows
 -- as their own column right after the focused column.
 local function sync(st, ctx)
@@ -279,6 +340,12 @@ local function layout_msg(ctx, msg)
 		local ci = current_ci(st, ctx)
 		if arg == "l" or arg == "r" then
 			local n = #st.columns
+			-- Edge column with a monitor in that direction: hand focus over.
+			if ((arg == "l" and ci == 1) or (arg == "r" and ci == n))
+				and monitor_in_direction(workspace_monitor(ctx), arg) then
+				hl.dispatch(hl.dsp.focus({ monitor = arg }))
+				return true
+			end
 			local ni = ((ci - 1 + (arg == "r" and 1 or -1)) % n) + 1 -- wrap, like scrolling
 			local col = st.columns[ni]
 			focus_window(ctx, col.last_active or col.members[1])
@@ -287,6 +354,13 @@ local function layout_msg(ctx, msg)
 			local col = st.columns[ci]
 			local _, mi = column_of(st, col.last_active or col.members[1])
 			local n = #col.members
+			-- Edge row with a monitor in that direction: hand focus over. A
+			-- single-window column is both top and bottom, so it always crosses.
+			if mi and ((arg == "d" and mi == n) or (arg == "u" and mi == 1))
+				and monitor_in_direction(workspace_monitor(ctx), arg) then
+				hl.dispatch(hl.dsp.focus({ monitor = arg }))
+				return true
+			end
 			if mi and n > 1 then
 				local ni = ((mi - 1 + (arg == "d" and 1 or -1)) % n) + 1
 				focus_window(ctx, col.members[ni])
@@ -321,6 +395,21 @@ local function layout_msg(ctx, msg)
 		-- Validate BEFORE detaching: an invalid arg must not mutate state.
 		if cmd == "move" and not (arg == "l" or arg == "r" or arg == "u" or arg == "d") then
 			return "tape: move expects l|r|u|d"
+		end
+
+		-- move at an edge with a monitor in that direction: send the focused
+		-- window to that monitor (focus follows) instead of re-arranging.
+		-- Pre-mutation indices: aci/#st.columns for l/r, mi for u/d.
+		if cmd == "move" and monitor_in_direction(workspace_monitor(ctx), arg) then
+			local n = #col.members
+			local at_edge = (arg == "u" and mi == 1)
+				or (arg == "d" and mi == n)
+				or (arg == "l" and aci == 1)
+				or (arg == "r" and aci == #st.columns)
+			if at_edge then
+				hl.dispatch(hl.dsp.window.move({ monitor = arg }))
+				return true
+			end
 		end
 
 		-- u/d: reorder the window within its own column stack (no detach)

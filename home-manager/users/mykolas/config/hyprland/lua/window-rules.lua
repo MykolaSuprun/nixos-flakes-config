@@ -8,6 +8,12 @@ local fullscreen_apps = {
 local done = {}
 
 hl.on("window.active", function(w)
+	-- w is nil when focus lands on nothing (empty numbered workspaces, special
+	-- workspaces with no windows) — indexing nil here raised "attempt to index
+	-- a nil value" on every switch to such a workspace.
+	if not w then
+		return
+	end
 	if fullscreen_apps[w.class] and not done[w.address] then
 		done[w.address] = true
 		hl.dispatch(hl.dsp.window.fullscreen())
