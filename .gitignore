@@ -7,6 +7,8 @@ result
 task_backlog/
 .tmp/
 .backlog/
+# Legacy pre-vault backlog copies (backlog now lives in the shared vault)
+state/
 
 # Local-only artifacts (credentials/junk — never public):
 home-manager/users/mykolas/config/distrobox/dockerfiles/archlinux/log
