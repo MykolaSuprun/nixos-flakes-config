@@ -304,7 +304,15 @@ in {
       enable = true;
       # extraUpFlags only applies with authKeyFile; extraSetFlags runs
       # `tailscale set --ssh` on every boot so Tailscale SSH stays enabled.
-      extraSetFlags = ["--ssh"];
+      # --operator: OpenClaw's gateway (user systemd unit, from
+      # nixconf-private homeManagerModules.openclaw) runs tailnet Serve
+      # (gateway.tailscale.mode="serve") as this user — route claims, claim
+      # cleanup, and `tailscale whois` for identity-header auth all need
+      # operator rights, without sudo. Idempotent; self-heals every boot.
+      # NOTE: this must stay in the host config — an HM user module cannot
+      # reach the system-level services.tailscale namespace (verified:
+      # setting extraSetFlags from the openclaw HM module has no effect).
+      extraSetFlags = ["--ssh" "--operator=mykolas"];
     };
 
     resolved.enable = true;
