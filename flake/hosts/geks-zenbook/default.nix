@@ -107,6 +107,7 @@ in {
                 wrappedPkgs.nix-update
                 wrappedPkgs.hypr-layout-picker
                 wrappedPkgs.specialisation-picker
+                wrappedPkgs."opencode-lmstudio-sync"
               ];
             };
             extraSpecialArgs = {

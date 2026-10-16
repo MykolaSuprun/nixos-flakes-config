@@ -232,6 +232,7 @@
       # opencode (overlays/opencode.nix) — V2 build from the npm prebuilt.
       # V1 pin + the opencode2 compat alias retired 2026-09-29.
       opencode
+      claude-code
       # sublime4
       # zed-editor
       nvtopPackages.amd
