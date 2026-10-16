@@ -38,16 +38,34 @@ in {
         # on the dGPU. The wrapper sources the shared render-GPU picker
         # (~/.config/hypr/render-gpu-env.sh, HM-managed) which sets
         # AQ_DRM_DEVICES iGPU-first (default) or dGPU-first (user switch).
-        package = pkgs.symlinkJoin {
-          name = "hyprland-${hypr_pkgs.hyprland.version}-render-gpu-wrapped";
-          paths = [hypr_pkgs.hyprland];
-          nativeBuildInputs = [pkgs.makeWrapper];
-          postBuild = ''
-            mv $out/bin/start-hyprland $out/bin/.start-hyprland-unwrapped
-            makeWrapper $out/bin/.start-hyprland-unwrapped $out/bin/start-hyprland \
-              --run '[ -f "$HOME/.config/hypr/render-gpu-env.sh" ] && . "$HOME/.config/hypr/render-gpu-env.sh" || true'
-          '';
-        };
+        package = let
+          hypr-wrapped = pkgs.symlinkJoin {
+            name = "hyprland-render-gpu-wrapped";
+            version = hypr_pkgs.hyprland.version;
+            paths = [hypr_pkgs.hyprland];
+            nativeBuildInputs = [pkgs.makeWrapper];
+            postBuild = ''
+              mv $out/bin/start-hyprland $out/bin/.start-hyprland-unwrapped
+              makeWrapper $out/bin/.start-hyprland-unwrapped $out/bin/start-hyprland \
+                --run '[ -f "$HOME/.config/hypr/render-gpu-env.sh" ] && . "$HOME/.config/hypr/render-gpu-env.sh" || true'
+            '';
+          };
+          # The nixpkgs hyprland module introspects `override` (genFinalPackage)
+          # and re-applies { enableXWayland }: return the FULL merged value
+          # (self-referential) so meta/providedSessions/override survive the
+          # module's plumbing. meta passthrough keeps lib.getExe pointing at
+          # bin/Hyprland (capital H); providedSessions satisfies sessionPackages.
+          final = hypr-wrapped
+            // {
+              override = {enableXWayland ? true}: final;
+              # meta passthrough for mainProgram (lib.getExe → bin/Hyprland),
+              # but pin outputsToInstall to `out`: the original lists "man"
+              # too, and man-db's buildenv resolves drv.man → missing here.
+              meta = hypr_pkgs.hyprland.meta // {outputsToInstall = ["out"];};
+              providedSessions = hypr_pkgs.hyprland.providedSessions or ["hyprland"];
+            };
+        in
+          final;
         portalPackage = hypr_pkgs.xdg-desktop-portal-hyprland;
         xwayland.enable = true;
       };
