@@ -151,10 +151,13 @@
     # Is a qs-flow lockscreen (ext-session-lock held by quickshell) live?
     # There is no swaylock pid in that case — the client is the shell itself.
     qsflow_lock_live() {
-      command -v qs-flow-lock >/dev/null 2>&1 || return 1
-      # a locked quickshell session renders LockScreen surfaces; probe via IPC
-      qs ipc -p "''${QS_FLOW_SHELL_DIR:-$HOME/.config/quickshell/qs-flow}/shell.qml" \
-        call lockScreen locked 2>/dev/null | grep -qi true
+      # qs-flow-islocked (shipped in the qs-flow package): resolves the LIVE
+      # instance (packaged or a dev takeover), calls the lockScreen.isLocked
+      # IPC. NOTE the old probe called `lockScreen locked` — the function is
+      # named isLocked, so the probe never matched and fix-lock fell through
+      # to swaylock, starting a SECOND lock on top of the live qs-flow one.
+      command -v qs-flow-islocked >/dev/null 2>&1 || return 1
+      qs-flow-islocked
     }
 
     launch() {

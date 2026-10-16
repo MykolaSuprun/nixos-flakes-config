@@ -66,7 +66,18 @@
       };
       Service = {
         Type = "oneshot";
-        ExecStart = "${pkgs.systemd}/bin/systemctl --user restart qs-flow.service";
+        # NEVER restart while the shell holds the ext-session-lock: killing
+        # the lock client makes the compositor keep the screen locked and
+        # painted solid (protocol: "the lock dying will not expose your
+        # session, but it will render it inoperable") — the user would be
+        # unable to unlock. Probe first; restart only when not locked.
+        ExecStart = "${pkgs.writeShellScriptBin "qs-flow-resume-guard" ''
+          if qs-flow-islocked 2>/dev/null; then
+            echo "qs-flow-resume-guard: shell holds the session lock - skipping restart" >&2
+            exit 0
+          fi
+          exec ${pkgs.systemd}/bin/systemctl --user restart qs-flow.service
+        ''}/bin/qs-flow-resume-guard";
       };
       Install = {
         WantedBy = ["suspend.target"];
