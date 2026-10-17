@@ -204,6 +204,23 @@ confirm_close = true
 # Hide tab bar when only one tab exists
 hide_tab_bar_when_single_tab = true
 
+# ── Sidebar jump codes ───────────────────────────────────────
+# Rows replicate the herdr defaults + a bold $jump badge at the row end.
+# Values are reported as metadata tokens (--source user:jumpd) by the
+# preview-grid jump tooling; unreported $jump tokens simply disappear.
+# Revert = delete these two tables (herdr defaults apply again).
+[ui.sidebar.spaces]
+rows = [
+  ["state_icon", "workspace", { token = "$jump", bold = true }],
+  ["branch", "git_status"],
+]
+
+[ui.sidebar.agents]
+rows = [
+  ["state_icon", "machine", "workspace", "tab"],
+  ["agent", { token = "$jump", bold = true }],
+]
+
 [session]
 # Resume agent conversations after a server restart (like tmux
 # resurrect/continuum, but for AI agent sessions).
