@@ -1790,11 +1790,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792212017,
-        "narHash": "sha256-HUkQdGJmYVTBylHZECYBlBFnz9r/arENEoCQ3I9FvqY=",
+        "lastModified": 1792214266,
+        "narHash": "sha256-9aS3u+DCma98k50l5HcEKw0jxTeuxI4DoWtvaFx3o5s=",
         "ref": "refs/heads/main",
-        "rev": "3f737bc0c3832a1960daa9d4ab93b683591c3128",
-        "revCount": 50,
+        "rev": "97bc8fd152f6c1eeeb8f7edcbc3de500f525fd4a",
+        "revCount": 51,
         "type": "git",
         "url": "ssh://git@gitlab.com/nix-private/qs-flow.git"
       },
