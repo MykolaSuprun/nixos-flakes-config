@@ -188,6 +188,16 @@ type = "plugin_action"
 command = "yoshiori.herdr-configurable-picker.open"
 description = "goto picker (tree)"
 
+# Sidebar jump codes (preview-grid): rows carry a $jump badge; this popup
+# takes the code and focuses its target. Esc cancels.
+[[keys.command]]
+key = "prefix+f"
+type = "popup"
+command = "/home/mykolas/workspaces/src/herdr-preview-grid/bin/herdr-preview-grid jump"
+width = 44
+height = 3
+description = "jump to sidebar code"
+
 [terminal]
 # Follow the focused pane's working directory for new panes/tabs,
 # matching tmux's `-c "#{pane_current_path}"` behaviour.
