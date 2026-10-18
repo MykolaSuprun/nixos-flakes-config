@@ -70,9 +70,12 @@ scripts/             # Standalone shell scripts
   The bare-package entry works because the plugin flake ships
   `passthru.herdrPluginId`; not-Nix-aware plugins use `{ pluginId; package; }`
   or `{ path = …; }` (id resolved from the registry after linking). Plugin
-  **keybindings** still live in the live-linked `config.toml`, and the sidebar
-  jump popup can bind `herdr-preview-grid jump` by name (the module puts the
-  plugin's `bin` on `home.sessionPath`).
+  **keybindings** still live in the live-linked `config.toml`; the sidebar
+  jump popup binds `herdr-preview-grid jump` by name — the manager's
+  `addPluginBinsToPath` (default on) puts each plugin package's `bin` on
+  `home.sessionPath`. Note activation itself uses ABSOLUTE binary paths:
+  HM activation runs with a restricted PATH (stateVersion ≥ 22.11 default)
+  where `command -v herdr` fails.
 
   Dev iteration conflicts with activation (each rebuild re-links the store
   path): set `programs.herdr-hpm.plugins` to `[{ path = ~/src/herdr-vimnav; }]`

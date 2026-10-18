@@ -190,10 +190,13 @@ description = "goto picker (tree)"
 
 # Sidebar jump codes (preview-grid): rows carry a $jump badge; this popup
 # takes the code and focuses its target. Esc cancels.
+# By-name form (works once the Nix-managed rebuild puts the plugin bin on
+# session PATH), with the dev checkout as fallback until that lands —
+# drop `|| …` after the first successful rebuild + herdr server restart.
 [[keys.command]]
 key = "prefix+f"
 type = "popup"
-command = "/home/mykolas/workspaces/src/herdr-preview-grid/bin/herdr-preview-grid jump"
+command = "herdr-preview-grid jump || /home/mykolas/workspaces/src/herdr-preview-grid/bin/herdr-preview-grid jump"
 width = 44
 height = 3
 description = "jump to sidebar code"
