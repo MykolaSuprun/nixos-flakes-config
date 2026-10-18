@@ -132,11 +132,14 @@
       flake = true;
     };
 
-    # herdr plugin: preview-grid / master-detail switcher. Ships its own Nix
-    # package + Home Manager module; installed by linking the immutable store
-    # path into herdr's plugin registry at HM activation — no Go toolchain and
-    # no network needed on the host. GitLab is the source of truth (the GitHub
-    # mirror lags a few minutes; prefer GitLab here to avoid mirror lag).
+    # herdr plugin management. The manager (programs.herdr-hpm) owns herdr's
+    # plugin registry declaratively: it links plugin store paths at activation
+    # and prunes store links that are no longer declared. GitLab is the source
+    # of truth for both repos (the GitHub mirror lags a few minutes).
+    nix-herdr-manager = {
+      url = "gitlab:mykolas-open/nix-herdr-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     herdr-vimnav = {
       url = "gitlab:mykolas-open/herdr-vimnav";
       inputs.nixpkgs.follows = "nixpkgs";

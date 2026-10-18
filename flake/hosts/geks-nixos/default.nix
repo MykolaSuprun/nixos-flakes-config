@@ -89,7 +89,7 @@ in {
                   inputs.dms-plugin-registry.nixosModules.default
                   inputs.caelestia-shell.homeManagerModules.default
                   inputs.qs-flow.homeManagerModules.default
-                  inputs.herdr-vimnav.homeManagerModules.default
+                  inputs.nix-herdr-manager.homeManagerModules.default
 
                   ../../../home-manager/users/mykolas/home-geks-nixos.nix
                   # HM feature modules (all gated by myconf.*.enable flags)

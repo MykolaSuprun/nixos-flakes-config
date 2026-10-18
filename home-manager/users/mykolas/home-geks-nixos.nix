@@ -72,11 +72,16 @@ in {
   # noctalia-greeter still owns the login screen.
   programs.noctalia.enable = false;
 
-  # herdr preview-grid plugin — Nix package linked into herdr's plugin registry
-  # from the store path at HM activation (no Go toolchain on the host). Module:
-  # inputs.herdr-vimnav.homeManagerModules.default. Keybindings stay in the
-  # live-linked herdr config.toml (plugin_action entries).
-  programs.herdrPreviewGrid.enable = true;
+  # herdr plugins — declarative via nix-herdr-manager (programs.herdr-hpm):
+  # the plugin store paths are linked into herdr's registry at HM activation
+  # and undeclared store links are pruned. The bare package entry works because
+  # the plugin flake ships passthru.herdrPluginId.
+  programs.herdr-hpm = {
+    enable = true;
+    plugins = [
+      inputs.herdr-vimnav.packages.${pkgs.stdenv.hostPlatform.system}.default
+    ];
+  };
 
     hyprconf = {
     target = "geks-nixos";
