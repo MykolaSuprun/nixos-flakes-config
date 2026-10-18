@@ -21,8 +21,13 @@
 
       # Build with nh (flake keys come with --accept-flake-config; substituter
       # list single-sourced in cache.nix (repo root)
+      # Extra `nix build` args can be injected via NIXOS_BUILD_EXTRA_ARGS, e.g.
+      # an unpushed flake input that the lock cannot resolve yet:
+      #   NIXOS_BUILD_EXTRA_ARGS="--override-input herdr-vimnav path:../herdr-preview-grid" nixos-build
+      # (empty by default, so other hosts and normal builds are unaffected)
       nh os switch -- \
         --accept-flake-config --show-trace \
+        ''${NIXOS_BUILD_EXTRA_ARGS:-} \
         --option extra-substituters "${builtins.concatStringsSep " " (import ../../cache.nix).trusted-substituters}" \
         --option extra-trusted-public-keys "${builtins.concatStringsSep " " (import ../../cache.nix).trusted-public-keys}"
 
