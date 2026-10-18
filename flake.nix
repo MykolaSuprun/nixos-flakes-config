@@ -132,6 +132,16 @@
       flake = true;
     };
 
+    # herdr plugin: preview-grid / master-detail switcher. Ships its own Nix
+    # package + Home Manager module; installed by linking the immutable store
+    # path into herdr's plugin registry at HM activation — no Go toolchain and
+    # no network needed on the host. GitLab is the source of truth (the GitHub
+    # mirror lags a few minutes; prefer GitLab here to avoid mirror lag).
+    herdr-vimnav = {
+      url = "gitlab:mykolas-open/herdr-vimnav";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Disk partitioning
     disko = {
       url = "github:nix-community/disko/latest";
