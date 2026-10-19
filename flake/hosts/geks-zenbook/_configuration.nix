@@ -78,6 +78,11 @@
     };
   };
 
+  # Tailnet traffic arrives on tailscale0; without this the default firewall
+  # drops it (services.tailscale does NOT open the firewall — only
+  # openFirewall opens UDP 41641 for the tunnel itself). Mirrors geks-nixos.
+  networking.firewall.trustedInterfaces = ["tailscale0"];
+
   # ── Locale ────────────────────────────────────────────────────────────────────
   time.timeZone = "Europe/Warsaw";
 
@@ -97,6 +102,23 @@
   # ── Services ──────────────────────────────────────────────────────────────────
   services = {
     desktopManager.plasma6.enable = true;
+
+    # Plain SSH over the tailnet (reachable via tailscale0/trustedInterfaces).
+    # Client-side SSH_AUTH_SOCK is owned by gpg-agent (see home-zenbook.nix);
+    # the NixOS ssh-agent stays disabled (programs.ssh.startAgent = false).
+    openssh = {
+      enable = true;
+    };
+
+    # Tailscale. extraSetFlags runs `tailscale set --ssh` on every boot so
+    # Tailscale SSH stays enabled (`extraUpFlags` only applies with
+    # authKeyFile, which this host does not use — login is interactive:
+    # `sudo tailscale up`). --operator lets the user run tailscale commands
+    # (incl. `tailscale ssh`-related state) without sudo. Mirrors geks-nixos.
+    tailscale = {
+      enable = true;
+      extraSetFlags = ["--ssh" "--operator=mykolas"];
+    };
 
     # SDDM: shows both Plasma and Hyprland session entries in the greeter,
     # and avoids the sysc-greet/Hyprland compositor hang on Intel iGPU
