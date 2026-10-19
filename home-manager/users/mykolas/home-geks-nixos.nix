@@ -48,6 +48,7 @@ in {
     desktop.enable = true;
     chromium.enable = true;
     dms.enable = false; # Noctalia is now the default desktop shell on geks-nixos
+    llm-help.enable = true; # ai-profiles picker (cc-*/pi-* launchers)
     caelestia.enable = false; # Caelestia shell disabled — replaced by custom qs shell (qs-flow); swaylock owns locking
     qs-flow.enable = true; # vendored-minflair quickshell shell: HM install, session autostart, immutable base settings, qs-flow-first lock
     catppuccin.enable = true;
@@ -63,6 +64,12 @@ in {
     openpets.enable = true;
     openclaw.enable = true;
     chatgpt.enable = true;
+    # Strata — local LLM inference engine. The backend matches this host's
+    # card (Radeon RX 7900 XT/XTX, gfx1100); the engine is pre-seeded into
+    # the components folder so the Terminal can start it.
+    strata.enable = true;
+    strata.backend = "hip-rx7900";
+    strata.clients.enable = true; # OpenCode, Pi and Claude desktop-model connections
     herdr.enable = true;
     audio-recovery.enable = true; # restart audio stack after resume (xHCI reinit wedges it)
   };
@@ -100,7 +107,11 @@ in {
       enable = false;
       output = null;
     };
-    hyprland.enable = true;
+    hyprland = {
+      enable = true;
+      # Mixed-scale AMD outputs exhibit stale hardware cursor shapes.
+      softwareCursor = true;
+    };
   };
 
   # ── Session variables ─────────────────────────────────────────────────────────

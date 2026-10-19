@@ -35,6 +35,29 @@
     accent = "mauve";
   };
 
+  # Mocha specialisation, scoped to THIS host.
+  #
+  # nixos/specialisations.nix keeps the shared 4-flavour block disabled: on
+  # geks-nixos each specialisation is a full toplevel with its own ~37 MiB
+  # initrd, which does not fit the 511 MiB ESP with limine (162 MiB/generation).
+  # That rationale does NOT apply here — zenbook uses GRUB with
+  # copyKernels = false, so the kernel and initrd are read from /nix/store and
+  # never copied to the ESP. Verified: the specialisation's bootspec references
+  # the SAME kernel (linux-6.18.56/bzImage) and initrd
+  # (initrd-linux-6.18.56) store paths as the base system → ~0 ESP cost.
+  #
+  # Gives: a boot-menu entry and `nixos-rebuild switch --specialisation mocha`
+  # (and a non-empty list for specialisation-picker, which is otherwise a no-op).
+  # Note the base flavour is already mocha, so this is redundancy-by-design:
+  # it stays correct if the base flavour is ever changed to something else.
+  specialisation.mocha.configuration = {
+    catppuccin.flavor = lib.mkForce "mocha";
+    home-manager.users.mykolas = {
+      catppuccin.flavor = lib.mkForce "mocha";
+      myconf.catppuccin.flavor = lib.mkForce "mocha";
+    };
+  };
+
   # ── Boot ──────────────────────────────────────────────────────────────────────
   boot = {
     loader = {

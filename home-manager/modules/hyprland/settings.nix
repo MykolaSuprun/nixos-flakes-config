@@ -11,6 +11,20 @@
 
   hyprSrcPath = "${config.home.sessionVariables.NIXOS_CONF_DIR}/home-manager/users/mykolas/config/hyprland";
   hyprTargetPath = "~/.config/hypr";
+  cursor = config.home.pointerCursor;
+  cursorEnvironment = {
+    XCURSOR_THEME = cursor.name;
+    XCURSOR_SIZE = toString cursor.size;
+    HYPRCURSOR_THEME = cursor.name;
+    HYPRCURSOR_SIZE = toString cursor.size;
+  };
+  cursorExports = lib.concatStringsSep "\n" (
+    lib.mapAttrsToList (name: value: "export ${name}=${lib.escapeShellArg value}") cursorEnvironment
+  );
+  cursorMode =
+    if config.hyprconf.hyprland.softwareCursor
+    then "1"
+    else "2";
 
   themes = [
     "catppuccin-latte"
@@ -201,6 +215,7 @@ in {
 
       hyprland = {
         enable = lib.mkEnableOption "enables hyprland config";
+        softwareCursor = lib.mkEnableOption "software cursors for hosts with hardware cursor rendering issues";
         # Note: the flake-vs-nixpkgs Hyprland choice is driven by the
         # useHyprlandFlake specialArg in each host's default.nix, not an option.
       };
@@ -247,6 +262,14 @@ in {
 
     services = {
       # hyprpolkitagent.enable = true;
+      # XWayland clients read XSettings independently of the Wayland environment.
+      xsettingsd = {
+        enable = true;
+        settings = {
+          "Gtk/CursorThemeName" = cursor.name;
+          "Gtk/CursorThemeSize" = cursor.size;
+        };
+      };
     };
 
     # Lock screen theming via the official catppuccin/swaylock port — follows
@@ -291,11 +314,24 @@ in {
     home = {
       # Explicit enable: HM deprecated the implicit generation trigger
       # (relying on home.pointerCursor alone now warns).
-      pointerCursor.enable = true;
-      pointerCursor.hyprcursor.enable = true;
+      pointerCursor = {
+        enable = true;
+        size = 32;
+        gtk.enable = true;
+        x11.enable = true;
+        hyprcursor.enable = true;
+      };
       file = {
-        # UWSM general environment (applies to all compositor sessions) — identical on every host.
-        "./.config/uwsm/env".source = ./../../users/mykolas/config/uwsm/env;
+        # Shared UWSM toolkit environment plus the host's XCursor preferences.
+        "./.config/uwsm/env".text =
+          builtins.readFile ./../../users/mykolas/config/uwsm/env
+          + ''
+
+            export XCURSOR_THEME=${lib.escapeShellArg cursorEnvironment.XCURSOR_THEME}
+            export XCURSOR_SIZE=${lib.escapeShellArg cursorEnvironment.XCURSOR_SIZE}
+          '';
+        # Also sourced by start-hyprland when the greeter bypasses UWSM.
+        "./.config/hypr/cursor-env.sh".text = cursorExports + "\n";
 
         # UWSM Hyprland-specific environment.
         # Dynamically discovers available GPUs and sets AQ_DRM_DEVICES with iGPU as
@@ -341,11 +377,13 @@ in {
           ''
           else "";
         "./.config/uwsm/env-hyprland".text =
-          if config.hyprconf.target == "geks-nixos"
-          then ''
+          lib.optionalString (config.hyprconf.target == "geks-nixos") ''
             source "''${XDG_CONFIG_HOME:-$HOME/.config}/hypr/render-gpu-env.sh"
           ''
-          else "";
+          + ''
+            export HYPRCURSOR_THEME=${lib.escapeShellArg cursorEnvironment.HYPRCURSOR_THEME}
+            export HYPRCURSOR_SIZE=${lib.escapeShellArg cursorEnvironment.HYPRCURSOR_SIZE}
+          '';
         # Nix-generated Catppuccin palette for Hyprland Lua config.
         # Rebuild home-manager to update when flavor/accent changes.
         "./.config/hypr/lua/catppuccin-palette.lua".text = ''
@@ -575,6 +613,13 @@ in {
       extraConfig =
         #lua
         ''
+          hl.config({
+            cursor = {
+              no_hardware_cursors = ${cursorMode},
+              -- Home Manager owns GTK preferences; avoid runtime theme rewrites.
+              sync_gsettings_theme = false,
+            },
+          })
           require("hyprland-dynamic")
           -- require("lua/settings")
           -- require("lua/monitors")
@@ -589,6 +634,8 @@ in {
 
     systemd.user = {
       enable = true;
+      # Includes D-Bus activations and shell services launched outside a login shell.
+      sessionVariables = cursorEnvironment;
       tmpfiles.rules = [
         # ensure noctalia directory exists in hyprland config dir
         "d %h/.config/hypr/noctalia 0755 - - -"

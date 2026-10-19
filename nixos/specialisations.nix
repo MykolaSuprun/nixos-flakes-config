@@ -2,7 +2,14 @@
   lib,
   ...
 }: {
-  # NixOS specialisations DISABLED 2026-10-16.
+  # NixOS specialisations DISABLED 2026-10-16 (for geks-nixos/limine).
+  #
+  # NOTE: geks-zenbook defines its OWN single mocha specialisation in
+  # flake/hosts/geks-zenbook/_configuration.nix. That host uses GRUB with
+  # copyKernels=false, so its kernel/initrd stay in /nix/store and are never
+  # copied to the ESP — the cost below does NOT apply there (verified: the
+  # specialisation's bootspec reuses the base system's exact kernel + initrd
+  # store paths). This shared 4-flavour block stays disabled.
   #
   # These provided 4 Catppuccin flavour variants (latte/frappe/macchiato/mocha),
   # live-switchable via `nixos-rebuild switch --specialisation <flavour>` and

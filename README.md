@@ -271,6 +271,49 @@ templates/         # nix flake init templates (go, haskell, python-uv, scala, ja
 
 ---
 
+## ChatGPT desktop
+
+The package overlay, Home Manager module and Hyprland pet rule live in
+`nixconf-private` (`overlays.chatgpt` and `homeManagerModules.chatgpt`). Both
+desktop hosts consume those exports; `myconf.chatgpt.enable` currently enables
+the app on geks-nixos. The private module keeps the pet floating and transparent
+when Hyprland uses Lua configuration.
+
+Until the private migration is published and its lock entry updated, rebuild
+with `--override-input nixconf-private path:/home/mykolas/workspaces/src/nixconf-private`.
+After publishing, run `nix flake update nixconf-private` before rebuilding.
+
+---
+
+## Strata — local LLM inference (geks-nixos)
+
+The Strata package overlay and Home Manager module live in `nixconf-private`
+(`overlays.strata` and `homeManagerModules.strata`), following OpenPets. The
+geks-nixos host applies the overlay, imports the gated module and enables:
+
+```nix
+myconf.strata = {
+  enable = true;
+  backend = "hip-rx7900";
+  clients.enable = true;
+};
+```
+
+The private module includes the image-decoder packaging fix, distinct Custom
+model names and protected loading of prepared custom weights. It installs
+`strata-clients`, `opencode-strata`, `pi-strata` and `claude-strata` (`cc-strata`).
+Load a model in the desktop app, then run a client launcher; it refreshes all
+installed model choices and connects to that desktop's current API port.
+`strata-clients list` shows the exact IDs. Model weights and client catalogs stay
+runtime data; `opencode.jsonc` stays untouched. See the private README for setup
+and verification.
+
+The private input is pinned to a published revision in `flake.lock`. After
+publishing private module updates, run `nix flake update nixconf-private` and
+validate the affected host before rebuilding.
+
+---
+
 ## fzf keybindings (all interactive scripts)
 
 | Key | Action |

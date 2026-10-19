@@ -233,6 +233,8 @@
       # V1 pin + the opencode2 compat alias retired 2026-09-29.
       opencode
       claude-code
+      pi-coding-agent
+      codex
       # sublime4
       # zed-editor
       nvtopPackages.amd

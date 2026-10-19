@@ -16,6 +16,7 @@
       inputs.nixconf-private.overlays.lmstudio
       # OpenPets packages — moved to nixconf-private 2026-10-14.
       inputs.nixconf-private.overlays.openpets
+      inputs.nixconf-private.overlays.chatgpt
     ];
   };
   pkgs-stable = import inputs.nixpkgs-stable {
@@ -97,7 +98,10 @@ in {
                   # 2026-10-14, openclaw precedent) — needs that flake's
                   # overlays.openpets for pkgs.openpets*.
                   inputs.nixconf-private.homeManagerModules.openpets
-                  ../../../home-manager/modules/chatgpt.nix
+                  # llm-help: interactive picker for the ai-profiles
+                  # Claude Code / pi launchers (see geks-nixos).
+                  inputs.nixconf-private.homeManagerModules.llm-help
+                  inputs.nixconf-private.homeManagerModules.chatgpt
                   ../../../home-manager/modules/hyprland
                 ]
                 ++ lib.optionals useHyprlandFlake [

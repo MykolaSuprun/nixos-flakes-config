@@ -39,61 +39,19 @@ in {
   };
 
   # ── Swap ────────────────────────────────────────────────────────────────────
-  # Layered swap: zram first (fast, compressed RAM), loop-backed disk file as
-  # the deep overflow. A PLAIN btrfs swapfile is kernel-forbidden here — the
-  # pool spans 2 devices (2026-09-15, gen 207: "swapfile must be on one
-  # device") — so the 64G NOCOW file is attached with `losetup --direct-io=on`
-  # and the kernel swaps on the loop BLOCK device, which carries no such
-  # restriction. Priority zram 100 > file 10: pressure lands on zram first,
-  # the file catches true overflow.
-  # One-time file setup (sudo):
-  #   mkdir -p /var/swap && chattr +C /var/swap
-  #   dd if=/dev/zero of=/var/swap/swapfile bs=1M count=65536 status=progress
-  #   chmod 600 /var/swap/swapfile && mkswap /var/swap/swapfile
-  # (+C on the dir → file is NOCOW/uncompressed, no CoW overhead under swap
-  # IO.) Service fails soft: a missing file never blocks boot. Hibernation
-  # NOT wired (a loop swap cannot resume — accepted).
+  # zram only. The 64G loop-backed btrfs file (gen 237, 2026-10-11 → removed
+  # 2026-10-20) was the freeze path: once zram filled, swap-out had to allocate
+  # memory through loop → btrfs → dm-crypt while memory was exhausted, and the
+  # box livelocked instead of OOM-killing (incidents #3/#4, strata at 50–71 GiB
+  # RSS, cliff right as swap passed ~21 GiB). Its 89 GiB of swap headroom also
+  # kept earlyoom's swap condition from ever tripping. A plain btrfs swapfile
+  # stays impossible (2-device pool), so overflow now ends in a kill, not a
+  # freeze. Leftover /var/swap/swapfile (64G) can be deleted by hand.
   zramSwap = {
     enable = true;
     algorithm = "zstd";
     memoryPercent = 25;
     priority = 100;
-  };
-
-  systemd.services.swap-loopfile = let
-    util = pkgs.util-linux;
-    file = "/var/swap/swapfile";
-  in {
-    description = "Swap on a loop-backed btrfs file (multi-device pool forbids plain swapfiles)";
-    wantedBy = [ "multi-user.target" ];
-    after = [ "local-fs.target" ];
-    unitConfig.RequiresMountsFor = [ "/var/swap" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecStart = pkgs.writeShellScript "swap-loopfile-up" ''
-        PATH=${pkgs.coreutils}/bin:${util}/bin:${pkgs.gnugrep}/bin
-        if [ ! -f "${file}" ]; then
-          echo "swap-loopfile: ${file} missing — create it once (see host _configuration.nix)" >&2
-          exit 1
-        fi
-        dev=$(losetup -j "${file}" -n --output NAME 2>/dev/null | head -n1)
-        if [ -z "$dev" ]; then
-          dev=$(losetup -f --show --direct-io=on "${file}")
-        fi
-        if ! grep -qs "^$dev " /proc/swaps; then
-          swapon -p 10 "$dev"
-        fi
-      '';
-      ExecStop = pkgs.writeShellScript "swap-loopfile-down" ''
-        PATH=${pkgs.coreutils}/bin:${util}/bin:${pkgs.gnugrep}/bin
-        dev=$(losetup -j "${file}" -n --output NAME 2>/dev/null | head -n1)
-        if [ -n "$dev" ]; then
-          swapoff "$dev" 2>/dev/null || true
-          losetup -d "$dev" 2>/dev/null || true
-        fi
-      '';
-    };
   };
 
   hyprconf = {
@@ -158,6 +116,10 @@ in {
     kernel.sysctl = {
       "vm.swappiness" = 180;
       "vm.page-cluster" = 0;
+      # 2026-10-20 freeze postmortem: full magic SysRq so a wedged box can be
+      # walked down with Alt+PrintScreen REISUB instead of a hard power cut —
+      # every power-button reset is a corruption lottery for the btrfs pool.
+      "kernel.sysrq" = 1;
     };
 
     plymouth.enable = true;
@@ -174,7 +136,11 @@ in {
     supportedFilesystems.zfs = false;
 
     # kernelPackages = pkgs.linuxPackages_zen;
-    kernelPackages = pkgs.linuxPackages;
+    # 2026-10-20 freeze postmortem: the Oct 15/16 DMCUB/DMUB display-engine
+    # storms (Raphael iGPU 0000:59:00.0) are in a constant upstream DC fix
+    # stream — test latest before any structural display rerouting.
+    # Revert to pkgs.linuxPackages on regression.
+    kernelPackages = pkgs.linuxPackages_latest;
     extraModulePackages = with config.boot.kernelPackages; [
       # kvmfr
     ];
@@ -274,10 +240,62 @@ in {
   # private flake's comfyui module; this adds the oomd kill contract on top).
   systemd.services.comfyui.serviceConfig.ManagedOOMMemoryPressure = "kill";
 
+  # ── Freeze attribution probes (2026-10-20 freeze postmortem) ────────────────
+  # Full evidence chain in task_backlog/nixconf_stability_backlog.md.
+  # Minutely memory snapshot: the next wedge names its killer in
+  # `journalctl -u rss-watch.service` instead of costing another postmortem.
+  systemd.services.rss-watch = {
+    description = "Freeze attribution: memory snapshot + top RSS processes";
+    serviceConfig = {
+      Type = "oneshot";
+      # Best-effort under thrash — a missed tick costs nothing.
+      TimeoutStartSec = "10s";
+    };
+    script = ''
+      ${pkgs.procps}/bin/free -m | ${pkgs.coreutils}/bin/head -n 3
+      ${pkgs.procps}/bin/ps -eo rss=,pid=,comm= --sort=-rss \
+        | ${pkgs.coreutils}/bin/head -n 11 \
+        | ${pkgs.gawk}/bin/awk '{printf "rss_mib=%-8.0f pid=%-8s comm=%s\n", $1/1024, $2, $3}'
+    '';
+  };
+  systemd.timers.rss-watch = {
+    description = "Minutely rss-watch (freeze attribution)";
+    wantedBy = ["timers.target"];
+    timerConfig = {
+      OnCalendar = "minutely";
+      AccuracySec = "10s";
+      Unit = "rss-watch.service";
+    };
+  };
+
   networking.firewall.trustedInterfaces = ["tailscale0"];
 
   # ── Services ──────────────────────────────────────────────────────────────────
   services = {
+    # 2026-10-20 freeze postmortem: the kernel OOM killer never fired in 30d
+    # (87G of swap means allocations never fail — the box comas instead) and
+    # oomd starved with zero kills despite the 20%/20s tuning (no kill
+    # contracts outside comfyui). earlyoom is a tiny, mlock-all'd userspace
+    # killer that survives the thrash — turns the next memory catastrophe into
+    # a killed + journal-named offender instead of a 20-minute coma.
+    # oomd stays for cgroup-level granular work.
+    earlyoom = {
+      enable = true;
+      # Memory-only trigger: earlyoom kills only when BOTH mem and swap are
+      # under threshold, so swap thresholds of 100% make swap always "low"
+      # and avail mem alone decides. With swap at 10% it never fired —
+      # incident #4 sat at 9.9% avail with 77% swap free right before the
+      # cliff. SIGTERM at 10% avail, SIGKILL at 5%.
+      freeMemThreshold = 10;
+      freeMemKillThreshold = 5;
+      freeSwapThreshold = 100;
+      freeSwapKillThreshold = 100;
+      # Kill the model runners first; never the compositor or shell.
+      extraArgs = [
+        "--prefer" "^(strata|strata-vision-h|comfyui|llama-server|ollama|python3?)$"
+        "--avoid" "^(\\.Hyprland-wrapp|Xwayland|\\.quickshell-wra|systemd|sshd|greetd|uwsm)$"
+      ];
+    };
     tuned.enable = true;
     upower.enable = true;
     openssh = {
@@ -479,6 +497,18 @@ in {
 
   # ── System ────────────────────────────────────────────────────────────────────
   systemd.tmpfiles.rules = ["f /dev/shm/looking-glass 0660 mykolas kvm -"];
+
+  # ── ROCm GPU isolation ────────────────────────────────────────────────────────
+  # The Raphael iGPU (gfx1036) drives the displays and is unsupported by ROCm
+  # (AMD: disable the iGPU or select the target GPU via env vars). Unset, every
+  # ROCm process (ComfyUI, strata, ...) also attaches to the display GPU, whose
+  # KFD queue evict/restore cycles under memory pressure are the freeze suspect.
+  # The UUID is the 7900 XTX's (stable across enumeration order); Mesa/Hyprland
+  # rendering is unaffected. Verify: no *_54953 entries in
+  # /sys/class/kfd/kfd/proc/<pid>/ for ROCm processes.
+  environment.variables.ROCR_VISIBLE_DEVICES = "GPU-8fd17aa5c99ca2b1";
+  systemd.globalEnvironment.ROCR_VISIBLE_DEVICES = "GPU-8fd17aa5c99ca2b1";
+  systemd.user.settings.Manager.DefaultEnvironment = "ROCR_VISIBLE_DEVICES=GPU-8fd17aa5c99ca2b1";
 
   environment = {
     enableAllTerminfo = true;

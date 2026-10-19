@@ -49,6 +49,12 @@
         # UX
         mouse-hide-while-typing = true;
 
+        # Free ctrl+shift+e for herdr's jump popup (bound there as
+        # "shift+prefix": [keys] prefix = ctrl+e). Ghostty 1.3.1 defaults the
+        # chord to new_split:down and would swallow it before herdr sees it;
+        # =unbind hands the key back to the application below.
+        keybind = ["ctrl+shift+e=unbind"];
+
         # term stays as default "xterm-ghostty" — full feature set
         # (kitty keyboard protocol, focus events, true colour, image protocol)
       };

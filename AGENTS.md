@@ -11,7 +11,7 @@ Personal NixOS configuration managed with [flake-parts](https://github.com/hercu
 | Host | Description | Display Manager | GPU |
 |------|-------------|-----------------|-----|
 | `geks-nixos` | AMD desktop, Hyprland + gaming | greetd + sysc-greet | AMD dGPU (7900 XTX) + AMD iGPU |
-| `geks-zenbook` | Intel laptop, Hyprland + Plasma 6 | SDDM (Wayland) | Intel Iris/Xe iGPU |
+| `geks-zenbook` | Intel laptop, Hyprland + Plasma 6 | SDDM (Wayland) | Intel Iris/Xe iGPU + NVIDIA RTX 4060 Laptop dGPU (present, but **no NVIDIA driver is configured** — no `hardware.nvidia` anywhere in this repo) |
 | `geks-wsl` | WSL2 minimal environment | N/A | N/A |
 
 ### Repository Structure
@@ -87,6 +87,8 @@ scripts/             # Standalone shell scripts
   path): set `programs.herdr-hpm.plugins` to `[{ path = ~/src/herdr-vimnav; }]`
   while hacking on a plugin, or drop the entry and link the checkout by hand.
 - **OpenClaw**: Provided by the first-party `nix-openclaw` flake input (official openclaw org) — **never add `pkgs.openclaw` to any package list**: nixpkgs' own package is permanently marked insecure (LLM prompt-injection policy flag, not a CVE — no fix without `permittedInsecurePackages`, which is off-limits by project rule). The host applies `inputs.nix-openclaw.overlays.default` to pkgs; the full HM module lives in **nixconf-private** (`homeManagerModules.openclaw`, imported in the host's HM module list, gated by `myconf.openclaw.enable` — personal data stays private). It configures the OpenCode Go model backend (`opencode-go/glm-5.3-flash`; bundled provider, `enabledByDefault` in the pinned 2026.9.5 package — no plugin install needed), the Telegram channel (pairing DM policy, `richMessages` = Bot API 10.3 rich blocks), and gateway autostart. The gateway runs in Nix mode (config immutable; manage via `programs.openclaw.config` in nixconf-private + rebuild — `openclaw onboard`/`plugins install` are disabled). Secrets are plain 600 files at `~/.secrets/openclaw/` (`opencode-api-key`, `telegram-bot-token`, `gateway-token`), referenced by path — never inline secrets in Nix. nixconf-private's own `nix-openclaw` input is deduped to the top-level one via `inputs.nix-openclaw.follows` (single lock entry).
+
+- **ChatGPT**: Packaging and the gated Home Manager module live in `nixconf-private` (`overlays.chatgpt`, `homeManagerModules.chatgpt`), following OpenPets. Both desktop hosts apply the overlay and import the module; `myconf.chatgpt.enable` enables the app. The pet window title patch and the matching Hyprland Lua rule belong to the private app files.
 
 ## Rules for AI Agents
 

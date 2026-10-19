@@ -20,6 +20,8 @@
       # OpenPets packages (desktop AppImage repack, MCP bridge, wayland
       # helper, opencode V2 plugin) — moved to nixconf-private 2026-10-14.
       inputs.nixconf-private.overlays.openpets
+      inputs.nixconf-private.overlays.chatgpt
+      inputs.nixconf-private.overlays.strata
       # First-party OpenClaw (HM module lives in nixconf-private:
       # homeManagerModules.openclaw): nixpkgs' own openclaw stays marked
       # insecure; this overlay supplies the upstream-maintained package the
@@ -123,10 +125,18 @@ in {
                   # 2026-10-14, openclaw precedent) — needs that flake's
                   # overlays.openpets for pkgs.openpets*.
                   inputs.nixconf-private.homeManagerModules.openpets
-                  ../../../home-manager/modules/chatgpt.nix
+                  inputs.nixconf-private.homeManagerModules.chatgpt
+                  # Strata packaging and client launchers live in the private
+                  # input; overlays.strata supplies the backend packages.
+                  inputs.nixconf-private.homeManagerModules.strata
                   # OpenClaw: full module (config, secrets wiring, autostart)
                   # lives in nixconf-private — personal data stays private.
                   inputs.nixconf-private.homeManagerModules.openclaw
+                  # llm-help: interactive picker for the ai-profiles
+                  # Claude Code / pi launchers. Nix owns only the tool; the
+                  # profile table + keys stay plain files under
+                  # ~/.config/ai-profiles (user decision 2026-10-20).
+                  inputs.nixconf-private.homeManagerModules.llm-help
                   ../../../home-manager/modules/hyprland
                 ]
                 ++ lib.optionals useHyprlandFlake [

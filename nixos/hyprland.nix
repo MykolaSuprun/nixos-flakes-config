@@ -38,6 +38,7 @@ in {
         # on the dGPU. The wrapper sources the shared render-GPU picker
         # (~/.config/hypr/render-gpu-env.sh, HM-managed) which sets
         # AQ_DRM_DEVICES iGPU-first (default) or dGPU-first (user switch).
+        # Source cursor preferences here too, before the compositor initializes.
         package = let
           hypr-wrapped = pkgs.symlinkJoin {
             name = "hyprland-render-gpu-wrapped";
@@ -47,7 +48,8 @@ in {
             postBuild = ''
               mv $out/bin/start-hyprland $out/bin/.start-hyprland-unwrapped
               makeWrapper $out/bin/.start-hyprland-unwrapped $out/bin/start-hyprland \
-                --run '[ -f "$HOME/.config/hypr/render-gpu-env.sh" ] && . "$HOME/.config/hypr/render-gpu-env.sh" || true'
+                --run '[ -f "$HOME/.config/hypr/render-gpu-env.sh" ] && . "$HOME/.config/hypr/render-gpu-env.sh" || true' \
+                --run '[ -f "$HOME/.config/hypr/cursor-env.sh" ] && . "$HOME/.config/hypr/cursor-env.sh" || true'
             '';
           };
           # The nixpkgs hyprland module introspects `override` (genFinalPackage)
@@ -77,5 +79,13 @@ in {
     services = {
       dbus.implementation = "broker";
     };
+
+    # KDED 6 still reads kded5rc. Home Manager owns GTK settings in both
+    # desktop sessions; KDE's bridge otherwise restores Breeze cursors.
+    # A system default preserves unrelated entries in the user's kded5rc.
+    environment.etc."xdg/kded5rc".text = ''
+      [Module-gtkconfig][$i]
+      autoload=false
+    '';
   };
 }
