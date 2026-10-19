@@ -80,6 +80,11 @@ in {
     enable = true;
     plugins = [
       inputs.herdr-vimnav.packages.${pkgs.stdenv.hostPlatform.system}.default
+      # Curated upstream plugins (take over the old `herdr plugin install`
+      # entries on the next rebuild; delete the orphaned
+      # ~/.config/herdr/plugins/github/{simple-switcher,yoshiori}* dirs after).
+      inputs.nix-herdr-manager.packages.${pkgs.stdenv.hostPlatform.system}.herdr-simple-switcher
+      inputs.nix-herdr-manager.packages.${pkgs.stdenv.hostPlatform.system}.herdr-configurable-picker
     ];
   };
 
