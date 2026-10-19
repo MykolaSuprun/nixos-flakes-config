@@ -22,7 +22,7 @@
       # Build with nh (flake keys come with --accept-flake-config; substituter
       # list single-sourced in cache.nix (repo root)
       # Extra `nix build` args can be injected via NIXOS_BUILD_EXTRA_ARGS, e.g.
-      # an unpushed flake input that the lock cannot resolve yet:
+      # to test an unpushed flake input against the locked one:
       #   NIXOS_BUILD_EXTRA_ARGS="--override-input herdr-vimnav path:../herdr-preview-grid" nixos-build
       # (empty by default, so other hosts and normal builds are unaffected)
       nh os switch -- \

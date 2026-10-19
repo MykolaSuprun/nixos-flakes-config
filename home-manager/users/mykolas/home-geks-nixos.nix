@@ -78,6 +78,11 @@ in {
   # the plugin flake ships passthru.herdrPluginId.
   programs.herdr-hpm = {
     enable = true;
+    # Version guard: the plugin manifest declares min_herdr_version; the module
+    # asserts it against programs.herdr.package.version at EVAL time. Read from
+    # the flake INPUT SOURCE tree (already realized during resolution — not
+    # IFD; a store path built from the package would be).
+    manifestChecks = [ "${inputs.herdr-vimnav}/herdr-plugin.toml" ];
     plugins = [
       inputs.herdr-vimnav.packages.${pkgs.stdenv.hostPlatform.system}.default
       # Curated upstream plugins (take over the old `herdr plugin install`

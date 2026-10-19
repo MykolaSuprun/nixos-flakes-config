@@ -136,13 +136,17 @@
     # plugin registry declaratively: it links plugin store paths at activation
     # and prunes store links that are no longer declared. GitLab is the source
     # of truth for both repos (the GitHub mirror lags a few minutes).
+    # Both flakes declare home-manager for their own checks — follow nixconf's
+    # so a single HM instance is locked (no duplicate checkout).
     nix-herdr-manager = {
       url = "gitlab:mykolas-open/nix-herdr-manager";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
     herdr-vimnav = {
       url = "gitlab:mykolas-open/herdr-vimnav";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
 
     # Disk partitioning

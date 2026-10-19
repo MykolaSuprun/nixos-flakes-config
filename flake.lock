@@ -729,6 +729,29 @@
         "type": "github"
       }
     },
+    "herdr-vimnav": {
+      "inputs": {
+        "home-manager": [
+          "home-manager"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792376087,
+        "narHash": "sha256-9nkMh9E/v1v14QNvFC2TYY2n6eG3pFEL4xyem1Kir9w=",
+        "owner": "mykolas-open",
+        "repo": "herdr-vimnav",
+        "rev": "371ab1d9bb61c6a8cb2c3c1863b8f82291151f92",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "mykolas-open",
+        "repo": "herdr-vimnav",
+        "type": "gitlab"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -1230,6 +1253,29 @@
       "original": {
         "type": "tarball",
         "url": "https://flakehub.com/f/DeterminateSystems/nix-src/%2A"
+      }
+    },
+    "nix-herdr-manager": {
+      "inputs": {
+        "home-manager": [
+          "home-manager"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792380765,
+        "narHash": "sha256-lsCs03Bex6kMV/9Ng6FnDkGM7o8uYw5nDaRTMOcV8Ok=",
+        "owner": "mykolas-open",
+        "repo": "nix-herdr-manager",
+        "rev": "d59de4f46620c8da19a87b1f7518beba4bc657db",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "mykolas-open",
+        "repo": "nix-herdr-manager",
+        "type": "gitlab"
       }
     },
     "nix-openclaw": {
@@ -1834,12 +1880,14 @@
         "dms-plugin-registry": "dms-plugin-registry",
         "flake-env": "flake-env",
         "flake-parts": "flake-parts_3",
+        "herdr-vimnav": "herdr-vimnav",
         "home-manager": "home-manager",
         "hyprland": "hyprland",
         "hyprland-plugins": "hyprland-plugins",
         "import-tree": "import-tree",
         "impurity": "impurity",
         "my-nixvim": "my-nixvim",
+        "nix-herdr-manager": "nix-herdr-manager",
         "nix-openclaw": "nix-openclaw",
         "nixconf-private": "nixconf-private",
         "nixos-wsl": "nixos-wsl",

@@ -53,9 +53,15 @@ scripts/             # Standalone shell scripts
   writable JSON array herdr rewrites on link/enable/install; never generate or
   symlink it from Nix) is managed **declaratively** by the flake input
   `nix-herdr-manager` (GitLab `mykolas-open/nix-herdr-manager`), enabled as
-  `programs.herdr-hpm` in `home-geks-nixos.nix` with one entry:
+  `programs.herdr-hpm` in `home-geks-nixos.nix` with **three entries**:
   `inputs.herdr-vimnav.packages.<system>.default` (the preview-grid plugin,
-  `gitlab:mykolas-open/herdr-vimnav`, GitHub mirror `MykolaSuprun/herdr-vimnav`).
+  `gitlab:mykolas-open/herdr-vimnav`, GitHub mirror `MykolaSuprun/herdr-vimnav`)
+  plus the manager's two curated upstream packages
+  `herdr-simple-switcher` (bash) and `herdr-configurable-picker` (Rust) — all
+  three are bare-package entries keyed by `passthru.herdrPluginId`. The two
+  curated packages replace plugins that used to be `herdr plugin install`ed
+  (the old install-managed dirs under `plugins/github/` are orphans to delete
+  once the first Nix-managed rebuild lands).
 
   At HM activation (after `linkGeneration`) the manager runs
   `herdr plugin link <store>/share/herdr/plugins/<id> --enabled` for every
