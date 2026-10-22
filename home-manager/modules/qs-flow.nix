@@ -18,7 +18,7 @@
     programs.qs-flow = {
       enable = true;
 
-      # The module cannot resolve the flake input itself — pass the package.
+      # Select the consumer’s locked package explicitly; the flake export also supplies a default.
       package = inputs.qs-flow.packages.${pkgs.stdenv.hostPlatform.system}.qs-flow;
 
       autostart = {
@@ -84,7 +84,10 @@
       };
     };
 
-    # Only run inside a Hyprland session (same guard style as dms/noctalia).
-    systemd.user.services.qs-flow.Unit.ConditionEnvironment = "XDG_CURRENT_DESKTOP=Hyprland";
+    # Keep the module’s Wayland readiness guard alongside the host session guard.
+    systemd.user.services.qs-flow.Unit.ConditionEnvironment = lib.mkForce [
+      "WAYLAND_DISPLAY"
+      "XDG_CURRENT_DESKTOP=Hyprland"
+    ];
   };
 }
