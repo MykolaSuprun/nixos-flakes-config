@@ -83,6 +83,8 @@ hl.config({
 -- Layer rules
 hl.layer_rule({ match = { namespace = "selection" }, no_anim = true })
 hl.layer_rule({ match = { namespace = "hyprpicker" }, no_anim = true })
+-- The palette owns its in-place reveal; a layer slide would move the whole surface.
+hl.layer_rule({ match = { namespace = "^qs-flow-command-palette$" }, no_anim = true })
 
 -- Bezier curves
 hl.curve("windowIn", { type = "bezier", points = { { 0.06, 0.71 }, { 0.25, 1 } } })
