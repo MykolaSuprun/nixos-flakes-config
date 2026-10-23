@@ -495,7 +495,8 @@ hl.bind(mod .. " + 0", hl.dsp.focus({ workspace = 10 }), { description = "Switch
 hl.bind(mod .. " + SHIFT + 0", hl.dsp.window.move({ workspace = 10 }), { description = "Move window to workspace 10" })
 
 -- Launchers
-hl.bind("ALT + SPACE", hl.dsp.exec_cmd(menu), { description = "Open application launcher" })
+hl.bind("ALT + SPACE", hl.dsp.exec_cmd("qs-flow-open commandPalette"), { description = "Open qs-flow command palette" })
+hl.bind("ALT + SHIFT + SPACE", hl.dsp.exec_cmd(menu), { description = "Open Rofi application launcher" })
 hl.bind(mod .. " + CTRL + SPACE", hl.dsp.exec_cmd("hyprlauncher"), { description = "Open Hypr launcher" })
 hl.bind(
 	mod .. " + CTRL + T",
