@@ -30,6 +30,8 @@
     opencode.enable = true;
   };
 
+  services.ai-gateway.enable = true;
+
   programs.noctalia.enable = true; # v5 Noctalia shell (built-in default settings)
 
   hyprconf = {

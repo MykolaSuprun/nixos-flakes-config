@@ -77,6 +77,8 @@ in {
   # Noctalia off — no desktop shell runs by default right now (custom qs
   # shell in progress). Noctalia input + greeter stay for easy rollback;
   # noctalia-greeter still owns the login screen.
+  services.ai-gateway.enable = true;
+
   programs.noctalia.enable = false;
 
   # herdr plugins — declarative via nix-herdr-manager (programs.herdr-hpm):

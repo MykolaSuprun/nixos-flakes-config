@@ -155,6 +155,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    ai-gateway = {
+      url = "git+ssh://git@gitlab.com/nix-private/ai-gateway.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nixconf-private = {
       url = "git+ssh://git@gitlab.com/nix-private/nixconf-private.git";
       inputs.nixpkgs.follows = "nixpkgs";

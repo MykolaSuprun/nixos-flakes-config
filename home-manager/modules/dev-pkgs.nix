@@ -280,6 +280,7 @@
       exercism
       netcat
       zip
+      bubblewrap
 
       # python
       uv

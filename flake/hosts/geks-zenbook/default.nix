@@ -69,6 +69,7 @@ in {
                   inputs.zen-browser.homeModules.beta
                   inputs.caelestia-shell.homeManagerModules.default
                   inputs.qs-flow.homeManagerModules.default
+                  inputs.ai-gateway.homeManagerModules.default
                   ../../../home-manager/users/mykolas/home-zenbook.nix
                   # HM feature modules (all gated by myconf.*.enable flags)
                   ../../../home-manager/modules/caelestia.nix

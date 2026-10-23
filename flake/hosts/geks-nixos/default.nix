@@ -91,6 +91,7 @@ in {
                   inputs.dms-plugin-registry.nixosModules.default
                   inputs.caelestia-shell.homeManagerModules.default
                   inputs.qs-flow.homeManagerModules.default
+                  inputs.ai-gateway.homeManagerModules.default
                   inputs.nix-herdr-manager.homeManagerModules.default
 
                   ../../../home-manager/users/mykolas/home-geks-nixos.nix
