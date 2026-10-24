@@ -8,11 +8,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792845043,
-        "narHash": "sha256-AXy5rheS3okCEJoTg8tDUUReqIv4MteEQ0Eu0ofW/jY=",
+        "lastModified": 1792867992,
+        "narHash": "sha256-Ib3jPHqQviFDeRkd6yJSYgf7btFlP7yjzsjD5RQmzjI=",
         "ref": "refs/heads/main",
-        "rev": "38336bcf2562700b68bedbe4acae4823e450a2d8",
-        "revCount": 89,
+        "rev": "ea00353ddb371db305d9c45f3f45e59f29bbe5cc",
+        "revCount": 90,
         "type": "git",
         "url": "ssh://git@gitlab.com/nix-private/ai-gateway.git"
       },
