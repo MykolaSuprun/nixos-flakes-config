@@ -222,12 +222,12 @@ hl.bind(
 -- Capture choices live in the qs-flow app; opening never takes a screenshot.
 hl.bind(
 	mod .. " + CTRL + SHIFT + P",
-	hl.dsp.exec_cmd("uwsm app -s a -- qs-flow-open screenCapture"),
+	hl.dsp.exec_cmd("qs-flow-open screenCapture"),
 	{ description = "Open screen capture" }
 )
 hl.bind(
 	"Print",
-	hl.dsp.exec_cmd("uwsm app -s a -- qs-flow-open screenCapture"),
+	hl.dsp.exec_cmd("qs-flow-open screenCapture"),
 	{ description = "Open screen capture" }
 )
 
