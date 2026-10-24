@@ -198,7 +198,7 @@ description = "goto picker (tree)"
 [[keys.command]]
 key = "prefix+f"
 type = "popup"
-command = "herdr-preview-grid jump || /home/mykolas/workspaces/src/herdr-preview-grid/bin/herdr-preview-grid jump"
+command = "/home/mykolas/workspaces/src/herdr-preview-grid/bin/herdr-preview-grid jump"
 width = 46
 height = 12
 description = "jump to code"
@@ -212,10 +212,14 @@ description = "jump to code"
 [[keys.command]]
 key = "ctrl+shift+e"
 type = "popup"
-command = "herdr-preview-grid jump || /home/mykolas/workspaces/src/herdr-preview-grid/bin/herdr-preview-grid jump"
+command = "/home/mykolas/workspaces/src/herdr-preview-grid/bin/herdr-preview-grid jump"
 width = 46
 height = 12
 description = "jump to code (shift+prefix)"
+
+# NOTE: opening the jump popup reveals the tab-bar jump codes; firing any
+# code hides them again. No separate toggle chord — the jump chord IS the
+# trigger. (prefix+ctrl+e is not bindable: herdr disables prefix+<prefix>.)
 
 [terminal]
 # Follow the focused pane's working directory for new panes/tabs,

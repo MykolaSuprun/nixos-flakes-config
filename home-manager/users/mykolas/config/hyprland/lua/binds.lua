@@ -219,37 +219,17 @@ hl.bind(
 -- hl.bind(mod .. " + SHIFT + K", hl.dsp.window.move({ direction = "u" }), { description = "Move window up" })
 -- hl.bind(mod .. " + SHIFT + L", hl.dsp.layout("swapcol r"), { description = "Swap column right" })
 
--- Screenshot submap
-hl.bind(mod .. " + CTRL + SHIFT + P", hl.dsp.submap("screenshot"), { description = "Enter screenshot mode" })
-hl.bind("Print", hl.dsp.submap("screenshot"), { description = "Enter screenshot mode" })
-
-hl.define_submap("screenshot", function()
-	hl.bind("S", hl.dsp.exec_cmd("grimblast -t png copysave area"), { description = "[Screenshot] Copy/save area" })
-	hl.bind("E", hl.dsp.exec_cmd("grimblast -t png edit area"), { description = "[Screenshot] Edit area" })
-	hl.bind(
-		"A",
-		hl.dsp.exec_cmd("grimblast -t png copysave active"),
-		{ description = "[Screenshot] Copy/save active window" }
-	)
-	-- With delay
-	hl.bind(
-		mod .. " + S",
-		hl.dsp.exec_cmd("sleep 3 && grimblast -t png copysave area"),
-		{ description = "[Screenshot] Copy/save area (3s delay)" }
-	)
-	hl.bind(
-		mod .. " + E",
-		hl.dsp.exec_cmd("sleep 3 && grimblast -t png edit area"),
-		{ description = "[Screenshot] Edit area (3s delay)" }
-	)
-	hl.bind(
-		mod .. " + A",
-		hl.dsp.exec_cmd("grimblast -t png copysave active"),
-		{ description = "[Screenshot] Copy/save active (3s delay)" }
-	)
-	hl.bind("catchall", hl.dsp.submap("reset"))
-	hl.bind("escape", hl.dsp.submap("reset"), { description = "[Screenshot] Exit screenshot mode" })
-end)
+-- Capture choices live in the qs-flow app; opening never takes a screenshot.
+hl.bind(
+	mod .. " + CTRL + SHIFT + P",
+	hl.dsp.exec_cmd("uwsm app -s a -- qs-flow-open screenCapture"),
+	{ description = "Open screen capture" }
+)
+hl.bind(
+	"Print",
+	hl.dsp.exec_cmd("uwsm app -s a -- qs-flow-open screenCapture"),
+	{ description = "Open screen capture" }
+)
 
 -- Resize submap
 hl.bind(mod .. " + R", hl.dsp.submap("resize"), { description = "Enter resize mode" })
