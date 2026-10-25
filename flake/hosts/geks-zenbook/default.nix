@@ -70,6 +70,7 @@ in {
                   inputs.caelestia-shell.homeManagerModules.default
                   inputs.qs-flow.homeManagerModules.default
                   inputs.ai-gateway.homeManagerModules.default
+                  inputs.nix-herdr-manager.homeManagerModules.default
                   ../../../home-manager/users/mykolas/home-zenbook.nix
                   # HM feature modules (all gated by myconf.*.enable flags)
                   ../../../home-manager/modules/caelestia.nix
@@ -85,6 +86,7 @@ in {
                   ../../../home-manager/modules/git.nix
                   ../../../home-manager/modules/ghostty.nix
                   ../../../home-manager/modules/helix.nix
+                  ../../../home-manager/modules/herdr.nix
                   ../../../home-manager/modules/kitty.nix
                   ../../../home-manager/modules/rofi.nix
                   ../../../home-manager/modules/shell.nix

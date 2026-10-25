@@ -28,11 +28,25 @@
     rofi.enable = true;
     fcitx5.enable = true;
     opencode.enable = true;
+    herdr.enable = true;
   };
 
   services.ai-gateway.enable = true;
 
   programs.noctalia.enable = true; # v5 Noctalia shell (built-in default settings)
+
+  # herdr plugins — declarative via nix-herdr-manager (programs.herdr-hpm),
+  # same setup as geks-nixos: plugin store paths are linked into herdr's
+  # registry at activation and undeclared store links are pruned. The bare
+  # package entry works because the plugin flake ships
+  # passthru.herdrPluginId.
+  programs.herdr-hpm = {
+    enable = true;
+    manifestChecks = [ "${inputs.herdr-vimnav}/herdr-plugin.toml" ];
+    plugins = [
+      inputs.herdr-vimnav.packages.${pkgs.stdenv.hostPlatform.system}.default
+    ];
+  };
 
   hyprconf = {
     target = "geks-zenbook";
