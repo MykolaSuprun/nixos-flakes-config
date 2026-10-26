@@ -778,11 +778,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792898082,
-        "narHash": "sha256-95px9e3iXEQV2lffmm7PKlVieorxKMfX+7dcZQ8EzpM=",
+        "lastModified": 1793042050,
+        "narHash": "sha256-rRrWAS/b3ftsYe0r5IcMujmuWp3Px5jpK4k4pUrAlRo=",
         "owner": "mykolas-open",
         "repo": "herdr-vimnav",
-        "rev": "0e69aef840b82253c5b2cd14f66108f37493d02d",
+        "rev": "ae9c473c1d0b30f7e8090a10649f6022a3cc6f0c",
         "type": "gitlab"
       },
       "original": {
