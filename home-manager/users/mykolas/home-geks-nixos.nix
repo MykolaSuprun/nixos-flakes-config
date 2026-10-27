@@ -77,6 +77,7 @@ in {
   # shell in progress). Noctalia input + greeter stay for easy rollback;
   # noctalia-greeter still owns the login screen.
   services.ai-gateway.enable = true;
+  programs.aidev.enable = true;
 
   programs.noctalia.enable = false;
 

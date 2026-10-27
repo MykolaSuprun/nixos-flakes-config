@@ -31,6 +31,7 @@
   };
 
   services.ai-gateway.enable = true;
+  programs.aidev.enable = true;
 
   programs.noctalia.enable = true; # v5 Noctalia shell (built-in default settings)
 

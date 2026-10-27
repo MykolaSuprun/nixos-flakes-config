@@ -8,11 +8,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792986075,
-        "narHash": "sha256-1pjPCFq95AD9hPx2WHyDxmiJSfXBNQxijnrVKRyjAUM=",
+        "lastModified": 1793093100,
+        "narHash": "sha256-ZXA2aqGPbrb+suWqah2bFbFDYDGcT6jRbTCopAkuLYM=",
         "ref": "refs/heads/main",
-        "rev": "b695416f45b2f57ae6b91e154dc12e0a67c2a981",
-        "revCount": 101,
+        "rev": "cf6f70353f8dac66adbf002ce80be154a1fb8206",
+        "revCount": 111,
         "type": "git",
         "url": "ssh://git@gitlab.com/nix-private/ai-gateway.git"
       },
@@ -1394,11 +1394,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1793091021,
-        "narHash": "sha256-7TwgbRx4vhMZ6u3W9mKKpEdai3R9kt0YPIk9vrAkNHY=",
+        "lastModified": 1793092611,
+        "narHash": "sha256-WONSdy7Hp5JO005/e+fCRvinq6kON+uLsXvpxJwbjtY=",
         "ref": "refs/heads/main",
-        "rev": "fee74b3d46ea7d7d5e4ba30b38804913a434b53c",
-        "revCount": 47,
+        "rev": "269306d3fb09eba183fe603eeb473cd183cfdbde",
+        "revCount": 48,
         "type": "git",
         "url": "ssh://git@gitlab.com/nix-private/nixconf-private.git"
       },
