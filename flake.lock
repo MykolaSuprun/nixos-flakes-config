@@ -1394,11 +1394,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1793073995,
-        "narHash": "sha256-uxP5JsyvyX+hwE3DDoPu84WruxILYnoH+7tIe3K0x7c=",
+        "lastModified": 1793091021,
+        "narHash": "sha256-7TwgbRx4vhMZ6u3W9mKKpEdai3R9kt0YPIk9vrAkNHY=",
         "ref": "refs/heads/main",
-        "rev": "2b40286fe2a119270a0baae0d68f037143d5e295",
-        "revCount": 44,
+        "rev": "fee74b3d46ea7d7d5e4ba30b38804913a434b53c",
+        "revCount": 47,
         "type": "git",
         "url": "ssh://git@gitlab.com/nix-private/nixconf-private.git"
       },
@@ -1912,11 +1912,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792918148,
-        "narHash": "sha256-UHd5ZqMqDZjCLApF7s4kTN6xdfqHJEjbT3Lhq2kstfQ=",
+        "lastModified": 1793090693,
+        "narHash": "sha256-Mpa0Yhg7Xq47HR4iIPqOHEALGDM0h9vTRlF+VgT6NKM=",
         "ref": "refs/heads/main",
-        "rev": "052de922d6b0d308665f2fc4a4bbdc5b6340d339",
-        "revCount": 121,
+        "rev": "d6d407d2ef726be5e8d74bef912fcd000c04de6e",
+        "revCount": 122,
         "type": "git",
         "url": "ssh://git@gitlab.com/nix-private/qs-flow.git"
       },
