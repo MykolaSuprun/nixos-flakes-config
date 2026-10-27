@@ -19,7 +19,6 @@
     chromium.enable = true;
     catppuccin.enable = true;
     catppuccin.flavor = lib.mkDefault "mocha";
-    llm-help.enable = true; # ai-profiles picker (cc-*/pi-* launchers)
     ghostty.enable = true;
     kitty.enable = true;
     helix.enable = true;
@@ -42,7 +41,7 @@
   # passthru.herdrPluginId.
   programs.herdr-hpm = {
     enable = true;
-    manifestChecks = [ "${inputs.herdr-vimnav}/herdr-plugin.toml" ];
+    manifestChecks = ["${inputs.herdr-vimnav}/herdr-plugin.toml"];
     plugins = [
       inputs.herdr-vimnav.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];

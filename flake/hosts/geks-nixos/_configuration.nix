@@ -25,6 +25,10 @@ in {
     desktop.enable = true;
     secrets.enable = true;
     ollama.enable = true;
+    # Fingerprint reader (FeinTech FPS00201) via the pinned elanpress
+    # libfprint fork — the module, package pin and sudo PAM wiring all
+    # live in nixconf-private (fingerprint-elanpress).
+    fingerprint-elanpress.enable = true;
     moshi-hook.enable = true;
     # Lian Li HydroShift LCD 360R (HSLCD36RW) + UNI FAN SL V2 hub: fan curves,
     # pump, ARGB, 480x480 LCD streaming via lian-li-linux (udev + user daemon).
@@ -344,13 +348,9 @@ in {
 
     flatpak.enable = true;
 
-    # fprintd = {
-    #   enable = true;
-    #   tod = {
-    #     enable = true;
-    #     driver = pkgs.libfprint-2-tod1-elan;
-    #   };
-    # };
+    # fprintd/fingerprint setup moved to nixconf-private
+    # (nixosModules.fingerprint-elanpress) — hardware-specific details
+    # stay out of the public repo.
     udev = {
       packages = [pkgs-stable.bazecor pkgs.bazecor];
       extraRules = ''
@@ -370,12 +370,11 @@ in {
   security = {
     pam = {
       services = {
-        swaylock = {
-          # fprintAuth = true;
-        };
-        hyprlock = {
-          # fprintAuth = true;
-        };
+        # Fingerprint PAM wiring lives in nixconf-private
+        # (fingerprint-elanpress): sudo accepts the enrolled print via
+        # pam_fprintd (sufficient — password falls through). Lock
+        # screens / login can follow once the print proves itself in
+        # daily use.
         # Auto-unlock KWallet at login so ProtonVPN (and other Secret Service
         # clients under Hyprland) retrieve credentials without an extra prompt.
         # Requires login password == kdewallet password. pam_kwallet_init,
@@ -385,9 +384,6 @@ in {
           enable = true;
           package = pkgs.kdePackages.kwallet-pam;
         };
-        # login.fprintAuth = true;
-        # sudo.fprintAuth = true;
-        # greetd.fprintAuth = true; # Enforces fingerprint fallback at the DM stage
       };
     };
     polkit.enable = true;

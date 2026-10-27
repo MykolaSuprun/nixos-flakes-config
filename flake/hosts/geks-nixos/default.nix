@@ -15,19 +15,21 @@
     # overlays/opencode.nix supplies pkgs.opencode (V2 from the npm prebuilt,
     # shadowing nixpkgs' broken V1 build); the former nixpkgs-opencode-pin
     # pin overlay was retired together with V1 on 2026-09-29.
-    overlays = import ../../../overlays ++ [
-      inputs.nixconf-private.overlays.lmstudio
-      # OpenPets packages (desktop AppImage repack, MCP bridge, wayland
-      # helper, opencode V2 plugin) — moved to nixconf-private 2026-10-14.
-      inputs.nixconf-private.overlays.openpets
-      inputs.nixconf-private.overlays.chatgpt
-      inputs.nixconf-private.overlays.strata
-      # First-party OpenClaw (HM module lives in nixconf-private:
-      # homeManagerModules.openclaw): nixpkgs' own openclaw stays marked
-      # insecure; this overlay supplies the upstream-maintained package the
-      # HM module consumes.
-      inputs.nix-openclaw.overlays.default
-    ];
+    overlays =
+      import ../../../overlays
+      ++ [
+        inputs.nixconf-private.overlays.lmstudio
+        # OpenPets packages (desktop AppImage repack, MCP bridge, wayland
+        # helper, opencode V2 plugin) — moved to nixconf-private 2026-10-14.
+        inputs.nixconf-private.overlays.openpets
+        inputs.nixconf-private.overlays.chatgpt
+        inputs.nixconf-private.overlays.strata
+        # First-party OpenClaw (HM module lives in nixconf-private:
+        # homeManagerModules.openclaw): nixpkgs' own openclaw stays marked
+        # insecure; this overlay supplies the upstream-maintained package the
+        # HM module consumes.
+        inputs.nix-openclaw.overlays.default
+      ];
   };
   pkgs-stable = import inputs.nixpkgs-stable {
     inherit system;
@@ -74,6 +76,11 @@ in {
         # Rebuild as the user with --use-remote-sudo.
         inputs.nixconf-private.nixosModules.llm
         inputs.nixconf-private.nixosModules.comfyui
+        # FeinTech FPS00201 press fingerprint reader + fprintd + sudo
+        # PAM (pinned elanpress libfprint fork). All fingerprint details
+        # live in the private module; this host only imports it and sets
+        # the enable flag in _configuration.nix.
+        inputs.nixconf-private.nixosModules.fingerprint-elanpress
         ../../../nixos/moshi-hook.nix
         ../../../nixos/specialisations.nix
         inputs.home-manager.nixosModules.home-manager
@@ -133,11 +140,6 @@ in {
                   # OpenClaw: full module (config, secrets wiring, autostart)
                   # lives in nixconf-private — personal data stays private.
                   inputs.nixconf-private.homeManagerModules.openclaw
-                  # llm-help: interactive picker for the ai-profiles
-                  # Claude Code / pi launchers. Nix owns only the tool; the
-                  # profile table + keys stay plain files under
-                  # ~/.config/ai-profiles (user decision 2026-10-20).
-                  inputs.nixconf-private.homeManagerModules.llm-help
                   ../../../home-manager/modules/hyprland
                 ]
                 ++ lib.optionals useHyprlandFlake [

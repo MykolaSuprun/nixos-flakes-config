@@ -48,7 +48,6 @@ in {
     desktop.enable = true;
     chromium.enable = true;
     dms.enable = false; # Noctalia is now the default desktop shell on geks-nixos
-    llm-help.enable = true; # ai-profiles picker (cc-*/pi-* launchers)
     caelestia.enable = false; # Caelestia shell disabled — replaced by custom qs shell (qs-flow); swaylock owns locking
     qs-flow.enable = true; # vendored-minflair quickshell shell: HM install, session autostart, immutable base settings, qs-flow-first lock
     catppuccin.enable = true;
@@ -91,7 +90,7 @@ in {
     # asserts it against programs.herdr.package.version at EVAL time. Read from
     # the flake INPUT SOURCE tree (already realized during resolution — not
     # IFD; a store path built from the package would be).
-    manifestChecks = [ "${inputs.herdr-vimnav}/herdr-plugin.toml" ];
+    manifestChecks = ["${inputs.herdr-vimnav}/herdr-plugin.toml"];
     plugins = [
       inputs.herdr-vimnav.packages.${pkgs.stdenv.hostPlatform.system}.default
       # Curated upstream plugins (take over the old `herdr plugin install`
@@ -102,7 +101,7 @@ in {
     ];
   };
 
-    hyprconf = {
+  hyprconf = {
     target = "geks-nixos";
     noctalia.enable = false;
     waybar = {
@@ -153,10 +152,10 @@ in {
         "image/avif" = ["org.kde.gwenview.desktop"];
         "image/svg+xml" = ["org.kde.gwenview.desktop"];
         "image/tiff" = ["org.kde.gwenview.desktop"];
-                "application/pdf" = ["org.kde.okular.desktop"];
-                "application/oxps" = ["org.kde.okular.desktop"];
-                "application/x-pdf" = ["org.kde.okular.desktop"];
-                "application/epub+zip" = ["org.kde.okular.desktop"];
+        "application/pdf" = ["org.kde.okular.desktop"];
+        "application/oxps" = ["org.kde.okular.desktop"];
+        "application/x-pdf" = ["org.kde.okular.desktop"];
+        "application/epub+zip" = ["org.kde.okular.desktop"];
       };
     };
     desktopEntries.steam = {
