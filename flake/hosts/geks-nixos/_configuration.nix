@@ -296,8 +296,10 @@ in {
       freeSwapKillThreshold = 100;
       # Kill the model runners first; never the compositor or shell.
       extraArgs = [
-        "--prefer" "^(strata|strata-vision-h|comfyui|llama-server|ollama|python3?)$"
-        "--avoid" "^(\\.Hyprland-wrapp|Xwayland|\\.quickshell-wra|systemd|sshd|greetd|uwsm)$"
+        "--prefer"
+        "^(strata|strata-vision-h|comfyui|llama-server|ollama|python3?)$"
+        "--avoid"
+        "^(\\.Hyprland-wrapp|Xwayland|\\.quickshell-wra|systemd|sshd|greetd|uwsm)$"
       ];
     };
     tuned.enable = true;
@@ -423,6 +425,7 @@ in {
         "plugdev"
         "gamemode"
         "input"
+        "dialout"
       ];
       # Keep user services (rootless containers etc.) running after logout —
       # without linger podman user services stop when the user logs out.
