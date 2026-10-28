@@ -1394,11 +1394,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1793092611,
-        "narHash": "sha256-WONSdy7Hp5JO005/e+fCRvinq6kON+uLsXvpxJwbjtY=",
+        "lastModified": 1793200425,
+        "narHash": "sha256-Qrjg7DPiVee+qHvz4yliaDagsZ/8Y/RZJM+H96rqn7k=",
         "ref": "refs/heads/main",
-        "rev": "269306d3fb09eba183fe603eeb473cd183cfdbde",
-        "revCount": 48,
+        "rev": "715b4402f260311a75da0cb7f1137956e4577343",
+        "revCount": 53,
         "type": "git",
         "url": "ssh://git@gitlab.com/nix-private/nixconf-private.git"
       },

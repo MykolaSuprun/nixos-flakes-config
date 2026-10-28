@@ -24,6 +24,13 @@
         inputs.nixconf-private.overlays.openpets
         inputs.nixconf-private.overlays.chatgpt
         inputs.nixconf-private.overlays.strata
+        # OpenClaw packaging fix (nodejs-24.22.1 prebuilt tarball must be
+        # rewritten with patchelf 0.15.2 — 0.18+ corrupts it). Must come BEFORE
+        # nix-openclaw's overlay: it supplies the repaired pkgs.nodejs_24 that
+        # nix-openclaw's version guard then returns instead of rebuilding its
+        # broken tarball. Packaging detail lives in nixconf-private
+        # (overlays.openclaw) because all OpenClaw-related files live there.
+        inputs.nixconf-private.overlays.openclaw
         # First-party OpenClaw (HM module lives in nixconf-private:
         # homeManagerModules.openclaw): nixpkgs' own openclaw stays marked
         # insecure; this overlay supplies the upstream-maintained package the
