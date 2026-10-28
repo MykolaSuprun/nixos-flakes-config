@@ -13,6 +13,12 @@
 pkgs: let
   # Grouped by role for readability; the wrapper flattens them into one PATH
   # prefix.
+  # Curated against the actual ~/workspaces census (2026-10-28): ts/js, python,
+  # go, nix, c/c++, lua, shell, markdown, dockerfile. Language families with no
+  # project markers or source files here (Rust, Java, Kotlin, Scala, C#, Swift,
+  # Ruby, Haskell, Elixir, PHP, OCaml, Zig, Jsonnet, Terraform) were removed —
+  # the closure cost was concentrated in exactly those (csharpier 753 MiB,
+  # ktlint 636 MiB). Re-add a family only when a real project needs it.
   lsps = [
     pkgs.typescript-language-server
     pkgs.vscode-langservers-extracted # HTML/CSS/JSON
@@ -20,22 +26,12 @@ pkgs: let
     pkgs.lua-language-server
     pkgs.basedpyright
     pkgs.nixd
-    pkgs.rust-analyzer
     pkgs.gopls
     pkgs.bash-language-server
     pkgs.taplo # TOML
     pkgs.marksman # Markdown
     pkgs.clang-tools # C/C++
-    pkgs.terraform-ls
     pkgs.dockerfile-language-server
-    pkgs.zls # Zig
-    pkgs.haskell-language-server
-    pkgs.elixir-ls
-    pkgs.ruby-lsp
-    pkgs.solargraph
-    pkgs.jsonnet-language-server
-    pkgs.kotlin-language-server
-    pkgs.metals # Scala
   ];
 
   formatters = [
@@ -46,19 +42,10 @@ pkgs: let
     pkgs.shfmt # Shell
     pkgs.stylua # Lua
     pkgs.go # gofmt
-    pkgs.rustfmt
     pkgs.dprint
     pkgs.yamlfmt
     pkgs.cmake-format
     pkgs.biome
-    pkgs.fourmolu
-    pkgs.ormolu
-    pkgs.stylish-haskell
-    pkgs.scalafmt
-    pkgs.google-java-format
-    pkgs.ktlint
-    pkgs.csharpier
-    pkgs.ocamlformat
   ];
 
   linters = [
@@ -73,19 +60,9 @@ pkgs: let
     pkgs.deadnix # Nix
     pkgs.markdownlint-cli
     pkgs.actionlint # GitHub Actions
-    pkgs.ansible-lint
-    pkgs.tflint
-    pkgs.sqlfluff
     pkgs.cppcheck
     pkgs.cpplint
     pkgs.flawfinder # C
-    pkgs.phpstan
-    pkgs.rubocop
-    pkgs.hlint # Haskell
-    pkgs.scalafix
-    pkgs.swiftlint
-    pkgs.checkstyle # Java
-    pkgs.pmd # Java
     pkgs.oxlint
     pkgs.stylelint # CSS
     pkgs.htmlhint
@@ -98,11 +75,13 @@ pkgs: let
     pkgs.gitleaks
     pkgs.detect-secrets
     pkgs.trufflehog
-    pkgs.semgrep
+    # semgrep removed 2026-10-28: semgrep-core 1.180.0 is unbuildable on the
+    # pinned nixpkgs (patchelf 0.19.2 aborts in fixupPhase with
+    # `Assertion 'splitIndex == -1' failed` while rewriting the prebuilt wheel
+    # binary) — nixpkgs#579107 / patchelf#583, both still open upstream.
+    # Re-add once nixpkgs ships a fixed semgrep-core.
     pkgs.bandit # Python
     pkgs.pip-audit
-    pkgs.cargo-audit
-    pkgs.cargo-deny
     pkgs.govulncheck
     pkgs.gosec # Go
     pkgs.revive
@@ -110,13 +89,9 @@ pkgs: let
     pkgs.grype
     pkgs.syft # SBOM
     pkgs.osv-scanner
-    pkgs.tfsec
-    pkgs.kube-linter
-    pkgs.kubeconform
     pkgs.conftest
     pkgs.open-policy-agent
     pkgs.nuclei
-    pkgs.brakeman # Rails
   ];
 
   devCli = [
@@ -131,7 +106,8 @@ pkgs: let
     pkgs.glab
     pkgs.git-lfs
     pkgs.fd
-    pkgs.ripgrep
+    # ripgrep omitted deliberately: overlays/opencode.nix already prepends
+    # self.ripgrep to this PATH, so listing it again is a duplicate entry.
     pkgs.bat
     pkgs.eza
     pkgs.delta
@@ -173,22 +149,13 @@ pkgs: let
     pkgs.websocat
     pkgs.xh
     pkgs.httpie
-    pkgs.kubectl
-    pkgs.helm
-    pkgs.k9s
-    pkgs.terraform
-    pkgs.ansible
+    # No Kubernetes manifests, .tf files or database work in ~/workspaces
+    # (census 2026-10-28) → kubectl/helm/k9s, terraform/terraform-ls/tflint/
+    # tfsec, ansible, and the SQL/NoSQL clients were dropped (k9s alone was
+    # 228 MiB, terraform+tfsec+tflint 285 MiB). lazysql/sqlit-tui remain in
+    # home.packages; re-add a client here only when a project needs it.
     pkgs.act
     pkgs.pre-commit
-    pkgs.sqlite-interactive
-    pkgs.duckdb
-    pkgs.pgcli
-    pkgs.mycli
-    pkgs.litecli
-    pkgs.lazysql
-    pkgs.valkey
-    pkgs.mongosh
-    pkgs.jsonnet
     pkgs.cue
     pkgs.dhall
     pkgs.nix-tree
