@@ -3,9 +3,9 @@ final: prev: {
   # Asset naming: moshi-hook_<OS>_<arch>.tar.gz, verified against the published
   # sha256 on first fetch.
   moshi-hook = let
-    version = "0.4.38";
+    version = "0.4.45";
     # Per-arch sha256 (SRI) verified via `nix store prefetch-file` against
-    # https://cdn.getmoshi.app/hook/v0.4.38/moshi-hook_Linux_<arch>.tar.gz
+    # https://cdn.getmoshi.app/hook/v0.4.45/moshi-hook_Linux_<arch>.tar.gz
     # No upstream index exists; the CDN is the only distribution channel.
     # Bumping: resolve the live version from
     #   curl -s https://cdn.getmoshi.app/hook/latest/version.txt
@@ -14,8 +14,8 @@ final: prev: {
     # CDN dropped it and the cached FOD was GC'd, so the pinned URL must be
     # bumped rather than assumed stable.
     hashes = {
-      x86_64 = "sha256-bjtGFmwQ+j2rsARB8YBSeU3B2vyDHCu8oo4RutYNd1M=";
-      arm64 = "sha256-/YAVIthHT8BBRPwdZrpZq8601wJ30lWCU/U9d7hzE8A=";
+      x86_64 = "sha256-I+a/BcxXWl41+Rd6EzbmtC3+n6VtFLQV5FU57i+wOfU=";
+      arm64 = "sha256-mUY9PwlnFocby/oto8GZrDkaXUjKak3k5ejWyfj1im8=";
     };
   in
     prev.stdenv.mkDerivation {
