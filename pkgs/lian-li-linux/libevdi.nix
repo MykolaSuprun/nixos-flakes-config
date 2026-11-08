@@ -30,7 +30,7 @@ stdenv.mkDerivation (finalAttrs: {
     hash = "sha256-tms+UNws+oBmwLvDFaDSIa/bUdSpK+CADodbsip3tRg=";
   };
 
-  buildInputs = [ libdrm ];
+  buildInputs = [libdrm];
 
   # The library has accumulated warnings that are errors with a modern toolchain.
   env.CFLAGS = "-Wno-error";

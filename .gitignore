@@ -11,7 +11,14 @@ task_backlog/
 state/
 
 # Local-only artifacts (credentials/junk — never public):
-home-manager/users/mykolas/config/distrobox/dockerfiles/archlinux/log
+dotfiles/distrobox/dockerfiles/archlinux/log
 
 # Local-only env (vault task dir)
 .envrc
+
+# Temporary compat symlink for live links created before the dotfiles/ move;
+# remove after the next rebuild re-points them.
+/home-manager/
+
+# Generated store-usage reports (scripts/nixos-store-usage.js) — local only.
+/reports/

@@ -1,4 +1,4 @@
-final: prev: {
+_final: prev: {
   # Prebuilt Go binary distributed from the Moshi CDN — no source archive exists.
   # Asset naming: moshi-hook_<OS>_<arch>.tar.gz, verified against the published
   # sha256 on first fetch.
@@ -22,11 +22,23 @@ final: prev: {
       pname = "moshi-hook";
       inherit version;
 
-      arch = if prev.stdenv.hostPlatform.isAarch64 then "arm64" else "x86_64";
+      arch =
+        if prev.stdenv.hostPlatform.isAarch64
+        then "arm64"
+        else "x86_64";
 
       src = prev.fetchurl {
-        url = "https://cdn.getmoshi.app/hook/v${version}/moshi-hook_Linux_${if prev.stdenv.hostPlatform.isAarch64 then "arm64" else "x86_64"}.tar.gz";
-        sha256 = hashes.${if prev.stdenv.hostPlatform.isAarch64 then "arm64" else "x86_64"};
+        url = "https://cdn.getmoshi.app/hook/v${version}/moshi-hook_Linux_${
+          if prev.stdenv.hostPlatform.isAarch64
+          then "arm64"
+          else "x86_64"
+        }.tar.gz";
+        sha256 =
+          hashes.${
+            if prev.stdenv.hostPlatform.isAarch64
+            then "arm64"
+            else "x86_64"
+          };
       };
 
       dontStrip = true; # already stripped upstream Go binary

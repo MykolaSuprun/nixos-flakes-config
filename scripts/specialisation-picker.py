@@ -11,6 +11,8 @@ Data sources:
 
 Actions:
   - switch-to-configuration via /run/current-system/specialisation/<name>/bin/switch-to-configuration
+  - "base" returns to the non-specialised system (needed when running from
+    inside a specialisation, whose own toplevel lists none)
 
 Keys:
   Up/Down or j/k   navigate
@@ -23,11 +25,14 @@ Keys:
 
 import curses
 import os
+import socket
 import subprocess
 import sys
 
+BASE = "base"
 
-def run(cmd, timeout=60):
+
+def run(cmd, timeout=None):
     """Run a command, return (returncode, stdout, stderr)."""
     try:
         p = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
@@ -45,13 +50,9 @@ def get_specialisations():
     for path in candidates:
         try:
             if os.path.isdir(path):
-                entries = [
-                    d
-                    for d in os.listdir(path)
-                    if os.path.isdir(os.path.join(path, d))
-                ]
+                entries = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
                 if entries:
-                    return sorted(entries)
+                    return [BASE, *sorted(entries)]
         except Exception:
             continue
     # Fallback: try to query flake (only works if flake present and Nix available)
@@ -68,7 +69,7 @@ def get_specialisations():
                 [
                     "nix",
                     "eval",
-                    f"{d}#nixosConfigurations.geks-nixos.config.specialisation",
+                    f"{d}#nixosConfigurations.{socket.gethostname()}.config.specialisation",
                     "--apply",
                     "builtins.attrNames",
                     "--json",
@@ -81,7 +82,7 @@ def get_specialisations():
 
                     names = json.loads(out)
                     if isinstance(names, list) and names:
-                        return sorted(names)
+                        return [BASE, *sorted(names)]
                 except Exception:
                     pass
     return []
@@ -105,6 +106,20 @@ def get_current_flavor():
     return ""
 
 
+def authenticate_sudo():
+    """Prompt for the sudo password on the real terminal, outside curses.
+
+    The switch itself runs with captured output; without this, sudo's prompt
+    would be swallowed by the curses screen.
+    """
+    curses.def_prog_mode()
+    curses.endwin()
+    try:
+        subprocess.run(["sudo", "-v"], check=False)
+    finally:
+        curses.reset_prog_mode()
+
+
 def switch_specialisation(name, mode):
     """Switch to specialisation via switch-to-configuration.
 
@@ -112,10 +127,13 @@ def switch_specialisation(name, mode):
     Returns (ok, output).
     """
     # Primary path: current system's switch-to-configuration per specialisation
-    candidates = [
-        f"/run/current-system/specialisation/{name}/bin/switch-to-configuration",
-        f"/nix/var/nix/profiles/system/specialisation/{name}/bin/switch-to-configuration",
-    ]
+    if name == BASE:
+        candidates = ["/nix/var/nix/profiles/system/bin/switch-to-configuration"]
+    else:
+        candidates = [
+            f"/run/current-system/specialisation/{name}/bin/switch-to-configuration",
+            f"/nix/var/nix/profiles/system/specialisation/{name}/bin/switch-to-configuration",
+        ]
     switch_bin = None
     for c in candidates:
         if os.path.isfile(c) and os.access(c, os.X_OK):
@@ -126,19 +144,24 @@ def switch_specialisation(name, mode):
         if os.geteuid() == 0:
             cmd = [switch_bin, mode]
         else:
+            authenticate_sudo()
             cmd = ["sudo", switch_bin, mode]
-        rc, out, err = run(cmd, timeout=120)
+        # No timeout: killing switch-to-configuration midway leaves a
+        # half-activated system.
+        rc, out, err = run(cmd)
         return rc == 0, (out + err).strip() or ("OK" if rc == 0 else "unknown error")
     # Fallback: try nixos-rebuild
     flake_ref = os.environ.get("NH_FLAKE") or os.environ.get(
         "NIXOS_CONF_DIR", os.path.expanduser("~/workspaces/src/nixconf")
     )
     # Prefer NH_FLAKE/NIXOS_CONF_DIR, else use current flake dir
+    spec = [] if name == BASE else ["--specialisation", name]
     if os.geteuid() == 0:
-        cmd = ["nixos-rebuild", mode, "--specialisation", name, "--flake", flake_ref]
+        cmd = ["nixos-rebuild", mode, *spec, "--flake", flake_ref]
     else:
-        cmd = ["sudo", "nixos-rebuild", mode, "--specialisation", name, "--flake", flake_ref]
-    rc, out, err = run(cmd, timeout=300)
+        authenticate_sudo()
+        cmd = ["sudo", "nixos-rebuild", mode, *spec, "--flake", flake_ref]
+    rc, out, err = run(cmd)
     return rc == 0, (out + err).strip() or ("OK" if rc == 0 else "unknown error")
 
 
@@ -288,13 +311,18 @@ def main(stdscr):
                 continue
             if not confirm(stdscr, f"Hot-swap to {name} now?\n(live switch, no reboot)"):
                 continue
-            show_message(stdscr, f"Switching live to {name}...\nThis will restart systemd units.", wait=False)
+            show_message(
+                stdscr,
+                f"Switching live to {name}...\nThis will restart systemd units.",
+                wait=False,
+            )
             ok, out = switch_specialisation(name, "switch")
             if ok:
                 current = name
                 show_message(
                     stdscr,
-                    f"Switched to {name} (live).\n{out[:500]}\n\nYou may need to restart Hyprland\n(uwsm stop; uwsm start) or log out/in.",
+                    f"Switched to {name} (live).\n{out[:500]}\n\n"
+                    "You may need to restart Hyprland\n(uwsm stop; uwsm start) or log out/in.",
                 )
             else:
                 show_message(stdscr, f"Switch to {name} failed:\n{out[:800]}")
@@ -368,7 +396,10 @@ if __name__ == "__main__":
             name = sys.argv[2]
             avail = get_specialisations()
             if name not in avail:
-                print(f"Unknown specialisation '{name}'. Available: {', '.join(avail)}", file=sys.stderr)
+                print(
+                    f"Unknown specialisation '{name}'. Available: {', '.join(avail)}",
+                    file=sys.stderr,
+                )
                 sys.exit(1)
             ok, out = switch_specialisation(name, mode)
             print(out)

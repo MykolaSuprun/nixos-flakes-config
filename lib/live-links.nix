@@ -7,7 +7,7 @@
 #     activationName = "linkWaybarThemes";
 #     nixPath        = ./path/to/source/dir;   # nix path — builtins.readDir at eval time
 #     runtimePath    = "$NIXOS_CONF_DIR/...";  # shell string — actual symlink target at activation time
-#     targetPath     = "~/.config/waybar/themes"; # shell string — link destination ("~/" expands to $HOME)
+#     targetPath     = "~/.config/hypr/lua";      # shell string — link destination ("~/" expands to $HOME)
 #     # filter        = name: true;            # optional: predicate on file names (default: all)
 #     # after         = ["writeBoundary"];     # optional: HM DAG activation ordering
 #     # backup        = false;                 # optional: move a colliding real file aside instead of aborting
@@ -60,16 +60,16 @@ in {
     backup ? false,
     onLink ? "",
   }: let
-    entries = lib.filterAttrs (_name: type:
-      (type == "regular" || type == "symlink") && filter _name
+    entries = lib.filterAttrs (
+      _name: type:
+        (type == "regular" || type == "symlink") && filter _name
     ) (builtins.readDir nixPath);
 
     managedFiles = let
       raw = builtins.attrNames entries;
     in
-      if raw == [ ]
-      then
-        throw "live-links.${activationName}: no files matched in ${toString nixPath} — check nixPath/filter"
+      if raw == []
+      then throw "live-links.${activationName}: no files matched in ${toString nixPath} — check nixPath/filter"
       else if lib.any (f: lib.any (c: lib.elem c badChars) (lib.stringToCharacters f)) raw
       then
         throw "live-links.${activationName}: managed filenames must not contain quotes, backslashes, $ or backticks: ${
@@ -77,7 +77,10 @@ in {
         }"
       else raw;
 
-    backupFlag = if backup then "1" else "0";
+    backupFlag =
+      if backup
+      then "1"
+      else "0";
 
     managedDecl = "declare -A _liveManaged=(" + lib.concatMapStringsSep " " (f: "[${lib.escapeShellArg f}]=1") managedFiles + ")";
 

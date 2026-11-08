@@ -4,5 +4,5 @@
 # (MIT) for upstream v1.1.4 (npm frontend). Exposed as pkgs.lianli-linux,
 # consumed by nixos/lianli.nix (myconf.nixos.lianli.enable).
 final: _prev: {
-  lianli-linux = final.callPackage ../pkgs/lian-li-linux/package.nix { };
+  lianli-linux = final.callPackage ../pkgs/lian-li-linux/package.nix {};
 }

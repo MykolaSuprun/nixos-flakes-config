@@ -1,0 +1,714 @@
+{inputs, ...}: {
+  flake.modules.homeManager.hyprland = {
+    config,
+    osConfig,
+    pkgs,
+    lib,
+    ...
+  }: let
+    liveLinks = import ../../../lib/live-links.nix {inherit lib;};
+
+    hyprSrcPath = "${config.home.sessionVariables.NIXOS_CONF_DIR}/dotfiles/hyprland";
+    hyprTargetPath = "~/.config/hypr";
+    cursor = config.home.pointerCursor;
+    cursorEnvironment = {
+      XCURSOR_THEME = cursor.name;
+      XCURSOR_SIZE = toString cursor.size;
+      HYPRCURSOR_THEME = cursor.name;
+      HYPRCURSOR_SIZE = toString cursor.size;
+    };
+    cursorExports = lib.concatStringsSep "\n" (
+      lib.mapAttrsToList (name: value: "export ${name}=${lib.escapeShellArg value}") cursorEnvironment
+    );
+    cursorMode =
+      if config.hyprconf.hyprland.softwareCursor
+      then "1"
+      else "2";
+
+    # ── Catppuccin palette (all 4 flavors × 26 colors, from catppuccin.com/palette) ──────────
+    catppuccinPalettes = {
+      latte = {
+        rosewater = "dc8a78";
+        flamingo = "dd7878";
+        pink = "ea76cb";
+        mauve = "8839ef";
+        red = "d20f39";
+        maroon = "e64553";
+        peach = "fe640b";
+        yellow = "df8e1d";
+        green = "40a02b";
+        teal = "179299";
+        sky = "04a5e5";
+        sapphire = "209fb5";
+        blue = "1e66f5";
+        lavender = "7287fd";
+        text = "4c4f69";
+        subtext1 = "5c5f77";
+        subtext0 = "6c6f85";
+        overlay2 = "7c7f93";
+        overlay1 = "8c8fa1";
+        overlay0 = "9ca0b0";
+        surface2 = "acb0be";
+        surface1 = "bcc0cc";
+        surface0 = "ccd0da";
+        base = "eff1f5";
+        mantle = "e6e9ef";
+        crust = "dce0e8";
+      };
+      frappe = {
+        rosewater = "f2d5cf";
+        flamingo = "eebebe";
+        pink = "f4b8e4";
+        mauve = "ca9ee6";
+        red = "e78284";
+        maroon = "ea999c";
+        peach = "ef9f76";
+        yellow = "e5c890";
+        green = "a6d189";
+        teal = "81c8be";
+        sky = "99d1db";
+        sapphire = "85c1dc";
+        blue = "8caaee";
+        lavender = "babbf1";
+        text = "c6d0f5";
+        subtext1 = "b5bfe2";
+        subtext0 = "a5adce";
+        overlay2 = "949cbb";
+        overlay1 = "838ba7";
+        overlay0 = "737994";
+        surface2 = "626880";
+        surface1 = "51576d";
+        surface0 = "414559";
+        base = "303446";
+        mantle = "292c3c";
+        crust = "232634";
+      };
+      macchiato = {
+        rosewater = "f4dbd6";
+        flamingo = "f0c6c6";
+        pink = "f5bde6";
+        mauve = "c6a0f6";
+        red = "ed8796";
+        maroon = "ee99a0";
+        peach = "f5a97f";
+        yellow = "eed49f";
+        green = "a6da95";
+        teal = "8bd5ca";
+        sky = "91d7e3";
+        sapphire = "7dc4e4";
+        blue = "8aadf4";
+        lavender = "b7bdf8";
+        text = "cad3f5";
+        subtext1 = "b8c0e0";
+        subtext0 = "a5adcb";
+        overlay2 = "939ab7";
+        overlay1 = "8087a2";
+        overlay0 = "6e738d";
+        surface2 = "5b6078";
+        surface1 = "494d64";
+        surface0 = "363a4f";
+        base = "24273a";
+        mantle = "1e2030";
+        crust = "181926";
+      };
+      mocha = {
+        rosewater = "f5e0dc";
+        flamingo = "f2cdcd";
+        pink = "f5c2e7";
+        mauve = "cba6f7";
+        red = "f38ba8";
+        maroon = "eba0ac";
+        peach = "fab387";
+        yellow = "f9e2af";
+        green = "a6e3a1";
+        teal = "94e2d5";
+        sky = "89dceb";
+        sapphire = "74c7ec";
+        blue = "89b4fa";
+        lavender = "b4befe";
+        text = "cdd6f4";
+        subtext1 = "bac2de";
+        subtext0 = "a6adc8";
+        overlay2 = "9399b2";
+        overlay1 = "7f849c";
+        overlay0 = "6c7086";
+        surface2 = "585b70";
+        surface1 = "45475a";
+        surface0 = "313244";
+        base = "1e1e2e";
+        mantle = "181825";
+        crust = "11111b";
+      };
+    };
+    catppuccinFlavor = config.catppuccin.flavor;
+    catppuccinAccent = config.catppuccin.accent;
+    catppuccinP = catppuccinPalettes.${catppuccinFlavor};
+    catppuccinAccentHex = catppuccinP.${catppuccinAccent};
+    mkCatppuccinRgb = hex: "rgb(${hex})";
+
+    # Best-effort live reload of every running Hyprland instance after the live
+    # links settle on a switch. Mirrors HM's own hyprland-module reloadConfig
+    # (hyprctl -i <instance> reload config-only). HM activation runs with a
+    # restricted PATH, so the user/system profiles are prepended explicitly; the
+    # profile hyprctl matches the RUNNING Hyprland (a hyprctl from another pkgs
+    # set could be IPC-version-skewed). Silent when no session is running.
+    hyprlandLiveReload = ''
+      PATH="/etc/profiles/per-user/${config.home.username}/bin:/run/current-system/sw/bin:$PATH"
+      if command -v hyprctl >/dev/null 2>&1; then
+        for _hypr_dir in "''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"/hypr/*; do
+          [ -d "$_hypr_dir" ] || continue
+          hyprctl -i "''${_hypr_dir##*/}" reload config-only >/dev/null 2>&1 || true
+        done
+      fi
+    '';
+  in {
+    imports = [inputs.hyprland.homeManagerModules.default];
+    options = {
+      hyprconf = {
+        target = lib.mkOption {
+          type = lib.types.nullOr (lib.types.enum ["geks-zenbook" "geks-nixos"]);
+          default = osConfig.hyprconf.target;
+          defaultText = lib.literalExpression "osConfig.hyprconf.target";
+          description = "Target host determining host-conditional Hyprland settings (e.g. AQ_DRM_DEVICES)";
+        };
+
+        hyprland = {
+          enable = lib.mkEnableOption "enables hyprland config";
+          softwareCursor = lib.mkEnableOption "software cursors for hosts with hardware cursor rendering issues";
+        };
+
+        hypridle = {
+          oledOptimized = lib.mkEnableOption "OLED-optimized idle timeouts (aggressive dim / screen-off for display longevity)";
+        };
+
+        noctalia = {
+          enable = lib.mkEnableOption "enables noctalia shell service";
+        };
+      };
+    };
+    config = lib.mkIf config.hyprconf.hyprland.enable {
+      # Symlink Lua config files from flake repo into ~/.config/hypr for live
+      # editing. Both the lua/ directory and the entry-point symlink go through
+      # mkLiveLinks (atomic ln -sfn, collision-guarded, self-pruning); each
+      # instance reloads the running session once when its links actually
+      # changed, so a switch lands on a live Hyprland instead of waiting for a
+      # relogin.
+      home.activation = lib.mkMerge [
+        (liveLinks.mkLiveLinks {
+          activationName = "linkHyprlandLua";
+          nixPath = ../../../dotfiles/hyprland/lua;
+          runtimePath = "${hyprSrcPath}/lua";
+          targetPath = "~/.config/hypr/lua";
+          filter = name: lib.hasSuffix ".lua" name;
+          onLink = hyprlandLiveReload;
+        }).home.activation
+
+        (liveLinks.mkLiveLinks {
+          # Lua entry point (`require("hyprland-dynamic")`). Was an inline
+          # rm+ln activation; folded in here so it gets the same guards and
+          # fires the reload after the lua links settle.
+          activationName = "linkHyprlandDynamic";
+          nixPath = ../../../dotfiles/hyprland/lua;
+          runtimePath = "${hyprSrcPath}/lua";
+          targetPath = hyprTargetPath;
+          filter = name: name == "hyprland-dynamic.lua";
+          after = ["writeBoundary" "linkHyprlandLua"];
+          onLink = hyprlandLiveReload;
+        }).home.activation
+      ];
+
+      services = {
+        # hyprpolkitagent.enable = true;
+        # XWayland clients read XSettings independently of the Wayland environment.
+        xsettingsd = {
+          enable = true;
+          settings = {
+            "Gtk/CursorThemeName" = cursor.name;
+            "Gtk/CursorThemeSize" = cursor.size;
+          };
+        };
+      };
+
+      # Lock screen theming via the official catppuccin/swaylock port — follows
+      # catppuccin.flavor (latte on geks-nixos, mocha on geks-zenbook).
+      catppuccin.swaylock.enable = true;
+
+      programs = {
+        hyprshot.enable = true;
+        # Plain swaylock (current upstream, suspend/resume-hardened) over the
+        # effects fork: nixpkgs' swaylock-effects is frozen on the 2022 1.7 base
+        # and misses 1.8.x password-buffer fixes after suspend/resume.
+        # Colors come from catppuccin.swaylock; only structural settings here.
+        # Wallpaper is passed at runtime by session_lock so a missing wallpaper
+        # can never prevent locking.
+        swaylock = {
+          enable = true;
+          package = pkgs.swaylock;
+          settings = {
+            font = "JetBrainsMono Nerd Font";
+            indicator-radius = 110;
+            indicator-thickness = 12;
+            indicator-idle-visible = true;
+            scaling = "fill";
+            ignore-empty-password = true;
+          };
+        };
+      };
+
+      home = {
+        # Explicit enable: HM deprecated the implicit generation trigger
+        # (relying on home.pointerCursor alone now warns).
+        pointerCursor = {
+          enable = true;
+          size = 32;
+          gtk.enable = true;
+          x11.enable = true;
+          hyprcursor.enable = true;
+        };
+        file = {
+          # Shared UWSM toolkit environment plus the host's XCursor preferences.
+          "./.config/uwsm/env".text =
+            builtins.readFile ../../../dotfiles/uwsm/env
+            + ''
+
+              export XCURSOR_THEME=${lib.escapeShellArg cursorEnvironment.XCURSOR_THEME}
+              export XCURSOR_SIZE=${lib.escapeShellArg cursorEnvironment.XCURSOR_SIZE}
+            '';
+          # Also sourced by start-hyprland when the greeter bypasses UWSM.
+          "./.config/hypr/cursor-env.sh".text = cursorExports + "\n";
+
+          # UWSM Hyprland-specific environment.
+          # Dynamically discovers available GPUs and sets AQ_DRM_DEVICES with iGPU as
+          # primary renderer (first in list). Three-layer fallback:
+          #   1. udev symlinks /dev/dri/{igpu,dgpu} from the host's udev rules
+          #   2. kernel by-path PCI symlinks (works without udev rules)
+          #   3. unset → aquamarine auto-detects (any remaining card node)
+          # If a GPU is absent, its path is simply omitted — never crashes Hyprland.
+          # UWSM env files are sourced as shell scripts, so dynamic logic is valid.
+          # Shared render-GPU picker — SINGLE SOURCE OF TRUTH used by both the
+          # start-hyprland wrapper (greetd/TTY path, see hyprland/nixos.nix) and
+          # the uwsm env file below. iGPU-first by default; dGPU-first when
+          # ~/.config/hypr/render-gpu-mode contains "dgpu" (set via the qs-flow
+          # GPU Runner bar widget — the rofi hypr-gpu-run script was retired).
+          # Only active on geks-nixos (dual-GPU); empty no-op elsewhere.
+          "./.config/hypr/render-gpu-env.sh".text =
+            if config.hyprconf.target == "geks-nixos"
+            then ''
+              mode=$(cat "''${XDG_CONFIG_HOME:-$HOME/.config}/hypr/render-gpu-mode" 2>/dev/null || echo igpu)
+              unset AQ_DRM_DEVICES
+              devices=""
+              if [ "$mode" = "dgpu" ]; then
+                for path in /dev/dri/dgpu /dev/dri/igpu; do
+                  [ -e "$path" ] && devices="''${devices:+$devices:}$path"
+                done
+              else
+                for path in /dev/dri/igpu /dev/dri/dgpu; do
+                  [ -e "$path" ] && devices="''${devices:+$devices:}$path"
+                done
+              fi
+
+              # Fallback: kernel built-in by-path PCI symlinks (always match current state)
+              if [ -z "$devices" ]; then
+                for path in /dev/dri/by-path/pci-*-card; do
+                  [ -L "$path" ] || continue
+                  # Skip boot framebuffers (not real GPU render nodes)
+                  echo "$path" | grep -q "platform.*framebuffer" && continue
+                  devices="''${devices:+$devices:}$path"
+                done
+              fi
+
+              [ -n "$devices" ] && export AQ_DRM_DEVICES="$devices"
+            ''
+            else "";
+          "./.config/uwsm/env-hyprland".text =
+            lib.optionalString (config.hyprconf.target == "geks-nixos") ''
+              source "''${XDG_CONFIG_HOME:-$HOME/.config}/hypr/render-gpu-env.sh"
+            ''
+            + ''
+              export HYPRCURSOR_THEME=${lib.escapeShellArg cursorEnvironment.HYPRCURSOR_THEME}
+              export HYPRCURSOR_SIZE=${lib.escapeShellArg cursorEnvironment.HYPRCURSOR_SIZE}
+            '';
+          # Nix-generated Catppuccin palette for Hyprland Lua config.
+          # Rebuild home-manager to update when flavor/accent changes.
+          "./.config/hypr/lua/catppuccin-palette.lua".text = ''
+            -- Nix-generated: do not edit manually.
+            -- Controlled by catppuccin.flavor = "${catppuccinFlavor}", catppuccin.accent = "${catppuccinAccent}".
+            return {
+              rosewater = "${mkCatppuccinRgb catppuccinP.rosewater}",
+              flamingo  = "${mkCatppuccinRgb catppuccinP.flamingo}",
+              pink      = "${mkCatppuccinRgb catppuccinP.pink}",
+              mauve     = "${mkCatppuccinRgb catppuccinP.mauve}",
+              red       = "${mkCatppuccinRgb catppuccinP.red}",
+              maroon    = "${mkCatppuccinRgb catppuccinP.maroon}",
+              peach     = "${mkCatppuccinRgb catppuccinP.peach}",
+              yellow    = "${mkCatppuccinRgb catppuccinP.yellow}",
+              green     = "${mkCatppuccinRgb catppuccinP.green}",
+              teal      = "${mkCatppuccinRgb catppuccinP.teal}",
+              sky       = "${mkCatppuccinRgb catppuccinP.sky}",
+              sapphire  = "${mkCatppuccinRgb catppuccinP.sapphire}",
+              blue      = "${mkCatppuccinRgb catppuccinP.blue}",
+              lavender  = "${mkCatppuccinRgb catppuccinP.lavender}",
+              text      = "${mkCatppuccinRgb catppuccinP.text}",
+              subtext1  = "${mkCatppuccinRgb catppuccinP.subtext1}",
+              subtext0  = "${mkCatppuccinRgb catppuccinP.subtext0}",
+              overlay2  = "${mkCatppuccinRgb catppuccinP.overlay2}",
+              overlay1  = "${mkCatppuccinRgb catppuccinP.overlay1}",
+              overlay0  = "${mkCatppuccinRgb catppuccinP.overlay0}",
+              surface2  = "${mkCatppuccinRgb catppuccinP.surface2}",
+              surface1  = "${mkCatppuccinRgb catppuccinP.surface1}",
+              surface0  = "${mkCatppuccinRgb catppuccinP.surface0}",
+              base      = "${mkCatppuccinRgb catppuccinP.base}",
+              mantle    = "${mkCatppuccinRgb catppuccinP.mantle}",
+              crust     = "${mkCatppuccinRgb catppuccinP.crust}",
+              -- resolved accent (catppuccin.accent = "${catppuccinAccent}")
+              accent    = "${mkCatppuccinRgb catppuccinAccentHex}",
+              primary   = "${mkCatppuccinRgb catppuccinAccentHex}",
+            }
+          '';
+          "./.config/hypr/hypridle.conf" = lib.mkMerge [
+            (lib.mkIf config.hyprconf.hypridle.oledOptimized {
+              text = ''
+                general {
+                    lock_cmd = session_lock
+                    # before_sleep_cmd: swaylock is the single lock (caelestia
+                    # disabled 2026-10-11; the old hyprlock fallback is gone),
+                    # so nothing else locks pre-suspend. fix-lock --record
+                    # snapshots the pre-suspend lock state (instant, never blocks
+                    # suspend) so after_sleep_cmd can repair a clientless lock
+                    # even when logind LockedHint says no.
+                    # QS_FLOW_LOCK_TIMEOUT=3: logind delays suspend only for
+                    # InhibitDelayMaxUSec (5 s); the 10 s default would let a wedged
+                    # shell outlive it, so the swaylock fallback must start sooner.
+                    before_sleep_cmd = fix-lock --record; QS_FLOW_LOCK_TIMEOUT=3 session_lock
+                    # Passive safety net: immediate repair pass on wake + a
+                    # detached --recheck 10s later (the amdgpu/DRI output-reset
+                    # storm kills clients AFTER the immediate check runs).
+                    # A living lock client is never touched — the normal
+                    # wake → unlock flow is unaffected.
+                    after_sleep_cmd = fix-lock --auto
+                    inhibit_sleep = 3
+                }
+
+                listener {
+                    timeout = 60
+                    on-timeout = brightnessctl -s set 5
+                    on-resume = brightnessctl -r
+                }
+
+                listener {
+                    timeout = 60
+                    on-timeout = brightnessctl -sd rgb:kbd_backlight set 0
+                    on-resume = brightnessctl -rd rgb:kbd_backlight
+                }
+
+                listener {
+                    timeout = 90
+                    # loginctl lock-session only sets logind's LockedHint — it
+                    # never RUNS a lock client (screen stays visibly unlocked).
+                    # session_lock fans out qs-flow-lock -> swaylock.
+                    on-timeout = session_lock
+                }
+
+                listener {
+                    timeout = 120
+                    # Legacy `hyprctl dispatch dpms X` fails under configType=lua;
+                    # the working form is hyprctl eval with hl.dsp.dpms().
+                    on-timeout = hyprctl eval 'hl.dsp.dpms("off")'
+                    on-resume = hyprctl eval 'hl.dsp.dpms("on")'
+                }
+
+                listener {
+                    timeout = 600
+                    on-timeout = systemctl suspend
+                }
+              '';
+            })
+            (lib.mkIf (!config.hyprconf.hypridle.oledOptimized) {
+              source = ../../../dotfiles/hypridle/hypridle.conf;
+            })
+          ];
+          # Disable noctalia's own lock screen — it crashes on resume from
+          # suspend (upstream EGL context-recovery bug), so swaylock takes over
+          # via the session_lock script. Kills all noctalia lock triggers:
+          # IPC, logind PrepareForSleep and its internal idle daemon.
+          # MUST be named noctalia.toml — that is the only config file noctalia
+          # reads (a differently-named toml in the same dir is ignored, which is
+          # exactly why the lock kept breaking after the first attempt).
+          "./.config/noctalia/noctalia.toml" = lib.mkIf config.hyprconf.noctalia.enable {
+            text = ''
+              [lockscreen]
+              enabled = false
+              lock_before_suspend = false
+            '';
+          };
+          "./.config/pypr/config.toml".text = ''
+            [pyprland]
+            plugins = [
+              "scratchpads",
+              "wallpapers",
+              "expose",
+              "shortcuts_menu",
+              "toggle_special"
+            ]
+
+            [expose]
+            include_special = true
+
+            [wallpapers]
+            path = "~/.config/wallpapers/catppuccin/${catppuccinFlavor}"
+            extentions = ["png", "jpg", "jpeg", "webp"]
+            unique = true
+            interval = 15
+            command = 'awww img --transition-type any "[file]"'
+            clear_command = "awww clear"
+
+            [scratchpads.term]
+            animation = "fromTop"
+            command = "ghostty --class=com.mitchellh.ghostty.dropterm"
+            class = "com.mitchellh.ghostty.dropterm"
+            size = "85% 75%"
+            max_size = "2400px 100%"
+            margin = 50
+            allow_special_workspaces = true
+            multi = false
+
+            [scratchpads.volume]
+            animation = "fromTop"
+            command = "pwvucontrol"
+            class = "com.saivert.pwvucontrol"
+            size = "33% 50%"
+            unfocus = "hide"
+            lazy = true
+            allow_special_workspaces = true
+
+            [shortcuts_menu.entries.Screenshots]
+            "Area to clipboard" = "grimblast -t png copysave area"
+            "Full screen" = "grimblast -t png copysave screen"
+            "Active window" = "grimblast -t png copysave active"
+            "Area (3s delay)" = "grimblast -w 3 -t png copysave area"
+            "Edit area" = "grimblast -t png edit area"
+
+            [shortcuts_menu.entries.Session]
+            "Lock screen" = "session_lock"
+            "Logout" = "uwsm stop"
+
+            [shortcuts_menu.entries.Utilities]
+            "Clipboard history" = "ghostty --class=com.mitchellh.ghostty.clipboard -e clipse"
+            "Volume control" = "pypr toggle volume"
+            "File manager" = "uwsm app -- ghostty -e yazi"
+            "Wallpaper cycle" = "pypr wall next"
+          '';
+
+          # Deploy wallpapers directory (catppuccin/<flavor>/, lockscreen/) into ~/.config/wallpapers
+          "./.config/wallpapers" = {
+            source = ../../../dotfiles/wallpapers;
+            recursive = true;
+          };
+        };
+      };
+
+      wayland.windowManager.hyprland = {
+        enable = true;
+        # set the Hyprland and XDPH packages to null to use the ones from the NixOS module package = null;
+        portalPackage = null;
+        systemd.enable = false;
+        configType = "lua";
+
+        # No hyprland plugins in use. To add one: plugins = [pkgs.hyprlandPlugins.<name>].
+        plugins = [];
+
+        xwayland.enable = true;
+
+        extraConfig =
+          #lua
+          ''
+            hl.config({
+              cursor = {
+                no_hardware_cursors = ${cursorMode},
+                -- Home Manager owns GTK preferences; avoid runtime theme rewrites.
+                sync_gsettings_theme = false,
+              },
+            })
+            require("hyprland-dynamic")
+          '';
+      };
+
+      systemd.user = {
+        enable = true;
+        # Includes D-Bus activations and shell services launched outside a login shell.
+        sessionVariables = cursorEnvironment;
+        tmpfiles.rules = lib.optionals config.hyprconf.noctalia.enable [
+          # ensure noctalia directory exists in hyprland config dir
+          "d %h/.config/hypr/noctalia 0755 - - -"
+        ];
+        services = lib.mkMerge [
+          # swaync only when no shell owns notifications itself: qs-flow runs its
+          # own notification center, and two daemons fight over
+          # org.freedesktop.Notifications — the loser SILENTLY gives up, so the
+          # shell's center would render with no toasts (verified live).
+          (lib.mkIf (!config.myconf.qs-flow.enable) {
+            swaync = {
+              Unit = {
+                Description = "Sway Notification Center";
+                ConditionEnvironment = "XDG_CURRENT_DESKTOP=Hyprland";
+                BindsTo = ["wayland-session@hyprland.desktop.target"];
+                After = ["wayland-session@hyprland.desktop.target"];
+              };
+              Service = {
+                Type = "dbus";
+                BusName = "org.freedesktop.Notifications";
+                ExecStart = "${pkgs.swaynotificationcenter}/bin/swaync";
+                Restart = "on-failure";
+              };
+              Install = {
+                WantedBy = ["wayland-session@hyprland.desktop.target"];
+              };
+            };
+          })
+          {
+            hypridle = {
+              Unit = {
+                Description = "Hyprland Idle Daemon";
+                # This keeps it strictly gated to your Hyprland session!
+                ConditionEnvironment = "XDG_CURRENT_DESKTOP=Hyprland";
+
+                # UWSM activates graphical-session.target once the environment is ready
+                BindsTo = ["graphical-session.target"];
+                After = ["graphical-session.target"];
+              };
+              Service = {
+                ExecStart = "${pkgs.hypridle}/bin/hypridle";
+                Restart = "on-failure";
+              };
+              Install = {
+                WantedBy = ["graphical-session.target"];
+              };
+            };
+
+            hyprpolkitagent = {
+              Unit = {
+                Description = "Hyprland Polkit Authentication Agent";
+                ConditionEnvironment = "XDG_CURRENT_DESKTOP=Hyprland";
+                BindsTo = ["wayland-session@hyprland.desktop.target"];
+                After = ["wayland-session@hyprland.desktop.target"];
+              };
+              Service = {
+                ExecStart = "${pkgs.hyprpolkitagent}/libexec/hyprpolkitagent";
+                Restart = "on-failure";
+                TimeoutStopSec = "5sec";
+                Slice = "session.slice";
+              };
+              Install = {
+                WantedBy = ["wayland-session@hyprland.desktop.target"];
+              };
+            };
+
+            # Build the KDE service cache (ksycoca6) at session start so that
+            # KDE apps (Dolphin, Gwenview, Okular) can discover app associations via KService.
+            # Without this, the cache is never populated in a non-Plasma session.
+            kbuildsycoca6 = {
+              Unit = {
+                Description = "Rebuild KDE service cache for KDE apps (Dolphin, Gwenview, Okular)";
+                ConditionEnvironment = "XDG_CURRENT_DESKTOP=Hyprland";
+                After = ["wayland-session@hyprland.desktop.target"];
+                PartOf = ["wayland-session@hyprland.desktop.target"];
+              };
+              Service = {
+                Type = "oneshot";
+                ExecStart = "${pkgs.kdePackages.kservice}/bin/kbuildsycoca6 --noincremental";
+                RemainAfterExit = true;
+              };
+              Install = {
+                WantedBy = ["wayland-session@hyprland.desktop.target"];
+              };
+            };
+
+            # Unlock KDE Wallet using the PAM_KWALLET5_LOGIN token injected by
+            # pam_kwallet5 at login. Under Plasma, Plasma's own starter handles
+            # unlock; this oneshot is Hyprland-only (ConditionEnvironment below)
+            # so it never runs in any other session, current or future.
+            # pam_kwallet_init D-Bus-activates kwalletd6 (which serves
+            # org.freedesktop.secrets via its ksecretsservice plugin) and unlocks
+            # the default wallet. Pre-req: a wallet named "kdewallet" must exist
+            # with blowfish encryption and the same password as the login (the
+            # first run after enabling prompts once to create it).
+            kwallet-pam-init = {
+              Unit = {
+                Description = "Unlock KDE Wallet using PAM credentials (Hyprland only)";
+                ConditionEnvironment = "XDG_CURRENT_DESKTOP=Hyprland";
+                After = ["wayland-session@hyprland.desktop.target"];
+                PartOf = ["wayland-session@hyprland.desktop.target"];
+              };
+              Service = {
+                Type = "oneshot";
+                ExecStart = "${pkgs.kdePackages.kwallet-pam}/libexec/pam_kwallet_init";
+                RemainAfterExit = true;
+              };
+              Install = {
+                WantedBy = ["wayland-session@hyprland.desktop.target"];
+              };
+            };
+
+            # Wallpaper daemon — started before pyprland so awww-daemon socket exists
+            # when pypr issues the first `awww img` command.
+            awww = {
+              Unit = {
+                Description = "Animated Wayland Wallpaper Daemon";
+                ConditionEnvironment = "XDG_CURRENT_DESKTOP=Hyprland";
+                BindsTo = ["wayland-session@hyprland.desktop.target"];
+                After = ["wayland-session@hyprland.desktop.target"];
+              };
+              Service = {
+                ExecStart = "${pkgs.awww}/bin/awww-daemon";
+                Restart = "on-failure";
+              };
+              Install = {
+                WantedBy = ["wayland-session@hyprland.desktop.target"];
+              };
+            };
+
+            pyprland = {
+              Unit = {
+                Description = "Pyprland (scratchpads, wallpaper cycling)";
+                ConditionEnvironment = "XDG_CURRENT_DESKTOP=Hyprland";
+                BindsTo = ["wayland-session@hyprland.desktop.target"];
+                After = ["wayland-session@hyprland.desktop.target" "awww.service"];
+                Wants = ["awww.service"];
+              };
+              Service = {
+                ExecStart = "${pkgs.pyprland}/bin/pypr";
+                Restart = "on-failure";
+                Slice = "background-graphical.slice";
+              };
+              Install = {
+                WantedBy = ["wayland-session@hyprland.desktop.target"];
+              };
+            };
+          }
+          (lib.mkIf config.hyprconf.noctalia.enable {
+            noctalia = let
+              noctaliaPkg = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
+            in {
+              Unit = {
+                Description = "Noctalia shell";
+                ConditionEnvironment = "XDG_CURRENT_DESKTOP=Hyprland";
+                BindsTo = ["wayland-session@hyprland.desktop.target"];
+                Requisite = ["wayland-session@hyprland.desktop.target"];
+                After = ["wayland-session@hyprland.desktop.target"];
+              };
+              Service = {
+                Slice = "app-graphical.slice";
+                ExecStart = "${noctaliaPkg}/bin/noctalia";
+                Restart = "on-failure";
+                RestartSec = 1;
+              };
+              Install = {
+                WantedBy = ["wayland-session@hyprland.desktop.target"];
+              };
+            };
+          })
+        ];
+      };
+    };
+  };
+}

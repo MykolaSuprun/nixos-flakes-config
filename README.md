@@ -14,7 +14,7 @@ Uses [Determinate Nix](https://determinate.systems/) on all hosts.
 
 ## Disk layout (geks-nixos and geks-zenbook)
 
-Both physical hosts use the layout declared in `flake/hosts/<host>/_disk-config.nix`,
+Both physical hosts use the layout declared in `modules/hosts/<host>/disk.nix`,
 applied by [disko](https://github.com/nix-community/disko) at install time:
 
 ```
@@ -51,7 +51,7 @@ Installation is fully offline — no nix evaluation or network access at install
 nix run github:MykolaSuprun/nixos-flakes-config#nixos-iso
 ```
 
-This builds `flake/hosts/installer/default.nix`. The ISO lands in `./result/iso/`. Flash it:
+This builds `modules/hosts/installer.nix`. The ISO lands in `./result/iso/`. Flash it:
 
 ```sh
 nix run github:MykolaSuprun/nixos-flakes-config#nixos-flash -- ./result/iso/nixos-installer-*.iso
@@ -155,7 +155,7 @@ determined at format time. After the first boot:
 sudo btrfs inspect-internal map-swapfile -r /.swapvol/swapfile
 ```
 
-Add the printed integer to `flake/hosts/geks-zenbook/_configuration.nix`:
+Add the printed integer to `modules/hosts/geks-zenbook/configuration.nix`:
 
 ```nix
 boot.kernelParams = [ "resume_offset=<N>" ];
@@ -252,22 +252,35 @@ nix run .#nixos-flash
 
 ## Repository structure
 
+Dendritic layout: every `.nix` file under `modules/` is a flake-parts module
+(auto-imported by import-tree). Features contribute to
+`flake.modules.nixos.<aspect>` / `flake.modules.homeManager.<aspect>`; every host
+imports all aspects and turns them on with `myconf.*` / `hyprconf.*` flags.
+
 ```
-flake/
-  hosts/
-    geks-nixos/    # AMD desktop
-    geks-zenbook/  # Intel laptop
-    geks-wsl/      # WSL2 minimal
-    Each host contains: default.nix  _configuration.nix  _hardware.nix  _disk-config.nix
-  packages/        # nixos-install  nixos-flash  nixos-build  nixos-check
-                   # nixos-remote-build  nixos-iso  nix-update  hypr-layout-picker
+modules/
+  flake/           # flake plumbing: host builder (hosts.nix), overlays, checks,
+                   #   formatter (treefmt), systems, templates
+  hosts/<host>/    # configurations.nixos.<host>: default.nix (overlays, host-only
+                   #   imports), configuration.nix, hardware.nix, disk.nix, home.nix
+  hosts/installer.nix
+  system/          # nix daemon, packages, audio, secrets, bees, lianli
+  desktop/         # hyprland/, core/ (apps, gaming), qs-flow, rofi, terminals/, ...
+  theme/           # catppuccin/, stylix/, fonts
+  dev/             # git, shell, ssh, herdr, opencode, nix-index, dev packages
+  users/mykolas.nix  # identity, gpg-agent, shared session variables
+  packages/        # CLI tools: nixos-build/check/install/iso/flash/remote-build, ...
+  private.nix      # gated modules from the private flake inputs
+dotfiles/          # live-linked / sourced config files (Hyprland Lua, herdr, uwsm, ...)
+lib/               # helper functions (live-links, opencode toolbox)
+overlays/          # nixpkgs overlays (composed into overlays.default)
+scripts/           # standalone scripts + tests
 cache.nix          # single source of truth for binary-cache substituters/keys
-nixos/             # Shared NixOS feature modules (each gated by a myconf.* enable flag)
-home-manager/      # Home Manager modules and per-user configs
-lib/               # Config generators (helix, zsh, tmux, kitty, wezterm, …)
-overlays/          # Nixpkgs overlays
 templates/         # nix flake init templates (go, haskell, python-uv, scala, java)
 ```
+
+Formatting and linting: `nix fmt` (alejandra, deadnix, statix, stylua,
+shellcheck, shfmt, ruff); `nix flake check` enforces it and builds every host.
 
 ---
 

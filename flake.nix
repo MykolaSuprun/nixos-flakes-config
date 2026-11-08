@@ -44,9 +44,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Dendritic infrastructure
+    # Dendritic infrastructure: every file under ./modules is a flake-parts module
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:vic/import-tree";
+
+    # Formatting/linting: `nix fmt` + `checks.treefmt` (modules/flake/formatter.nix)
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Platform-specific
     # follows is safe here: NixOS-WSL is a module-only flake with no binary
@@ -58,16 +64,17 @@
     };
 
     # Desktop
-    impurity.url = "github:outfoxxed/impurity.nix";
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
 
     # Theming framework — fills in GTK and app targets not covered by catppuccin-nix
     stylix = {
       url = "github:nix-community/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
     };
     # Official Hyprland flake, tracked on main (flake.lock pins the exact rev).
     # 2026-10-14: switched from pinned tags after v0.56.2 proved unbuildable
@@ -82,10 +89,6 @@
     # the 2026-10-14 login crash (gen 238: mesa 26.2.4 needs GLIBC_2.43,
     # Hyprland's June-2026 closure had glibc 2.42 → CBackend::create() abort).
     hyprland.url = "github:hyprwm/Hyprland";
-    hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
-      inputs.hyprland.follows = "hyprland";
-    };
     # Pin the cachix branch (always the latest cached commit) and do NOT follow
     # nixpkgs — following changes the derivation hash and defeats the binary cache.
     noctalia = {
@@ -94,42 +97,30 @@
     noctalia-greeter = {
       url = "github:noctalia-dev/noctalia-greeter";
     };
-    dms = {
-      url = "github:AvengeMedia/DankMaterialShell/master";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    dms-plugin-registry = {
-      url = "github:AvengeMedia/dms-plugin-registry";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    caelestia-shell = {
-      url = "github:caelestia-dots/shell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     # qs-flow — private shell flake (vendored minflair + 3-layer settings).
     # URL is git+ssh so the private repo is fetched with the user's SSH key.
     qs-flow = {
       url = "git+ssh://git@gitlab.com/nix-private/qs-flow.git";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-    sysc-greet = {
-      url = "github:Nomadcxx/sysc-greet";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
 
     # Theming
     catppuccin.url = "github:catppuccin/nix";
 
     # Tools
+    # Own flakes without a binary cache: dedupe their nixpkgs/flake-parts.
     my-nixvim = {
       url = "gitlab:mykolas-open/nixvim-config";
-      flake = true;
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
     };
 
     # Dev environment picker TUI (vim-keyed nix develop / flake template scaffolder)
     flake-env = {
       url = "gitlab:mykolas-open/flake-env";
-      flake = true;
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
     };
 
     # herdr plugin management. The manager (programs.herdr-hpm) owns herdr's
@@ -147,6 +138,12 @@
       url = "gitlab:mykolas-open/herdr-vimnav";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
+    };
+
+    # Prebuilt nix-index database (command-not-found + comma)
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Disk partitioning
@@ -169,25 +166,6 @@
       # nix-openclaw lock entry — the overlay (pkgs.openclaw) and the private
       # HM module always come from the same pinned rev.
       inputs.nix-openclaw.follows = "nix-openclaw";
-
-      # ⚠️  PROVISIONAL: comfyui-nix pinned to a LOCAL PATCHED FORK (2026-10-15)
-      #
-      # utensils/comfyui-nix upstream is stuck on ComfyUI v0.37.0 (last commit
-      # 2026-09-27, no bump PR open). v0.37.0 cannot resolve alembic revision
-      # 0008_drop_asset_meta, which a newer build already applied to the shared
-      # user/comfyui.db — reverting caused:
-      #   alembic.util.exc.CommandError: Can't locate revision identified by
-      #   '0008_drop_asset_meta'
-      # We therefore track ComfyUI releases ourselves at:
-      #   /home/mykolas/workspaces/src/comfyui-nix-patched  (commit b623486)
-      # which bumps ONLY nix/versions.nix to ComfyUI 0.40.0 + its coupled
-      # wheel closure (frontend 1.55.17, templates 0.11.82, kitchen 0.2.37,
-      # aimdo 0.5.6, embeddedDocs 0.5.14).
-      #
-      # ⚠️  REMOVE this override block once upstream releases >= 0.40.0, then
-      #     `nix flake update nixconf-private` to pick it up. The fork is a
-      #     single-file patch so a future upstream bump is a clean drop-in.
-      inputs.comfyui-nix.url = "git+file:///home/mykolas/workspaces/src/comfyui-nix-patched";
     };
 
     # OpenClaw — first-party Nix distribution (official openclaw org flake).
@@ -200,10 +178,11 @@
     nix-openclaw = {
       url = "github:openclaw/nix-openclaw";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
   };
 
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake {inherit inputs;}
-    (inputs.import-tree ./flake);
+    (inputs.import-tree ./modules);
 }

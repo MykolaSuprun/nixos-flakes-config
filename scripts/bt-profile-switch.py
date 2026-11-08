@@ -69,8 +69,7 @@ def run(cmd, timeout=10, input_text=None):
     dmenu, which reads its option list from stdin (no stdin = empty list).
     """
     try:
-        p = subprocess.run(cmd, capture_output=True, text=True,
-                           timeout=timeout, input=input_text)
+        p = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, input=input_text)
         return p.returncode, p.stdout, p.stderr
     except Exception as exc:
         return -1, "", str(exc)
@@ -88,8 +87,17 @@ def rofi_select(prompt, items, current=0):
     run() timeout would kill rofi mid-browse and silently return None —
     the exact "does nothing" failure this rewrite introduced (gen 215).
     """
-    args = ["rofi", "-dmenu", "-i", "-format", "i", "-p", prompt,
-            "-selected-row", str(current)]
+    args = [
+        "rofi",
+        "-dmenu",
+        "-i",
+        "-format",
+        "i",
+        "-p",
+        prompt,
+        "-selected-row",
+        str(current),
+    ]
     # Pipe the menu entries — dmenu shows an empty list without stdin input
     # (the exact "empty pick list" failure; items were built but never sent).
     rc, out, _ = run(args, timeout=None, input_text="\n".join(items) + "\n")
@@ -183,10 +191,7 @@ def get_pipewire_cards():
             continue
         mac = props.get("api.bluez5.address", "")
         params = obj.get("info", {}).get("params", {})
-        profiles = [
-            (p.get("index"), p.get("name"), p.get("description", ""))
-            for p in params.get("EnumProfile", [])
-        ]
+        profiles = [(p.get("index"), p.get("name"), p.get("description", "")) for p in params.get("EnumProfile", [])]
         active = [p.get("name") for p in params.get("Profile", [])]
         cards[mac] = {
             "card_id": obj.get("id"),
@@ -231,9 +236,11 @@ def recover_card(device):
     bug); a disconnect/reconnect cycle brings them back. The PipeWire card
     gets a NEW id on reconnect, so re-fetch and return the fresh card.
     """
-    notify(device["name"],
-           "broken profile state — reconnecting to restore profiles…",
-           "bluetooth-disabled")
+    notify(
+        device["name"],
+        "broken profile state — reconnecting to restore profiles…",
+        "bluetooth-disabled",
+    )
     run(["bluetoothctl", "disconnect", device["mac"]], timeout=20)
     time.sleep(1)
     rc, _, err = run(["bluetoothctl", "connect", device["mac"]], timeout=20)
@@ -318,8 +325,7 @@ def main():
 
     while True:
         if not devices:
-            rofi_error("No paired Bluetooth audio devices found.\n"
-                       "Pair one with bluetoothctl first.")
+            rofi_error("No paired Bluetooth audio devices found.\nPair one with bluetoothctl first.")
             return
 
         items = [d["name"] + device_status_label(d, cards) for d in devices]
@@ -330,8 +336,7 @@ def main():
         device = devices[idx]
         if not device["connected"]:
             # Only useful action for a disconnected device: connect it.
-            idx = rofi_select(f"󰂯 {device['name']} (disconnected)",
-                              ["  Connect", f"  {BACK_ITEM}"])
+            idx = rofi_select(f"󰂯 {device['name']} (disconnected)", ["  Connect", f"  {BACK_ITEM}"])
             if idx != 0:
                 # Cancel or Back (index 1) — return to the device list.
                 continue

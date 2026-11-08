@@ -1,144 +1,108 @@
 # AGENTS.md — Guide for AI Coding Agents
 
-This file provides context and rules for AI agents (e.g. Avante) working in this repository.
+This file provides context and rules for AI agents working in this repository.
 
 ## Project Overview
 
-Personal NixOS configuration managed with [flake-parts](https://github.com/hercules-ci/flake-parts) and [import-tree](https://github.com/vic/import-tree). Uses [Determinate Nix](https://determinate.systems/) on all hosts. The desktop environment is Hyprland launched via UWSM (systemd-managed Wayland sessions).
+Personal NixOS configuration in the **dendritic** pattern: [flake-parts](https://github.com/hercules-ci/flake-parts) + [import-tree](https://github.com/vic/import-tree). Every `.nix` file under `modules/` is a flake-parts module and is auto-imported. Uses [Determinate Nix](https://determinate.systems/) on all hosts. The desktop environment is Hyprland launched via UWSM (systemd-managed Wayland sessions).
 
 ### Hosts
 
 | Host | Description | Display Manager | GPU |
 |------|-------------|-----------------|-----|
-| `geks-nixos` | AMD desktop, Hyprland + gaming | greetd + sysc-greet | AMD dGPU (7900 XTX) + AMD iGPU |
-| `geks-zenbook` | Intel laptop, Hyprland | SDDM (Wayland) | Intel Iris/Xe iGPU + NVIDIA RTX 4060 Laptop dGPU (present, but **no NVIDIA driver is configured** — no `hardware.nvidia` anywhere in this repo) |
+| `geks-nixos` | AMD desktop, Hyprland + gaming | greetd + noctalia-greeter | AMD dGPU (7900 XTX) + AMD iGPU |
+| `geks-zenbook` | Intel laptop, Hyprland | SDDM (Wayland, KWin) | Intel Iris/Xe iGPU + NVIDIA RTX 4060 Laptop dGPU (present, but **no NVIDIA driver is configured** — no `hardware.nvidia` anywhere in this repo) |
 | `geks-wsl` | WSL2 minimal environment | N/A | N/A |
 
 ### Repository Structure
 
 ```
-flake/
-  hosts/
-    geks-nixos/      # AMD desktop — default.nix, _configuration.nix, _hardware.nix, _disk-config.nix
-    geks-zenbook/    # Intel laptop — same layout
-    geks-wsl/        # WSL2 minimal — same layout
-    installer/       # Custom installer ISO
-  modules.nix        # Exposes all nixos/ and home-manager/modules/ as flake outputs
-                      #   (flake.nixosModules.*, flake.homeManagerModules.*)
-  packages/          # CLI tools only: nixos-install, nixos-flash, nixos-build, nixos-check,
-                     #   nixos-remote-build, nixos-iso, nix-update, hypr-layout-picker
-nixos/               # Shared NixOS feature modules — each gated by myconf.nixos.<name>.enable
-home-manager/
-  modules/           # Shared Home Manager feature modules — each gated by myconf.<name>.enable or hyprconf.*
-  users/mykolas/     # Per-user configuration and dotfiles
-    config/          # Raw dotfiles (hyprland, uwsm, swaync, hyprlock, wallpapers, etc.)
-lib/                 # Config generators (helix, zsh, tmux, kitty, wezterm, rofi, ghostty)
-overlays/            # Nixpkgs overlays
+flake.nix            # inputs + mkFlake (import-tree ./modules)
+modules/             # EVERY file is a flake-parts module (auto-imported)
+  flake/             # hosts.nix (host builder), overlays.nix, checks.nix,
+                     #   formatter.nix (treefmt), systems.nix, templates.nix
+  hosts/<host>/      # contributes to configurations.nixos.<host>:
+                     #   default.nix (host overlays / host-only imports),
+                     #   configuration.nix, hardware.nix, disk.nix (NixOS), home.nix (HM)
+  hosts/installer.nix
+  system/ desktop/ theme/ dev/   # feature aspects (see below)
+  users/mykolas.nix  # HM: identity, gpg-agent, shared session variables
+  packages/          # perSystem CLI tools (nixos-build, nixos-check, ...)
+  private.nix        # gated modules from nixconf-private / ai-gateway
+dotfiles/            # raw config files: live-linked (hyprland/lua, herdr) or read by Nix
+lib/                 # plain Nix functions, NOT modules (live-links.nix, opencode-tools.nix)
+overlays/            # nixpkgs overlays, composed into overlays.default
+scripts/             # standalone scripts + their tests
 templates/           # nix flake init templates (go, haskell, python-uv, scala, java)
-scripts/             # Standalone shell scripts
+cache.nix            # single source of truth for substituters/keys
 ```
+
+import-tree skips any path containing `/_`, so a helper `.nix` that is not a module must live outside `modules/` (e.g. `lib/`) or be underscore-prefixed.
 
 ### Key Architectural Patterns
 
-- **Feature modules**: All NixOS modules in `nixos/` and Home Manager modules in `home-manager/modules/` are auto-imported by each host's `default.nix`. Each module is gated by an enable flag (`myconf.nixos.<name>.enable` for NixOS, `myconf.<name>.enable` or `hyprconf.*` for HM). Never import a module directly in a host config — always add an enable flag and set it in the host's `_configuration.nix` or `home-*.nix`.
-- **Host-specific config**: Host differences live in `flake/hosts/<host>/_configuration.nix` (NixOS-level) and `home-manager/users/mykolas/home-<host>.nix` (HM-level). Shared config lives in the feature modules.
-- **Hyprland + UWSM**: Hyprland is launched via UWSM (`programs.hyprland.withUWSM = true`). UWSM env files are deployed to `~/.config/uwsm/` by `home-manager/modules/hyprland/settings.nix`. The `env` file is shared across all hosts; `env-hyprland` is host-conditional (e.g. `AQ_DRM_DEVICES` only set on `geks-nixos` where dual-GPU udev symlinks exist).
-- **Hyprland config type**: Hyprland is configured via Lua (`configType = "lua"`), with the entry point `require("hyprland-dynamic")` in `~/.config/hypr/`. Lua files are symlinked from the repo to `~/.config/hypr/lua/` via live-links for live editing.
-- **Catppuccin theming**: Theming is managed by catppuccin-nix + stylix. The Catppuccin palette is Nix-generated into `catppuccin-palette.lua` — do not edit that file manually.
-- **Wrapped packages**: Removed. Previously kitty, helix, tmux, wezterm, zsh, rofi, and ghostty were wrapped via `inputs.wrappers` in `flake/packages/`. Their configurations have been ported to Home Manager modules in `home-manager/modules/` (each gated by `myconf.<name>.enable`). CLI tool packages (nixos-build, nixos-check, nixos-install, nixos-iso, nixos-flash, nixos-remote-build, nix-update, hypr-layout-picker) remain as flake packages and are still accessed via `wrappedPkgs` (now a misnomer — it's all flake `perSystem.packages`).
-- **SSH/GPG agent**: SSH key passphrase caching is handled by `gpg-agent` with `enableSshSupport = true` on all hosts (including WSL). The NixOS `ssh-agent` is explicitly disabled (`startAgent = false`) to avoid `SSH_AUTH_SOCK` conflicts. HM's `gpg-agent` module creates a socket-activated `gpg-agent-ssh.socket` systemd user unit and a `set-SSH_AUTH_SOCK.service` that exports `SSH_AUTH_SOCK` into the D-Bus/systemd environment (so GUI apps launched via `uwsm app` also see it). SSH client config lives in `home-manager/modules/ssh.nix` (gated by `myconf.ssh.enable`) and uses the new `programs.ssh.settings."*"` API with upstream OpenSSH directive names. Agent forwarding is disabled globally (`ForwardAgent = false`) for security — enable per-host in `programs.ssh.settings` if needed. Pinentry is configured per-host: `pinentry-qt` on desktop hosts (works on Wayland via the Nixpkgs qtwayland wrapper, with `QT_QPA_PLATFORM=wayland;xcb` set in the UWSM env file), `pinentry-tty` on WSL. `allow-loopback-pinentry` is set in gpg-agent extraConfig on all hosts for TTY fallback when no display is available (SSH sessions, TTY-only contexts). The NixOS-level `programs.gnupg.agent` is not used — HM's `services.gpg-agent` handles everything.
-- **Herdr**: Herdr is an agent multiplexer (like tmux for AI agents) configured via `home-manager/modules/herdr.nix` (gated by `myconf.herdr.enable`). Its config is a live-linked TOML file in the checkout — `home-manager/users/mykolas/config/herdr/config.toml` is symlinked into `~/.config/herdr/config.toml` by `lib/live-links.nix` (same mechanism as the Hyprland Lua config): edit it and reload with `prefix+Shift+r` / `herdr server reload-config`, no rebuild. Nix no longer generates the file (`programs.herdr` runs with no `settings`; herdr supports no config includes). Never run `herdr config reset-keys` — it rewrites the file in place. Bindings are tmux-motion-compatible: prefix is `ctrl+e` (NOT tmux's `Ctrl+Space` — that stays tmux's so embedded sessions keep working), pane navigation uses `prefix+h/j/k/l` plus `Alt+Shift+h/j/k/l` direct chords, pane swapping uses `prefix+Shift+h/j/k/l`, splits use `prefix+-` and `prefix+v`, tabs use `prefix+c/n/p/1..9`. Theme: static `catppuccin-latte` initial value with `auto_switch = true` — herdr follows the host terminal's light/dark at runtime (the flavor is no longer Nix-derived; herdr runs only on geks-nixos = latte).
+- **Aspects**: a feature file contributes to `flake.modules.nixos.<aspect>` and/or `flake.modules.homeManager.<aspect>`. One feature may span both classes and several files (e.g. `modules/desktop/hyprland/{nixos,home-settings,home-pkgs}.nix` all define the `hyprland` aspect — deferred modules merge). Upstream modules a feature depends on are imported **inside the aspect** (`imports = [inputs.foo.homeManagerModules.default];`), not in host files.
+- **Enable flags**: every host imports ALL aspects (`modules/flake/hosts.nix`); each aspect is inert until its flag is set — `myconf.nixos.<name>.enable` (NixOS), `myconf.<name>.enable` or `hyprconf.*` (HM). Flags are set in `modules/hosts/<host>/configuration.nix` / `home.nix`. A module **must not** change the system when its flag is off — WSL imports every aspect too. Modules without an enable flag upstream (private `comfyui`, `llm-tools`) are imported only by the host that wants them.
+- **No specialArgs**: `inputs` comes from the flake-parts module closure (`{inputs, ...}: { flake.modules.nixos.x = {pkgs, ...}: ...; }`). `overlays.default` adds `pkgs.stable` (nixpkgs-stable) and `pkgs.nixconf` (this flake's `packages`).
+- **Hosts**: `configurations.nixos.<host> = { module; home; system; }` → `flake.nixosConfigurations.<host>` (home-manager as a NixOS module, `useGlobalPkgs`). Host-specific overlays go into `nixpkgs.overlays` inside the host's `module`.
+- **Hyprland + UWSM**: Hyprland is launched via UWSM (`programs.hyprland.withUWSM = true`). UWSM env files are generated by `modules/desktop/hyprland/home-settings.nix`: `~/.config/uwsm/env` (from `dotfiles/uwsm/env`, shared) and `env-hyprland` (host-conditional — `AQ_DRM_DEVICES` only on `geks-nixos`).
+- **Hyprland config type**: Lua (`configType = "lua"`), entry point `require("hyprland-dynamic")`. The Lua files are live-linked from `dotfiles/hyprland/lua/` into `~/.config/hypr/lua/` (`lib/live-links.nix`) — **edits there are live on the running desktop** after `hyprctl reload`; moving/renaming files breaks the running session until the next rebuild re-points the links.
+- **Catppuccin theming**: catppuccin-nix + stylix (stylix has its own flag, `myconf.nixos.stylix.enable`). The palette is Nix-generated into `~/.config/hypr/lua/catppuccin-palette.lua` — never create/edit it by hand.
+- **SSH/GPG agent**: gpg-agent with `enableSshSupport` on all hosts, configured once in `modules/users/mykolas.nix` (pinentry via `myconf.gpg.pinentry`: `pinentry-qt` default, `pinentry-tty` on WSL). The NixOS `ssh-agent` is disabled (`startAgent = false`). `allow-loopback-pinentry` is set for TTY fallback. SSH client config: `modules/dev/ssh.nix` (`programs.ssh.settings."*"`, `ForwardAgent = false` globally). sshd is key-only and not opened in the firewall; it is reachable over Tailscale (`tailscale0` is trusted; Tailscale SSH is on).
+- **Nix trust**: no `trusted-users` beyond root (a trusted user is root-equivalent and AI agents run as the user). Caches from `cache.nix` are both `substituters` and `trusted-substituters`.
+- **Herdr**: agent multiplexer, `modules/dev/herdr.nix` (`myconf.herdr.enable`). Its config `dotfiles/herdr/config.toml` is live-linked into `~/.config/herdr/config.toml`: edit it and reload with `prefix+Shift+r` / `herdr server reload-config`, no rebuild. Never run `herdr config reset-keys` (rewrites the file in place). Prefix is `ctrl+e`; pane navigation `prefix+h/j/k/l` and `Alt+Shift+h/j/k/l`, swapping `prefix+Shift+h/j/k/l`, splits `prefix+-`/`prefix+v`, tabs `prefix+c/n/p/1..9`. Theme: `catppuccin-latte` with `auto_switch = true`.
 
-  **Plugins**: herdr's plugin registry (`~/.config/herdr/plugins.json` — a
-  writable JSON array herdr rewrites on link/enable/install; never generate or
-  symlink it from Nix) is managed **declaratively** by the flake input
-  `nix-herdr-manager` (GitLab `mykolas-open/nix-herdr-manager`), enabled as
-  `programs.herdr-hpm` in `home-geks-nixos.nix` with **three entries**:
-  `inputs.herdr-vimnav.packages.<system>.default` (the preview-grid plugin,
-  `gitlab:mykolas-open/herdr-vimnav`, GitHub mirror `MykolaSuprun/herdr-vimnav`)
-  plus the manager's two curated upstream packages
-  `herdr-simple-switcher` (bash) and `herdr-configurable-picker` (Rust) — all
-  three are bare-package entries keyed by `passthru.herdrPluginId`. The two
-  curated packages replace plugins that used to be `herdr plugin install`ed
-  (the old install-managed dirs under `plugins/github/` are orphans to delete
-  once the first Nix-managed rebuild lands).
-
-  At HM activation (after `linkGeneration`) the manager runs
-  `herdr plugin link <store>/share/herdr/plugins/<id> --enabled` for every
-  declared plugin, **unlinks store links that are no longer declared**
-  (removal is declarative: drop the entry, run a rebuild), renders per-plugin
-  `settings` to `plugins/config/<id>/config.toml`, and verifies each declared
-  root produced a registry entry. No Go toolchain and no network are needed on
-  the host — unlike `herdr plugin install`, which clones from GitHub and runs
-  the manifest `[[build]]`. `herdr plugin install` entries and checkout links
-  are never pruned (only link-installed `/nix/store` roots are).
-
-  The bare-package entry works because the plugin flake ships
-  `passthru.herdrPluginId`; not-Nix-aware plugins use `{ pluginId; package; }`
-  or `{ path = …; }` (id resolved from the registry after linking). Plugin
-  **keybindings** still live in the live-linked `config.toml`; the sidebar
-  jump popup binds `herdr-preview-grid jump` by name — the manager's
-  `addPluginBinsToPath` (default on) puts each plugin package's `bin` on
-  `home.sessionPath`. Note activation itself uses ABSOLUTE binary paths:
-  HM activation runs with a restricted PATH (stateVersion ≥ 22.11 default)
-  where `command -v herdr` fails.
-
-  Dev iteration conflicts with activation (each rebuild re-links the store
-  path): set `programs.herdr-hpm.plugins` to `[{ path = ~/src/herdr-vimnav; }]`
-  while hacking on a plugin, or drop the entry and link the checkout by hand.
-- **OpenClaw**: Provided by the first-party `nix-openclaw` flake input (official openclaw org) — **never add `pkgs.openclaw` to any package list**: nixpkgs' own package is permanently marked insecure (LLM prompt-injection policy flag, not a CVE — no fix without `permittedInsecurePackages`, which is off-limits by project rule). The host applies `inputs.nix-openclaw.overlays.default` to pkgs; the full HM module lives in **nixconf-private** (`homeManagerModules.openclaw`, imported in the host's HM module list, gated by `myconf.openclaw.enable` — personal data stays private). It configures the OpenCode Go model backend (`opencode-go/glm-5.3-flash`; bundled provider, `enabledByDefault` in the pinned 2026.9.5 package — no plugin install needed), the Telegram channel (pairing DM policy, `richMessages` = Bot API 10.3 rich blocks), and gateway autostart. The gateway runs in Nix mode (config immutable; manage via `programs.openclaw.config` in nixconf-private + rebuild — `openclaw onboard`/`plugins install` are disabled). Secrets are plain 600 files at `~/.secrets/openclaw/` (`opencode-api-key`, `telegram-bot-token`, `gateway-token`), referenced by path — never inline secrets in Nix. nixconf-private's own `nix-openclaw` input is deduped to the top-level one via `inputs.nix-openclaw.follows` (single lock entry).
-
-- **ChatGPT**: Packaging and the gated Home Manager module live in `nixconf-private` (`overlays.chatgpt`, `homeManagerModules.chatgpt`), following OpenPets. Both desktop hosts apply the overlay and import the module; `myconf.chatgpt.enable` enables the app. The pet window title patch and the matching Hyprland Lua rule belong to the private app files.
+  **Plugins**: herdr's registry (`~/.config/herdr/plugins.json`, writable, never generate it from Nix) is managed declaratively by the `nix-herdr-manager` input (`programs.herdr-hpm`, set in each desktop's `home.nix`). geks-nixos declares `herdr-vimnav` plus the curated `herdr-simple-switcher` and `herdr-configurable-picker`; zenbook declares `herdr-vimnav`. At activation the manager `herdr plugin link`s each declared store path, unlinks undeclared store links, renders per-plugin settings and verifies registration — no network or Go toolchain needed. Activation uses absolute binary paths (HM activation runs with a restricted PATH where `command -v herdr` fails). For plugin development set `programs.herdr-hpm.plugins = [{ path = ~/src/herdr-vimnav; }]` or link the checkout by hand.
+- **OpenClaw**: from the first-party `nix-openclaw` input — **never add `pkgs.openclaw`** (nixpkgs' package is permanently marked insecure; `permittedInsecurePackages` for it is off-limits). geks-nixos applies `inputs.nixconf-private.overlays.openclaw` then `inputs.nix-openclaw.overlays.default` (order matters). The HM module is `homeManagerModules.openclaw` in **nixconf-private** (`myconf.openclaw.enable`). The gateway runs in Nix mode (manage via `programs.openclaw.config` in nixconf-private + rebuild). Secrets are plain 600 files in `~/.secrets/openclaw/`, referenced by path — never inline secrets in Nix.
+- **ChatGPT / OpenPets / Strata**: packaging + gated HM modules live in `nixconf-private` (`overlays.*`, `homeManagerModules.*`), imported by `modules/private.nix`; overlays are applied per host in `modules/hosts/<host>/default.nix`.
 
 ## Rules for AI Agents
 
 ### 1. Always Test Config Changes with a Build
 
-Nix configuration changes must be validated before considering the task complete. Use one of:
-
 ```sh
-# Dry-run evaluation of a specific host (fastest, recommended for most changes):
+# Dry-run evaluation of a host (fastest):
 nix build .#nixosConfigurations.geks-zenbook.config.system.build.toplevel --dry-run --show-trace
 
-# Or use the interactive check script (select host and mode):
+# Interactive (defaults to the local checkout):
 nix run .#nixos-check
 
-# Full flake check (evaluates all outputs — slower):
-nix flake check . --show-trace
+# Full check: formatting/lint + live-links test + builds every host (slow):
+nix flake check --show-trace
 ```
 
-**Always run a dry-run build for the affected host(s) after making changes.** If the build fails, fix the errors before reporting completion.
+`writeShellApplication` scripts run shellcheck at **build** time — a dry run does not catch those failures; build the affected host (`nix build --no-link ...toplevel`) when changing them. If anything fails, fix it before reporting completion.
 
-### 2. Understand Host Conditionality
+### 2. Format and Lint
 
-Many configs are shared across hosts but need host-specific values. Check `config.hyprconf.target` (values: `"geks-zenbook"` or `"geks-nixos"`) and `config.catppuccin.flavor` to conditionally set values. Never assume a device path, GPU setup, or display configuration applies to all hosts.
+Run `nix fmt` before finishing. It runs alejandra, deadnix and statix (Nix), stylua (Lua), shellcheck + shfmt (shell) and ruff (Python); `checks.treefmt` fails on anything unformatted.
 
-### 3. Respect Existing Conventions
+### 3. Understand Host Conditionality
 
-- Use 2-space indentation in Nix files (matching existing style).
-- Use `lib.mkIf`, `lib.mkMerge`, `lib.mkOption`, and `lib.mkEnableOption` for conditional and modular config.
-- Gate new modules behind enable flags, never import them unconditionally.
-- Keep comments in English, concise, and explain *why* (not *what*).
-- Use `lib.mkDefault` / `lib.mkForce` judiciously when overriding values from shared modules.
+Check `config.hyprconf.target` (`"geks-nixos"`, `"geks-zenbook"` or `null`; set on the NixOS side, the HM option follows it) and `config.catppuccin.flavor`. Never assume a device path, GPU setup or display configuration applies to all hosts — hardware-specific config belongs in `modules/hosts/<host>/`.
 
-### 4. Do Not Edit Generated Files
+### 4. Respect Existing Conventions
 
-- `home-manager/users/mykolas/config/hyprland/lua/catppuccin-palette.lua` — generated from `catppuccin.flavor` and `catppuccin.accent` in `settings.nix`.
-- Files under `~/.config/hypr/lua/` are symlinked from the repo — edit the source in `home-manager/users/mykolas/config/hyprland/lua/`, not the deployed symlinks.
+- New feature → new file under `modules/<category>/` defining an aspect with an enable flag; never import feature modules from host files.
+- Use `lib.mkIf`, `lib.mkMerge`, `lib.mkOption`, `lib.mkEnableOption`; `lib.mkDefault` / `lib.mkForce` judiciously.
+- Comments in English, concise, explaining *why*.
 
-### 5. Flake Inputs
+### 5. Do Not Edit Generated Files
 
-Flake inputs are defined in `flake.nix`. When adding a new input, follow the existing pattern (URL, `inputs.nixpkgs.follows = "nixpkgs"` where appropriate). Run `nix flake lock --update-input <name>` after adding.
+- `~/.config/hypr/lua/catppuccin-palette.lua` — generated from `catppuccin.flavor` / `catppuccin.accent`.
+- Files under `~/.config/hypr/lua/` and `~/.config/herdr/config.toml` are symlinks — edit the sources in `dotfiles/`.
 
-### 6. Commits
+### 6. Flake Inputs
 
-Only commit when explicitly asked by the user. Use the existing commit style — the `nixos-build` script auto-commits with the generation number. For manual commits, use a concise message describing the change.
+Defined in `flake.nix`. Follow the existing pattern (`inputs.nixpkgs.follows = "nixpkgs"` where it does not defeat a binary cache — Hyprland and Noctalia deliberately do not follow). After adding one, run `nix flake lock` (not `nix flake update`, which bumps everything).
 
-### 7. UWSM / Hyprland Launch
+### 7. Commits
 
-- UWSM env files are in `home-manager/users/mykolas/config/uwsm/` and deployed via `home-manager/modules/hyprland/settings.nix`.
-- `env` is shared across all hosts. `env-hyprland` is host-conditional.
-- `AQ_DRM_DEVICES` must only be set on hosts with the corresponding udev symlinks (`/dev/dri/igpu`, `/dev/dri/dgpu`).
-- HM's Hyprland systemd integration is disabled (`systemd.enable = false`) — UWSM manages the session lifecycle. User services bind to `wayland-session@hyprland.desktop.target` or `graphical-session.target`.
+Only commit when explicitly asked by the user. `nixos-build` auto-commits tracked files as `gen N` after a successful switch; manual commits use a concise message describing the change.
+
+### 8. UWSM / Hyprland Launch
+
+- `AQ_DRM_DEVICES` must only be set on hosts with the `/dev/dri/igpu` / `/dev/dri/dgpu` udev symlinks (geks-nixos).
+- HM's Hyprland systemd integration is disabled (`systemd.enable = false`) — UWSM manages the session. User services bind to `wayland-session@hyprland.desktop.target` or `graphical-session.target`.
+- User units cannot hook system sleep (`suspend.target` does not exist in the user manager); post-resume actions belong in hypridle's `after_sleep_cmd` or a system unit.
 - Apps inside Hyprland are launched via `uwsm app -s <slice> -- <cmd>` where slices are `a` (app-graphical), `b` (background-graphical), `s` (session-graphical).
-

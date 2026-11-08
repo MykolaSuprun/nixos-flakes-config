@@ -1,0 +1,52 @@
+{inputs, ...}: {
+  flake.modules.nixos.stylix = {
+    pkgs,
+    lib,
+    config,
+    ...
+  }: {
+    imports = [inputs.stylix.nixosModules.stylix];
+    # Stylix provides fonts and NixOS-level theming that catppuccin-nix doesn't
+    # cover. Flavor follows catppuccin.flavor.
+    options.myconf.nixos.stylix.enable = lib.mkEnableOption "stylix theming (fonts, GTK, icons)";
+
+    config = lib.mkIf config.myconf.nixos.stylix.enable {
+      stylix = {
+        enable = true;
+        # Mirror catppuccin flavor: base16-schemes has catppuccin-{latte,frappe,macchiato,mocha}.yaml
+        base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-${config.catppuccin.flavor}.yaml";
+        image = ../../../dotfiles/wallpapers/catppuccin/${config.catppuccin.flavor}/forrest.png;
+        # Do not auto-theme apps — catppuccin-nix handles most of them.
+        autoEnable = false;
+        fonts = {
+          serif = {
+            package = pkgs.noto-fonts;
+            name = "Noto Serif";
+          };
+          sansSerif = {
+            package = pkgs.noto-fonts;
+            name = "Noto Sans";
+          };
+          monospace = {
+            package = pkgs.nerd-fonts.jetbrains-mono;
+            name = "JetBrainsMono Nerd Font";
+          };
+          emoji = {
+            package = pkgs.noto-fonts-color-emoji;
+            name = "Noto Color Emoji";
+          };
+          sizes = {
+            applications = 10;
+            desktop = 10;
+            terminal = 10;
+          };
+        };
+        targets = {
+          # catppuccin-nix handles Qt via kvantum
+          qt.enable = false;
+          nixos-icons.enable = true;
+        };
+      };
+    };
+  };
+}
