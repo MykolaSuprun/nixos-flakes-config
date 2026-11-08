@@ -292,10 +292,6 @@ desktop hosts consume those exports; `myconf.chatgpt.enable` currently enables
 the app on geks-nixos. The private module keeps the pet floating and transparent
 when Hyprland uses Lua configuration.
 
-Until the private migration is published and its lock entry updated, rebuild
-with `--override-input nixconf-private path:/home/mykolas/workspaces/src/nixconf-private`.
-After publishing, run `nix flake update nixconf-private` before rebuilding.
-
 ---
 
 ## Strata — local LLM inference (geks-nixos)

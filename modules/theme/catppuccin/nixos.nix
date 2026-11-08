@@ -10,6 +10,8 @@
     config = lib.mkIf config.myconf.nixos.catppuccin.enable {
       catppuccin = {
         enable = true;
+        # Explicit: catppuccin/nix is moving port auto-enrolment to autoEnable.
+        autoEnable = true;
         cache.enable = true;
         grub = {
           enable = true;

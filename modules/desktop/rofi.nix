@@ -10,7 +10,7 @@ _: {
       programs.rofi = {
         enable = true;
         package = pkgs.rofi;
-        extraConfig = {
+        settings = {
           modi = "run,drun,window,binds:hypr-binds-list";
           icon-theme = "Papirus";
           show-icons = true;

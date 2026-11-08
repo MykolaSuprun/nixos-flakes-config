@@ -49,6 +49,7 @@
         };
         firefox = {
           enable = true;
+          configPath = ".mozilla/firefox"; # existing profile location (pre-26.05 default)
           policies = {
             ExtensionSettings = {
               # Sidebery's official Extension ID

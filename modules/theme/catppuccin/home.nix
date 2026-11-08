@@ -27,9 +27,8 @@
           enable = false;
         };
         hyprtoolkit.enable = true;
-        cursors = {
-          enable = true;
-        };
+        # Cursor theme only matters on a graphical desktop (not WSL).
+        cursors.enable = config.myconf.desktop.enable;
         fcitx5 = {
           enable = true;
           enableRounded = true;

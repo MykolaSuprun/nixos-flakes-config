@@ -68,6 +68,7 @@ _: {
         };
         zsh = {
           enable = true;
+          dotDir = config.home.homeDirectory; # keep ~/.zshrc (pre-26.05 default)
           enableCompletion = true;
           autosuggestion.enable = true;
           defaultKeymap = "viins";

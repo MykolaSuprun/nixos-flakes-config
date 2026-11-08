@@ -154,6 +154,7 @@
         };
         yazi = {
           enable = true;
+          shellWrapperName = "yy"; # keep the pre-26.05 wrapper name
           enableZshIntegration = true;
           enableBashIntegration = true;
           extraPackages = with pkgs; [
