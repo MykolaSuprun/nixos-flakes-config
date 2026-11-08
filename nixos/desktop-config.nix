@@ -7,6 +7,7 @@
 }: {
   options.myconf.nixos.desktop.enable = lib.mkEnableOption "gaming and desktop apps";
   config = lib.mkIf config.myconf.nixos.desktop.enable {
+    qt.enable = true;
     services.hardware = {
       bolt.enable = true;
     };
@@ -63,6 +64,13 @@
     };
 
     services = {
+      # These desktop services were previously enabled by the Plasma module.
+      accounts-daemon.enable = true;
+      libinput.enable = true;
+      power-profiles-daemon.enable = lib.mkDefault true;
+      udisks2.enable = true;
+      upower.enable = true;
+
       displayManager.sessionPackages = [
         (pkgs.writeTextFile {
           name = "gamescope-steam-session";
@@ -114,11 +122,9 @@
       };
     };
     environment.systemPackages = with pkgs; [
-      pkgs-stable.lutris
       thunderbolt
       bolt
       tbtools
-      kdePackages.plasma-thunderbolt
       pkgs-stable.bazecor
       steam-run
       # looking-glass-client

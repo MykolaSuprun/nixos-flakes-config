@@ -1,5 +1,4 @@
 local fullscreen_apps = {
-	["steam"] = true,
 	["cider"] = true,
 	["LM-Studio"] = true,
 }
@@ -36,7 +35,6 @@ local scratchpad_assignments = {
 	{ match = { class = "^(nz\\.co\\.mega\\.)$" }, id = "hidden" },
 	{ match = { initial_title = "Cryptomator" }, id = "hidden" },
 	{ match = { initial_title = "^(Filen)$" }, id = "hidden", pseudo = true },
-	{ match = { class = "^(steam)$" }, id = "games" },
 	{ match = { class = "^(zen-beta)$" }, id = "zen" },
 }
 
@@ -51,7 +49,7 @@ for _, entry in ipairs(scratchpad_assignments) do
 	})
 end
 
--- ── Game Workspaces ───────────────────────────────────────────────────────────
+-- ── Game Window Rules ─────────────────────────────────────────────────────────
 local games = {
 	{ match = { class = "^(gamescope)$" } },
 	{ match = { class = "^(steam_app_1903340)$" } },
@@ -72,7 +70,6 @@ for _, entry in ipairs(games) do
 		immediate = true,
 		fullscreen = true,
 		-- fullscreen_state = "3 3",
-		workspace = "special:scratch_games",
 	})
 end
 
@@ -88,14 +85,14 @@ end
 
 -- ── Floating/Utility Rules ───────────────────────────────────────────────────
 hl.window_rule({ match = { class = "^(steam)$" }, float = true, center = true })
-hl.window_rule({ match = { class = "^(kitty-dropterm)$" }, float = true, pseudo = true })
+hl.window_rule({ match = { class = "^(com\\.mitchellh\\.ghostty\\.dropterm)$" }, float = true, pseudo = true })
 hl.window_rule({ match = { class = "^(com\\.saivert\\.pwvucontrol)$" }, float = true, pseudo = true })
 
 -- ── Priority & Portals ───────────────────────────────────────────────────────
 local priority = {
 	{ match = { class = "^(org\\.kde\\.ksecretd)$" } },
 	{ match = { class = "^(nm-applet)$" } },
-	{ match = { class = "^(clipse)$" }, size = { 800, 560 } },
+	{ match = { class = "^(com\\.mitchellh\\.ghostty\\.clipboard)$" }, size = { 800, 560 } },
 }
 
 for _, entry in ipairs(priority) do

@@ -28,7 +28,6 @@
           id = "oepjogknopbbibcjcojmedaepolkghpb";
         } # Editor for Docs, Sheets & Slides
         {id = "ecabifbgmdmgdllomnfinbmaellmclnh";} # Reader view
-        {id = "cimiefiiaegbelhefglklhhakcgmhkai";} # Plasma integration
       ];
     };
   };

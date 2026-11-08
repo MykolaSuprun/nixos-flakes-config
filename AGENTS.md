@@ -11,7 +11,7 @@ Personal NixOS configuration managed with [flake-parts](https://github.com/hercu
 | Host | Description | Display Manager | GPU |
 |------|-------------|-----------------|-----|
 | `geks-nixos` | AMD desktop, Hyprland + gaming | greetd + sysc-greet | AMD dGPU (7900 XTX) + AMD iGPU |
-| `geks-zenbook` | Intel laptop, Hyprland + Plasma 6 | SDDM (Wayland) | Intel Iris/Xe iGPU + NVIDIA RTX 4060 Laptop dGPU (present, but **no NVIDIA driver is configured** — no `hardware.nvidia` anywhere in this repo) |
+| `geks-zenbook` | Intel laptop, Hyprland | SDDM (Wayland) | Intel Iris/Xe iGPU + NVIDIA RTX 4060 Laptop dGPU (present, but **no NVIDIA driver is configured** — no `hardware.nvidia` anywhere in this repo) |
 | `geks-wsl` | WSL2 minimal environment | N/A | N/A |
 
 ### Repository Structure

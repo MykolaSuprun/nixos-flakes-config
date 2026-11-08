@@ -9,6 +9,15 @@
   lib,
   ...
 }: let
+  gamingGpuId = "1002:744c";
+  gamingGpuEnv = ''
+    export DRI_PRIME=${lib.escapeShellArg gamingGpuId}
+    export MESA_VK_DEVICE_SELECT=${lib.escapeShellArg "${gamingGpuId}!"}
+  '';
+  steam-dgpu = pkgs.writeShellScript "steam-dgpu" ''
+    ${gamingGpuEnv}
+    exec ${pkgs.steam}/bin/steam "$@"
+  '';
   # NOTE (2026-09-11): --mangoapp REMOVED — mangoapp 0.8.4 is X11-only and
   # segfaults (XInternAtom on NULL Display) under gamescope --expose-wayland;
   # gamescope's reaper respawns it ~1/sec (96k coredumps/day observed).
@@ -24,7 +33,7 @@
       "2"
       "--expose-wayland"
       "--prefer-vk-device"
-      "1002:744c"
+      gamingGpuId
       "-W"
       "3440"
       "-H"
@@ -35,9 +44,10 @@
     ];
   in
     pkgs.writeShellScriptBin "steam-gamescope" ''
+      ${gamingGpuEnv}
       export DXVK_HDR=1
       export ENABLE_GAMESCOPE_WSI=1
-      exec ${pkgs.gamescope}/bin/gamescope ${lib.escapeShellArgs gamescopeArgs} -- ${pkgs.steam}/bin/steam -gamepadui -steamos
+      exec ${pkgs.gamescope}/bin/gamescope ${lib.escapeShellArgs gamescopeArgs} -- ${steam-dgpu}
     '';
 in {
   myconf = {
@@ -53,8 +63,6 @@ in {
     catppuccin.enable = true;
     catppuccin.flavor = lib.mkDefault "latte";
     ghostty.enable = true;
-    kitty.enable = true;
-    helix.enable = true;
     tmux.enable = true;
     wezterm.enable = true;
     rofi.enable = true;
@@ -171,7 +179,7 @@ in {
       actions = {
         "normal" = {
           name = "Launch without Gamescope";
-          exec = "${pkgs.steam}/bin/steam";
+          exec = "${steam-dgpu}";
         };
       };
     };
@@ -194,13 +202,6 @@ in {
   };
 
   programs.home-manager.enable = true;
-
-  dconf.settings = {
-    "org/virt-manager/virt-manager/connections" = {
-      autoconnect = ["qemu:///system"];
-      uris = ["qemu:///system"];
-    };
-  };
 
   # ── Dotfile symlinks ──────────────────────────────────────────────────────────
   home.file = {

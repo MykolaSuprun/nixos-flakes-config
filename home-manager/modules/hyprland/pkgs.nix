@@ -193,15 +193,25 @@
 
     # pidof (argv[0] match) is the reliable handle for the wrapped binary.
     kill_client() {
-      # qs-flow holds the lock as the shell process — unlock through IPC
-      # rather than hunting a swaylock pid that does not exist.
-      if qsflow_lock_live; then
-        qs-flow-lock >/dev/null 2>&1 || true
+      # qs-flow holds the lock as the shell process. It has no unlock IPC (by
+      # design, ADR 0027 - an exported unlock would bypass authentication), so
+      # `qs-flow-lock` can only re-lock; break-glass instead is to stop the
+      # shell. The compositor then keeps the session locked and, with
+      # misc.allow_session_lock_restore, the fresh swaylock that launch()
+      # starts takes the dead lock over and still demands the user's password.
+      # Probe exit 3 (IPC hung) counts too: a wedged shell may hold the lock.
+      qs-flow-islocked >/dev/null 2>&1 && qs_rc=0 || qs_rc=$?
+      if { [ "$qs_rc" = 0 ] || [ "$qs_rc" = 3 ]; } && ! pidof swaylock >/dev/null 2>&1; then
+        echo "fix-lock: stopping the qs-flow shell holding the lock (swaylock takes over)" >&2
+        systemctl --user stop qs-flow.service 2>/dev/null || true
+        # dev/takeover shells are not the unit; same anchored pattern as dev.sh
+        pkill -U "$(id -u)" -f "^/nix/store/.*-quickshell-[0-9.]*/bin/quickshell -p .*qs-flow" 2>/dev/null || true
         for ((i = 0; i < 30; i++)); do
-          qsflow_lock_live || return 0
+          qs-flow-islocked >/dev/null 2>&1 && qs_rc=0 || qs_rc=$?
+          [ "$qs_rc" = 2 ] && return 0
           sleep 0.1
         done
-        echo "fix-lock: ERROR: qs-flow lock did not release" >&2
+        echo "fix-lock: ERROR: qs-flow shell did not stop" >&2
         return 1
       fi
       pids=$(pidof swaylock 2>/dev/null) || return 0

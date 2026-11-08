@@ -46,10 +46,8 @@
       gtk.icon.enable = false;
 
       # Native catppuccin/nix modules
-      kitty.enable = true;
       ghostty.enable = true;
       wezterm.enable = true;
-      helix.enable = true;
       tmux.enable = true;
       waybar.enable = true;
       swaync.enable = true;

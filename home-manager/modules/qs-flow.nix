@@ -72,10 +72,23 @@
         # session, but it will render it inoperable") — the user would be
         # unable to unlock. Probe first; restart only when not locked.
         ExecStart = "${pkgs.writeShellScriptBin "qs-flow-resume-guard" ''
-          if qs-flow-islocked 2>/dev/null; then
-            echo "qs-flow-resume-guard: shell holds the session lock - skipping restart" >&2
-            exit 0
-          fi
+          # qs-flow-islocked exits 0 secure, 1 unprotected, 2 no shell, 3 probe
+          # error. Only 1 and 2 prove the shell holds no lock. 3 is exactly what
+          # a wedged shell answers after a DRI reset - possibly while locked -
+          # so retry briefly, then leave it alone rather than kill a lock holder.
+          for attempt in 1 2 3; do
+            qs-flow-islocked 2>/dev/null && rc=0 || rc=$?
+            [ "$rc" -ne 3 ] && break
+            sleep 2
+          done
+          case "$rc" in
+            0)
+              echo "qs-flow-resume-guard: shell holds the session lock - skipping restart" >&2
+              exit 0 ;;
+            3)
+              echo "qs-flow-resume-guard: lock state unknown (probe error) - skipping restart" >&2
+              exit 0 ;;
+          esac
           exec ${pkgs.systemd}/bin/systemctl --user restart qs-flow.service
         ''}/bin/qs-flow-resume-guard";
       };
@@ -83,6 +96,10 @@
         WantedBy = ["suspend.target"];
       };
     };
+
+    # Applications launched by qs-flow may remain in its service cgroup.
+    # Preserve them when the shell itself is restarted.
+    systemd.user.services.qs-flow.Service.KillMode = "process";
 
     # Keep the module’s Wayland readiness guard alongside the host session guard.
     systemd.user.services.qs-flow.Unit.ConditionEnvironment = lib.mkForce [

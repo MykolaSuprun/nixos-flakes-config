@@ -15,7 +15,6 @@
     dev.enable = true;
     git.enable = true;
     catppuccin.enable = true;
-    helix.enable = true;
     tmux.enable = true;
   };
 

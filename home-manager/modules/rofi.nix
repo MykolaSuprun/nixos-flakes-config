@@ -13,7 +13,7 @@
         modi = "run,drun,window,binds:hypr-binds-list";
         icon-theme = "Papirus";
         show-icons = true;
-        terminal = "kitty";
+        terminal = "ghostty";
         drun-display-format = "{icon} {name}";
         location = 0;
         disable-history = false;

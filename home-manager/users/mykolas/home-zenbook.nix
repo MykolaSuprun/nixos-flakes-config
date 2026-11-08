@@ -20,8 +20,6 @@
     catppuccin.enable = true;
     catppuccin.flavor = lib.mkDefault "mocha";
     ghostty.enable = true;
-    kitty.enable = true;
-    helix.enable = true;
     tmux.enable = true;
     wezterm.enable = true;
     rofi.enable = true;

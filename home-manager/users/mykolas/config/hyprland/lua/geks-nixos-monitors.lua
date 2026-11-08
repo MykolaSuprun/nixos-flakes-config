@@ -1,4 +1,4 @@
-local monitor_main = "desc:ASUSTek COMPUTER INC ASUS VG34V R1LMTF004674"
+local monitor_main = "desc:ASUSTek COMPUTER INC ASUS VG34V"
 local monitor_secondary = "desc:GWD ARZOPA 0x48310206"
 
 -- Runtime-toggleable disabled state. The `monitor-toggle` script flips these

@@ -58,6 +58,33 @@ in {
     priority = 100;
   };
 
+  # Hibernation swap: 128 GiB LUKS partition (boot.initrd.luks.devices.cryptswap
+  # + boot.resumeDevice below), sized for RAM + the used part of VRAM that
+  # amdgpu copies into RAM before the freeze. Hibernate with plain
+  # `systemctl hibernate`; stop ROCm/compute jobs first — an active KFD
+  # workload is the fragile case.
+  # Priority -2 keeps it behind zram (100): normal swap-out fills zram first
+  # and only a full zram spills here. The old freeze came from a loop-backed
+  # btrfs file (see above); this is a raw dm-crypt partition, and earlyoom
+  # below triggers on memory alone, so extra swap headroom no longer hides OOM.
+  # A custom on/off unit was tried and removed: `systemctl hibernate` only
+  # queues the request, so turning swap off right after it raced the real
+  # hibernate ("Failed to find location to hibernate to: Stale file handle").
+  swapDevices = [
+    {
+      device = "/dev/mapper/cryptswap";
+      priority = -2;
+    }
+  ];
+  # Hibernation is blocked for now (2026-11-07) while the iGPU/Thunderbolt
+  # display path is tested separately; the swap/resume plumbing above stays.
+  # Re-enable by deleting this block (or setting "yes").
+  systemd.sleep.settings.Sleep = {
+    AllowHibernation = "no";
+    AllowHybridSleep = "no";
+    AllowSuspendThenHibernate = "no";
+  };
+
   hyprconf = {
     target = "geks-nixos";
     hyprland.enable = true;
@@ -133,6 +160,19 @@ in {
     # stage-1 retries entered passwords automatically → single boot prompt.
     # by-uuid: kernel nvme numbering is unstable across boots, never use it.
     initrd.luks.devices.crypted2.device = "/dev/disk/by-uuid/f4aed711-b947-4570-b0f2-df8b0d26b915";
+
+    # Hibernate disk (Samsung 970 EVO Plus 1TB, ex-Windows, wiped 2026-11-06):
+    # part1 = 128 GiB encrypted swap (hibernation image only: RAM + VRAM), part2 = third
+    # btrfs pool member. Same passphrase as `crypted`; the initrd retries it
+    # per volume. The image holds all of RAM, so the swap must be encrypted.
+    #
+    # ORDER MATTERS: `crypted3` has to be in the booted generation BEFORE
+    # `btrfs device add /dev/mapper/crypted3 /` is run — otherwise the next boot
+    # can't assemble the pool. Generations built before this line cannot boot
+    # once the device has been added.
+    initrd.luks.devices.crypted3.device = "/dev/disk/by-uuid/d1c2a5d5-2877-4a27-8ef2-a99fc3d6dc78";
+    initrd.luks.devices.cryptswap.device = "/dev/disk/by-uuid/1693c0a5-733f-448d-8658-b7c80200fd7b";
+    resumeDevice = "/dev/mapper/cryptswap";
 
     # ZFS is not used on this host (ext4 + LUKS). Explicitly disabled so that
     # zfs-kernel (currently broken for linux-zen) is never pulled in — including
@@ -346,7 +386,7 @@ in {
       videoDrivers = ["amdgpu"];
     };
 
-    desktopManager.plasma6 = {enable = true;};
+    desktopManager.plasma6.enable = false;
 
     flatpak.enable = true;
 
@@ -460,14 +500,9 @@ in {
 
   # ── Programs ──────────────────────────────────────────────────────────────────
   programs = {
-    fish = {
-      enable = true;
-      useBabelfish = true;
-    };
     zsh.enable = true;
     noctalia-greeter.enable = true; # Noctalia login greeter
     partition-manager.enable = true;
-    virt-manager.enable = true;
     java.enable = true;
     neovim = {
       defaultEditor = true;
@@ -511,7 +546,7 @@ in {
 
   environment = {
     enableAllTerminfo = true;
-    shells = with pkgs; [zsh fish nushell];
+    shells = with pkgs; [zsh];
     variables = {
       MESA_SHADER_CACHE_MAX_SIZE = "16G";
       __GL_SHADER_DISK_CACHE_SIZE = "16G";
@@ -538,7 +573,6 @@ in {
       git
       gh
       wezterm
-      kitty
       wget
       p7zip
       rar

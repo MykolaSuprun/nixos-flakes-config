@@ -81,13 +81,6 @@
             wav = "vlc";
             m4a = "vlc";
             opus = "vlc";
-            # office → libreoffice
-            docx = "libreoffice";
-            odt = "libreoffice";
-            xlsx = "libreoffice";
-            ods = "libreoffice";
-            pptx = "libreoffice";
-            odp = "libreoffice";
           };
         };
         hotkeys = {
@@ -198,12 +191,6 @@
       };
 
       zsh.initContent = lib.mkAfter ''
-        # Kitty doesn't set TERM_PROGRAM; expose it so tools like superfile detect
-        # the kitty graphics protocol even inside tmux
-        if [[ -n "$KITTY_WINDOW_ID" && -z "$TERM_PROGRAM" ]]; then
-          export TERM_PROGRAM=kitty
-        fi
-
         function spf() {
           local lastdir_file="''${XDG_STATE_HOME:-$HOME/.local/state}/superfile/lastdir"
           if [[ $# -eq 0 && -f "$lastdir_file" ]]; then
@@ -228,7 +215,6 @@
       # flake-env picker TUI — nix develop / template scaffolder
       inputs.flake-env.packages.${pkgs.stdenv.hostPlatform.system}.picker
       vscode
-      neovide
       # opencode (overlays/opencode.nix) — V2 build from the npm prebuilt.
       # V1 pin + the opencode2 compat alias retired 2026-09-29.
       opencode

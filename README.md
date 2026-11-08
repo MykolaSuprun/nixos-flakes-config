@@ -9,7 +9,7 @@ Uses [Determinate Nix](https://determinate.systems/) on all hosts.
 | Host | Description |
 |------|-------------|
 | `geks-nixos` | Main desktop (AMD, NixOS, Hyprland) |
-| `geks-zenbook` | Laptop (Intel, NixOS, Hyprland + Plasma 6) |
+| `geks-zenbook` | Laptop (Intel, NixOS, Hyprland) |
 | `geks-wsl` | WSL2 minimal environment |
 
 ## Disk layout (geks-nixos and geks-zenbook)

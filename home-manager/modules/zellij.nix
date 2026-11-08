@@ -62,7 +62,6 @@ in {
   config = lib.mkIf config.myconf.zellij.enable {
     programs.zellij = {
       enable = true;
-      enableFishIntegration = true;
       enableBashIntegration = true;
       enableZshIntegration = true;
       extraConfig = zellij-config;

@@ -469,7 +469,10 @@ in {
                   # snapshots the pre-suspend lock state (instant, never blocks
                   # suspend) so after_sleep_cmd can repair a clientless lock
                   # even when logind LockedHint says no.
-                  before_sleep_cmd = fix-lock --record; session_lock
+                  # QS_FLOW_LOCK_TIMEOUT=3: logind delays suspend only for
+                  # InhibitDelayMaxUSec (5 s); the 10 s default would let a wedged
+                  # shell outlive it, so the swaylock fallback must start sooner.
+                  before_sleep_cmd = fix-lock --record; QS_FLOW_LOCK_TIMEOUT=3 session_lock
                   # Passive safety net: immediate repair pass on wake + a
                   # detached --recheck 10s later (the amdgpu/DRI output-reset
                   # storm kills clients AFTER the immediate check runs).
@@ -555,8 +558,8 @@ in {
 
           [scratchpads.term]
           animation = "fromTop"
-          command = "kitty --class kitty-dropterm"
-          class = "kitty-dropterm"
+          command = "ghostty --class=com.mitchellh.ghostty.dropterm"
+          class = "com.mitchellh.ghostty.dropterm"
           size = "85% 75%"
           max_size = "2400px 100%"
           margin = 50
@@ -584,9 +587,9 @@ in {
           "Logout" = "uwsm stop"
 
           [shortcuts_menu.entries.Utilities]
-          "Clipboard history" = "kitty --class clipse -e clipse"
+          "Clipboard history" = "ghostty --class=com.mitchellh.ghostty.clipboard -e clipse"
           "Volume control" = "pypr toggle volume"
-          "File manager" = "uwsm app -- kitty -e yazi"
+          "File manager" = "uwsm app -- ghostty -e yazi"
           "Wallpaper cycle" = "pypr wall next"
         '';
 

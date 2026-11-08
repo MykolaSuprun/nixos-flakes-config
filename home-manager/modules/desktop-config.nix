@@ -190,14 +190,12 @@
       catppuccin-papirus-folders
 
       # internet
-      mullvad-browser
       proton-vpn
       proton-pass
       protonmail-desktop
       proton-authenticator-bin
       lbry
       vivaldi
-      floorp-bin
       filen-desktop
       impala # tui wifi manager
 
@@ -206,18 +204,13 @@
       signal-desktop
       ayugram-desktop
       telegram-desktop
-      viber
-      tg
 
       # other
-      onlyoffice-desktopeditors
       bluetui
       wrappedPkgs.bt-profile-switch # bluetooth device profile switcher (A2DP <-> HFP)
       pkgs-stable.megasync
       cryptomator
       qbittorrent
-      libreoffice-qt
-      ledger-live-desktop
       protonup-qt
       protonplus
       protonup-ng
@@ -238,7 +231,6 @@
 
       # media
       spotify
-      gimp
       vlc
       cider-2
       yt-dlp

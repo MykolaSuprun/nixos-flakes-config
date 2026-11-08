@@ -57,7 +57,6 @@ in {
     }
     {
       home.packages = with pkgs; [
-        babelfish
         grc
         tmuxp
 
@@ -65,39 +64,27 @@ in {
       ];
 
       programs = {
-        nushell = {
-          enable = true;
-          envFile.source = ./../users/mykolas/config/nushell/env.nu;
-          configFile.source = ./../users/mykolas/config/nushell/config.nu;
-        };
         carapace = {
           enable = true;
-          enableNushellIntegration = true;
           enableZshIntegration = true;
-          enableFishIntegration = true;
           enableBashIntegration = true;
         };
         fzf = {
           enable = true;
           tmux.enableShellIntegration = true;
           enableZshIntegration = true;
-          enableFishIntegration = true;
           enableBashIntegration = true;
         };
         starship = {
           enable = true;
           enableBashIntegration = true;
           enableZshIntegration = true;
-          enableFishIntegration = true;
-          enableNushellIntegration = true;
           enableTransience = true;
         };
         zoxide = {
           enable = true;
           enableBashIntegration = true;
           enableZshIntegration = true;
-          enableFishIntegration = true;
-          enableNushellIntegration = true;
           options = [
             "--cmd cd"
           ];
@@ -105,7 +92,6 @@ in {
         direnv = {
           enableZshIntegration = true;
           enableBashIntegration = true;
-          enableFishIntegration = true;
         };
         zsh = {
           enable = true;

@@ -5,6 +5,14 @@
   ...
 }: {
   options.myconf.fcitx5.enable = lib.mkEnableOption "Fcitx5 input method";
+  # Home Manager unconditionally adds the obsolete GTK 2 input-method cache.
+  # Its fcitx5-gtk package already defaults to GTK 3 and 4 only.
+  options.home.packages = lib.mkOption {
+    apply = packages:
+      if config.myconf.fcitx5.enable
+      then builtins.filter (package: (package.name or "") != "gtk2-immodule.cache") packages
+      else packages;
+  };
   config = lib.mkIf config.myconf.fcitx5.enable {
     i18n.inputMethod = {
       enable = true;

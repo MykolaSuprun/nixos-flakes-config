@@ -41,7 +41,11 @@ in {
     # Non-root USB/hidraw access for Lian Li devices (uaccess + lianli group).
     services.udev.packages = [cfg.package];
     users.groups.lianli = {};
-    users.users.${cfg.user}.extraGroups = ["lianli"];
+    users.users.${cfg.user} = {
+      extraGroups = ["lianli"];
+      # Cooling control must start before login and survive logout.
+      linger = true;
+    };
 
     # v1.1.x daemon refuses to start without these root-owned shared flock
     # files (both user-mode and system-mode daemons share them).
@@ -51,12 +55,12 @@ in {
       "f /run/lianli-control.lock 0666 root root - -"
     ];
 
-    # Per-user daemon: talks to the GUI via a socket in $XDG_RUNTIME_DIR.
+    # NixOS user units are installed for every user manager, including greeter.
+    # Only the device owner's lingering manager may start the daemon.
     systemd.user.services.lianli-daemon = {
       description = "Lian Li Device Daemon";
       wantedBy = ["default.target"];
-      partOf = ["graphical-session.target"];
-      after = ["graphical-session.target"];
+      unitConfig.ConditionUser = cfg.user;
       serviceConfig = {
         ExecStart = "${cfg.package}/bin/lianli-daemon";
         Restart = "on-failure";

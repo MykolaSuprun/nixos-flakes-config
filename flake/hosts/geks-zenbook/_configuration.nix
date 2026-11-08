@@ -124,7 +124,7 @@
 
   # ── Services ──────────────────────────────────────────────────────────────────
   services = {
-    desktopManager.plasma6.enable = true;
+    desktopManager.plasma6.enable = false;
 
     # Plain SSH over the tailnet (reachable via tailscale0/trustedInterfaces).
     # Client-side SSH_AUTH_SOCK is owned by gpg-agent (see home-zenbook.nix);
@@ -143,9 +143,7 @@
       extraSetFlags = ["--ssh" "--operator=mykolas"];
     };
 
-    # SDDM: shows both Plasma and Hyprland session entries in the greeter,
-    # and avoids the sysc-greet/Hyprland compositor hang on Intel iGPU
-    # (the greeter itself now runs under KWin Wayland, not Hyprland).
+    # KWin avoids the sysc-greet/Hyprland compositor hang on the Intel iGPU.
     greetd = {
       enable = false;
     };
@@ -161,7 +159,18 @@
 
     displayManager.sddm = {
       enable = true;
-      wayland.enable = true;
+      wayland = {
+        enable = true;
+        compositor = "kwin";
+      };
+      extraPackages = with pkgs.kdePackages; [
+        breeze-icons
+        kirigami
+        libplasma
+        plasma5support
+        qtsvg
+        qtvirtualkeyboard
+      ];
     };
     displayManager.defaultSession = "hyprland-uwsm";
 
@@ -235,10 +244,6 @@
 
   # ── Programs ──────────────────────────────────────────────────────────────────
   programs = {
-    fish = {
-      enable = true;
-      useBabelfish = true;
-    };
     zsh.enable = true;
     appimage = {
       enable = true;
@@ -261,7 +266,7 @@
   # ── System ────────────────────────────────────────────────────────────────────
   environment = {
     enableAllTerminfo = true;
-    shells = with pkgs; [zsh fish nushell];
+    shells = with pkgs; [zsh];
     systemPackages = with pkgs; [
       keyd
       brightnessctl

@@ -20,10 +20,8 @@ clear_command = "awww clear"
 
 [scratchpads.term]
 animation = "fromTop"
-command = "kitty --class kitty-dropterm"
-class = "kitty-dropterm"
-# command = "ghostty --class=com.mitchellh.ghostty.dropdown"
-# class = "com.mitchellh.ghostty.dropdown"
+command = "ghostty --class=com.mitchellh.ghostty.dropterm"
+class = "com.mitchellh.ghostty.dropterm"
 size = "85% 75%"
 max_size = "2400px 100%"
 margin = 50
@@ -51,9 +49,9 @@ allow_special_workspaces = true
 "Logout" = "uwsm stop"
 
 [shortcuts_menu.entries.Utilities]
-"Clipboard history" = "kitty --class clipse -e clipse"
+"Clipboard history" = "ghostty --class=com.mitchellh.ghostty.clipboard -e clipse"
 "Volume control" = "pypr toggle volume"
-"File manager" = "uwsm app -- kitty -e yazi"
+"File manager" = "uwsm app -- ghostty -e yazi"
 "Wallpaper cycle" = "pypr wall next"
 
 

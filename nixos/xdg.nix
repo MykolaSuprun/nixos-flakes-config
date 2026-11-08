@@ -31,10 +31,14 @@
         # neither XDPH nor KDE implement (Settings/AppChooser for Flatpak apps).
         # It's pulled out of the per-desktop default lists below so it never
         # serves the FileChooser — that's routed to the KDE portal (Dolphin)
-        # on Hyprland, and to kde on Plasma.
+        # on Hyprland.
         # xdg-desktop-portal-phosh was previously listed but never matched
         # (selection files referenced "posh", not "phosh") — pure dead weight.
-        extraPortals = [pkgs.xdg-desktop-portal-gtk];
+        extraPortals = [
+          pkgs.xdg-desktop-portal-gtk
+          pkgs.kdePackages.xdg-desktop-portal-kde
+          pkgs.kdePackages.kwallet
+        ];
         xdgOpenUsePortal = true;
         config = {
           # Pattern documented on the Hyprland wiki: XDPH owns Hyprland-native
@@ -44,11 +48,6 @@
           hyprland = {
             default = ["hyprland" "gtk"];
             "org.freedesktop.impl.portal.FileChooser" = ["kde"];
-          };
-          # Pin Plasma's portal explicitly so the plasma6 module's
-          # implicit portal deps don't drift if upstream changes defaults.
-          kde = {
-            default = ["kde"];
           };
         };
       };

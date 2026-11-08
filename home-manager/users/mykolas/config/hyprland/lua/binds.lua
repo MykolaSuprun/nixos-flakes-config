@@ -36,7 +36,7 @@ hl.bind(
 hl.bind(mod .. " + C", hl.dsp.exec_cmd("rofi -show binds"), { description = "Open keybind cheatsheet" })
 hl.bind(
 	mod .. " + SHIFT + C",
-	hl.dsp.exec_cmd("kitty --class clipse -e clipse"),
+	hl.dsp.exec_cmd("uwsm app -- ghostty --class=com.mitchellh.ghostty.clipboard -e clipse"),
 	{ description = "Open clipboard manager" }
 )
 
@@ -396,16 +396,6 @@ hl.bind(
 	{ description = "Move window to music scratch workspace" }
 )
 hl.bind(
-	mod .. " + G",
-	hl.dsp.workspace.toggle_special("scratch_games"),
-	{ description = "Toggle games scratch workspace" }
-)
-hl.bind(
-	mod .. " + SHIFT + G",
-	hl.dsp.window.move({ workspace = "special:scratch_games" }),
-	{ description = "Move window to games scratch workspace" }
-)
-hl.bind(
 	mod .. " + X",
 	hl.dsp.workspace.toggle_special("scratch_messaging"),
 	{ description = "Toggle messaging scratch workspace" }
@@ -476,7 +466,7 @@ hl.bind("ALT + SHIFT + SPACE", hl.dsp.exec_cmd(menu), { description = "Open Rofi
 hl.bind(mod .. " + CTRL + SPACE", hl.dsp.exec_cmd("hyprlauncher"), { description = "Open Hypr launcher" })
 hl.bind(
 	mod .. " + CTRL + T",
-	hl.dsp.exec_cmd("kitty --class specialisation-picker -e specialisation-picker"),
+	hl.dsp.exec_cmd("uwsm app -- ghostty --class=com.mitchellh.ghostty.specialisation -e specialisation-picker"),
 	{ description = "Open Catppuccin specialisation picker" }
 )
 
