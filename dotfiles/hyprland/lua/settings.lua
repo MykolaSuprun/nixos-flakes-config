@@ -50,7 +50,9 @@ hl.config({
 		enabled = true,
 	},
 	input = {
-		follow_mouse = 1,
+		-- Keep keyboard focus until a click or keyboard navigation.
+		follow_mouse = 2,
+		float_switch_override_focus = 0,
 		sensitivity = -0.75,
 		touchpad = {
 			natural_scroll = true,
@@ -72,6 +74,8 @@ hl.config({
 	},
 	misc = {
 		vrr = 1,
+		always_follow_on_dnd = false,
+		mouse_move_focuses_monitor = false,
 		disable_hyprland_logo = true,
 		-- Let a session lock be restored/re-grabbed after compositor or lock
 		-- client restarts instead of dropping the lock state.

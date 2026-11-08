@@ -318,6 +318,7 @@ local function recalculate(ctx)
 			-- The work area ends inside the physical screen. Keep columns that
 			-- are entirely outside the viewport from catching the pointer in
 			-- that margin; leave partially visible columns in their normal place.
+			-- Half a pixel allows for fractional widths and Hyprland's rounding.
 			if x + wpx <= 0.5 then
 				px = math.min(px, mon_box.x - wpx)
 			elseif x >= area.w - 0.5 then
