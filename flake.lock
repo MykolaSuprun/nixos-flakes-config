@@ -163,19 +163,16 @@
         "nixpkgs": "nixpkgs_9"
       },
       "locked": {
-        "lastModified": 1794162799,
-        "narHash": "sha256-Ct5NHpRujXbpkzD4QD8l/UUz+urys5XX2gnwf3oGeSY=",
-        "ref": "comfyui-nix",
-        "rev": "98f2754b56ecf6edc53fa2a076790bdf34c036d9",
-        "revCount": 209,
-        "type": "git",
-        "url": "ssh://git@gitlab.com/nix-private/nixconf-private.git"
+        "path": "./comfyui-nix",
+        "type": "path"
       },
       "original": {
-        "ref": "comfyui-nix",
-        "type": "git",
-        "url": "ssh://git@gitlab.com/nix-private/nixconf-private.git"
-      }
+        "path": "./comfyui-nix",
+        "type": "path"
+      },
+      "parent": [
+        "nixconf-private"
+      ]
     },
     "determinate": {
       "inputs": {
@@ -1074,11 +1071,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1794162813,
-        "narHash": "sha256-rW3RDscj8GxBuwRjxnllnT1MdUw5iOg3v6ZLllqdYgw=",
+        "lastModified": 1794168369,
+        "narHash": "sha256-L9iwICpX2ujOPku7ektnbqGvG0n0CQDn1l2IoPnWETQ=",
         "ref": "refs/heads/main",
-        "rev": "920f13a398d7ae7152c5f0776d17a1c49c05ef06",
-        "revCount": 58,
+        "rev": "6267f346878d8f5a8b3cd0fe17cdf344c2aafb13",
+        "revCount": 59,
         "type": "git",
         "url": "ssh://git@gitlab.com/nix-private/nixconf-private.git"
       },
