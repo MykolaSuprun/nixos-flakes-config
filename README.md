@@ -286,11 +286,14 @@ shellcheck, shfmt, ruff); `nix flake check` enforces it and builds every host.
 
 ## ChatGPT desktop
 
-The package overlay, Home Manager module and Hyprland pet rule live in
-`nixconf-private` (`overlays.chatgpt` and `homeManagerModules.chatgpt`). Both
-desktop hosts consume those exports; `myconf.chatgpt.enable` currently enables
-the app on geks-nixos. The private module keeps the pet floating and transparent
-when Hyprland uses Lua configuration.
+`modules/desktop/chatgpt.nix` installs the nixpkgs desktop app when
+`myconf.chatgpt.enable` is set (currently on geks-nixos). The nixpkgs launcher
+stages bundled plugins in a writable cache. Until the locked unstable Tectonic
+build is fixed, the module selects the same Tectonic version from stable.
+
+The nixpkgs package uses the desktop's `NIXOS_OZONE_WL` setting and does not
+include the former custom pet window rule or the XWayland preference, so pet
+positioning and interaction may differ.
 
 ---
 

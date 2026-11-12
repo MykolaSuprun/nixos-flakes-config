@@ -6,7 +6,6 @@
     module.nixpkgs.overlays = [
       inputs.nixconf-private.overlays.lmstudio
       inputs.nixconf-private.overlays.openpets
-      inputs.nixconf-private.overlays.chatgpt
     ];
 
     home = {pkgs, ...}: {

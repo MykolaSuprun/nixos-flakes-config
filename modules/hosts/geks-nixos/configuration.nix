@@ -36,7 +36,40 @@ _: {
       # initial crawl, reverted on settlement).
       bees.enable = true;
       bees.hashTableSizeMB = 2048;
+      memoryProtection = {
+        enable = true;
+        modelServices = ["comfyui"];
+      };
       # flatpak.enable = false;  # bindfs/theme Flatpak setup – zenbook only
+    };
+
+    # System defaults leave the user's mimeapps.list writable for "Open With".
+    xdg.mime.defaultApplications = let
+      zen = ["zen-beta.desktop"];
+      gwenview = ["org.kde.gwenview.desktop"];
+      okular = ["org.kde.okular.desktop"];
+    in {
+      "text/html" = zen;
+      "x-scheme-handler/http" = zen;
+      "x-scheme-handler/https" = zen;
+      "x-scheme-handler/about" = zen;
+      "x-scheme-handler/unknown" = zen;
+      "image/png" = gwenview;
+      "image/jpeg" = gwenview;
+      "image/jpg" = gwenview;
+      "image/gif" = gwenview;
+      "image/bmp" = gwenview;
+      "image/webp" = gwenview;
+      "image/avif" = gwenview;
+      "image/svg+xml" = gwenview;
+      "image/tiff" = gwenview;
+      "application/pdf" = okular;
+      "application/oxps" = okular;
+      "application/x-pdf" = okular;
+      "application/epub+zip" = okular;
+      "audio/*" = ["vlc.desktop"];
+      "video/*" = ["vlc.desktop"];
+      "inode/directory" = ["org.kde.dolphin.desktop"];
     };
 
     # ── Swap ────────────────────────────────────────────────────────────────────
@@ -266,77 +299,10 @@ _: {
       LC_TIME = "en_IE.UTF-8";
     };
 
-    # ── GPU-workload host hardening (2026-10-15/16 freeze postmortem) ──────────
-    # oomd was running with an EMPTY /etc/systemd/oomd.conf and did nothing in
-    # both incidents. Give it real defaults: kill a pressure-generating cgroup
-    # after 20% memory pressure for 20s — BEFORE the box thrashes/fails.
-    environment.etc."systemd/oomd.conf.d/10-geks-geks.conf".text = ''
-      [OOM]
-      DefaultMemoryPressureLimit=20%
-      DefaultMemoryPressureDurationSec=20s
-    '';
-    # Opt the comfyui service into oomd management (its MemoryMax comes from the
-    # private flake's comfyui module; this adds the oomd kill contract on top).
-    systemd.services.comfyui.serviceConfig.ManagedOOMMemoryPressure = "kill";
-
-    # ── Freeze attribution probes (2026-10-20 freeze postmortem) ────────────────
-    # Full evidence chain in task_backlog/nixconf_stability_backlog.md.
-    # Minutely memory snapshot: the next wedge names its killer in
-    # `journalctl -u rss-watch.service` instead of costing another postmortem.
-    systemd.services.rss-watch = {
-      description = "Freeze attribution: memory snapshot + top RSS processes";
-      serviceConfig = {
-        Type = "oneshot";
-        # Best-effort under thrash — a missed tick costs nothing.
-        TimeoutStartSec = "10s";
-      };
-      script = ''
-        ${pkgs.procps}/bin/free -m | ${pkgs.coreutils}/bin/head -n 3
-        ${pkgs.procps}/bin/ps -eo rss=,pid=,comm= --sort=-rss \
-          | ${pkgs.coreutils}/bin/head -n 11 \
-          | ${pkgs.gawk}/bin/awk '{printf "rss_mib=%-8.0f pid=%-8s comm=%s\n", $1/1024, $2, $3}'
-      '';
-    };
-    systemd.timers.rss-watch = {
-      description = "Minutely rss-watch (freeze attribution)";
-      wantedBy = ["timers.target"];
-      timerConfig = {
-        OnCalendar = "minutely";
-        AccuracySec = "10s";
-        Unit = "rss-watch.service";
-      };
-    };
-
     networking.firewall.trustedInterfaces = ["tailscale0"];
 
     # ── Services ──────────────────────────────────────────────────────────────────
     services = {
-      # 2026-10-20 freeze postmortem: the kernel OOM killer never fired in 30d
-      # (87G of swap means allocations never fail — the box comas instead) and
-      # oomd starved with zero kills despite the 20%/20s tuning (no kill
-      # contracts outside comfyui). earlyoom is a tiny, mlock-all'd userspace
-      # killer that survives the thrash — turns the next memory catastrophe into
-      # a killed + journal-named offender instead of a 20-minute coma.
-      # oomd stays for cgroup-level granular work.
-      earlyoom = {
-        enable = true;
-        # Memory-only trigger: earlyoom kills only when BOTH mem and swap are
-        # under threshold, so swap thresholds of 100% make swap always "low"
-        # and avail mem alone decides. With swap at 10% it never fired —
-        # incident #4 sat at 9.9% avail with 77% swap free right before the
-        # cliff. SIGTERM at 10% avail, SIGKILL at 5%.
-        freeMemThreshold = 10;
-        freeMemKillThreshold = 5;
-        freeSwapThreshold = 100;
-        freeSwapKillThreshold = 100;
-        # Kill the model runners first; never the compositor or shell.
-        extraArgs = [
-          "--prefer"
-          "^(strata|strata-vision-h|comfyui|llama-server|ollama|python3?)$"
-          "--avoid"
-          "^(\\.Hyprland-wrapp|Xwayland|\\.quickshell-wra|systemd|sshd|greetd|uwsm)$"
-        ];
-      };
       tuned.enable = true;
       upower.enable = true;
       openssh = {

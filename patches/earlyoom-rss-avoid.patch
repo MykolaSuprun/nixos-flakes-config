@@ -1,0 +1,25 @@
+Treat adjusted RSS as a ranking value, not a test for a zombie main thread.
+An avoided process can have negative adjusted RSS while still being alive.
+Backport the raw stat.rss comparisons without changing the preference weights.
+https://github.com/rfjakob/earlyoom/issues/377
+
+--- a/kill.c
++++ b/kill.c
+@@ -438,7 +438,7 @@
+     if (args->sort_by_rss) {
+         // Case 1: neither victim nor cur have rss=0 (zombie main thread).
+         // This is the usual case.
+-        if (cur->VmRSSkiB > 0 && victim->VmRSSkiB > 0) {
++        if (cur->stat.rss > 0 && victim->stat.rss > 0) {
+             if (cur->VmRSSkiB < victim->VmRSSkiB) {
+                 return false;
+             }
+@@ -448,7 +448,7 @@
+         }
+         // Case 2: one (or both) have rss=0 (zombie main thread)
+         else {
+-            if (cur->VmRSSkiB == 0) {
++            if (cur->stat.rss == 0) {
+                 // only print the warning when the zombie is first seen, i.e. as "cur"
+                 get_comm(cur->pid, cur->name, sizeof(cur->name));
+                 warn("%s: pid %d \"%s\": rss=0 but oom_score=%d. Zombie main thread? Using oom_score for this process.\n",

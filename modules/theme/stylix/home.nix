@@ -16,11 +16,8 @@ _: {
         targets = {
           # GTK window theme — catppuccin-nix removed gtk theming in v25.05
           gtk.enable = true;
-          # zen-browser — not supported by catppuccin-nix
-          zen-browser = {
-            enable = true;
-            profileNames = ["default"];
-          };
+          # Zen uses the Catppuccin preset supplied by zen-browser-flake.
+          zen-browser.enable = false;
           # Explicitly disable targets that catppuccin.enable = true handles globally
           ghostty.enable = false;
           fcitx5.enable = false;

@@ -15,7 +15,6 @@ in {
 
   flake.modules.homeManager.private.imports = [
     private.homeManagerModules.openpets
-    private.homeManagerModules.chatgpt
     private.homeManagerModules.strata
     # OpenClaw: config, secrets wiring and autostart (needs nix-openclaw's
     # overlay, applied by the host that enables it).

@@ -500,38 +500,6 @@ hl.on("keybinds.submap", function(name)
 	} })
 end)
 
--- ── Messaging scratch ESC (issue 4) ──────────────────────────────────────────
--- When special:scratch_messaging is active, ESC dismisses it.
--- A dedicated submap is entered on activespecial; only ESC is bound so all
--- other keystrokes fall through to the focused application unmodified.
-hl.define_submap("messaging_open", function()
-	hl.bind(
-		"escape",
-		hl.dsp.exec_cmd("hyprctl dispatch togglespecialworkspace scratch_messaging"),
-		{ description = "[Messaging] Close messaging workspace" }
-	)
-	hl.bind(
-		mod .. " + X",
-		hl.dsp.workspace.toggle_special("scratch_messaging"),
-		{ description = "[Messaging] Toggle messaging workspace" }
-	)
-	-- no catchall: all other keys pass through to the focused app
-end)
-
--- workspace.active fires whenever the visible workspace changes on any monitor.
--- We use it to detect when scratch_messaging appears/disappears.
-local messaging_visible = false
-hl.on("workspace.active", function(ws)
-	local name = (type(ws) == "table" and ws.name) or tostring(ws)
-	if name == "special:scratch_messaging" then
-		messaging_visible = true
-		hl.exec_cmd("hyprctl dispatch submap messaging_open")
-	elseif messaging_visible then
-		messaging_visible = false
-		hl.exec_cmd("hyprctl dispatch submap reset")
-	end
-end)
-
 -- NOTE: the former "Auto-fill remaining windows" (fit visible on close/move)
 -- hack was removed — tape auto-rebalances per its width rules, and on scrollable
 -- fallback workspaces the fit submap (SUPER+CTRL+F) covers it manually.

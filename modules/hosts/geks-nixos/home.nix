@@ -117,33 +117,6 @@
     home.stateVersion = "24.11";
 
     xdg = {
-      mimeApps = {
-        enable = true;
-        defaultApplications = let
-          zen = ["zen-beta.desktop"];
-          gwenview = ["org.kde.gwenview.desktop"];
-          okular = ["org.kde.okular.desktop"];
-        in {
-          "text/html" = zen;
-          "x-scheme-handler/http" = zen;
-          "x-scheme-handler/https" = zen;
-          "x-scheme-handler/about" = zen;
-          "x-scheme-handler/unknown" = zen;
-          "image/png" = gwenview;
-          "image/jpeg" = gwenview;
-          "image/jpg" = gwenview;
-          "image/gif" = gwenview;
-          "image/bmp" = gwenview;
-          "image/webp" = gwenview;
-          "image/avif" = gwenview;
-          "image/svg+xml" = gwenview;
-          "image/tiff" = gwenview;
-          "application/pdf" = okular;
-          "application/oxps" = okular;
-          "application/x-pdf" = okular;
-          "application/epub+zip" = okular;
-        };
-      };
       desktopEntries.steam = {
         name = "Steam";
         genericName = "Game Store";

@@ -3,19 +3,20 @@ _final: prev: {
   # Asset naming: moshi-hook_<OS>_<arch>.tar.gz, verified against the published
   # sha256 on first fetch.
   moshi-hook = let
-    version = "0.4.45";
+    version = "0.4.53";
     # Per-arch sha256 (SRI) verified via `nix store prefetch-file` against
-    # https://cdn.getmoshi.app/hook/v0.4.45/moshi-hook_Linux_<arch>.tar.gz
+    # https://cdn.getmoshi.app/hook/v0.4.53/moshi-hook_Linux_<arch>.tar.gz
     # No upstream index exists; the CDN is the only distribution channel.
     # Bumping: resolve the live version from
     #   curl -s https://cdn.getmoshi.app/hook/latest/version.txt
     # (that file is what https://getmoshi.app/install.sh reads), then
-    # prefetch both arches. 2026-10-26: 0.4.13 was 404 on every arch — the
+    # prefetch both arches. The CDN keeps only a few recent versions: 0.4.13
+    # (2026-10-26) and 0.4.45 (2026-11-10) were 404 on every arch — the
     # CDN dropped it and the cached FOD was GC'd, so the pinned URL must be
     # bumped rather than assumed stable.
     hashes = {
-      x86_64 = "sha256-I+a/BcxXWl41+Rd6EzbmtC3+n6VtFLQV5FU57i+wOfU=";
-      arm64 = "sha256-mUY9PwlnFocby/oto8GZrDkaXUjKak3k5ejWyfj1im8=";
+      x86_64 = "sha256-kKs5brM+rY0u6Wei3BUI0HrbdJTYsLZKS58PCjWoI0Y=";
+      arm64 = "sha256-RdbZ9o2Yo8oVZ7LYFqNcdSPln3ulbALCJa9djBC8BEY=";
     };
   in
     prev.stdenv.mkDerivation {

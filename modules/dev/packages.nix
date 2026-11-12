@@ -219,7 +219,6 @@
         [
           # dev tools
           cachix
-          nixvim.lazyvim
           nixvim.nixvim
           nixvim.codevim
           nixvim.nvim
@@ -265,6 +264,8 @@
           netcat
           zip
           bubblewrap
+          herdr-core
+          herdr-desktop
 
           # python
           uv

@@ -55,6 +55,13 @@
         bat.enable = true;
         lazygit.enable = true;
       };
+
+      programs.zen-browser.profiles.default.presets.catppuccin = lib.mkIf config.programs.zen-browser.enable {
+        enable = true;
+        flavor = lib.toSentenceCase config.catppuccin.flavor;
+        accent = lib.toSentenceCase config.catppuccin.accent;
+      };
+
       qt = {
         enable = true;
         platformTheme.name = "kvantum";

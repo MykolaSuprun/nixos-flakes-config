@@ -5,7 +5,6 @@
   # NixOS/installer consumers. nixConfig CANNOT import it: nix refuses thunked
   # nixConfig values, so this literal list must be kept in sync with cache.nix.
   nixConfig = {
-    experimental-features = ["nix-command" "flakes"];
     trusted-substituters = [
       "https://cache.nixos.org"
       "https://nix-community.cachix.org"
@@ -109,10 +108,12 @@
     catppuccin.url = "github:catppuccin/nix";
 
     # Tools
-    # Own flakes without a binary cache: dedupe their nixpkgs/flake-parts.
+    # Own flakes without a binary cache: dedupe their flake-parts.
+    # my-nixvim deliberately keeps its own nixpkgs: it is tested against that
+    # rev, and following ours put it on a rev where markitdown's test-only
+    # dependency chain (geopandas, speechrecognition) is uncached and fails.
     my-nixvim = {
       url = "gitlab:mykolas-open/nixvim-config";
-      inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
     };
 
